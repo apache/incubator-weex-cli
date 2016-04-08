@@ -1,2 +1,3 @@
-# weex_toolchain
-weex toolchain
+# Weex Toolchain
+
+Weex toolchain

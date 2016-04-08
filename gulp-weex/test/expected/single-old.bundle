@@ -1,0 +1,13 @@
+register('single', {
+
+style: {}
+, template: {
+  "type": "text",
+  "attr": {
+    "value": "Hello World"
+  }
+}
+})
+
+// require module
+render('single', {})
