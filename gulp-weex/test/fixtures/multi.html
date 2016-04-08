@@ -1,0 +1,49 @@
+<we-element name="taobao-item">
+  <template>
+    <container onclick="gotoDetail">
+      <image class="thumb" src="{{pictureUrl}}"></image>
+      <text class="title">{{title}}</text>
+    </container>
+  </template>
+
+  <style>
+    .thumb {width: 200px; height: 200px; line-height: 200px;}
+    .title {flex: 1; color: red; font-size: 48px; font-weight: bold; background-color: #eee;}
+  </style>
+
+  <script>
+    module.exports = {
+      data: {
+        itemId: '',
+        title: '',
+        pictureUrl: ''
+      },
+      methods: {
+        gotoDetail: function () {
+          this.$openURL('https://item.taobao.com/item.htm?id=' + this.itemId)
+        }
+      }
+    }
+  </script>
+</we-element>
+
+<template>
+  <container style="flex-direction: column;">
+    <taobao-item repeat="{{itemList}}"></taobao-item>
+  </container>
+</template>
+
+<script type="config">
+  module.exports = {}
+</script>
+
+<script>
+  module.exports = {
+    data: {
+      itemList: [
+        {itemId: '520421163634', title: '宝贝标题1', pictureUrl: 'https://gd2.alicdn.com/bao/uploaded/i2/T14H1LFwBcXXXXXXXX_!!0-item_pic.jpg'},
+        {itemId: '522076777462', title: '宝贝标题2', pictureUrl: 'https://gd1.alicdn.com/bao/uploaded/i1/TB1PXJCJFXXXXciXFXXXXXXXXXX_!!0-item_pic.jpg'}
+      ]
+    }
+  }
+</script>
