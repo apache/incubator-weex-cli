@@ -1,2 +1,4 @@
-# weex_toolchain
-weex toolchain
+# Weex Toolchain
+
+## Toolkit
+Weex CLI tool

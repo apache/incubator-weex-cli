@@ -1,0 +1,13 @@
+.idea
+.project
+.svn
+.DS_Store
+.sass-cache
+*/.svn
+*/.DS_Store
+*/.idea
+
+node_modules
+tmp
+npm-debug.log
+
