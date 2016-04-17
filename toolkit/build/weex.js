@@ -75,8 +75,12 @@ var Previewer = function () {
     key: 'tempDirInit',
     value: function tempDirInit() {
       fse.removeSync(WEEX_TRANSFORM_TMP);
-      fs.mkdirSync(WEEX_TRANSFORM_TMP);
-      fse.copySync(__dirname + '/../node_modules/weex-html5', WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
+
+      //turnoff H5 preview
+      //fs.mkdirSync(WEEX_TRANSFORM_TMP)
+      //fse.copySync(`${__dirname}/../node_modules/weex-html5` , `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`)
+
+      fse.mkdirsSync(WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
     }
   }, {
     key: 'startServer',
@@ -212,7 +216,7 @@ var Previewer = function () {
             console.error(e);
           }
 
-          var bundleWritePath = undefined;
+          var bundleWritePath = void 0;
           if (self.specifiedBundleName) {
             bundleWritePath = self.specifiedBundleName;
           } else {
@@ -235,7 +239,7 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('Usage: $0 foo/bar/your_next_best_weex_script_file.we  [options]').boolean('n').describe('n', 'do not open preview browser automatic').boolean('qr').describe('qr', 'display QR code for native runtime').option('we', { demand: false }).option('h', { demand: false }).default('h', "127.0.0.1").describe('h', 'specify weex server listen host').option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex JS bundle only, specify bundle file name using the option').option('s', { demand: false }).default('s', false).describe('s', 'start a http file server, weex .we file will be transformed on the server , specify local root path using the option').help('help').argv;
+var argv = yargs.usage('Usage: $0 foo/bar/your_next_best_weex_script_file.we  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex JS bundle only, specify bundle file name using the option').option('s', { demand: false }).default('s', false).describe('s', 'start a http file server, weex .we file will be transformed on the server , specify local root path using the option').help('help').argv;
 
 var wePath = argv._[0];
 var transformServerPath = argv.s;
@@ -248,8 +252,8 @@ if (badWePath && !transformServerPath) {
 }
 
 var host = argv.h;
-var shouldOpenBrowser = argv.n ? false : true;
-var displayQR = argv.qr ? true : false;
+var shouldOpenBrowser = false; //argv.n  ? false : true
+var displayQR = true; //argv.qr  ? true : false
 var specifiedBundleName = argv.o;
 
 new Previewer(wePath, host, shouldOpenBrowser, displayQR, specifiedBundleName, transformServerPath);
