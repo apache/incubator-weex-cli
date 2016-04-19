@@ -4,4 +4,4 @@ machine:
 
 test:
   override:
-    - cd ./weex-transformer && cd ./style-transformer && npm test && cd ../template-transformer && npm test && cd ../script-transformer && npm test && cd ../transformer && npm test && cd ../../gulp-weex && npm test && cd ..
+    - cd ./weex-transformer/style-transformer && npm install && npm test && cd ../template-transformer && npm install && npm test && cd ../script-transformer && npm install && npm test && cd ../transformer && npm install && npm test && cd ../../gulp-weex && npm install && npm test && cd ..
