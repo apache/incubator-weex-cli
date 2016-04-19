@@ -1,15 +1,18 @@
 {
   "name": "weex-toolkit",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alibaba/weex_toolchain.git"
+  },
   "author": "lvscar@gmail.com",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
-    "weex-html5": "^0.1.55",
     "weex-transformer": "^0.1.8",
     "opener": "^1.4.1",
     "http-server": "^0.8.5",
@@ -25,7 +28,7 @@
     "babel-preset-es2015": "^6.6.0",
     "del": "^2.2.0",
     "gulp": "^3.9.1",
-    "gulp-babel": "*",
+    "gulp-babel": "^6.1.2",
     "gulp-coffee": "^2.3.2",
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
