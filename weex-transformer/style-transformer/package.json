@@ -1,0 +1,31 @@
+{
+  "name": "weex-styler",
+  "version": "0.0.15",
+  "description": "Weex <style> transformer",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test && npm run cover",
+    "cover": "node node_modules/isparta/bin/isparta cover node_modules/gulp-mocha/node_modules/.bin/_mocha -- --reporter dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alibaba/weex_transformer.git"
+  },
+  "keywords": [
+    "weex"
+  ],
+  "author": "songsiqi <songsiqi2006@126.com>",
+  "license": "Apache",
+  "dependencies": {
+    "css": "~2.2.1"
+  },
+  "devDependencies": {
+    "chai": "~3.4.1",
+    "gulp": "~3.9.0",
+    "gulp-jscs": "~3.0.2",
+    "gulp-mocha": "~2.2.0",
+    "sinon": "~1.17.2",
+    "sinon-chai": "~2.8.0",
+    "isparta": "~4.0.0"
+  }
+}
