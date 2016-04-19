@@ -97,7 +97,7 @@ describe('gulp-weex', function () {
     })
 
     var expected = removeEndingLineBreak(addVersionInfo(readFile('test/expected/multi.bundle')))
-    var stream = weex()
+    var stream = weex({logLevel: 'NOTE'})
     stream.on('data', function (newFile) {
       expect(newFile).is.an.object
       expect(newFile.contents).is.existed
@@ -107,8 +107,5 @@ describe('gulp-weex', function () {
 
     stream.write(file)
     stream.end()
-  })
-
-  it.skip('transform multi files', function (done) {
   })
 })

@@ -1,6 +1,6 @@
 {
   "name": "gulp-weex",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "gulp plugin for weex transformer",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "author": "songsiqi <songsiqi2006@126.com>",
   "license": "Apache",
   "dependencies": {
-    "weex-transformer": "~0.1.7",
+    "weex-transformer": "~0.2.0",
     "chalk": "~1.1.1",
     "gulp-util": "~3.0.7",
     "printf": "~0.2.3",

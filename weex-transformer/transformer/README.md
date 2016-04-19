@@ -1,5 +1,16 @@
 # Weex DSL Transformer
 
+[![NPM version][npm-image]][npm-url]
+[![Build status][circle-image]][circle-url]
+[![Downloads][downloads-image]][downloads-url]
+
+[npm-image]: https://img.shields.io/npm/v/weex-transformer.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/weex-transformer
+[circle-image]: https://circleci.com/gh/alibaba/weex_toolchain.svg?style=svg
+[circle-url]: https://circleci.com/gh/alibaba/weex_toolchain/tree/master
+[downloads-image]: https://img.shields.io/npm/dm/weex-transformer.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/weex-transformer
+
 `<template>` + `<style>` + `<script>` + `<element>`
 
 ## Install
@@ -19,8 +30,9 @@ npm install weex-transformer
 
     -h, --help               output usage information
     -V, --version            output the version number
-    -l, --oldFormat [value]  whether to transform to old format (default: false)
+    -g, --logLevel [value]   specify log output level - `NOTE`, `WARNING`, `ERROR`, `OFF`` (default: `NOTE`, equivalent to `ALL`)'
     -e, --isEntry [value]    whether is an entry module which has `bootstrap` (default: true)
+    -l, --oldFormat [value]  whether to transform to old format (default: false)
     -o, --output [path]      the output file dirname
 ```
 
@@ -40,8 +52,9 @@ var output = transformer.transform('foo', '/* code here */', '.', {})
 - `path`: string *optional*, useful when find custom component in a certain path
 - `elements`: object *optional*, existed custom component map
 - `config`: object *optional*
-    * `oldFormat`: whether to transform to old format (default: false)
+    * `logLevel`: specify log output level - `NOTE` (default, equivalent to `ALL`), `WARNING`, `ERROR`, `OFF`, aranging from low to high
     * `isEntry`: whether is an entry module which has `bootstrap` (default: true)
+    * `oldFormat`: whether to transform to old format (default: false)
 
 ##### returns
 

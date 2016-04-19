@@ -200,7 +200,7 @@ var LENGTH_VALIDATOR = function LENGTH_VALIDATOR(v) {
   return {
     value: null,
     reason: function reason(k, v, result) {
-      return 'Error: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (only number and pixel values are supported)'
+      return 'ERROR: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (only number and pixel values are supported)'
     }
   }
 }
@@ -267,7 +267,7 @@ var COLOR_VALIDATOR = function COLOR_VALIDATOR(v) {
   return {
     value: null,
     reason: function reason(k, v, result) {
-      return 'Error: property value `' + v + '` is not valid for `' + util.camelCaseToHyphened(k) + '`'
+      return 'ERROR: property value `' + v + '` is not valid for `' + util.camelCaseToHyphened(k) + '`'
     }
   }
 }
@@ -290,7 +290,7 @@ var NUMBER_VALIDATOR = function NUMBER_VALIDATOR(v) {
   return {
     value: null,
     reason: function reason(k, v, result) {
-      return 'Error: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (only number is supported)'
+      return 'ERROR: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (only number is supported)'
     }
   }
 }
@@ -313,7 +313,7 @@ var INTEGER_VALIDATOR = function INTEGER_VALIDATOR(v) {
   return {
     value: null,
     reason: function reason(k, v, result) {
-      return 'Error: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (only integer is supported)'
+      return 'ERROR: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (only integer is supported)'
     }
   }
 }
@@ -346,7 +346,7 @@ function genEnumValidator(list) {
       return {
         value: null,
         reason: function reason(k, v, result) {
-          return 'Error: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (supported values are: `' + list.join('`|`') + '`)'
+          return 'ERROR: property value `' + v + '` is not supported for `' + util.camelCaseToHyphened(k) + '` (supported values are: `' + list.join('`|`') + '`)'
         }
       }
     }
@@ -460,7 +460,7 @@ function validate(name, value) {
       value = parseFloat(value)
     }
     result = {value: value}
-    log = {reason: 'Warning: `' + util.camelCaseToHyphened(name) + '` is not a standard property name'}
+    log = {reason: 'WARNING: `' + util.camelCaseToHyphened(name) + '` is not a standard property name'}
   }
   return {
     value: result.value,

@@ -15,9 +15,9 @@ describe('parse', function () {
       expect(data).is.an.object
       expect(data.jsonStyle).eql({foo: {color: '#FF0000', backgroundColor: 'rgba(255,255,255,0.6)', WebkitTransform: 'rotate(90deg)', width: 200, left: 0, right: 0}})
       expect(data.log).eql([
-        {line: 1, column: 1, reason: 'Error: Selector `html` is not supported. Weex only support single-classname selector'},
+        {line: 1, column: 1, reason: 'ERROR: Selector `html` is not supported. Weex only support single-classname selector'},
         {line: 3, column: 7, reason: 'NOTE: property value `red` is autofixed to `#FF0000`'},
-        {line: 3, column: 60, reason: 'Warning: `-webkit-transform` is not a standard property name'},
+        {line: 3, column: 60, reason: 'WARNING: `-webkit-transform` is not a standard property name'},
         {line: 3, column: 94, reason: 'NOTE: property value `200px` is autofixed to `200`'},
         {line: 3, column: 117, reason: 'NOTE: property value `0px` is autofixed to `0`'}
       ])
@@ -69,7 +69,7 @@ describe('parse', function () {
       expect(err[0].line).eql(1)
       expect(err[0].column).eql(5)
       expect(err[0].source).eql('')
-      expect(data.log).eql([{line: 1, column: 5, reason: 'Error: undefined:1:5: missing \'{\''}])
+      expect(data.log).eql([{line: 1, column: 5, reason: 'ERROR: undefined:1:5: missing \'{\''}])
       done()
     })
   })

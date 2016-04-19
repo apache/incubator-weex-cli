@@ -32,8 +32,9 @@ function saveFile(filePath, content) {
 }
 
 program.version(pkg.version)
-  .option('-l, --oldFormat [value]', 'whether to transform to old format (default: false)', false)
+  .option('-g, --logLevel [value]', 'specify log output level - `NOTE`, `WARNING`, `ERROR`, `OFF`` (default: `NOTE`, equivalent to `ALL`)', 'NOTE')
   .option('-e, --isEntry [value]', 'whether is an entry module which has `bootstrap` (default: true)', true)
+  .option('-l, --oldFormat [value]', 'whether to transform to old format (default: false)', false)
   .option('-o, --output [path]', 'the output file dirname')
   .parse(process.argv)
 
@@ -43,6 +44,7 @@ if (!program.args.length) {
 }
 
 var options = {
+  logLevel: deserializeValue(program.logLevel),
   isEntry: deserializeValue(program.isEntry),
   oldFormat: deserializeValue(program.oldFormat)
 }
@@ -65,10 +67,10 @@ program.args.forEach(function (filePath) {
 
   // print logs
   ret.logs && ret.logs.forEach(function (log) {
-    var reason = log.reason.toLowerCase()
+    var reason = log.reason.toUpperCase()
     var formattedLog = printf('%-10s %4d:%-4d  %s', log.name, log.line, log.column, log.reason)
-    if (reason.indexOf('note') !== 0) {
-      formattedLog = chalk[reason.indexOf('error') === 0 ? 'red' : 'yellow'](formattedLog)
+    if (reason.indexOf('NOTE') !== 0) {
+      formattedLog = chalk[reason.indexOf('ERROR') === 0 ? 'red' : 'yellow'](formattedLog)
     }
     console.log(formattedLog)
   })

@@ -130,7 +130,7 @@ exports.parse = function parse(code, done) {
     return
   }
   if (rootElements.length > 1) {
-    output.log.push({reason: 'Error: only one root element required', line: 1, column: 1})
+    output.log.push({reason: 'ERROR: only one root element required', line: 1, column: 1})
     done(null, {
       jsonTemplate: output.result,
       deps: output.deps,

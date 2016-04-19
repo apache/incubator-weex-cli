@@ -3,8 +3,7 @@ var scripter = require('weex-scripter')
 var transformerVersion = require('./package.json').version
 
 function transform(name, code, path, elements, config) {
-  var configType = Object.prototype.toString.call(config);
-  config = configType === '[object Object]' ? config : {oldFormat: config}
+  config = config || {}
 
   var path = path || '.'
   var elements = elements || {}
@@ -31,11 +30,11 @@ function transform(name, code, path, elements, config) {
     if (isEntry) {
       bootstrapParams.config = bootstrapParams.config || {}
       bootstrapParams.config.transformerVersion = transformerVersion
-      var config = JSON.stringify(bootstrapParams.config)
-      var data = JSON.stringify(bootstrapParams.data)
-      output += '\n\n// require module\nbootstrap(\'@weex-component/' + name + '\', ' + config
-      if (data) {
-        output += ', ' + data + ')'
+      var configJson = JSON.stringify(bootstrapParams.config)
+      var dataJson = JSON.stringify(bootstrapParams.data)
+      output += '\n\n// require module\nbootstrap(\'@weex-component/' + name + '\', ' + configJson
+      if (dataJson) {
+        output += ', ' + dataJson + ')'
       }
       else {
         output += ')'
@@ -43,7 +42,23 @@ function transform(name, code, path, elements, config) {
     }
   }
 
+  logs = filterLogs(logs, config.logLevel)
+
   return {result: output, logs: logs}
+}
+
+function filterLogs(logs, logLevel) {
+  logLevel = logLevel ? logLevel.toUpperCase() : 'NOTE'
+  var logLevels = ['OFF', 'ERROR', 'WARNING', 'NOTE']
+  if (logLevel === 'ALL' || logLevels.indexOf(logLevel) === -1) {
+    logLevel = 'NOTE'
+  }
+  var specifyLevel = logLevels.indexOf(logLevel)
+
+  return logs.filter(function (log) {
+    var curLevel = logLevels.indexOf(log.reason.match(/^(ERROR|WARNING|NOTE): /)[1])
+    return curLevel <= specifyLevel
+  })
 }
 
 function parseNew(name, content, results, bootstrapParams, thirdPartyJs, logs, elements, path) {
