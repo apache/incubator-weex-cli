@@ -66,8 +66,8 @@ describe('bootstrap params', function () {
     expect(output.logs).is.an.array
     expect(output.logs.length).eql(3)
     expect(output.logs).eql([{name: 'foo', reason: 'NOTE: property value `column` is the DEFAULT value for `flex-direction` (could be removed)', line: 39, column: 3},
-      {name: 'foo', reason: 'Error: invalid json of `config`', line: 44, column: 1},
-      {name: 'taobao-item', reason: 'Error: only entry module can have `data`', line: 14, column: 3}])
+      {name: 'foo', reason: 'ERROR: invalid json of `config`', line: 44, column: 1},
+      {name: 'taobao-item', reason: 'ERROR: only entry module can have `data`', line: 14, column: 3}])
   })
 
   it('not entry', function () {

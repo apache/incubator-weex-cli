@@ -41,7 +41,7 @@ function parse(code, done) {
   if (ast.stylesheet.parsingErrors && ast.stylesheet.parsingErrors.length) {
     err = ast.stylesheet.parsingErrors
     err.forEach(function (error) {
-      log.push({line: error.line, column: error.column, reason: error.toString()})
+      log.push({line: error.line, column: error.column, reason: error.toString().replace('Error', 'ERROR')})
     })
   }
 
@@ -98,7 +98,7 @@ function parse(code, done) {
               log.push({
                 line: rule.position.start.line,
                 column: rule.position.start.column,
-                reason: 'Error: Selector `' + selector + '` is not supported. Weex only support single-classname selector'
+                reason: 'ERROR: Selector `' + selector + '` is not supported. Weex only support single-classname selector'
               })
             }
           })

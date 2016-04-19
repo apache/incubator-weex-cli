@@ -79,7 +79,7 @@ function parseAndReplaceRequire(code, curPath) {
     }
 
     if (!subModulePath) {
-      log.push({reason: 'Error: Cannot find required module "' + $1 + '"'})
+      log.push({reason: 'ERROR: Cannot find required module "' + $1 + '"'})
       return $0
     }
     else {

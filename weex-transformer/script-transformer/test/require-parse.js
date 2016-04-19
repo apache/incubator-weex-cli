@@ -129,7 +129,7 @@ describe('parse and replace require 3rd party js', function () {
     var expected = {
       code: 'var a = require("underscore")',
       requires: {},
-      log: [{reason: 'Error: Cannot find required module "underscore"'}]
+      log: [{reason: 'ERROR: Cannot find required module "underscore"'}]
     }
     expect(parseAndReplaceRequire(code)).eql(expected)
   })

@@ -51,7 +51,7 @@ describe('validate', function () {
         {reason: 'NOTE: property value `200px` is autofixed to `200`'},
         {reason: 'NOTE: property value `10.5px` is autofixed to `10.5`'},
         {reason: 'NOTE: property value `0px` is autofixed to `0`'},
-        {reason: 'Error: property value `asdf` is not supported for `margin-right` (only number and pixel values are supported)'}
+        {reason: 'ERROR: property value `asdf` is not supported for `margin-right` (only number and pixel values are supported)'}
       ])
       done()
     })
@@ -92,8 +92,8 @@ describe('validate', function () {
         }
       })
       expect(data.log).eql([
-        {reason: 'Error: property value `a` is not supported for `opacity` (only number is supported)'},
-        {reason: 'Error: property value `0.5a` is not supported for `opacity` (only number is supported)'}
+        {reason: 'ERROR: property value `a` is not supported for `opacity` (only number is supported)'},
+        {reason: 'ERROR: property value `0.5a` is not supported for `opacity` (only number is supported)'}
       ])
       done()
     })
@@ -132,9 +132,9 @@ describe('validate', function () {
         }
       })
       expect(data.log).eql([
-        {reason: 'Error: property value `0.5` is not supported for `z-index` (only integer is supported)'},
-        {reason: 'Error: property value `a` is not supported for `z-index` (only integer is supported)'},
-        {reason: 'Error: property value `0.5a` is not supported for `z-index` (only integer is supported)'}
+        {reason: 'ERROR: property value `0.5` is not supported for `z-index` (only integer is supported)'},
+        {reason: 'ERROR: property value `a` is not supported for `z-index` (only integer is supported)'},
+        {reason: 'ERROR: property value `0.5a` is not supported for `z-index` (only integer is supported)'}
       ])
       done()
     })
@@ -197,9 +197,9 @@ describe('validate', function () {
         {reason: 'NOTE: property value `#f00` is autofixed to `#ff0000`'},
         {reason: 'NOTE: property value `red` is autofixed to `#FF0000`'},
         {reason: 'NOTE: property value `lightpink` is autofixed to `#FFB6C1`'},
-        {reason: 'Error: property value `asdf` is not valid for `background-color`'},
-        {reason: 'Error: property value `rgb(266,0,255)` is not valid for `color`'},
-        {reason: 'Error: property value `rgba(234,45,99,1.3)` is not valid for `background-color`'}
+        {reason: 'ERROR: property value `asdf` is not valid for `background-color`'},
+        {reason: 'ERROR: property value `rgb(266,0,255)` is not valid for `color`'},
+        {reason: 'ERROR: property value `rgba(234,45,99,1.3)` is not valid for `background-color`'}
       ])
       done()
     })
@@ -237,7 +237,7 @@ describe('validate', function () {
       })
       expect(data.log).eql([
         {reason: 'NOTE: property value `relative` is the DEFAULT value for `position` (could be removed)'},
-        {reason: 'Error: property value `` is not supported for `position` (supported values are: `relative`|`absolute`|`sticky`|`fixed`)'}
+        {reason: 'ERROR: property value `` is not supported for `position` (supported values are: `relative`|`absolute`|`sticky`|`fixed`)'}
       ])
       done()
     })
@@ -262,9 +262,9 @@ describe('validate', function () {
         }
       })
       expect(data.log).eql([
-        {reason: 'Warning: `abc` is not a standard property name'},
-        {reason: 'Warning: `-abc-def` is not a standard property name'},
-        {reason: 'Warning: `abc-def` is not a standard property name'}
+        {reason: 'WARNING: `abc` is not a standard property name'},
+        {reason: 'WARNING: `-abc-def` is not a standard property name'},
+        {reason: 'WARNING: `abc-def` is not a standard property name'}
       ])
       done()
     })
@@ -284,7 +284,7 @@ describe('validate', function () {
       expect(data.jsonStyle).eql({foo: {color: '#FF0000', WebkitTransform: 'rotate(90deg)', width: 200}})
       expect(data.log).eql([
         {reason: 'NOTE: property value `red` is autofixed to `#FF0000`'},
-        {reason: 'Warning: `-webkit-transform` is not a standard property name'},
+        {reason: 'WARNING: `-webkit-transform` is not a standard property name'},
         {reason: 'NOTE: property value `200px` is autofixed to `200`'}
       ])
       done()

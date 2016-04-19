@@ -56,7 +56,7 @@ describe('parse', function () {
     var expected = {
       jsonTemplate: {},
       deps: [],
-      log: [{reason: 'Error: only one root element required', line: 1, column: 1}]
+      log: [{reason: 'ERROR: only one root element required', line: 1, column: 1}]
     }
     templater.parse(code, function (err, result) {
       expect(stringify(result)).eql(stringify(expected))
@@ -81,8 +81,8 @@ describe('parse', function () {
       },
       deps: ['container', 'text'],
       log: [
-        {line: 1, column: 1, reason: 'Warning: `x` is not a standard property name'},
-        {line: 1, column: 1, reason: 'Warning: `y` is not a standard property name'}
+        {line: 1, column: 1, reason: 'WARNING: `x` is not a standard property name'},
+        {line: 1, column: 1, reason: 'WARNING: `y` is not a standard property name'}
       ]
     }
     templater.parse(code, function (err, result) {
@@ -200,10 +200,10 @@ describe('parse', function () {
       },
       deps: ['container', 'text'],
       log: [
-        {line: 1, column: 25, reason: 'Error: property value `rgba(2,2,2,2)` is not valid for `background-color`'},
+        {line: 1, column: 25, reason: 'ERROR: property value `rgba(2,2,2,2)` is not valid for `background-color`'},
         {line: 1, column: 25, reason: 'NOTE: property value `8px` is autofixed to `8`'},
-        {line: 1, column: 109, reason: 'Warning: `x` is not a standard property name'},
-        {line: 1, column: 109, reason: 'Warning: `y` is not a standard property name'}
+        {line: 1, column: 109, reason: 'WARNING: `x` is not a standard property name'},
+        {line: 1, column: 109, reason: 'WARNING: `y` is not a standard property name'}
       ]
     }
     templater.parse(code, function (err, result) {
@@ -403,7 +403,7 @@ describe('parse', function () {
       },
       deps: ['container', 'text'],
       log: [
-        {line: 1, column: 12, reason: 'Warning: `-webkit-transform` is not a standard property name'}
+        {line: 1, column: 12, reason: 'WARNING: `-webkit-transform` is not a standard property name'}
       ]
     }
     templater.parse(code, function (err, result) {
@@ -449,9 +449,5 @@ describe('parse', function () {
       expect(stringify(result)).eql(stringify(expected))
       done()
     })
-  })
-
-  it('handle syntax error', function (done) {
-    done()
   })
 })

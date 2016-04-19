@@ -95,7 +95,7 @@ function parse(name, content, results, bootstrapParams, thirdPartyJs, logs, elem
       template = getTemplate(name, result.template, deps, logs, elements[name])
     }
     else {
-      logs.push({name: name, reason: 'Error: should have a template tag', line: 1, column: 1})
+      logs.push({name: name, reason: 'ERROR: should have a template tag', line: 1, column: 1})
       return
     }
 
@@ -119,11 +119,11 @@ function parse(name, content, results, bootstrapParams, thirdPartyJs, logs, elem
             content = eval('(' + content + ')')
             bootstrapParams[opt] = content
           } catch (e) {
-            logs.push({name: name, reason: 'Error: invalid json of `' + opt + '`', line: result[opt].line, column: result[opt].column})
+            logs.push({name: name, reason: 'ERROR: invalid json of `' + opt + '`', line: result[opt].line, column: result[opt].column})
           }
         }
         else {
-          logs.push({name: name, reason: 'Error: only entry module can have `' + opt + '`', line: result[opt].line, column: result[opt].column})
+          logs.push({name: name, reason: 'ERROR: only entry module can have `' + opt + '`', line: result[opt].line, column: result[opt].column})
         }
       }
     })

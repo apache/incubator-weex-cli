@@ -1,5 +1,16 @@
 # Weex `<script>` Transformer
 
+[![NPM version][npm-image]][npm-url]
+[![Build status][circle-image]][circle-url]
+[![Downloads][downloads-image]][downloads-url]
+
+[npm-image]: https://img.shields.io/npm/v/weex-scripter.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/weex-scripter
+[circle-image]: https://circleci.com/gh/alibaba/weex_toolchain.svg?style=svg
+[circle-url]: https://circleci.com/gh/alibaba/weex_toolchain/tree/master
+[downloads-image]: https://img.shields.io/npm/dm/weex-scripter.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/weex-scripter
+
 transform JavaScript
 
 ## API

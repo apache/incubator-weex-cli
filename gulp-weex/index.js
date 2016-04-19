@@ -38,10 +38,10 @@ module.exports = function weex(options) {
 
       // print logs
       ret.logs && ret.logs.forEach(function (log) {
-        var reason = log.reason.toLowerCase()
+        var reason = log.reason.toUpperCase()
         var formattedLog = printf('%-10s %4d:%-4d  %s', log.name, log.line, log.column, log.reason)
-        if (reason.indexOf('note') !== 0) {
-          formattedLog = chalk[reason.indexOf('error') === 0 ? 'red' : 'yellow'](formattedLog)
+        if (reason.indexOf('NOTE') !== 0) {
+          formattedLog = chalk[reason.indexOf('ERROR') === 0 ? 'red' : 'yellow'](formattedLog)
         }
         gutil.log(formattedLog)
       })
