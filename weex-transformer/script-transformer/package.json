@@ -15,7 +15,7 @@
     "weex"
   ],
   "author": "songsiqi <songsiqi2006@126.com>",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
     "browserify": "~13.0.0",
     "escodegen": "~1.7.1",
