@@ -88,8 +88,6 @@ var TEXT_CONTENT_TAG_NAME_LIST = []
 })()
 
 
-
-
 /**
  * tag name checking
  * - autofix alias
@@ -121,10 +119,32 @@ function checkTagName(node, output) {
     }
     tagName = TAG_NAME_ALIAS_MAP[tagName]
   }
-  result.type = tagName
+
+  if (tagName === 'component') {
+    var indexOfIs = -1
+    if (node.attrs) {
+      node.attrs.forEach(function (attr, index) {
+        if (attr.name === 'is') {
+          indexOfIs = index
+          result.type = tagName = exp(attr.value)
+        }
+      })
+      node.attrs.splice(indexOfIs, 1) // delete `is`
+    }
+    if (indexOfIs === -1) {
+      result.type = tagName = 'container'
+      log.push({
+        line: location.line || 1,
+        column: location.col || 1,
+        reason: 'WARNING: tag `component` should have an `is` attribute, otherwise it will be regarded as a `container`'
+      })
+    }
+  } else {
+    result.type = tagName
+  }
 
   // deps
-  if (deps.indexOf(tagName) < 0) {
+  if (deps.indexOf(tagName) < 0 && typeof tagName === 'string') { // FIXME: improve `require` to bundle dynamic binding components
     deps.push(tagName)
   }
 
@@ -136,7 +156,7 @@ function checkTagName(node, output) {
       log.push({
         line: location.line || 1,
         column: location.col || 1,
-        reason: 'ERROR: tag name `' + tagName + '` should not have children'
+        reason: 'ERROR: tag `' + tagName + '` should not have children'
       })
     }
   }

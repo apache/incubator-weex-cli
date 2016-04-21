@@ -442,9 +442,7 @@ describe('parse', function () {
         ]
       },
       deps: ['container', 'text'],
-      log: [
-        {line: 1, column: 12, reason: 'WARNING: `-webkit-transform` is not a standard property name'}
-      ]
+      log: [{line: 1, column: 12, reason: 'WARNING: `-webkit-transform` is not a standard property name'}]
     }
     templater.parse(code, function (err, result) {
       expect(stringify(result)).eql(stringify(expected))
@@ -483,7 +481,27 @@ describe('parse', function () {
         ]
       },
       deps: ['container', 'tabheader', 'text'],
-      log: [{line: 1, column: 13, reason: 'ERROR: tag name `tabheader` should not have children'}]
+      log: [{line: 1, column: 13, reason: 'ERROR: tag `tabheader` should not have children'}]
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
+  it('parse component', function (done) {
+    var code = '<container><component></component><component is="foo"></component><component is="{{foo}}"></component></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'container'},
+          {type: 'foo'},
+          {type: function () {return this.foo}}
+        ]
+      },
+      deps: ['container', 'foo'],
+      log: [{line: 1, column: 12, reason: 'WARNING: tag `component` should have an `is` attribute, otherwise it will be regarded as a `container`'}]
     }
     templater.parse(code, function (err, result) {
       expect(stringify(result)).eql(stringify(expected))

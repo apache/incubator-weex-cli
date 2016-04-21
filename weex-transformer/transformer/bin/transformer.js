@@ -32,7 +32,7 @@ function saveFile(filePath, content) {
 }
 
 program.version(pkg.version)
-  .option('-g, --logLevel [value]', 'specify log output level - `NOTE`, `WARNING`, `ERROR`, `OFF`` (default: `NOTE`, equivalent to `ALL`)', 'NOTE')
+  .option('-g, --logLevel [value]', 'specify log output level - `NOTE`, `WARNING`, `ERROR`, `OFF` (default: `NOTE`, equivalent to `ALL`)', 'NOTE')
   .option('-e, --isEntry [value]', 'whether is an entry module which has `bootstrap` (default: true)', true)
   .option('-l, --oldFormat [value]', 'whether to transform to old format (default: false)', false)
   .option('-o, --output [path]', 'the output file dirname')
