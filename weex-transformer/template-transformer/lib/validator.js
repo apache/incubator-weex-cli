@@ -11,14 +11,6 @@ var NATIVE_TAG_GROUP = {
     },
     text: {
       events: COMMON_EVENTS,
-      // attr: {
-      //   value: function (v) {
-      //     return {
-      //       value: v,
-      //       reason: 'NOTE: `value` could be written as text content in <text>'
-      //     }
-      //   }
-      // },
       textContent: true
     },
     image: {
@@ -299,7 +291,6 @@ function checkStyle(cssText, output, locationInfo) {
  */
 function checkIf(value, output, not) {
   if (!exp.isExpr(value)) {
-    // output.log
     value = '{{' + value + '}}'
   }
   if (value) {
@@ -372,8 +363,22 @@ function checkEvent(name, value, output) {
   var eventName = name.substr(2)
   if (eventName && value) {
     if (exp.isExpr(value)) {
-      // output.log
       value = value.substr(2, value.length - 4)
+    }
+    var paramsMatch = value.match(/(.*)\((.*)\)/)
+    if (paramsMatch) {
+      var funcName = paramsMatch[1]
+      var params = paramsMatch[2]
+      if (params) {
+        params = params.split(',')
+        if (params[params.length - 1].trim() !== 'EVENT') {
+          params[params.length] = 'EVENT'
+        }
+      } else {
+        params = ['EVENT']
+      }
+      value = '{{' + funcName + '(' + params.join(',') + ')}}'
+      value = eval('(function (EVENT) {' + exp(value, false).replace('this.EVENT', 'EVENT') + '})')
     }
     output.result.events = output.result.events || {}
     output.result.events[eventName] = value

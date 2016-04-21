@@ -332,13 +332,13 @@ describe('parse', function () {
   })
 
   it('parse events', function (done) {
-    var code = '<container><text onclick="a"></text><text onclick="{{a}}"></text></container>'
+    var code = '<container><text onclick="a" onappear="{{a()}}"></text><text onclick="{{a}}" onappear="{{a(x, 1, \'2\', EVENT)}}"></text></container>'
     var expected = {
       jsonTemplate: {
         type: 'container',
         children: [
-          {type: 'text', events: {click: 'a'}},
-          {type: 'text', events: {click: 'a'}}
+          {type: 'text', events: {click: 'a', appear: function (EVENT) {this.a(EVENT)}}},
+          {type: 'text', events: {click: 'a', appear: function (EVENT) {this.a(this.x,1,'2',EVENT)}}}
         ]
       },
       deps: ['container', 'text'],
