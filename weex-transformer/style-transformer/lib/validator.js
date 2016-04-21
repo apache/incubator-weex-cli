@@ -449,14 +449,18 @@ function validate(name, value) {
   var validator = validatorMap[name]
 
   if (typeof validator === 'function') {
-    result = validator(value)
+    if (typeof value !== 'function') {
+      result = validator(value)
+    } else {
+      result = {value: value}
+    }
     if (result.reason) {
       log = {reason: result.reason(name, value, result.value)}
     }
   }
   else {
     // ensure number type, no `px`
-    if (value.match(/^[-+]?[0-9]*\.?[0-9]+(px)?$/)) {
+    if (typeof value !== 'function' && value.match(/^[-+]?[0-9]*\.?[0-9]+(px)?$/)) {
       value = parseFloat(value)
     }
     result = {value: value}

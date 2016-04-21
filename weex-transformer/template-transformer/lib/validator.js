@@ -129,9 +129,11 @@ function checkTagName(node, output) {
           result.type = tagName = exp(attr.value)
         }
       })
+    }
+    if (indexOfIs > -1) {
       node.attrs.splice(indexOfIs, 1) // delete `is`
     }
-    if (indexOfIs === -1) {
+    else {
       result.type = tagName = 'container'
       log.push({
         line: location.line || 1,
@@ -139,7 +141,8 @@ function checkTagName(node, output) {
         reason: 'WARNING: tag `component` should have an `is` attribute, otherwise it will be regarded as a `container`'
       })
     }
-  } else {
+  }
+  else {
     result.type = tagName
   }
 
@@ -176,7 +179,8 @@ function checkTagName(node, output) {
       if (attr !== 'append') {
         result.attr = result.attr || {}
         result.attr[attr] = TAG_DEFAULT_ATTR_MAP[tagName][attr]
-      } else {
+      }
+      else {
         result[attr] = TAG_DEFAULT_ATTR_MAP[tagName][attr]
       }
     })
@@ -216,12 +220,14 @@ function checkClass(className, output) {
     tempClassList.forEach(function (subName, index) {
       if (subName.indexOf('{{') > -1 && subName.indexOf('}}') === -1) {
         expStart = index
-      } else if (expStart !== -1 && subName.indexOf('}}') > -1) {
+      }
+      else if (expStart !== -1 && subName.indexOf('}}') > -1) {
         expEnd = index
         classList.push(tempClassList.slice(expStart, expEnd + 1).join(''))
         expStart = -1
         expEnd = -1
-      } else if ((expStart === -1 && expEnd === -1) || (subName.indexOf('{{') > -1 && subName.indexOf('}}') > -1)) {
+      }
+      else if ((expStart === -1 && expEnd === -1) || (subName.indexOf('{{') > -1 && subName.indexOf('}}') > -1)) {
         classList.push(subName)
       }
     })
@@ -264,20 +270,18 @@ function checkStyle(cssText, output, locationInfo) {
         k = util.hyphenedToCamelCase(k)
         v = pair[1].trim()
         v = exp(v)
-        if (typeof v !== 'function') {
-          vResult = styler.validateItem(k, v)
-          v = vResult.value
-          if (vResult.log) {
-            // FIXME: in order to guarantee order of keys of a log item
-            var ret = {}
-            ret.line = locationInfo.line
-            ret.column = locationInfo.column
-            ret.reason = vResult.log.reason
-            log.push(ret)
-            // vResult.log.line = locationInfo.line
-            // vResult.log.column = locationInfo.column
-            // log.push(vResult.log)
-          }
+        vResult = styler.validateItem(k, v)
+        v = vResult.value
+        if (vResult.log) {
+          // FIXME: in order to guarantee order of keys of a log item
+          var ret = {}
+          ret.line = locationInfo.line
+          ret.column = locationInfo.column
+          ret.reason = vResult.log.reason
+          log.push(ret)
+          // vResult.log.line = locationInfo.line
+          // vResult.log.column = locationInfo.column
+          // log.push(vResult.log)
         }
         if (typeof v === 'number' || typeof v === 'string' || typeof v === 'function') {
           style[k] = v
@@ -331,7 +335,8 @@ function checkRepeat(value, output) {
       if (itMatch) {
         key = itMatch[1].trim()
         val = itMatch[2].trim()
-      } else {
+      }
+      else {
         val = inMatch[1].trim()
       }
       value = inMatch[2]
