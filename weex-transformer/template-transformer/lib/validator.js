@@ -299,12 +299,32 @@ function checkElse(value, output) {
  * @param  {object} output{result, deps[], log[]}
  */
 function checkRepeat(value, output) {
-  if (!exp.isExpr(value)) {
-    // output.log
-    value = '{{' + value + '}}'
-  }
   if (value) {
-    output.result.repeat = exp(value)
+    if (exp.isExpr(value)) {
+      value = value.substr(2, value.length - 4)
+    }
+    var key
+    var val
+    var inMatch = value.match(/(.*) (?:in) (.*)/)
+    if (inMatch) {
+      var itMatch = inMatch[1].match(/\((.*),(.*)\)/)
+      if (itMatch) {
+        key = itMatch[1].trim()
+        val = itMatch[2].trim()
+      } else {
+        val = inMatch[1].trim()
+      }
+      value = inMatch[2]
+    }
+    value = '{{' + value + '}}'
+    var repeat = {expression: exp(value)}
+    if (key) {
+      repeat.key = key
+    }
+    if (val) {
+      repeat.value = val
+    }
+    output.result.repeat = repeat
   }
 }
 

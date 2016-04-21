@@ -212,16 +212,56 @@ describe('parse', function () {
     })
   })
 
-  it('parse if/repeat', function (done) {
-    var code = '<container><text if="a"></text><text if="{{a}}"></text><text if="{{a()}}"></text><text repeat="a"></text></container>'
+  it('parse if', function (done) {
+    var code = '<container><text if="a"></text><text if="{{a}}"></text><text if="{{a()}}"></text></container>'
     var expected = {
       jsonTemplate: {
         type: 'container',
         children: [
           {type: 'text', shown: function () {return this.a}},
           {type: 'text', shown: function () {return this.a}},
-          {type: 'text', shown: function () {return this.a()}},
-          {type: 'text', repeat: function () {return this.a}}
+          {type: 'text', shown: function () {return this.a()}}
+        ]
+      },
+      deps: ['container', 'text'],
+      log: []
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
+  it('parse repeat', function (done) {
+    var code = '<container><text repeat="a"></text><text repeat="{{a}}"></text><text repeat="{{a()}}"></text></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'text', repeat: {expression: function () {return this.a}}},
+          {type: 'text', repeat: {expression: function () {return this.a}}},
+          {type: 'text', repeat: {expression: function () {return this.a()}}}
+        ]
+      },
+      deps: ['container', 'text'],
+      log: []
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
+  it('parse repeat key/value', function (done) {
+    var code = '<container><text repeat="v in listOrMap"></text><text repeat="{{v in listOrMap}}"></text><text repeat="(k, v) in listOrMap"></text><text repeat="{{(k, v) in listOrMap}}"></text></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, value: 'v'}},
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, value: 'v'}},
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, key: 'k', value: 'v'}},
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, key: 'k', value: 'v'}}
         ]
       },
       deps: ['container', 'text'],
