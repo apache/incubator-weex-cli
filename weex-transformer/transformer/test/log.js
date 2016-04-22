@@ -32,7 +32,7 @@ describe('print logs', function () {
     expect(logs.length).eql(14)
     expect(logs).eql([{name: 'foo', reason: 'NOTE: property value `red` is autofixed to `#FF0000`', line: 3, column: 5},
       {name: 'foo', reason: 'NOTE: `value` could be written as text content in <text>', line: 4, column: 5},
-      {name: 'foo', reason: 'ERROR: tag name `tabheader` should not have children', line: 5, column: 5},
+      {name: 'foo', reason: 'ERROR: tag `tabheader` should not have children', line: 5, column: 5},
       {name: 'foo', reason: 'ERROR: tag name `text` should just have one text node only', line: 6, column: 5},
       {name: 'foo', reason: 'NOTE: property value `200px` is autofixed to `200`', line: 12, column: 5},
       {name: 'foo', reason: 'WARNING: `line-height` is not a standard property name', line: 13, column: 5},
@@ -152,7 +152,7 @@ describe('log levels', function () {
     var logsNotExist = transformer.transform('foo', readFile(path + '/normal.html'), path, elements, {logLevel: 'not exist'}).logs
     var logsExpected = [{name: 'foo', reason: 'NOTE: property value `red` is autofixed to `#FF0000`', line: 3, column: 5},
       {name: 'foo', reason: 'NOTE: `value` could be written as text content in <text>', line: 4, column: 5},
-      {name: 'foo', reason: 'ERROR: tag name `tabheader` should not have children', line: 5, column: 5},
+      {name: 'foo', reason: 'ERROR: tag `tabheader` should not have children', line: 5, column: 5},
       {name: 'foo', reason: 'ERROR: tag name `text` should just have one text node only', line: 6, column: 5},
       {name: 'foo', reason: 'NOTE: property value `200px` is autofixed to `200`', line: 12, column: 5},
       {name: 'foo', reason: 'WARNING: `line-height` is not a standard property name', line: 13, column: 5},
@@ -184,7 +184,7 @@ describe('log levels', function () {
     var logs = transformer.transform('foo', readFile(path + '/normal.html'), path, elements, {logLevel: 'WARNING'}).logs
     expect(logs).is.an.array
     expect(logs.length).eql(9)
-    expect(logs).eql([{name: 'foo', reason: 'ERROR: tag name `tabheader` should not have children', line: 5, column: 5},
+    expect(logs).eql([{name: 'foo', reason: 'ERROR: tag `tabheader` should not have children', line: 5, column: 5},
       {name: 'foo', reason: 'ERROR: tag name `text` should just have one text node only', line: 6, column: 5},
       {name: 'foo', reason: 'WARNING: `line-height` is not a standard property name', line: 13, column: 5},
       {name: 'foo', reason: 'ERROR: property value `stretch` is not supported for `justify-content` (supported values are: `flex-start`|`flex-end`|`center`|`space-between`)', line: 14, column: 5},
@@ -201,7 +201,7 @@ describe('log levels', function () {
     var logs = transformer.transform('foo', readFile(path + '/normal.html'), path, elements, {logLevel: 'ERROR'}).logs
     expect(logs).is.an.array
     expect(logs.length).eql(8)
-    expect(logs).eql([{name: 'foo', reason: 'ERROR: tag name `tabheader` should not have children', line: 5, column: 5},
+    expect(logs).eql([{name: 'foo', reason: 'ERROR: tag `tabheader` should not have children', line: 5, column: 5},
       {name: 'foo', reason: 'ERROR: tag name `text` should just have one text node only', line: 6, column: 5},
       {name: 'foo', reason: 'ERROR: property value `stretch` is not supported for `justify-content` (supported values are: `flex-start`|`flex-end`|`center`|`space-between`)', line: 14, column: 5},
       {name: 'foo', reason: 'ERROR: property value `center` is not supported for `height` (only number and pixel values are supported)', line: 15, column: 5},

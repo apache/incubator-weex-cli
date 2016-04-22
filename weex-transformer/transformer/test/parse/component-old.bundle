@@ -8,8 +8,8 @@ register('taobao-item', {
         };
     },
     methods: {
-        gotoDetail: function () {
-            this.$openURL('https://item.taobao.com/item.htm?id=' + this.itemId);
+        gotoDetail: function (itemId, EVENT) {
+            this.$openURL('https://item.taobao.com/item.htm?id=' + itemId);
         }
     }
 
@@ -29,7 +29,7 @@ register('taobao-item', {
 , template: {
   "type": "container",
   "events": {
-    "click": "gotoDetail"
+    "click": function (EVENT) {this.gotoDetail(this.itemId,EVENT)}
   },
   "children": [
     {
@@ -81,7 +81,9 @@ register('foo', {
   "children": [
     {
       "type": "taobao-item",
-      "repeat": function () {return this.itemList}
+      "repeat": {
+        "expression": function () {return this.itemList}
+      }
     }
   ]
 }
