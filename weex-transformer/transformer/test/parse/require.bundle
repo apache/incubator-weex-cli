@@ -83,7 +83,9 @@ define('@weex-component/foo', function (require, exports, module) {
   "children": [
     {
       "type": "taobao-item",
-      "repeat": function () {return this.itemList}
+      "repeat": {
+        "expression": function () {return this.itemList}
+      }
     }
   ]
 }

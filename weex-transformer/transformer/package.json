@@ -1,6 +1,6 @@
 {
   "name": "weex-transformer",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Weex DSL transformer",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "dependencies": {
     "weex-scripter": "~0.1.4",
     "weex-styler": "~0.0.16",
-    "weex-templater": "~0.1.6",
+    "weex-templater": "~0.2.0",
     "chalk": "~1.1.1",
     "commander": "~2.9.0",
     "fs-extra": "~0.26.7",
