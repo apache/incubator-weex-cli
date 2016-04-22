@@ -203,7 +203,8 @@ describe('parse', function () {
         {line: 1, column: 25, reason: 'ERROR: property value `rgba(2,2,2,2)` is not valid for `background-color`'},
         {line: 1, column: 25, reason: 'NOTE: property value `8px` is autofixed to `8`'},
         {line: 1, column: 109, reason: 'WARNING: `x` is not a standard property name'},
-        {line: 1, column: 109, reason: 'WARNING: `y` is not a standard property name'}
+        {line: 1, column: 109, reason: 'WARNING: `y` is not a standard property name'},
+        {line: 1, column: 109, reason: 'WARNING: `z` is not a standard property name'}
       ]
     }
     templater.parse(code, function (err, result) {
@@ -212,16 +213,56 @@ describe('parse', function () {
     })
   })
 
-  it('parse if/repeat', function (done) {
-    var code = '<container><text if="a"></text><text if="{{a}}"></text><text if="{{a()}}"></text><text repeat="a"></text></container>'
+  it('parse if', function (done) {
+    var code = '<container><text if="a"></text><text if="{{a}}"></text><text if="{{a()}}"></text></container>'
     var expected = {
       jsonTemplate: {
         type: 'container',
         children: [
           {type: 'text', shown: function () {return this.a}},
           {type: 'text', shown: function () {return this.a}},
-          {type: 'text', shown: function () {return this.a()}},
-          {type: 'text', repeat: function () {return this.a}}
+          {type: 'text', shown: function () {return this.a()}}
+        ]
+      },
+      deps: ['container', 'text'],
+      log: []
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
+  it('parse repeat', function (done) {
+    var code = '<container><text repeat="a"></text><text repeat="{{a}}"></text><text repeat="{{a()}}"></text></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'text', repeat: {expression: function () {return this.a}}},
+          {type: 'text', repeat: {expression: function () {return this.a}}},
+          {type: 'text', repeat: {expression: function () {return this.a()}}}
+        ]
+      },
+      deps: ['container', 'text'],
+      log: []
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
+  it('parse repeat key/value', function (done) {
+    var code = '<container><text repeat="v in listOrMap"></text><text repeat="{{v in listOrMap}}"></text><text repeat="(k, v) in listOrMap"></text><text repeat="{{(k, v) in listOrMap}}"></text></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, value: 'v'}},
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, value: 'v'}},
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, key: 'k', value: 'v'}},
+          {type: 'text', repeat: {expression: function () {return this.listOrMap}, key: 'k', value: 'v'}}
         ]
       },
       deps: ['container', 'text'],
@@ -291,13 +332,13 @@ describe('parse', function () {
   })
 
   it('parse events', function (done) {
-    var code = '<container><text onclick="a"></text><text onclick="{{a}}"></text></container>'
+    var code = '<container><text onclick="a" onappear="{{a()}}"></text><text onclick="{{a}}" onappear="{{a(x, 1, \'2\', EVENT)}}"></text></container>'
     var expected = {
       jsonTemplate: {
         type: 'container',
         children: [
-          {type: 'text', events: {click: 'a'}},
-          {type: 'text', events: {click: 'a'}}
+          {type: 'text', events: {click: 'a', appear: function (EVENT) {this.a(EVENT)}}},
+          {type: 'text', events: {click: 'a', appear: function (EVENT) {this.a(this.x,1,'2',EVENT)}}}
         ]
       },
       deps: ['container', 'text'],
@@ -402,9 +443,7 @@ describe('parse', function () {
         ]
       },
       deps: ['container', 'text'],
-      log: [
-        {line: 1, column: 12, reason: 'WARNING: `-webkit-transform` is not a standard property name'}
-      ]
+      log: [{line: 1, column: 12, reason: 'WARNING: `-webkit-transform` is not a standard property name'}]
     }
     templater.parse(code, function (err, result) {
       expect(stringify(result)).eql(stringify(expected))
@@ -443,7 +482,27 @@ describe('parse', function () {
         ]
       },
       deps: ['container', 'tabheader', 'text'],
-      log: [{line: 1, column: 13, reason: 'ERROR: tag name `tabheader` should not have children'}]
+      log: [{line: 1, column: 13, reason: 'ERROR: tag `tabheader` should not have children'}]
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
+  it('parse component', function (done) {
+    var code = '<container><component></component><component is="foo"></component><component is="{{foo}}"></component></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'container'},
+          {type: 'foo'},
+          {type: function () {return this.foo}}
+        ]
+      },
+      deps: ['container', 'foo'],
+      log: [{line: 1, column: 12, reason: 'WARNING: tag `component` should have an `is` attribute, otherwise it will be regarded as a `container`'}]
     }
     templater.parse(code, function (err, result) {
       expect(stringify(result)).eql(stringify(expected))

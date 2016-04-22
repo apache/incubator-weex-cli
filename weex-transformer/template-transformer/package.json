@@ -1,6 +1,6 @@
 {
   "name": "weex-templater",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Weex <template> transformer",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "weex"
   ],
   "author": "songsiqi <songsiqi2006@126.com>",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
     "weex-styler": "~0.0.16",
     "parse5": "~2.1.0"

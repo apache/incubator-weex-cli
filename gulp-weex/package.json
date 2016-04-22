@@ -16,7 +16,7 @@
     "gulp"
   ],
   "author": "songsiqi <songsiqi2006@126.com>",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
     "weex-transformer": "~0.2.0",
     "chalk": "~1.1.1",

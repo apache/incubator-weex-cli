@@ -30,7 +30,7 @@ npm install weex-transformer
 
     -h, --help               output usage information
     -V, --version            output the version number
-    -g, --logLevel [value]   specify log output level - `NOTE`, `WARNING`, `ERROR`, `OFF`` (default: `NOTE`, equivalent to `ALL`)'
+    -g, --logLevel [value]   specify log output level - `NOTE`, `WARNING`, `ERROR`, `OFF` (default: `NOTE`, equivalent to `ALL`)
     -e, --isEntry [value]    whether is an entry module which has `bootstrap` (default: true)
     -l, --oldFormat [value]  whether to transform to old format (default: false)
     -o, --output [path]      the output file dirname

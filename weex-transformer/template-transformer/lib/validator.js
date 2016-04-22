@@ -11,14 +11,6 @@ var NATIVE_TAG_GROUP = {
     },
     text: {
       events: COMMON_EVENTS,
-      // attr: {
-      //   value: function (v) {
-      //     return {
-      //       value: v,
-      //       reason: 'NOTE: `value` could be written as text content in <text>'
-      //     }
-      //   }
-      // },
       textContent: true
     },
     image: {
@@ -88,8 +80,6 @@ var TEXT_CONTENT_TAG_NAME_LIST = []
 })()
 
 
-
-
 /**
  * tag name checking
  * - autofix alias
@@ -121,10 +111,35 @@ function checkTagName(node, output) {
     }
     tagName = TAG_NAME_ALIAS_MAP[tagName]
   }
-  result.type = tagName
+
+  if (tagName === 'component') {
+    var indexOfIs = -1
+    if (node.attrs) {
+      node.attrs.forEach(function (attr, index) {
+        if (attr.name === 'is') {
+          indexOfIs = index
+          result.type = tagName = exp(attr.value)
+        }
+      })
+    }
+    if (indexOfIs > -1) {
+      node.attrs.splice(indexOfIs, 1) // delete `is`
+    }
+    else {
+      result.type = tagName = 'container'
+      log.push({
+        line: location.line || 1,
+        column: location.col || 1,
+        reason: 'WARNING: tag `component` should have an `is` attribute, otherwise it will be regarded as a `container`'
+      })
+    }
+  }
+  else {
+    result.type = tagName
+  }
 
   // deps
-  if (deps.indexOf(tagName) < 0) {
+  if (deps.indexOf(tagName) < 0 && typeof tagName === 'string') { // FIXME: improve `require` to bundle dynamic binding components
     deps.push(tagName)
   }
 
@@ -136,7 +151,7 @@ function checkTagName(node, output) {
       log.push({
         line: location.line || 1,
         column: location.col || 1,
-        reason: 'ERROR: tag name `' + tagName + '` should not have children'
+        reason: 'ERROR: tag `' + tagName + '` should not have children'
       })
     }
   }
@@ -156,7 +171,8 @@ function checkTagName(node, output) {
       if (attr !== 'append') {
         result.attr = result.attr || {}
         result.attr[attr] = TAG_DEFAULT_ATTR_MAP[tagName][attr]
-      } else {
+      }
+      else {
         result[attr] = TAG_DEFAULT_ATTR_MAP[tagName][attr]
       }
     })
@@ -196,12 +212,14 @@ function checkClass(className, output) {
     tempClassList.forEach(function (subName, index) {
       if (subName.indexOf('{{') > -1 && subName.indexOf('}}') === -1) {
         expStart = index
-      } else if (expStart !== -1 && subName.indexOf('}}') > -1) {
+      }
+      else if (expStart !== -1 && subName.indexOf('}}') > -1) {
         expEnd = index
         classList.push(tempClassList.slice(expStart, expEnd + 1).join(''))
         expStart = -1
         expEnd = -1
-      } else if ((expStart === -1 && expEnd === -1) || (subName.indexOf('{{') > -1 && subName.indexOf('}}') > -1)) {
+      }
+      else if ((expStart === -1 && expEnd === -1) || (subName.indexOf('{{') > -1 && subName.indexOf('}}') > -1)) {
         classList.push(subName)
       }
     })
@@ -244,20 +262,18 @@ function checkStyle(cssText, output, locationInfo) {
         k = util.hyphenedToCamelCase(k)
         v = pair[1].trim()
         v = exp(v)
-        if (typeof v !== 'function') {
-          vResult = styler.validateItem(k, v)
-          v = vResult.value
-          if (vResult.log) {
-            // FIXME: in order to guarantee order of keys of a log item
-            var ret = {}
-            ret.line = locationInfo.line
-            ret.column = locationInfo.column
-            ret.reason = vResult.log.reason
-            log.push(ret)
-            // vResult.log.line = locationInfo.line
-            // vResult.log.column = locationInfo.column
-            // log.push(vResult.log)
-          }
+        vResult = styler.validateItem(k, v)
+        v = vResult.value
+        if (vResult.log) {
+          // FIXME: in order to guarantee order of keys of a log item
+          var ret = {}
+          ret.line = locationInfo.line
+          ret.column = locationInfo.column
+          ret.reason = vResult.log.reason
+          log.push(ret)
+          // vResult.log.line = locationInfo.line
+          // vResult.log.column = locationInfo.column
+          // log.push(vResult.log)
         }
         if (typeof v === 'number' || typeof v === 'string' || typeof v === 'function') {
           style[k] = v
@@ -275,7 +291,6 @@ function checkStyle(cssText, output, locationInfo) {
  */
 function checkIf(value, output, not) {
   if (!exp.isExpr(value)) {
-    // output.log
     value = '{{' + value + '}}'
   }
   if (value) {
@@ -299,12 +314,33 @@ function checkElse(value, output) {
  * @param  {object} output{result, deps[], log[]}
  */
 function checkRepeat(value, output) {
-  if (!exp.isExpr(value)) {
-    // output.log
-    value = '{{' + value + '}}'
-  }
   if (value) {
-    output.result.repeat = exp(value)
+    if (exp.isExpr(value)) {
+      value = value.substr(2, value.length - 4)
+    }
+    var key
+    var val
+    var inMatch = value.match(/(.*) (?:in) (.*)/)
+    if (inMatch) {
+      var itMatch = inMatch[1].match(/\((.*),(.*)\)/)
+      if (itMatch) {
+        key = itMatch[1].trim()
+        val = itMatch[2].trim()
+      }
+      else {
+        val = inMatch[1].trim()
+      }
+      value = inMatch[2]
+    }
+    value = '{{' + value + '}}'
+    var repeat = {expression: exp(value)}
+    if (key) {
+      repeat.key = key
+    }
+    if (val) {
+      repeat.value = val
+    }
+    output.result.repeat = repeat
   }
 }
 
@@ -327,8 +363,22 @@ function checkEvent(name, value, output) {
   var eventName = name.substr(2)
   if (eventName && value) {
     if (exp.isExpr(value)) {
-      // output.log
       value = value.substr(2, value.length - 4)
+    }
+    var paramsMatch = value.match(/(.*)\((.*)\)/)
+    if (paramsMatch) {
+      var funcName = paramsMatch[1]
+      var params = paramsMatch[2]
+      if (params) {
+        params = params.split(',')
+        if (params[params.length - 1].trim() !== 'EVENT') {
+          params[params.length] = 'EVENT'
+        }
+      } else {
+        params = ['EVENT']
+      }
+      value = '{{' + funcName + '(' + params.join(',') + ')}}'
+      value = eval('(function (EVENT) {' + exp(value, false).replace('this.EVENT', 'EVENT') + '})')
     }
     output.result.events = output.result.events || {}
     output.result.events[eventName] = value
