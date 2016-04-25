@@ -1,0 +1,27 @@
+<template>
+    <container>
+        <text class="{{className}}">Copy right @ 2016 Weex</text>
+        <company></company>
+    </container>
+</template>
+
+<style>
+    .copyright {
+        text-align: center;
+        padding-top: 20;
+        padding-bottom: 20;
+        color: #666;
+        font-size: 26;
+    }
+</style>
+
+<script>
+    module.exports = {
+        data: {
+            className: ''
+        },
+        created: function (argument) {
+            this.className = 'copyright';
+        }
+    }
+</script>

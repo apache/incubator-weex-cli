@@ -1,0 +1,48 @@
+{
+  "name": "weex-loader",
+  "version": "0.1.0",
+  "description": "a webpack loader for weex",
+  "main": "index.js",
+  "author": "terrykingcha <terrykingcha@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alibaba/weex_toolchain.git"
+  },
+  "licenses": "MIT",
+  "keywords": [
+    "weex",
+    "loader",
+    "webpack",
+    "transformer"
+  ],
+  "scripts": {
+    "test:build": "webpack --config webpack.config.js",
+    "test:transform": "transformer test/expect/*.we -o test/expect",
+    "test:mocha": "mocha --compilers js:babel-core/register test/test.js",
+    "test": "npm run test:build && npm run test:transform && npm run test:mocha",
+    "serve": "serve ./test -p 12581"
+  },
+  "peerDependencies": {
+    "weex-scripter": "^0.1.4",
+    "weex-styler": "^0.0.17",
+    "weex-templater": "~0.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.6",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.6.0",
+    "chai": "^3.5.0",
+    "less": "^2.6.1",
+    "less-loader": "^2.2.3",
+    "mocha": "^2.4.5",
+    "serve": "^1.4.0",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
+    "webpack": "~1.13.0"
+  },
+  "dependencies": {
+    "loader-utils": "~0.2.14",
+    "md5": "^2.1.0",
+    "weex-transformer": "^0.3.0"
+  }
+}

@@ -1,0 +1,27 @@
+<template>
+    <container>
+        <text class="h1">{{text}}</text>
+        <goto></goto>
+        <copyright></copyright>
+    </container>
+</template>
+
+<style>
+.h1 {
+    font-size: 60px;
+    color: red;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+</style>
+
+<script>
+var c = require('../lib/c')
+module.exports = {
+    data: {
+        text: 'Hello ' + c.name
+    }
+}
+</script>
