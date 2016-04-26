@@ -47,12 +47,6 @@ loader.useScripter(scripter);
 loader.useStyler(styler);
 loader.useTemplater(templater);
 
-/* The banner plugin is required, please just copy to use it */
-var banner = 'var __weex_define__ = define, __weex_bootstrap__ = bootstrap;';
-var bannerPlugin = new webpack.BannerPlugin(banner, {
-  raw: true
-});
-
 module.exports = {
   entry: './test/main.we?entry=true',
   output: {
@@ -66,8 +60,7 @@ module.exports = {
         loader: 'weex'
       }
     ]
-  },
-  plugins: [bannerPlugin]
+  }
 }
 ```
 
@@ -136,7 +129,7 @@ Then change the entry to `main.js` in `webpack.config.js`
 
 ### How to require a CommonJS module
 
-0. first, require a `path/to/module.js` in `script` like `var _ = require('loadash')`. 
+0. first, require a `path/to/module.js` in `script` like `var _ = require('lodash')`. 
 1. then use it in `script`.
 
 ### How to embed a composed component

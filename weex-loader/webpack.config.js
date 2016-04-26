@@ -9,12 +9,6 @@ loader.useScripter(scripter);
 loader.useStyler(styler);
 loader.useTemplater(templater);
 
-var banner = 'var __weex_define__ = define, __weex_bootstrap__ = bootstrap;';
-
-var bannerPlugin = new webpack.BannerPlugin(banner, {
-  raw: true
-});
-
 module.exports = {
   entry: './test/a.js?entry=true',
   output: {
@@ -46,6 +40,5 @@ module.exports = {
   },
   resolveLoader: {
     modulesDirectories: ['./', './node_modules']
-  },
-  plugins: [bannerPlugin]
+  }
 }

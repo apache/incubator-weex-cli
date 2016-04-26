@@ -1,4 +1,3 @@
-var __weex_define__ = define, __weex_bootstrap__ = bootstrap;
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -62,7 +61,7 @@ var __weex_define__ = define, __weex_bootstrap__ = bootstrap;
 	__weex_module__.exports.style = __webpack_require__(7);
 	__weex_module__.exports.template = __webpack_require__(8);
 	})
-	;__weex_bootstrap__("@weex-component/48c34d39ea9ced4ad5f95df361368f61", {"transformerVersion":"0.3.0"}, undefined)
+	;__weex_bootstrap__("@weex-component/48c34d39ea9ced4ad5f95df361368f61", {"transformerVersion":"0.3.1"}, undefined)
 
 /***/ },
 /* 1 */

@@ -1,6 +1,6 @@
 {
   "name": "weex-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a webpack loader for weex",
   "main": "index.js",
   "author": "terrykingcha <terrykingcha@gmail.com>",
@@ -25,7 +25,7 @@
   "peerDependencies": {
     "weex-scripter": "^0.1.4",
     "weex-styler": "^0.0.17",
-    "weex-templater": "~0.2.0"
+    "weex-templater": "~0.2.1"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",
@@ -43,6 +43,6 @@
   "dependencies": {
     "loader-utils": "~0.2.14",
     "md5": "^2.1.0",
-    "weex-transformer": "^0.3.0"
+    "weex-transformer": "^0.3.1"
   }
 }
