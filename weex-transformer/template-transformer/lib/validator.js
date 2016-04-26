@@ -333,12 +333,18 @@ function checkRepeat(value, output) {
       value = inMatch[2]
     }
     value = '{{' + value + '}}'
-    var repeat = {expression: exp(value)}
-    if (key) {
-      repeat.key = key
+    var repeat
+    if (!key && !val) {
+      repeat = exp(value)
     }
-    if (val) {
-      repeat.value = val
+    else {
+      repeat = {expression: exp(value)}
+      if (key) {
+        repeat.key = key
+      }
+      if (val) {
+        repeat.value = val
+      }
     }
     output.result.repeat = repeat
   }
@@ -371,14 +377,14 @@ function checkEvent(name, value, output) {
       var params = paramsMatch[2]
       if (params) {
         params = params.split(',')
-        if (params[params.length - 1].trim() !== 'EVENT') {
-          params[params.length] = 'EVENT'
+        if (params[params.length - 1].trim() !== '$event') {
+          params[params.length] = '$event'
         }
       } else {
-        params = ['EVENT']
+        params = ['$event']
       }
       value = '{{' + funcName + '(' + params.join(',') + ')}}'
-      value = eval('(function (EVENT) {' + exp(value, false).replace('this.EVENT', 'EVENT') + '})')
+      value = eval('(function ($event) {' + exp(value, false).replace('this.$event', '$event') + '})')
     }
     output.result.events = output.result.events || {}
     output.result.events[eventName] = value

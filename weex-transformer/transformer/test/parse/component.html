@@ -1,6 +1,6 @@
 <we-element name="taobao-item">
   <template>
-    <container onclick="gotoDetail(itemId, EVENT)">
+    <container onclick="gotoDetail(itemId, $event)">
       <image class="thumb" src="{{pictureUrl}}"></image>
       <text class="title">{{title}}</text>
     </container>
@@ -19,7 +19,7 @@
         pictureUrl: ''
       },
       methods: {
-        gotoDetail: function (itemId, EVENT) {
+        gotoDetail: function (itemId, $event) {
           this.$openURL('https://item.taobao.com/item.htm?id=' + itemId)
         }
       }
