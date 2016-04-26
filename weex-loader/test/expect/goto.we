@@ -1,0 +1,22 @@
+<template>
+    <container>
+        <text onclick="clicked" style="text-decoration: underline; padding-left: {{paddingLeft}}">{{text}}</text>
+    </container>
+</template>
+
+<script>
+    module.exports = {
+        data: {
+            text: '',
+            paddingLeft: 20
+        },
+        created: function() {
+            this.text = 'Yes It is! Go Weex >>>';
+        },
+        methods: {
+            clicked: function() {
+                this.$openURL('http://github.com/alibaba/weex');
+            }
+        }
+    }
+</script>

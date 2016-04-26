@@ -1,0 +1,14 @@
+<template>
+    <container>
+        <text style="text-align: center; font-size: 18; color: #CCCCCC;">{{name}}</text>
+    </container>
+</template>
+
+<script>
+var d = require('../lib/d');
+module.exports = {
+    data: {
+        name: d.name
+    }
+}
+</script>
