@@ -1,9 +1,7 @@
 # Weex Toolchain
 
-[![Build status][circle-image]][circle-url]
-
-[circle-image]: https://circleci.com/gh/alibaba/weex_toolchain.svg?style=svg
-[circle-url]: https://circleci.com/gh/alibaba/weex_toolchain/tree/master
+## Weex Transformer
+It transforms `Weex DSL` code(`.we` file) into `JavaScript bundle`, which can be executed by `Weex JavaScript framework`.
 
 ## Toolkit
 Weex CLI tool
@@ -11,4 +9,6 @@ Weex CLI tool
 ## Gulp Weex
 gulp plugin for weex transformer
 
-## [Weex Transformer](weex-transformer/README.md)
+## Weex Webpack loader
+A webpack loader for Weex.
+
