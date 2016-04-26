@@ -35,9 +35,7 @@ define('@weex-component/foo', function (require, exports, module) {
   "children": [
     {
       "type": "container",
-      "repeat": {
-        "expression": function () {return this.itemList}
-      },
+      "repeat": function () {return this.itemList},
       "events": {
         "click": "gotoDetail"
       },

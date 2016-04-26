@@ -239,9 +239,9 @@ describe('parse', function () {
       jsonTemplate: {
         type: 'container',
         children: [
-          {type: 'text', repeat: {expression: function () {return this.a}}},
-          {type: 'text', repeat: {expression: function () {return this.a}}},
-          {type: 'text', repeat: {expression: function () {return this.a()}}}
+          {type: 'text', repeat: function () {return this.a}},
+          {type: 'text', repeat: function () {return this.a}},
+          {type: 'text', repeat: function () {return this.a()}}
         ]
       },
       deps: ['container', 'text'],
@@ -332,13 +332,13 @@ describe('parse', function () {
   })
 
   it('parse events', function (done) {
-    var code = '<container><text onclick="a" onappear="{{a()}}"></text><text onclick="{{a}}" onappear="{{a(x, 1, \'2\', EVENT)}}"></text></container>'
+    var code = '<container><text onclick="a" onappear="{{a()}}"></text><text onclick="{{a}}" onappear="{{a(x, 1, \'2\', $event)}}"></text></container>'
     var expected = {
       jsonTemplate: {
         type: 'container',
         children: [
-          {type: 'text', events: {click: 'a', appear: function (EVENT) {this.a(EVENT)}}},
-          {type: 'text', events: {click: 'a', appear: function (EVENT) {this.a(this.x,1,'2',EVENT)}}}
+          {type: 'text', events: {click: 'a', appear: function ($event) {this.a($event)}}},
+          {type: 'text', events: {click: 'a', appear: function ($event) {this.a(this.x,1,'2',$event)}}}
         ]
       },
       deps: ['container', 'text'],

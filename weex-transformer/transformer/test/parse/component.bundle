@@ -8,7 +8,7 @@ define('@weex-component/taobao-item', function (require, exports, module) {
         pictureUrl: ''
       }},
       methods: {
-        gotoDetail: function (itemId, EVENT) {
+        gotoDetail: function (itemId, $event) {
           this.$openURL('https://item.taobao.com/item.htm?id=' + itemId)
         }
       }
@@ -32,7 +32,7 @@ define('@weex-component/taobao-item', function (require, exports, module) {
 ;module.exports.template = {
   "type": "container",
   "events": {
-    "click": function (EVENT) {this.gotoDetail(this.itemId,EVENT)}
+    "click": function ($event) {this.gotoDetail(this.itemId,$event)}
   },
   "children": [
     {
@@ -80,9 +80,7 @@ define('@weex-component/foo', function (require, exports, module) {
   "children": [
     {
       "type": "taobao-item",
-      "repeat": {
-        "expression": function () {return this.itemList}
-      }
+      "repeat": function () {return this.itemList}
     }
   ]
 }
