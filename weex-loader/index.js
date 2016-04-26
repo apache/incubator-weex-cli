@@ -166,11 +166,11 @@ function parseWeexFile(loader, params, source) {
         if (deps.length) {
             requireContent += deps.map(function(dep) {
                 if (!content.match(new RegExp('require\\(["\']./' + path.basename(dep) + '["\']\\)', 'g'))) {
-                    return 'require("' + dep + '");\n';
+                    return 'require("' + dep + '");';
                 } else {
                     return '';
                 }
-            });
+            }).join('\n');
 
             content = requireContent + '\n' + content;
         }
@@ -192,7 +192,7 @@ function parseWeexFile(loader, params, source) {
         if (results.data) {
             data = results.data.content;
         }
-
+        
         return parseScript(loader, params, content, config, data);
     });
 }

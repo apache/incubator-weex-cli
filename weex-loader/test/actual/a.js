@@ -131,7 +131,6 @@ var __weex_define__ = define, __weex_bootstrap__ = bootstrap;
 	;__weex_define__("@weex-component/copyright", [], function(__weex_require__, __weex_exports__, __weex_module__){
 	__webpack_require__(4);
 
-
 	;
 	    __weex_module__.exports = {
 	        data: function () {return {
