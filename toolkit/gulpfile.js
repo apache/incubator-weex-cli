@@ -17,7 +17,8 @@ gulp.task('clean', function() {
 gulp.task('babel',['clean'],function(){
   return  gulp.src('src/**/*.js')
   .pipe(babel({
-    presets: ['es2015']
+      presets: ['es2015'],
+      plugins: ['transform-runtime']
   }))
   .pipe(gulp.dest('./build'));    
 })

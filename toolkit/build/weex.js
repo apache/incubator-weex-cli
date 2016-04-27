@@ -1,8 +1,18 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _promise = require('babel-runtime/core-js/promise');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _promise2 = _interopRequireDefault(_promise);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var fs = require('fs'),
     fse = require('fs-extra'),
@@ -33,7 +43,7 @@ var NO_JSBUNDLE_OUTPUT = "no JSBundle output";
 
 var Previewer = function () {
   function Previewer(targetPath, host, shouldOpenBrowser, displayQR, specifiedBundleName, transformServerPath) {
-    _classCallCheck(this, Previewer);
+    (0, _classCallCheck3.default)(this, Previewer);
 
     this.targetPath = targetPath;
     this.host = host;
@@ -71,7 +81,7 @@ var Previewer = function () {
     });
   }
 
-  _createClass(Previewer, [{
+  (0, _createClass3.default)(Previewer, [{
     key: 'tempDirInit',
     value: function tempDirInit() {
       fse.removeSync(WEEX_TRANSFORM_TMP);
@@ -190,7 +200,7 @@ var Previewer = function () {
     value: function transformTarget() {
       var self = this;
       var promiseData = { promise: null, resolver: null, rejecter: null };
-      promiseData.promise = new Promise(function (resolve, reject) {
+      promiseData.promise = new _promise2.default(function (resolve, reject) {
         promiseData.resolver = resolve;
         promiseData.rejecter = reject;
       });
@@ -234,7 +244,6 @@ var Previewer = function () {
       return promiseData.promise;
     }
   }]);
-
   return Previewer;
 }();
 
