@@ -29,7 +29,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
-* 160426 : improve -s feedback information
+* 160427(0.0.21) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview
 * 160401 : format for opensource
 * 160331 : update upstream lib , ready for opensource
