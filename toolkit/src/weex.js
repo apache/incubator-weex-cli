@@ -101,7 +101,7 @@ class Previewer{
       console.log((new Date()) + `http  is listening on port ${PREVIEW_SERVER_PORT}`)
 
       if (self.transformServerPath){
-        console.log(  `please access http://${self.host}:${PREVIEW_SERVER_PORT}/`  )
+          console.log(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${self.host}:${PREVIEW_SERVER_PORT}/`  )
         return 
       }
       
@@ -235,8 +235,8 @@ var argv = yargs
            .default('o',NO_JSBUNDLE_OUTPUT)
            .describe('o', 'transform weex JS bundle only, specify bundle file name using the option')
            .option('s' , {demand:false})
-           .default('s', false)
-           .describe('s', 'start a http file server, weex .we file will be transformed on the server , specify local root path using the option')
+           .default('s', null)
+           .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
            .help('help')
            .argv
 
@@ -246,9 +246,19 @@ var transformServerPath = argv.s
 var badWePath =  !!( !wePath ||   wePath.length   < 2   || ( wePath.substring( wePath.length -2 ,  wePath.length) !=  WEEX_FILE_EXT ) )
 
 if ( badWePath  &&  !transformServerPath ){
-    console.log(yargs.help());
-    console.log("postfix fo weex file must be .we");    
+    console.log(yargs.help())
+    console.log("postfix fo weex file must be .we")
     process.exit(1)
+}
+
+if (transformServerPath){
+    var absPath = path.resolve(transformServerPath)
+    try{
+        var res = fs.accessSync(transformServerPath)
+    }catch(e){
+        console.log(`path ${absPath} not accessible`)
+        process.exit(1)
+    }
 }
 
 var host = argv.h  

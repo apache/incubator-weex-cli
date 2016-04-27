@@ -19,7 +19,7 @@ weex  foo/bar/your_next_best_weex_script_file.we [options]
 Options:
   --qr    display QR code for Weex Playground app, default action.               
   -o      transform weex JS bundle only, specify bundle file name using the option
-  -s      start a http file server, weex .we file will be transformed on the server. specify local root path using the option
+  -s      start a http file server, weex .we file will be transform to JS bundle on the server. specify local root path using the option
   --help  Show help                                                       
 ```
 
@@ -29,6 +29,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160426 : improve -s feedback information
 * 160418 : temporary turnoff H5 preview
 * 160401 : format for opensource
 * 160331 : update upstream lib , ready for opensource
