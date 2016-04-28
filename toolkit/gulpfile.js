@@ -4,7 +4,8 @@ var fs = require('fs')
   babel = require('gulp-babel'),
   rename = require('gulp-rename'),
   concat = require('gulp-concat'),
-  coffee = require("gulp-coffee"),
+  browserify = require("browserify"),
+  source = require('vinyl-source-stream'),
   wrap  = require('gulp-wrap');    
 
 
@@ -29,8 +30,16 @@ gulp.task('weex',['babel'],function(){
   .pipe(gulp.dest('./bin'))
 })
 
+gulp.task('browserify',['babel'],function(callback){
+    browserify("./build/debugger-client.js", { debug: false })
+        .bundle()
+        .pipe(source('debugger-client-browserify.js'))  //vinyl-source-stream
+        .pipe(gulp.dest('./build/'))
+    return callback()
+})
 
-gulp.task('build',['weex'],function(cb){
+
+gulp.task('build',['weex','browserify'],function(cb){
   return cb()
 })
 

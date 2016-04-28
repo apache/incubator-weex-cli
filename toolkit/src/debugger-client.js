@@ -1,9 +1,8 @@
-import './index.less';
 import uuid from 'uuid';
-import WebsocketClient from '../libs/client';
-import WebscoketLogger from '../libs/logger';
-import {init, logger} from '../libs/debugger';
-import qrcode from '../libs/qrcode';
+import WebsocketClient from './libs/client';
+import WebscoketLogger from './libs/logger';
+import {init, logger} from './libs/debugger';
+import qrcode from './libs/qrcode';
 
 const ENDPOINT = 'framework';
 const ID = location.hash.replace('#', '') || uuid.v1();
