@@ -45,7 +45,10 @@ function parseScript(loader, params, source, config, data) {
     return Promise.resolve(target);
 }
 
+var logLevel = false;
 function logWarning(loader, log) {
+    if (logLevel === false) return;
+
     if (log && log instanceof Array) {
         log.forEach(function(l) {
             loader.emitWarning(l.reason + '\t@' + l.line + ':' + l.column)
@@ -85,7 +88,7 @@ function stringifyFunction(key, value) {
 function parseTemplate(loader, params, source, deps) {
     return new Promise(function(resolve, reject) {
         if (!templater) {
-            return reject('please use a template parser. ex. weex-styler');
+            return reject('please use a template parser. ex. weex-templater');
         }
 
         templater.parse(source, function(err, obj) {
@@ -100,7 +103,7 @@ function parseTemplate(loader, params, source, deps) {
                         var filename = './' + dep + '.we';
                         var filepath = path.resolve(context, filename);
                         if (fs.existsSync(filepath)) {
-                            return filepath;
+                            return filename;
                         }
                     }).forEach(function(dep) {
                         if (dep) {
@@ -165,7 +168,7 @@ function parseWeexFile(loader, params, source) {
         var requireContent = '';
         if (deps.length) {
             requireContent += deps.map(function(dep) {
-                if (!content.match(new RegExp('require\\(["\']./' + path.basename(dep) + '["\']\\)', 'g'))) {
+                if (!content.match(new RegExp('require\\(["\']./' + path.basename(dep) + '(\.we)?["\']\\)', 'g'))) {
                     return 'require("' + dep + '");';
                 } else {
                     return '';
@@ -255,6 +258,10 @@ loader.useStyler = function(module) {
 
 loader.useTemplater = function(module) {
     templater = module;
+}
+
+loader.setLogLevel = function(level) {
+    logLevel = level
 }
 
 module.exports = loader;
