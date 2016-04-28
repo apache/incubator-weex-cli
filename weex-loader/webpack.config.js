@@ -10,10 +10,13 @@ loader.useStyler(styler);
 loader.useTemplater(templater);
 
 module.exports = {
-  entry: './test/a.js?entry=true',
+  entry: {
+    a: './test/a.js?entry=true',
+    z: './test/expect/z.we?entry=true'
+  },
   output: {
     path: './test/actual',
-    filename: 'a.js'
+    filename: '[name].js'
   },
   module: {
     loaders: [
