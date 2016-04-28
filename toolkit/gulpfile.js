@@ -6,6 +6,8 @@ var fs = require('fs')
   concat = require('gulp-concat'),
   browserify = require("browserify"),
   source = require('vinyl-source-stream'),
+  path = require('path'),
+  less = require('gulp-less'),
   wrap  = require('gulp-wrap');    
 
 
@@ -38,8 +40,17 @@ gulp.task('browserify',['babel'],function(callback){
     return callback()
 })
 
+gulp.task('less',function(){
+    return gulp.src('./src/css/**/*.less')
+    .pipe(less({
+      paths: [ path.join(__dirname, 'src/css/', 'includes') ]
+    }))
+    .pipe(gulp.dest('./build/css'))    ;
+})
 
-gulp.task('build',['weex','browserify'],function(cb){
+
+gulp.task('build',['weex','browserify','less'],function(cb){
+    
   return cb()
 })
 
