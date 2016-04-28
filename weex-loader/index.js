@@ -18,7 +18,7 @@ var REQUIRE_REG = /require\((["'])(\@weex\-module\/[^\)\1]+)\1\)/g;
 
 function parseScript(loader, params, source, config, data) {
     if (!scripter) {
-        return Promise.reject('please use a script parser. ex. weex-scripter');
+        return Promise.reject('please use a script parser. e.g. weex-scripter');
     }
 
     var target = scripter.fix(source);
@@ -38,7 +38,7 @@ function parseScript(loader, params, source, config, data) {
 
     if (params.resourceQuery.entry === true) {
         target += '\n;__weex_bootstrap__("@weex-component/' + name + '", ' + 
-                    String(config) + ', ' + 
+                    String(config) + ',' + 
                     String(data) + ')';
     }
 
@@ -56,7 +56,7 @@ function logWarning(loader, log) {
 function parseStyle(loader, params, source) {
     return new Promise(function(resolve, reject) {
         if (!styler) {
-            return reject('please use a style parser. ex. weex-styler');
+            return reject('please use a style parser. e.g. weex-styler');
         }
 
         styler.parse(source, function(err, obj) {
@@ -85,7 +85,7 @@ function stringifyFunction(key, value) {
 function parseTemplate(loader, params, source, deps) {
     return new Promise(function(resolve, reject) {
         if (!templater) {
-            return reject('please use a template parser. ex. weex-styler');
+            return reject('please use a template parser. e.g. weex-templater');
         }
 
         templater.parse(source, function(err, obj) {
@@ -184,13 +184,14 @@ function parseWeexFile(loader, params, source) {
         }
 
         if (results.config) {
-            config = JSON.parse(results.config.content);
+            config = new Function('return ' + results.config.content.replace(/\n/g, ''))();
         }
         config.transformerVersion = transformerVersion;
-        config = JSON.stringify(config);
+        config = JSON.stringify(config, null, '  ');
 
         if (results.data) {
-            data = results.data.content;
+            data = new Function('return ' + results.data.content.replace(/\n/g, ''))();
+            data = JSON.stringify(data, null, ' ');
         }
         
         return parseScript(loader, params, content, config, data);
