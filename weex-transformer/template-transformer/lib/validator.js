@@ -376,8 +376,8 @@ function checkEvent(name, value, output) {
       var funcName = paramsMatch[1]
       var params = paramsMatch[2]
       if (params) {
-        params = params.split(',')
-        if (params[params.length - 1].trim() !== '$event') {
+        params = params.split(/\s*,\s*/)
+        if (params.indexOf('$event') === -1) {
           params[params.length] = '$event'
         }
       } else {
