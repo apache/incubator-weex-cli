@@ -30,12 +30,13 @@ var http = require('http');
 var EventEmitter = require('events');
 var uuid = require('uuid');
 var serve = require('koa-serve');
-var serveStatic = require('koa-serve-static');
+//const serveStatic = require('koa-serve-static');
 var Router = require('koa-router');
 var websockify = require('koa-websocket');
 var emitter = new EventEmitter();
-
 var app = websockify(koa());
+
+var nwUtils = require('./nw-utils');
 
 // Debugger Server
 var DS = {
@@ -237,4 +238,5 @@ app.use(webRouter.routes());
 //app.use(serveStatic(rootpath));
 
 app.listen(4000);
-console.log("http listening http://0.0.0.0:4000/");
+var IP = nwUtils.getPublicIP();
+console.log('http listening http://' + IP + ':4000/');

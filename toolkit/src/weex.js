@@ -134,7 +134,7 @@ class Previewer{
 
   showQR(fileName){
       let host = this.host
-      if (this.host == "127.0.0.1"){
+      if (this.host == "127.0.0.1"){  // TODO: update to use nw-utils.js 
 	  let ifaces = os.networkInterfaces()
 	  let address = _.flatten(_.values(ifaces))
 	  address = _.filter( address , (ifObj) =>  ( (ifObj.family == "IPv4") && (ifObj.address != "127.0.0.1") ) )

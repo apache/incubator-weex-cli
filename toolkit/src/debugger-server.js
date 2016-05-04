@@ -18,9 +18,9 @@ const serve = require('koa-serve');
 const Router = require('koa-router');
 const websockify = require('koa-websocket');
 const emitter = new EventEmitter();
-
-
 const app = websockify(koa());
+
+const nwUtils =  require('./nw-utils')
 
 // Debugger Server
 var DS = { 
@@ -172,4 +172,5 @@ app.use(webRouter.routes());
 
 
 app.listen(4000)
-console.log("http listening http://0.0.0.0:4000/")
+let IP =  nwUtils.getPublicIP()
+console.log(`http listening http://${IP}:4000/`)
