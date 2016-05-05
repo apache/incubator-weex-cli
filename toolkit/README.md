@@ -31,7 +31,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
-* 160505(0.0.23) : support batch transform 
+* 160505(0.0.24) : support batch transform 
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview
 * 160401 : format for opensource
