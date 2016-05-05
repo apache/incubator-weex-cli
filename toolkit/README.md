@@ -1,11 +1,23 @@
 Weex-Toolkit
 ============
 
-Weex CLI tool set 
+Weex CLI tool set
+
+## Pre Install
+some dependencies need recent version of npm to install
+
+if your
+```
+$ npm --version
+```
+output less then `2.15.1`, please run below cmd upgrade your npm at first
+```
+sudo npm install -g npm
+```
 
 ## Install
 ```
-$npm install -g -f weex-toolkit
+$npm install -g weex-toolkit
 ```
 
 ##  Usage
@@ -17,12 +29,14 @@ Usage:
 $ bin/weex.js foo/bar/we_file_or_dir_path  [options]
 
 Options:
-  --qr    display QR code for native runtime, default action when input is a we file          
-  -o      transform weex JS Bundle, output path must specified (single JS bundle
-          file or dir)                           
-  -s      start a http file server, weex .we file will be transforme to JS
-          bundle on the server , specify local root path using the option
-  --help  Show help                                                    
+  --qr     display QR code for native runtime, default action          
+  -o       transform weex we file to JS Bundle, output path must specified
+           (single JS bundle file or dir)        
+  --watch  using with -o , watch input path , auto run transform if change
+           happen
+  -s       start a http file server, weex .we file will be transforme to JS
+           bundle on the server , specify local root path using the option
+  --help   Show help                                                   
 ```
 
 
@@ -31,6 +45,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160505(0.0.25) : option --watch added
 * 160505(0.0.24) : support batch transform 
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview

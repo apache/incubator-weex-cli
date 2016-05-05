@@ -42,85 +42,108 @@ var WEBSOCKET_PORT = "8082";
 var NO_JSBUNDLE_OUTPUT = "no JSBundle output";
 
 var Previewer = function () {
-    function Previewer(targetPath, host, shouldOpenBrowser, displayQR, specifiedOutput, transformServerPath) {
+    function Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath) {
         var _this = this;
 
         (0, _classCallCheck3.default)(this, Previewer);
 
-        this.targetPath = targetPath;
+        this.inputPath = inputPath;
         this.host = host;
         this.shouldOpenBrowser = shouldOpenBrowser;
         this.displayQR = displayQR;
         this.transformServerPath = transformServerPath;
 
-        if (!targetPath && transformServerPath) {
+        this.serverMark = false;
+
+        if (!inputPath && transformServerPath) {
+            this.serverMark = true;
             this.startServer();
             return;
         }
 
-        if (specifiedOutput == NO_JSBUNDLE_OUTPUT) {
-            this.specifiedOutput = null;
+        if (outputPath == NO_JSBUNDLE_OUTPUT) {
+            this.outputPath = outputPath = null;
             this.tempDirInit();
+            this.serverMark = true;
             // when no js bundle output specified, start server for playgroundApp(now) or H5 renderer.                 
         } else {
-                this.specifiedOutput = specifiedOutput;
+                this.outputPath = outputPath;
             }
 
-        if (fs.lstatSync(targetPath).isFile()) {
+        if (fs.lstatSync(inputPath).isFile()) {
             try {
-                if (fs.lstatSync(this.specifiedOutput).isDirectory()) {
-                    var fileName = path.basename(targetPath).replace(/\..+/, '');
-                    this.specifiedOutput = path.join(this.specifiedOutput, fileName + '.js');
+                if (fs.lstatSync(outputPath).isDirectory()) {
+                    var fileName = path.basename(inputPath).replace(/\..+/, '');
+                    this.outputPath = outputPath = path.join(this.outputPath, fileName + '.js');
                 }
             } catch (e) {
-                //fs.lstatSync my raise when specifiedOutput is file but not exist yet.
+                //fs.lstatSync my raise when outputPath is file but not exist yet.
             }
         }
 
-        var transformP = void 0;
-        if (fs.lstatSync(targetPath).isFile()) {
-            transformP = this.transformTarget(targetPath, this.specifiedOutput); // this.specifiedOutput may be null , meaning start server
-        } else if (fs.lstatSync(targetPath).isDirectory) {
-                (function () {
+        if (transformWatch) {
+            (function () {
+                console.log('watching ' + inputPath);
+                var self = _this;
+                watch(inputPath, function (fileName) {
+                    console.log(fileName + ' updated');
+                    self.transforme(inputPath, outputPath);
+                });
+            })();
+        } else {
+            this.transforme(inputPath, outputPath);
+        }
+    }
+
+    (0, _createClass3.default)(Previewer, [{
+        key: 'transforme',
+        value: function transforme(inputPath, outputPath) {
+
+            var transformP = void 0;
+            var self = this;
+            if (fs.lstatSync(inputPath).isFile()) {
+                transformP = this.transformTarget(inputPath, outputPath); // outputPath may be null , meaning start server
+            } else if (fs.lstatSync(inputPath).isDirectory) {
                     try {
-                        fs.lstatSync(_this.specifiedOutput).isDirectory;
+                        fs.lstatSync(outputPath).isDirectory;
                     } catch (e) {
                         console.log(yargs.help());
                         console.log("when input path is dir , output path must be dir too");
                         process.exit(1);
                     }
 
-                    var filesInTarget = fs.readdirSync(targetPath);
+                    var filesInTarget = fs.readdirSync(inputPath);
                     filesInTarget = _.filter(filesInTarget, function (fileName) {
                         return fileName.length > 2;
                     });
                     filesInTarget = _.filter(filesInTarget, function (fileName) {
                         return fileName.substring(fileName.length - 2, fileName.length) == WEEX_FILE_EXT;
                     });
-                    var self = _this;
+
                     var filesInTargetPromiseList = _.map(filesInTarget, function (fileName) {
-                        var inputPath = path.join(targetPath, fileName);
-                        var outputPath = path.join(self.specifiedOutput, fileName.substring(0, fileName.length - 2));
-                        return self.transformTarget(inputPath, outputPath);
+                        var ip = path.join(inputPath, fileName);
+                        fileName = fileName.replace(/\.we/, '');
+                        var op = path.join(outputPath, fileName + '.js');
+                        return self.transformTarget(ip, op);
                     });
                     transformP = _promise2.default.all(filesInTargetPromiseList);
-                })();
-            }
-        var self = this;
-        transformP.then(function (jsBundlePathForRender) {
-            if (typeof jsBundlePathForRender == "string") {
-                //no js bundle output specified, start server for playgroundApp(now) or H5 renderer.
-                self.startServer(jsBundlePathForRender);
-                self.startWebSocket();
-            } else {
-                console.log('weex JS bundle saved at ' + path.resolve(self.specifiedOutput));
-            }
-        }).catch(function (e) {
-            console.error(e);
-        });
-    }
+                }
 
-    (0, _createClass3.default)(Previewer, [{
+            transformP.then(function (jsBundlePathForRender) {
+                if (self.serverMark == true) {
+                    // typeof jsBundlePathForRender == "string"
+
+                    //no js bundle output specified, start server for playgroundApp(now) or H5 renderer.
+                    self.startServer(jsBundlePathForRender);
+                    self.startWebSocket();
+                } else {
+                    console.log('weex JS bundle saved at ' + path.resolve(outputPath));
+                }
+            }).catch(function (e) {
+                console.error(e);
+            });
+        }
+    }, {
         key: 'tempDirInit',
         value: function tempDirInit() {
             fse.removeSync(WEEX_TRANSFORM_TMP);
@@ -140,6 +163,7 @@ var Previewer = function () {
                 showDir: true,
                 autoIndex: true
             };
+            var self = this;
 
             if (this.transformServerPath) {
                 options.root = this.transformServerPath;
@@ -147,8 +171,6 @@ var Previewer = function () {
             }
 
             var server = httpServer.createServer(options);
-
-            var self = this;
             server.listen(PREVIEW_SERVER_PORT, "0.0.0.0", function () {
                 console.log(new Date() + ('http  is listening on port ' + PREVIEW_SERVER_PORT));
 
@@ -221,15 +243,20 @@ var Previewer = function () {
                 var connection = request.accept('echo-protocol', request.origin);
                 connection.sendUTF("ws server ok");
                 self.wsConnection = connection;
-                self.watchForRefresh();
+                self.watchForWSRefresh();
             });
         }
+
+        /**
+         * websocket refresh cmd
+         */
+
     }, {
-        key: 'watchForRefresh',
-        value: function watchForRefresh() {
+        key: 'watchForWSRefresh',
+        value: function watchForWSRefresh() {
             var self = this;
-            watch(this.targetPath, function (filename) {
-                var transformP = self.transformTarget(this.targetPath, this.specifiedOutput);
+            watch(this.inputPath, function (filename) {
+                var transformP = self.transformTarget(this.inputPath, this.outputPath);
                 transformP.then(function (fileName) {
                     self.wsConnection.sendUTF("refresh");
                 });
@@ -237,14 +264,14 @@ var Previewer = function () {
         }
     }, {
         key: 'transformTarget',
-        value: function transformTarget(targetPath, outputPath) {
+        value: function transformTarget(inputPath, outputPath) {
             var promiseData = { promise: null, resolver: null, rejecter: null };
             promiseData.promise = new _promise2.default(function (resolve, reject) {
                 promiseData.resolver = resolve;
                 promiseData.rejecter = reject;
             });
-            var filename = path.basename(targetPath).replace(/\..+/, '');
-            fs.readFile(targetPath, 'utf8', function (err, data) {
+            var filename = path.basename(inputPath).replace(/\..+/, '');
+            fs.readFile(inputPath, 'utf8', function (err, data) {
                 if (err) {
                     promiseData.rejecter(err);
                 } else {
@@ -255,7 +282,7 @@ var Previewer = function () {
                             return l.reason.indexOf("Warning:") == 0 || l.reason.indexOf("Error:") == 0;
                         });
                         if (logs.length > 0) {
-                            console.info('weex transformer complain:  ' + targetPath + ' \n');
+                            console.info('weex transformer complain:  ' + inputPath + ' \n');
                         }
                         _.each(logs, function (l) {
                             return console.info('    line' + l.line + ',column' + l.column + ':\n        ' + l.reason + '\n');
@@ -285,11 +312,11 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)').option('s', { demand: false }).default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').help('help').argv;
+var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').help('help').argv;
 
-var wePath = argv._[0];
+var inputPath = argv._[0];
 var transformServerPath = argv.s;
-var badWePath = !!(!wePath || wePath.length < 2); //we path can be we file or dir
+var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir
 
 if (badWePath && !transformServerPath) {
     console.log(yargs.help());
@@ -310,11 +337,12 @@ if (transformServerPath) {
 var host = argv.h;
 var shouldOpenBrowser = false; //argv.n  ? false : true
 var displayQR = true; //argv.qr  ? true : false
-var specifiedOutput = argv.o; // js bundle file path  or  transform output dir path
-if (typeof specifiedOutput != "string") {
+var outputPath = argv.o; // js bundle file path  or  transform output dir path
+if (typeof outputPath != "string") {
     console.log(yargs.help());
     console.log("must specify output path ");
     process.exit(1);
 }
+var transformWatch = argv.watch;
 
-new Previewer(wePath, host, shouldOpenBrowser, displayQR, specifiedOutput, transformServerPath);
+new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath);
