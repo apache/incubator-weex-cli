@@ -14,13 +14,15 @@ $npm install -g -f weex-toolkit
 Weex file preview tool with hot reload 
 ```
 Usage:
-weex  foo/bar/your_next_best_weex_script_file.we [options]
+$ bin/weex.js foo/bar/we_file_or_dir_path  [options]
 
 Options:
-  --qr    display QR code for Weex Playground app, default action.               
-  -o      transform weex JS bundle only, specify bundle file name using the option
-  -s      start a http file server, weex .we file will be transform to JS bundle on the server. specify local root path using the option
-  --help  Show help                                                       
+  --qr    display QR code for native runtime, default action when input is a we file          
+  -o      transform weex JS Bundle, output path must specified (single JS bundle
+          file or dir)                           
+  -s      start a http file server, weex .we file will be transforme to JS
+          bundle on the server , specify local root path using the option
+  --help  Show help                                                    
 ```
 
 
@@ -29,7 +31,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
-
+* 160505 : support batch transforme 
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview
 * 160401 : format for opensource

@@ -28,7 +28,7 @@ const NO_JSBUNDLE_OUTPUT = "no JSBundle output"
 
 class Previewer{
 
-  constructor( targetPath , host , shouldOpenBrowser  , displayQR , specifiedBundleName , transformServerPath ){
+  constructor( targetPath , host , shouldOpenBrowser  , displayQR , specifiedOutput , transformServerPath ){
     this.targetPath = targetPath
     this.host = host
     this.shouldOpenBrowser = shouldOpenBrowser
@@ -41,33 +41,59 @@ class Previewer{
       return
     }
     
-    if ( specifiedBundleName == NO_JSBUNDLE_OUTPUT){
-      this.specifiedBundleName = null
-      this.tempDirInit()  
+    if ( specifiedOutput == NO_JSBUNDLE_OUTPUT){
+      this.specifiedOutput = null
+      this.tempDirInit()
+      // when no js bundle output specified, start server for playgroundApp(now) or H5 renderer.                   
     }else{
-      if ( specifiedBundleName
-           && specifiedBundleName.length > 0
-           && specifiedBundleName.substring(specifiedBundleName.length - 3, specifiedBundleName.length) != ".js"){
-        this.specifiedBundleName =  `${specifiedBundleName}.js`          
-      }else if(specifiedBundleName
-               && specifiedBundleName.length >=  3
-               && specifiedBundleName.substring(specifiedBundleName.length - 3, specifiedBundleName.length) == ".js"
-      ){
-        this.specifiedBundleName =  specifiedBundleName
-      }else{
-        this.specifiedBundleName = `${ path.basename(targetPath ,  "." + WEEX_FILE_EXT ) }.js`
-      }
+        this.specifiedOutput =  specifiedOutput               
+    }
+
+    if (fs.lstatSync(targetPath).isFile()){
+        try{
+            if (fs.lstatSync(this.specifiedOutput).isDirectory()){
+                let fileName = path.basename(targetPath).replace(/\..+/, '')            
+                this.specifiedOutput = path.join(this.specifiedOutput , `${fileName}.js`)
+            }
+        }catch(e){
+            //fs.lstatSync my raise when specifiedOutput is file but not exist yet.
+        }
     }
     
-    let transformP  = this.transformTarget()
+    let transformP
+    if (fs.lstatSync(targetPath).isFile()){      
+        transformP  = this.transformTarget(targetPath , this.specifiedOutput) // this.specifiedOutput may be null , meaning start server
+    }else if (fs.lstatSync(targetPath).isDirectory){
+        try{
+            fs.lstatSync(this.specifiedOutput).isDirectory
+        }catch(e){
+            console.log(yargs.help())
+            console.log("when input path is dir , output path must be dir too")
+            process.exit(1)    
+        }
+        
+        let filesInTarget = fs.readdirSync(targetPath)
+        filesInTarget = _.filter(filesInTarget , (fileName)=>(fileName.length > 2 ) )        
+        filesInTarget = _.filter(filesInTarget , (fileName)=>( fileName.substring(fileName.length - 2 ,  fileName.length) ==  WEEX_FILE_EXT ) )
+        let self = this
+        let filesInTargetPromiseList  = _.map(filesInTarget , function(fileName){
+            let inputPath = path.join(targetPath , fileName)
+            let outputPath = path.join( self.specifiedOutput , fileName.substring(0, fileName.length - 2)  )
+            return self.transformTarget(inputPath , outputPath)
+        })
+        transformP = Promise.all(filesInTargetPromiseList)
+    }
     let self = this
-    transformP.then( function(fileName){
-      if (fileName){
-        self.startServer(fileName)
+    transformP.then( function(jsBundlePathForRender){
+      if (typeof jsBundlePathForRender == "string") {          
+        //no js bundle output specified, start server for playgroundApp(now) or H5 renderer.
+        self.startServer(jsBundlePathForRender)
         self.startWebSocket()
       }else{
-        console.log(  `weex JS bundle saved at ${this.specifiedBundleName}`  )        
+          console.log('weex JS bundle saved at ' + path.resolve(self.specifiedOutput));          
       }
+    }).catch(function(e){
+        console.error(e)
     })
   }
 
@@ -172,68 +198,65 @@ class Previewer{
   watchForRefresh(){
     let self = this
     watch(this.targetPath, function(filename){
-      let transformP  = self.transformTarget()
+      let transformP  = self.transformTarget(this.targetPath,this.specifiedOutput)
       transformP.then( function(fileName){
         self.wsConnection.sendUTF("refresh")
       })
     });
   }
 
-  transformTarget(){
-    let self = this
-    let promiseData = {promise: null,resolver: null,rejecter: null}
-    promiseData.promise = new Promise(function (resolve, reject) {
-        promiseData.resolver = resolve
-        promiseData.rejecter = reject
-      })    
-    let filename = path.basename(this.targetPath).replace(/\..+/, '')
-    var targetPath = this.targetPath
-    fs.readFile(targetPath ,'utf8', function(err,data){
-      if (err){
-           promiseData.rejecter(err)
-        }else{
-          let res = weexTransformer.transform(filename,data, "")
-          let logs = res.logs
-          try{
-            logs = _.filter(logs ,(l) => (  l.reason.indexOf("Warning:") == 0) || ( l.reason.indexOf("Error:") == 0 ) )
-            if (logs.length > 0){console.info(`weex transformer complain:  ${targetPath} \n`)}            
-            _.each(
-              logs,
-              (l)=>  console.info(   `    line${l.line},column${l.column}:\n        ${l.reason}\n`   ) )
-          } catch(e){
-            console.error(e)
-          }
+    transformTarget(targetPath , outputPath){
+        let promiseData = {promise: null,resolver: null,rejecter: null}
+        promiseData.promise = new Promise(function (resolve, reject) {
+            promiseData.resolver = resolve
+            promiseData.rejecter = reject
+        })    
+        let filename = path.basename(targetPath).replace(/\..+/, '')
+        fs.readFile(targetPath ,'utf8', function(err,data){
+            if (err){
+                promiseData.rejecter(err)
+            }else{
+                let res = weexTransformer.transform(filename,data, "")
+                let logs = res.logs
+                try{
+                    logs = _.filter(logs ,(l) => (  l.reason.indexOf("Warning:") == 0) || ( l.reason.indexOf("Error:") == 0 ) )
+                    if (logs.length > 0){console.info(`weex transformer complain:  ${targetPath} \n`)}            
+                    _.each(
+                        logs,
+                        (l)=>  console.info(   `    line${l.line},column${l.column}:\n        ${l.reason}\n`   ) )
+                } catch(e){
+                    console.error(e)
+                }
 
-          let bundleWritePath
-          if (self.specifiedBundleName){
-            bundleWritePath = self.specifiedBundleName
-          }else{
-            bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
-          }
-          fs.writeFileSync(bundleWritePath , res.result)
-          if (self.specifiedBundleName){
-            console.log(  "weex JS bundle saved" )
-            promiseData.resolver(false)            
-          }else{
-            promiseData.resolver(`${filename}.js`)            
-          }
-        }
-    })
-    return promiseData.promise
-  }
+                let bundleWritePath
+                if (outputPath){
+                    bundleWritePath = outputPath
+                }else{
+                    bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
+                }
+                fs.writeFileSync(bundleWritePath , res.result)
+                if (outputPath){
+                    promiseData.resolver(false)            
+                }else{
+                    promiseData.resolver(`${filename}.js`)            
+                }
+            }
+        })
+        return promiseData.promise
+    }
 
 }
 
 var yargs = require('yargs')
 var argv = yargs
-           .usage('Usage: $0 foo/bar/your_next_best_weex_script_file.we  [options]')
+           .usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]')
            .boolean('qr')
            .describe('qr', 'display QR code for native runtime, default action')
            .option('h' , {demand:false})
            .default('h',"127.0.0.1")
            .option('o' , {demand:false})
            .default('o',NO_JSBUNDLE_OUTPUT)
-           .describe('o', 'transform weex JS bundle only, specify bundle file name using the option')
+           .describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)')
            .option('s' , {demand:false})
            .default('s', null)
            .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
@@ -243,11 +266,10 @@ var argv = yargs
 
 var wePath =  argv._[0]
 var transformServerPath = argv.s
-var badWePath =  !!( !wePath ||   wePath.length   < 2   || ( wePath.substring( wePath.length -2 ,  wePath.length) !=  WEEX_FILE_EXT ) )
+var badWePath =  !!( !wePath ||   (wePath.length < 2)  ) //we path can be we file or dir 
 
 if ( badWePath  &&  !transformServerPath ){
     console.log(yargs.help())
-    console.log("postfix fo weex file must be .we")
     process.exit(1)
 }
 
@@ -256,6 +278,7 @@ if (transformServerPath){
     try{
         var res = fs.accessSync(transformServerPath)
     }catch(e){
+        console.log(yargs.help())            
         console.log(`path ${absPath} not accessible`)
         process.exit(1)
     }
@@ -264,7 +287,12 @@ if (transformServerPath){
 var host = argv.h  
 var shouldOpenBrowser =    false //argv.n  ? false : true
 var displayQR =    true //argv.qr  ? true : false
-var specifiedBundleName = argv.o
+var specifiedOutput = argv.o  // js bundle file path  or  transform output dir path
+if ( typeof specifiedOutput  != "string"){
+    console.log(yargs.help())    
+    console.log("must specify output path ")
+    process.exit(1)    
+}
 
 
-new Previewer(wePath , host , shouldOpenBrowser , displayQR , specifiedBundleName , transformServerPath)
+new Previewer(wePath , host , shouldOpenBrowser , displayQR , specifiedOutput , transformServerPath)
