@@ -36,4 +36,4 @@ module.exports = {
 ;})
 
 // require module
-bootstrap('@weex-component/company', {"transformerVersion":"0.3.0"})
+bootstrap('@weex-component/company', {"transformerVersion":"0.3.1"})

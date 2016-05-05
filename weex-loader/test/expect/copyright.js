@@ -79,4 +79,4 @@ define('@weex-component/copyright', function (require, exports, module) {
 ;})
 
 // require module
-bootstrap('@weex-component/copyright', {"transformerVersion":"0.3.0"})
+bootstrap('@weex-component/copyright', {"transformerVersion":"0.3.1"})

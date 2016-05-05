@@ -44,13 +44,14 @@
 /* 0 */
 /***/ function(module, exports) {
 
-	;__weex_define__("@weex-component/060e94206c8ea81edded49ff8b7ca324", [], function(__weex_require__, __weex_exports__, __weex_module__){
+	;__weex_define__("@weex-component/465f098187d45d0bb4e7c097ac00091e", [], function(__weex_require__, __weex_exports__, __weex_module__){
 
-	;__weex_module__.exports.template={
+	;__weex_module__.exports.template = __weex_module__.exports.template || {}
+	;Object.assign(__weex_module__.exports.template, {
 	  "type": "div"
-	}
 	})
-	;__weex_bootstrap__("@weex-component/060e94206c8ea81edded49ff8b7ca324", {
+	})
+	;__weex_bootstrap__("@weex-component/465f098187d45d0bb4e7c097ac00091e", {
 	  "downgrade": {
 	    "ios": {
 	      "appVersion": ">=13.0.0"

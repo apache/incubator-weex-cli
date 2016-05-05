@@ -32,6 +32,10 @@ module.exports = {
         loaders: ['index.js?type=script', 'babel?presets[]=es2015']
       },
       {
+        test: /\.css(\?[^?]+)?$/, 
+        loaders: ['index.js?type=style']
+      },
+      {
         test: /\.less(\?[^?]+)?$/, 
         loaders: ['index.js?type=style', 'less']
       },
