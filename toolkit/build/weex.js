@@ -22,15 +22,10 @@ var fs = require('fs'),
     http = require('http'),
     WebSocketServer = require('websocket').server,
     watch = require('node-watch'),
-    lie = require('lie'),
     os = require('os'),
     _ = require("underscore"),
     qrcode = require('qrcode-terminal'),
     weexTransformer = require('weex-transformer');
-
-if (!global.Promise) {
-    global.Promise = lie;
-}
 
 var fsUtils = require('../build/fs-utils');
 
