@@ -75,8 +75,8 @@ var Previewer = function () {
         if (fs.lstatSync(inputPath).isFile()) {
             try {
                 if (fs.lstatSync(outputPath).isDirectory()) {
-                    var fileName = path.basename(inputPath).replace(/\..+/, '');
-                    this.outputPath = outputPath = path.join(this.outputPath, fileName + '.js');
+                    var _fileName = path.basename(inputPath).replace(/\..+/, '');
+                    this.outputPath = outputPath = path.join(this.outputPath, _fileName + '.js');
                 }
             } catch (e) {
                 //fs.lstatSync my raise when outputPath is file but not exist yet.
@@ -88,8 +88,10 @@ var Previewer = function () {
                 console.log('watching ' + inputPath);
                 var self = _this;
                 watch(inputPath, function (fileName) {
-                    console.log(fileName + ' updated');
-                    self.transforme(inputPath, outputPath);
+                    if (/\.we$/gi.test(fileName)) {
+                        console.log(fileName + ' updated');
+                        self.transforme(inputPath, outputPath);
+                    }
                 });
             })();
         } else {
@@ -258,10 +260,12 @@ var Previewer = function () {
         value: function watchForWSRefresh() {
             var self = this;
             watch(this.inputPath, function (filename) {
-                var transformP = self.transformTarget(this.inputPath, this.outputPath);
-                transformP.then(function (fileName) {
-                    self.wsConnection.sendUTF("refresh");
-                });
+                if (/\.we$/gi.test(fileName)) {
+                    var transformP = self.transformTarget(this.inputPath, this.outputPath);
+                    transformP.then(function (fileName) {
+                        self.wsConnection.sendUTF("refresh");
+                    });
+                }
             });
         }
     }, {

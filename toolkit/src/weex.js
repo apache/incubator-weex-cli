@@ -67,8 +67,10 @@ class Previewer{
             console.log(`watching ${inputPath}`)
             let self = this
             watch(inputPath, function (fileName){
-                console.log(`${fileName} updated`)
-                self.transforme(inputPath,outputPath)
+                if (/\.we$/gi.test(fileName)){
+                    console.log(`${fileName} updated`)
+                    self.transforme(inputPath,outputPath)
+                }
             })
         }else{
             this.transforme(inputPath,outputPath)
@@ -220,10 +222,12 @@ class Previewer{
     watchForWSRefresh(){
         let self = this
         watch(this.inputPath, function(filename){
-            let transformP  = self.transformTarget(this.inputPath,this.outputPath)
-            transformP.then( function(fileName){
-                self.wsConnection.sendUTF("refresh")
-            })
+            if (/\.we$/gi.test(fileName)){            
+                let transformP  = self.transformTarget(this.inputPath,this.outputPath)
+                transformP.then( function(fileName){
+                    self.wsConnection.sendUTF("refresh")
+                })
+            }
         });
     }
 
