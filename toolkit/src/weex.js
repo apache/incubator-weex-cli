@@ -218,9 +218,9 @@ class Previewer{
      */
     watchForWSRefresh(){
         let self = this
-        watch(this.inputPath, function(filename){
+        watch(this.inputPath, function(fileName){
             if (/\.we$/gi.test(fileName)){            
-                let transformP  = self.transformTarget(this.inputPath,this.outputPath)
+                let transformP  = self.transformTarget(self.inputPath,self.outputPath)
                 transformP.then( function(fileName){
                     self.wsConnection.sendUTF("refresh")
                 })
@@ -293,6 +293,11 @@ var argv = yargs
     
     if (argv.debugger){
         debuggerServer.startListen()
+        return
+    }
+
+    if (argv.version){
+        console.log(require('../package.json').version)
         return
     }
 

@@ -69,8 +69,8 @@ var Previewer = function () {
         if (fs.lstatSync(inputPath).isFile()) {
             try {
                 if (fs.lstatSync(outputPath).isDirectory()) {
-                    var _fileName = path.basename(inputPath).replace(/\..+/, '');
-                    this.outputPath = outputPath = path.join(this.outputPath, _fileName + '.js');
+                    var fileName = path.basename(inputPath).replace(/\..+/, '');
+                    this.outputPath = outputPath = path.join(this.outputPath, fileName + '.js');
                 }
             } catch (e) {
                 //fs.lstatSync my raise when outputPath is file but not exist yet.
@@ -254,9 +254,9 @@ var Previewer = function () {
         key: 'watchForWSRefresh',
         value: function watchForWSRefresh() {
             var self = this;
-            watch(this.inputPath, function (filename) {
+            watch(this.inputPath, function (fileName) {
                 if (/\.we$/gi.test(fileName)) {
-                    var transformP = self.transformTarget(this.inputPath, this.outputPath);
+                    var transformP = self.transformTarget(self.inputPath, self.outputPath);
                     transformP.then(function (fileName) {
                         self.wsConnection.sendUTF("refresh");
                     });
@@ -319,6 +319,11 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
 
     if (argv.debugger) {
         debuggerServer.startListen();
+        return;
+    }
+
+    if (argv.version) {
+        console.log(require('../package.json').version);
         return;
     }
 
