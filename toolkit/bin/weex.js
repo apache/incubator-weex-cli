@@ -27,9 +27,9 @@ var fs = require('fs'),
     os = require('os'),
     _ = require("underscore"),
     qrcode = require('qrcode-terminal'),
-    weexTransformer = require('weex-transformer');
-
-var fsUtils = require('../build/fs-utils');
+    weexTransformer = require('weex-transformer'),
+    fsUtils = require('../build/fs-utils'),
+    debuggerServer = require('../build/debugger-server');
 
 var WEEX_FILE_EXT = "we";
 var WEEX_TRANSFORM_TMP = "weex_tmp";
@@ -276,8 +276,8 @@ var Previewer = function () {
                 if (err) {
                     promiseData.rejecter(err);
                 } else {
-                    var _res = weexTransformer.transform(filename, data, "");
-                    var logs = _res.logs;
+                    var res = weexTransformer.transform(filename, data, "");
+                    var logs = res.logs;
                     try {
                         logs = _.filter(logs, function (l) {
                             return l.reason.indexOf("Warning:") == 0 || l.reason.indexOf("Error:") == 0;
@@ -298,7 +298,7 @@ var Previewer = function () {
                     } else {
                         bundleWritePath = WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + filename + '.js';
                     }
-                    fs.writeFileSync(bundleWritePath, _res.result);
+                    fs.writeFileSync(bundleWritePath, res.result);
                     if (outputPath) {
                         promiseData.resolver(false);
                     } else {
@@ -315,35 +315,43 @@ var Previewer = function () {
 var yargs = require('yargs');
 var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').help('help').argv;
 
-var inputPath = argv._[0];
-var transformServerPath = argv.s;
-var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir
+(function argvProcess() {
 
-if (badWePath && !transformServerPath) {
-    console.log(yargs.help());
-    process.exit(1);
-}
+    if (argv.debugger) {
+        debuggerServer.startListen();
+        return;
+    }
 
-if (transformServerPath) {
-    var absPath = path.resolve(transformServerPath);
-    try {
-        var res = fs.accessSync(transformServerPath);
-    } catch (e) {
+    var inputPath = argv._[0];
+    var transformServerPath = argv.s;
+    var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir
+
+    if (badWePath && !transformServerPath) {
         console.log(yargs.help());
-        console.log('path ' + absPath + ' not accessible');
         process.exit(1);
     }
-}
 
-var host = argv.h;
-var shouldOpenBrowser = false; //argv.n  ? false : true
-var displayQR = true; //argv.qr  ? true : false
-var outputPath = argv.o; // js bundle file path  or  transform output dir path
-if (typeof outputPath != "string") {
-    console.log(yargs.help());
-    console.log("must specify output path ");
-    process.exit(1);
-}
-var transformWatch = argv.watch;
+    if (transformServerPath) {
+        var absPath = path.resolve(transformServerPath);
+        try {
+            var res = fs.accessSync(transformServerPath);
+        } catch (e) {
+            console.log(yargs.help());
+            console.log('path ' + absPath + ' not accessible');
+            process.exit(1);
+        }
+    }
 
-new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath);
+    var host = argv.h;
+    var shouldOpenBrowser = false; //argv.n  ? false : true
+    var displayQR = true; //argv.qr  ? true : false
+    var outputPath = argv.o; // js bundle file path  or  transform output dir path
+    if (typeof outputPath != "string") {
+        console.log(yargs.help());
+        console.log("must specify output path ");
+        process.exit(1);
+    }
+    var transformWatch = argv.watch;
+
+    new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath);
+})();

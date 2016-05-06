@@ -1,4 +1,4 @@
-var fs = require('fs'),
+const fs = require('fs'),
     fse = require('fs-extra'),
     path = require('path'),
     opener = require('opener'),
@@ -9,10 +9,10 @@ var fs = require('fs'),
     os  = require('os'),
     _   = require("underscore"),
     qrcode = require('qrcode-terminal'),    
-    weexTransformer = require('weex-transformer');
+    weexTransformer = require('weex-transformer'),
+    fsUtils = require('../build/fs-utils'),      
+    debuggerServer =  require('../build/debugger-server');
 
-
-var fsUtils = require('../build/fs-utils')
 
 const WEEX_FILE_EXT = "we"
 const WEEX_TRANSFORM_TMP = "weex_tmp"
@@ -284,39 +284,48 @@ var argv = yargs
         .default('s', null)
         .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
         .help('help')
-        .argv
+        .argv  ;
 
 
-var inputPath =  argv._[0]
-var transformServerPath = argv.s
-var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir 
+(function argvProcess(){
+    
+    if (argv.debugger){
+        debuggerServer.startListen()
+        return
+    }
 
-if ( badWePath  &&  !transformServerPath ){
-    console.log(yargs.help())
-    process.exit(1)
-}
+    var inputPath =  argv._[0]
+    var transformServerPath = argv.s
+    var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir 
 
-if (transformServerPath){
-    var absPath = path.resolve(transformServerPath)
-    try{
-        var res = fs.accessSync(transformServerPath)
-    }catch(e){
-        console.log(yargs.help())            
-        console.log(`path ${absPath} not accessible`)
+    if ( badWePath  &&  !transformServerPath ){
+        console.log(yargs.help())
         process.exit(1)
     }
-}
 
-var host = argv.h  
-var shouldOpenBrowser =    false //argv.n  ? false : true
-var displayQR =    true //argv.qr  ? true : false
-var outputPath = argv.o  // js bundle file path  or  transform output dir path
-if ( typeof outputPath  != "string"){
-    console.log(yargs.help())    
-    console.log("must specify output path ")
-    process.exit(1)    
-}
-var transformWatch =  argv.watch
+    if (transformServerPath){
+        var absPath = path.resolve(transformServerPath)
+        try{
+            var res = fs.accessSync(transformServerPath)
+        }catch(e){
+            console.log(yargs.help())            
+            console.log(`path ${absPath} not accessible`)
+            process.exit(1)
+        }
+    }
+
+    var host = argv.h  
+    var shouldOpenBrowser =    false //argv.n  ? false : true
+    var displayQR =    true //argv.qr  ? true : false
+    var outputPath = argv.o  // js bundle file path  or  transform output dir path
+    if ( typeof outputPath  != "string"){
+        console.log(yargs.help())    
+        console.log("must specify output path ")
+        process.exit(1)    
+    }
+    var transformWatch =  argv.watch
 
 
-new Previewer(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR ,  transformServerPath)
+    new Previewer(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR ,  transformServerPath)
+
+})()

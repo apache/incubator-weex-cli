@@ -45,7 +45,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
-* 160506(0.0.26) : improve --watch feature
+* 160506(0.0.27) : improve --watch feature
 * 160505(0.0.25) : support batch transform  & option --watch added
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview
