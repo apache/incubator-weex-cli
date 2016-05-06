@@ -10,6 +10,7 @@ const fs = require('fs'),
     _   = require("underscore"),
     qrcode = require('qrcode-terminal'),    
     weexTransformer = require('weex-transformer'),
+    nwUtils =  require('../build/nw-utils'),      
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server');
 
@@ -143,7 +144,8 @@ class Previewer{
             console.log((new Date()) + `http  is listening on port ${PREVIEW_SERVER_PORT}`)
 
             if (self.transformServerPath){
-                console.log(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${self.host}:${PREVIEW_SERVER_PORT}/`  )
+                let IP =  nwUtils.getPublicIP()                
+                console.log(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${IP}:${PREVIEW_SERVER_PORT}/`  )
                 return 
             }
             

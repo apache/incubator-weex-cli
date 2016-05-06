@@ -22,11 +22,10 @@ $npm install -g weex-toolkit
 
 ##  Usage
 
-### weex
-Weex file preview tool with hot reload 
+
+### Usage
 ```
-Usage:
-$ bin/weex.js foo/bar/we_file_or_dir_path  [options]
+$weex foo/bar/input_path  [options]
 
 Options:
   --qr     display QR code for native runtime, default action          
@@ -39,13 +38,15 @@ Options:
   --help   Show help                                                   
 ```
 
+### Example
+
 
 ## Issue & Feedback
 
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
-* 160506(0.0.27) : improve --watch feature
+* 160506(0.0.28) : improve --watch & -s feature
 * 160505(0.0.25) : support batch transform  & option --watch added
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview

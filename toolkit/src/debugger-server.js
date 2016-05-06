@@ -29,10 +29,10 @@ var DS = {
   }
 };
 
-app.use(views("page",{ pagemap: {html: 'underscore'} }))
+app.use(views( path.join(__dirname , "../","page") ,{ pagemap: {html: 'underscore'} }))
 app.use(r.get('/',DS.index))
 var appStatic = koa()
-appStatic.use(staticServer("build"))
+appStatic.use(staticServer(path.join(__dirname , "../","build")))
 app.use(mount('/static',appStatic))
 
 
