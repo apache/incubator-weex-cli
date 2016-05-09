@@ -3,6 +3,7 @@ var mount = require('koa-mount')
 var r =   require('koa-route')
 var views = require('koa-views')
 var staticServer = require('koa-static')
+var opener = require("opener");
 
 const path = require('path');
 // const wget = require('wget');
@@ -38,25 +39,13 @@ var appPage = koa()
 appPage.use(staticServer("page"))
 app.use(mount('/page',appPage))
 
-
-function WSLogger(ws, id, endpoint) {
-    this.log = function(message) {
-        var event = {
-            endpoint: endpoint,
-            id: id,
-            message: message
-        };
-        // console.log(event)
-        emitter.emit('logger', event);
-    }
-}
-
 /* 
 ===================================
 WebSocket Router
 ===================================
 */
 var wsRouter = Router();
+var frameworkWS, rendererWS;
 
 wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var that = this;
@@ -64,10 +53,18 @@ wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var id = this.params.id;
     var endpoint = this.params.endpoint;
 
-    ws.send(JSON.stringify({
-        method: '__connect',
-        arguments: [endpoint]
-    }));
+    if(endpoint === 'framework') {
+        frameworkWS = ws;
+    } else if (endpoint === 'renderer') {
+        rendererWS = ws;
+    }
+
+    if (endpoint !== 'framework' || id !== 0 ) {
+        frameworkWS.send(JSON.stringify({
+            method: '__connect',
+            arguments: [endpoint]
+        }));
+    }
 
     function subscriberHandler(event) {
         // 同一个debugger（id相同）下，向不同的终端（endpoint不同）发送
@@ -144,6 +141,12 @@ webRouter.get('/getScriptText', function*(next) {
         this.response.body = body;
     }
 });
+
+webRouter.get('/launchDebugger', function*(next) {
+    var debuggerURL = 'http://localhost:4000/#0';
+    opener(debuggerURL);
+});
+
 app.use(webRouter.routes());
 //app.use(serveStatic(rootpath));
 

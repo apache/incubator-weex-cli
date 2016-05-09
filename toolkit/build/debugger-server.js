@@ -25,6 +25,7 @@ var mount = require('koa-mount');
 var r = require('koa-route');
 var views = require('koa-views');
 var staticServer = require('koa-static');
+var opener = require("opener");
 
 var path = require('path');
 // const wget = require('wget');
@@ -72,24 +73,13 @@ var appPage = koa();
 appPage.use(staticServer("page"));
 app.use(mount('/page', appPage));
 
-function WSLogger(ws, id, endpoint) {
-    this.log = function (message) {
-        var event = {
-            endpoint: endpoint,
-            id: id,
-            message: message
-        };
-        // console.log(event)
-        emitter.emit('logger', event);
-    };
-}
-
 /* 
 ===================================
 WebSocket Router
 ===================================
 */
 var wsRouter = Router();
+var frameworkWS, rendererWS;
 
 wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _callee(next) {
     var that, ws, id, endpoint, subscriberHandler;
@@ -112,10 +102,18 @@ wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _cal
                     endpoint = this.params.endpoint;
 
 
-                    ws.send((0, _stringify2.default)({
-                        method: '__connect',
-                        arguments: [endpoint]
-                    }));
+                    if (endpoint === 'framework') {
+                        frameworkWS = ws;
+                    } else if (endpoint === 'renderer') {
+                        rendererWS = ws;
+                    }
+
+                    if (endpoint !== 'framework' || id !== '0') {
+                        frameworkWS.send((0, _stringify2.default)({
+                            method: '__connect',
+                            arguments: [endpoint]
+                        }));
+                    }
 
                     ws.on('message', function (message) {
                         // 接受来自各个端的消息，通知所有订阅者
@@ -138,10 +136,10 @@ wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _cal
 
                     emitter.on('debugger', subscriberHandler);
 
-                    _context2.next = 12;
+                    _context2.next = 13;
                     return next;
 
-                case 12:
+                case 13:
                 case 'end':
                     return _context2.stop();
             }
@@ -205,6 +203,25 @@ webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee2(nex
         }
     }, _callee2, this);
 }));
+
+webRouter.get('/launchDebugger', _regenerator2.default.mark(function _callee3(next) {
+    var debuggerURL;
+    return _regenerator2.default.wrap(function _callee3$(_context4) {
+        while (1) {
+            switch (_context4.prev = _context4.next) {
+                case 0:
+                    debuggerURL = 'http://localhost:4000/#0';
+
+                    opener(debuggerURL);
+
+                case 2:
+                case 'end':
+                    return _context4.stop();
+            }
+        }
+    }, _callee3, this);
+}));
+
 app.use(webRouter.routes());
 //app.use(serveStatic(rootpath));
 
