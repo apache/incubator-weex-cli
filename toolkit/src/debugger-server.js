@@ -34,6 +34,9 @@ app.use(r.get('/',DS.index))
 var appStatic = koa()
 appStatic.use(staticServer(path.join(__dirname , "../","build")))
 app.use(mount('/static',appStatic))
+var appPage = koa()
+appPage.use(staticServer("page"))
+app.use(mount('/page',appPage))
 
 
 function WSLogger(ws, id, endpoint) {
@@ -54,33 +57,6 @@ WebSocket Router
 ===================================
 */
 var wsRouter = Router();
-wsRouter.all('/logger/:id/:endpoint', function*(next) {
-    var that = this;
-    var ws = this.websocket;
-    var id = this.params.id;
-    var endpoint = this.params.endpoint;
-
-    var logger = new WSLogger(ws, id, endpoint);
-
-    function handler(event) {
-        if (event.id === id) {
-            ws.send(JSON.stringify(event));    
-        }
-    }
-
-    ws.on('message', function(message) {
-        // 接受来自各个端的debugger信息
-        logger.log(message);
-    });
-
-    ws.on('close', function() {
-        emitter.removeListener('logger', handler);
-    });
-
-    emitter.on('logger', handler);
-
-    yield next;
-});
 
 wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var that = this;
@@ -88,9 +64,10 @@ wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var id = this.params.id;
     var endpoint = this.params.endpoint;
 
-    var logger = new WSLogger(ws, id, 'server');
-
-    logger.log(endpoint + ' connected');
+    ws.send(JSON.stringify({
+        method: '__connect',
+        arguments: [endpoint]
+    }));
 
     function subscriberHandler(event) {
         // 同一个debugger（id相同）下，向不同的终端（endpoint不同）发送

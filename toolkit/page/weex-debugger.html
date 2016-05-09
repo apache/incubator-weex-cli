@@ -2,13 +2,18 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Weex Debugger </title>
+<title>Weex Debugger</title>
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 <meta name="format-detection" content="telephone=no, email=no" />
+<link rel="stylesheet" href="/page/bootstrap.min.css">
+<link rel="stylesheet" href="/page/font-awesome.min.css">
+<link rel="stylesheet" href="/page/logger.css">
+
+<script src="/page/jquery-1.9.1.min.js"></script>
+
 <script src="//g.alicdn.com/mtb/??lib-flexible/0.3.4/flexible.js,lib-env/1.5.10/env.js,lib-qrcode/1.0.1/qrcode.js"></script>
 <script src="/static/debugger-client-browserify.js"></script>
-<link rel="stylesheet" href="/static/css/debugger_web-interface.css" />
 </head>
 <body>
 <div id="slogan">
@@ -17,11 +22,56 @@
         <p>please using <a href="http://alibaba.github.io/weex/download.html">Weex Playground App</a> to scan</p>
         <div id="qrcode"></div>
     </div>
-</div>  
-<div id="logs">
-    <div class="lines">
+</div>
+<div id="logs" class="container">
+    <div class="row">
+        <label> Device Log Level: </label>
+        <div class="btn-group" data-toggle="buttons" id="device-level">
+            <label class="btn" data-level="all">
+                <input type="radio" id="device-level-all" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>All</span>
+            </label>
+            <label class="btn" data-level="error">
+                <input type="radio" id="device-level-error" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Error</span>
+            </label>
+            <label class="btn" data-level="warn">
+                <input type="radio" id="device-level-warn" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Warn</span>
+            </label>
+            <label class="btn" data-level="info">
+                <input type="radio" id="device-level-info" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Info</span>
+            </label>
+            <label class="btn" data-level="debug">
+                <input type="radio" id="device-level-debug" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Debug</span>
+            </label>
+            <label class="btn" data-level="verbose">
+                <input type="radio" id="device-level-verbose" name='level' ><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Verbose</span>
+            </label>
+        </div>
+        <div class="btn-group" data-toggle="buttons" id="debug-js">
+            <label class="btn">
+                <input type="checkbox" name='email3'><i class="fa fa-square-o fa-2x"></i><i class="fa fa-check-square-o fa-2x"></i><span>Debug JS</span>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <ul class="nav nav-pills" id="level">
+            <li class="active"><a href="#" data-level="all">All</a></li>
+            <li><a href="#" data-level="error">Error</a></li>
+            <li><a href="#" data-level="warn">Warn</a></li>
+            <li><a href="#" data-level="info">Info</a></li>
+            <li><a href="#" data-level="debug">Debug</a></li>
+            <li><a href="#" data-level="verbose">Verbose</a></li>
+
+        </ul>
+
+        <div id="logger">
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <button class="btn btn-primary" id="clear">Clear</button>
+            <p id="status"></p>
+        </div>
     </div>
 </div>
-<script src="/static/debugger-client-browserify.js"></script>
 </body>
 </html>

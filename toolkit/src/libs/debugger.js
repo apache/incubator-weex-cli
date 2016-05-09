@@ -1,17 +1,15 @@
 import WebsocketClient from './client';
-import WebsocketLogger from './logger';
+import qrcode from './qrcode';
 
 function debuggableDecorator(target, name, descriptor) {
     descriptor = descriptor
     var fn = descriptor.value;
 
     descriptor.value = function() {
-        logger.log(`proxy ${name}`, [...arguments]);
         wsc.send(name, [...arguments]);
-    }
+    };
 
     wsc.on(name, function(args) {
-        logger.log(`adapt ${name}`, args);
         fn && fn(...args);
     });
 
@@ -29,7 +27,6 @@ function defineProperty(scope, name, descriptor) {
     Object.defineProperty(scope, name, descriptor);
 }
 
-var instanceId;
 function registerMethods(scope, debuggableScope) {
     for (let methodName in debuggableScope) {
         let methodFunction = debuggableScope[methodName];
@@ -54,11 +51,18 @@ function registerMethods(scope, debuggableScope) {
 }
 
 export var wsc;
-export var logger;
 export function init(endpoint, id, frameworkCode, rendererCode) {
-    logger = new WebsocketLogger(endpoint, id);
     wsc = new WebsocketClient(endpoint, id);
 
+    var scope;
+    if (typeof global !== 'undefined') {
+        scope = global;
+    } else if (typeof window !== 'undefined') {
+        scope = window;
+    } else  {
+        scope = {};
+    }
+    registerMethods(scope, debuggableScope);
     if (frameworkCode) {
         evalFramework(frameworkCode);
     } else {
@@ -106,9 +110,36 @@ var debuggableScope = {
     instanceMap: true,
     callNative: true,
     callJS: true,
+    __logger (scopeFunction, flag, message) {
+        hideNativeQRCode();
+        printLog(flag, message);
+    },
+    __connect (scopeFunction, message) {
+        if (message === 'framework') {
+            generateNativeQRCode();
+        } else if (message === 'renderer') {
+            hideNativeQRCode();
+        }
+    },
     setEnvironment (scopeFunction, env) {
-        global.WXEnvironment = env
+        global.WXEnvironment = env;
+        var deviceLevel = env.logLevel;
+        $("#device-level-" + deviceLevel).attr('checked', 'checked');
+        $("#device-level-" + deviceLevel).parent().addClass('active');
     }
+}
+
+function printLog(flag, message) {
+    var div, html;
+    if (flag == null) {
+        flag = 'info';
+    }
+
+    html = $("<div/>").text(message).html();
+    $("#logger").append("<p class='" + flag + " log'>" + html + "</p>");
+    div = $("#logger")[0];
+    return div.scrollTop = div.scrollHeight;
+    //console.log(flag, message);
 }
 
 export function evalFramework(frameworkCode) {
@@ -134,4 +165,28 @@ export function evalRenderer(rendererCode) {
         scope = global || window;
     }
     registerMethods(scope, debuggableScope);
+}
+
+export function setLogLevel(logLevel) {
+    wsc.send('setLogLevel', [logLevel]);
+}
+
+function generateNativeQRCode() {
+    var host = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`;
+    const ID = location.hash.replace('#', '') || uuid.v1();
+    var rendererUrl = WebsocketClient.getServerUrl('renderer', ID);
+    var qrUrl = `http://weex-remote-debugger?_wx_debug=${encodeURIComponent(rendererUrl)}`;
+
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'flex';
+
+    var $qrcode = document.querySelector('#qrcode');
+    var el = qrcode(qrUrl);
+    $qrcode.innerHTML = '';
+    $qrcode.appendChild(el);
+}
+
+function hideNativeQRCode() {
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'none';
 }

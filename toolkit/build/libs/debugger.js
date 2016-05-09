@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.logger = exports.wsc = undefined;
+exports.wsc = undefined;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -20,14 +20,15 @@ var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 exports.init = init;
 exports.evalFramework = evalFramework;
 exports.evalRenderer = evalRenderer;
+exports.setLogLevel = setLogLevel;
 
 var _client = require('./client');
 
 var _client2 = _interopRequireDefault(_client);
 
-var _logger = require('./logger');
+var _qrcode = require('./qrcode');
 
-var _logger2 = _interopRequireDefault(_logger);
+var _qrcode2 = _interopRequireDefault(_qrcode);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36,12 +37,10 @@ function debuggableDecorator(target, name, descriptor) {
     var fn = descriptor.value;
 
     descriptor.value = function () {
-        logger.log('proxy ' + name, [].concat(Array.prototype.slice.call(arguments)));
         wsc.send(name, [].concat(Array.prototype.slice.call(arguments)));
     };
 
     wsc.on(name, function (args) {
-        logger.log('adapt ' + name, args);
         fn && fn.apply(undefined, (0, _toConsumableArray3.default)(args));
     });
 
@@ -59,7 +58,6 @@ function defineProperty(scope, name, descriptor) {
     (0, _defineProperty2.default)(scope, name, descriptor);
 }
 
-var instanceId;
 function registerMethods(scope, debuggableScope) {
     for (var methodName in debuggableScope) {
         var methodFunction = debuggableScope[methodName];
@@ -84,11 +82,18 @@ function registerMethods(scope, debuggableScope) {
 }
 
 var wsc = exports.wsc = undefined;
-var logger = exports.logger = undefined;
 function init(endpoint, id, frameworkCode, rendererCode) {
-    exports.logger = logger = new _logger2.default(endpoint, id);
     exports.wsc = wsc = new _client2.default(endpoint, id);
 
+    var scope;
+    if (typeof global !== 'undefined') {
+        scope = global;
+    } else if (typeof window !== 'undefined') {
+        scope = window;
+    } else {
+        scope = {};
+    }
+    registerMethods(scope, debuggableScope);
     if (frameworkCode) {
         evalFramework(frameworkCode);
     } else {
@@ -141,10 +146,37 @@ var debuggableScope = {
     instanceMap: true,
     callNative: true,
     callJS: true,
+    __logger: function __logger(scopeFunction, flag, message) {
+        hideNativeQRCode();
+        printLog(flag, message);
+    },
+    __connect: function __connect(scopeFunction, message) {
+        if (message === 'framework') {
+            generateNativeQRCode();
+        } else if (message === 'renderer') {
+            hideNativeQRCode();
+        }
+    },
     setEnvironment: function setEnvironment(scopeFunction, env) {
         global.WXEnvironment = env;
+        var deviceLevel = env.logLevel;
+        $("#device-level-" + deviceLevel).attr('checked', 'checked');
+        $("#device-level-" + deviceLevel).parent().addClass('active');
     }
 };
+
+function printLog(flag, message) {
+    var div, html;
+    if (flag == null) {
+        flag = 'info';
+    }
+
+    html = $("<div/>").text(message).html();
+    $("#logger").append("<p class='" + flag + " log'>" + html + "</p>");
+    div = $("#logger")[0];
+    return div.scrollTop = div.scrollHeight;
+    //console.log(flag, message);
+}
 
 function evalFramework(frameworkCode) {
     var scope;
@@ -168,4 +200,28 @@ function evalRenderer(rendererCode) {
         scope = global || window;
     }
     registerMethods(scope, debuggableScope);
+}
+
+function setLogLevel(logLevel) {
+    wsc.send('setLogLevel', [logLevel]);
+}
+
+function generateNativeQRCode() {
+    var host = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    var ID = location.hash.replace('#', '') || uuid.v1();
+    var rendererUrl = _client2.default.getServerUrl('renderer', ID);
+    var qrUrl = 'http://weex-remote-debugger?_wx_debug=' + encodeURIComponent(rendererUrl);
+
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'flex';
+
+    var $qrcode = document.querySelector('#qrcode');
+    var el = (0, _qrcode2.default)(qrUrl);
+    $qrcode.innerHTML = '';
+    $qrcode.appendChild(el);
+}
+
+function hideNativeQRCode() {
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'none';
 }
