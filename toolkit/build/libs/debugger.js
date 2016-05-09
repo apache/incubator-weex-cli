@@ -107,6 +107,12 @@ function init(endpoint, id, frameworkCode, rendererCode) {
 }
 
 function evalCode(code) {
+
+    //var e = document.createElement('script');
+    //e.type = 'text/javascript';
+    //e.src  = 'data:text/javascript;charset=utf-8,'+escape(code);
+    //document.body.appendChild(e);
+
     var scope;
     if (typeof global !== 'undefined') {
         scope = global;
@@ -141,10 +147,29 @@ var debuggableScope = {
     instanceMap: true,
     callNative: true,
     callJS: true,
+    __logger: function __logger(scopeFunction, flag, message) {
+        printLog(flag, message);
+    },
     setEnvironment: function setEnvironment(scopeFunction, env) {
         global.WXEnvironment = env;
+        var deviceLevel = env.logLevel;
+        $("#device-level-" + deviceLevel).attr('checked', 'checked');
+        $("#device-level-" + deviceLevel).parent().addClass('active');
     }
 };
+
+function printLog(flag, message) {
+    var div, html;
+    if (flag == null) {
+        flag = 'info';
+    }
+
+    html = $("<div/>").text(message).html();
+    $("#logger").append("<p class='" + flag + " log'>" + html + "</p>");
+    div = $("#logger")[0];
+    return div.scrollTop = div.scrollHeight;
+    //console.log(flag, message);
+}
 
 function evalFramework(frameworkCode) {
     var scope;

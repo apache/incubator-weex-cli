@@ -62,6 +62,9 @@ app.use(r.get('/', DS.index));
 var appStatic = koa();
 appStatic.use(staticServer("build"));
 app.use(mount('/static', appStatic));
+var appPage = koa();
+appPage.use(staticServer("page"));
+app.use(mount('/page', appPage));
 
 function WSLogger(ws, id, endpoint) {
     this.log = function (message) {

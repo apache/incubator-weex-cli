@@ -1,13 +1,5 @@
 'use strict';
 
-var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
-
-var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
-
-var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
-
-var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
-
 var _stringify = require('babel-runtime/core-js/json/stringify');
 
 var _stringify2 = _interopRequireDefault(_stringify);
@@ -114,46 +106,6 @@ function generateLogArgs(args, expand) {
     }).join('<span class="arg_separator">,</span>');
 }
 
-function generateLogLine(type, name, args) {
-    var div = document.createElement('div');
-    div.className = 'line';
-
-    div.innerHTML = '\n        <span class="icon ' + type + '"></span>\n        <span class="function_name">' + name + '</span>\n        <span class="l_bracket">(</span>\n        ' + generateLogArgs(args, true) + '\n        <span class="r_bracket">)</span>\n    ';
-
-    return div;
-}
-
-function appendLog(message) {
-    var data;
-    try {
-        data = JSON.parse(message);
-    } catch (e) {
-        data = message;
-    }
-
-    var _data$0$split = data[0].split(' ');
-
-    var _data$0$split2 = (0, _slicedToArray3.default)(_data$0$split, 2);
-
-    var type = _data$0$split2[0];
-    var name = _data$0$split2[1];
-
-    var args = [].concat((0, _toConsumableArray3.default)(data[1]));
-    var $line = generateLogLine(type, name, args);
-
-    var $logs = document.querySelector('#logs');
-    var $lines = $logs.querySelector('.lines');
-    $lines.appendChild($line);
-    $logs.scrollTop = $lines.getBoundingClientRect().height;
-}
-
-function clearLog() {
-    var $lines = document.querySelector('#logs .lines');
-    $lines.innerHTML = '';
-}
-
-window.clearLog = clearLog;
-
 document.addEventListener('DOMContentLoaded', function () {
     location.hash = ID;
 
@@ -169,7 +121,39 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideNativeQRCode();
             }
         } else if (id === ID && endpoint === ENDPOINT) {
-            appendLog(message);
+            //appendLog(message);
+        }
+    });
+
+    $("#clear").on('click', function () {
+        $("#logger").html("");
+        return false;
+    });
+    $("#level li a").on('click', function (e) {
+        var level;
+        level = $(this).data("level");
+        if (level) {
+            console.log("set filter to " + level);
+            $("#level li").removeClass("active");
+            $(this).parent().addClass("active").addClass("level-" + level);
+            $("#logger").removeClass("level-error level-warn level-info level-debug level-verbose level-all");
+            $("#logger").addClass("level-" + level);
+        }
+        return false;
+    });
+
+    $("#device-level label").on('click', function (e) {
+        var level = $().data("level");
+        console.log("set device level to " + level);
+        $("#device-level label").removeClass("active");
+        $(this).addClass("active").addClass("level-" + level);
+    });
+    $("#debug-js label").on('click', function (e) {
+        var checked = $("#debug-js input")[0].checked;
+        if (!checked) {
+            $("#debug-js label").removeClass("active");
+        } else {
+            $("#debug-js label").addClass("active");
         }
     });
 });
