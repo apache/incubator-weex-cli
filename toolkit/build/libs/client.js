@@ -22,10 +22,10 @@ function WebsocketClient(endpoint, id) {
 
     var emitter = new _events2.default();
 
-    this.send = function (name, value) {
+    this.send = function (method, args) {
         var message = {
-            name: name,
-            value: value
+            method: method,
+            arguments: args
         };
 
         websocket.send((0, _stringify2.default)(message));

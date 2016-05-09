@@ -1,9 +1,5 @@
 'use strict';
 
-var _stringify = require('babel-runtime/core-js/json/stringify');
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
 var _uuid = require('uuid');
 
 var _uuid2 = _interopRequireDefault(_uuid);
@@ -49,63 +45,6 @@ function hideNativeQRCode() {
     $slogan.style.display = 'none';
 }
 
-function typof(v) {
-    var s = Object.prototype.toString.call(v);
-    return s.substring(8, s.length - 1);
-}
-
-function generateLogArgs(args, expand) {
-    return args.map(function generateLogArg(arg) {
-        var type = typof(arg);
-        var lcType = type.toLowerCase();
-        var html;
-        switch (lcType) {
-            case 'undefined':
-            case 'null':
-                html = '<span class="arg ' + lcType + '_arg">' + lcType + '</span>';
-                break;
-            case 'number':
-            case 'boolean':
-                html = '<span class="arg ' + lcType + '_arg">' + arg.toString() + '</span>';
-                break;
-            case 'string':
-                var originArg;
-                if (arg.length > 100) {
-                    originArg = arg;
-                    arg = arg.substr(0, 50) + '...' + arg.substr(arg.length - 50);
-                    html = '<a class="arg ' + lcType + '_arg"\n                                title="' + originArg.replace(/"/g, '&quot;') + '" onclick="alert(this.title)">\n                                <span class="string_quote">"</span>' + arg + '<span class="string_quote">"</span>\n                            </a>';
-                } else {
-                    html = '<span class="arg ' + lcType + '_arg">"' + arg + '"</span>';
-                }
-                break;
-            case 'array':
-                if (!!expand) {
-                    html = '\n                        <span class="arg l_square_bracket">[</span>\n                        ' + generateLogArgs(arg, true) + '\n                        <span class="arg r_square_bracket">]</span>\n                    ';
-                    break;
-                } else {
-                    html = '<a class="arg ' + lcType + '_arg"\n                                title="' + (0, _stringify2.default)(arg).replace(/"/g, '&quot;') + '">\n                                [object ' + type + ']\n                            </a>';
-                    break;
-                }
-            case 'object':
-            default:
-                if (!!expand) {
-                    html = '<span class="arg l_brace">{</span>';
-                    var html1 = [];
-                    for (var key in arg) {
-                        html1.push('\n                            <span class="arg object_key">"' + key + '"</span>\n                            <span class="key_separator">:</span>\n                            ' + generateLogArg(arg[key]) + '\n                        ');
-                    }
-                    html += html1.join('<span class="arg_separator">,</span>');
-                    html += '<span class="arg r_brace">}</span>';
-                    break;
-                } else {
-                    html = '<a class="arg ' + lcType + '_arg"\n                                title="' + (0, _stringify2.default)(arg).replace(/"/g, '&quot;') + '">\n                                [object ' + type + ']\n                            </a>';
-                    break;
-                }
-        }
-        return html;
-    }).join('<span class="arg_separator">,</span>');
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     location.hash = ID;
 
@@ -143,8 +82,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $("#device-level label").on('click', function (e) {
-        var level = $().data("level");
+        var level = $(this).data("level");
         console.log("set device level to " + level);
+        (0, _debugger.setLogLevel)(level);
         $("#device-level label").removeClass("active");
         $(this).addClass("active").addClass("level-" + level);
     });

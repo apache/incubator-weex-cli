@@ -29,7 +29,6 @@ function defineProperty(scope, name, descriptor) {
     Object.defineProperty(scope, name, descriptor);
 }
 
-var instanceId;
 function registerMethods(scope, debuggableScope) {
     for (let methodName in debuggableScope) {
         let methodFunction = debuggableScope[methodName];
@@ -59,6 +58,15 @@ export function init(endpoint, id, frameworkCode, rendererCode) {
     logger = new WebsocketLogger(endpoint, id);
     wsc = new WebsocketClient(endpoint, id);
 
+    var scope;
+    if (typeof global !== 'undefined') {
+        scope = global;
+    } else if (typeof window !== 'undefined') {
+        scope = window;
+    } else  {
+        scope = {};
+    }
+    registerMethods(scope, debuggableScope);
     if (frameworkCode) {
         evalFramework(frameworkCode);
     } else {
@@ -77,12 +85,6 @@ export function init(endpoint, id, frameworkCode, rendererCode) {
 }
 
 function evalCode(code) {
-
-    //var e = document.createElement('script');
-    //e.type = 'text/javascript';
-    //e.src  = 'data:text/javascript;charset=utf-8,'+escape(code);
-    //document.body.appendChild(e);
-
     var scope;
     if (typeof global !== 'undefined') {
         scope = global;
@@ -159,4 +161,8 @@ export function evalRenderer(rendererCode) {
         scope = global || window;
     }
     registerMethods(scope, debuggableScope);
+}
+
+export function setLogLevel(logLevel) {
+    wsc.send('setLogLevel', [logLevel]);
 }

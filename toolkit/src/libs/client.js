@@ -6,11 +6,11 @@ export default function WebsocketClient(endpoint, id) {
 
     var emitter = new EventEmitter();
 
-    this.send = function(name, value) {
+    this.send = function(method, args) {
         var message = {
-            name: name,
-            value: value
-        }
+            method: method,
+            arguments: args
+        };
         
         websocket.send(JSON.stringify(message));
     }

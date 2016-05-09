@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import WebsocketClient from './libs/client';
 import WebscoketLogger from './libs/logger';
-import {init, logger} from './libs/debugger';
+import {init, setLogLevel, logger} from './libs/debugger';
 import qrcode from './libs/qrcode';
 
 const ENDPOINT = 'framework';
@@ -27,80 +27,6 @@ function generateNativeQRCode() {
 function hideNativeQRCode() {
     var $slogan = document.querySelector('#slogan');
     $slogan.style.display = 'none';
-}
-
-function typof(v) {
-  var s = Object.prototype.toString.call(v)
-  return s.substring(8, s.length - 1)
-}
-
-function generateLogArgs(args, expand) {
-    return args.map(function generateLogArg(arg) {
-        var type = typof(arg);
-        var lcType = type.toLowerCase();
-        var html;
-        switch (lcType) {
-            case 'undefined':
-            case 'null':
-                html = `<span class="arg ${lcType}_arg">${lcType}</span>`;
-                break;
-            case 'number':
-            case 'boolean':
-                html = `<span class="arg ${lcType}_arg">${arg.toString()}</span>`;
-                break;
-            case 'string':
-                var originArg;
-                if (arg.length > 100) {
-                    originArg = arg;
-                    arg = arg.substr(0, 50) + '...' + arg.substr(arg.length - 50)
-                    html = `<a class="arg ${lcType}_arg"
-                                title="${originArg.replace(/"/g, '&quot;')}" onclick="alert(this.title)">
-                                <span class="string_quote">"</span>${arg}<span class="string_quote">"</span>
-                            </a>`;
-                } else {
-                    html = `<span class="arg ${lcType}_arg">"${arg}"</span>`;
-                }
-                break;
-            case 'array':
-                if (!!expand) {
-                    html = `
-                        <span class="arg l_square_bracket">[</span>
-                        ${generateLogArgs(arg, true)}
-                        <span class="arg r_square_bracket">]</span>
-                    `;
-                    break;
-                } else {
-                    html = `<a class="arg ${lcType}_arg"
-                                title="${JSON.stringify(arg).replace(/"/g, '&quot;')}">
-                                [object ${type}]
-                            </a>`;
-                    break;
-                }
-            case 'object':
-            default:
-                if (!!expand) {
-                    html = '<span class="arg l_brace">{</span>';
-                    let html1 = []
-                    for (let key in arg) {
-                        html1.push(`
-                            <span class="arg object_key">"${key}"</span>
-                            <span class="key_separator">:</span>
-                            ${generateLogArg(arg[key])}
-                        `)
-                    }
-                    html += html1.join('<span class="arg_separator">,</span>');
-                    html += '<span class="arg r_brace">}</span>';
-                    break;
-                } else {
-                    html = `<a class="arg ${lcType}_arg"
-                                title="${JSON.stringify(arg).replace(/"/g, '&quot;')}">
-                                [object ${type}]
-                            </a>`;
-                    break;
-                }
-        }
-        return html;
-    }).join('<span class="arg_separator">,</span>');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -137,8 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     $("#device-level label").on('click', function(e) {
-        var level = $().data("level");
+        var level = $(this).data("level");
         console.log("set device level to " + level);
+        setLogLevel(level);
         $("#device-level label").removeClass("active");
         $(this).addClass("active").addClass("level-" + level);
     });

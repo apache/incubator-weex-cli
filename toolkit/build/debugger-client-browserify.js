@@ -1,10 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _stringify = require('babel-runtime/core-js/json/stringify');
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
 var _uuid = require('uuid');
 
 var _uuid2 = _interopRequireDefault(_uuid);
@@ -50,63 +46,6 @@ function hideNativeQRCode() {
     $slogan.style.display = 'none';
 }
 
-function typof(v) {
-    var s = Object.prototype.toString.call(v);
-    return s.substring(8, s.length - 1);
-}
-
-function generateLogArgs(args, expand) {
-    return args.map(function generateLogArg(arg) {
-        var type = typof(arg);
-        var lcType = type.toLowerCase();
-        var html;
-        switch (lcType) {
-            case 'undefined':
-            case 'null':
-                html = '<span class="arg ' + lcType + '_arg">' + lcType + '</span>';
-                break;
-            case 'number':
-            case 'boolean':
-                html = '<span class="arg ' + lcType + '_arg">' + arg.toString() + '</span>';
-                break;
-            case 'string':
-                var originArg;
-                if (arg.length > 100) {
-                    originArg = arg;
-                    arg = arg.substr(0, 50) + '...' + arg.substr(arg.length - 50);
-                    html = '<a class="arg ' + lcType + '_arg"\n                                title="' + originArg.replace(/"/g, '&quot;') + '" onclick="alert(this.title)">\n                                <span class="string_quote">"</span>' + arg + '<span class="string_quote">"</span>\n                            </a>';
-                } else {
-                    html = '<span class="arg ' + lcType + '_arg">"' + arg + '"</span>';
-                }
-                break;
-            case 'array':
-                if (!!expand) {
-                    html = '\n                        <span class="arg l_square_bracket">[</span>\n                        ' + generateLogArgs(arg, true) + '\n                        <span class="arg r_square_bracket">]</span>\n                    ';
-                    break;
-                } else {
-                    html = '<a class="arg ' + lcType + '_arg"\n                                title="' + (0, _stringify2.default)(arg).replace(/"/g, '&quot;') + '">\n                                [object ' + type + ']\n                            </a>';
-                    break;
-                }
-            case 'object':
-            default:
-                if (!!expand) {
-                    html = '<span class="arg l_brace">{</span>';
-                    var html1 = [];
-                    for (var key in arg) {
-                        html1.push('\n                            <span class="arg object_key">"' + key + '"</span>\n                            <span class="key_separator">:</span>\n                            ' + generateLogArg(arg[key]) + '\n                        ');
-                    }
-                    html += html1.join('<span class="arg_separator">,</span>');
-                    html += '<span class="arg r_brace">}</span>';
-                    break;
-                } else {
-                    html = '<a class="arg ' + lcType + '_arg"\n                                title="' + (0, _stringify2.default)(arg).replace(/"/g, '&quot;') + '">\n                                [object ' + type + ']\n                            </a>';
-                    break;
-                }
-        }
-        return html;
-    }).join('<span class="arg_separator">,</span>');
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     location.hash = ID;
 
@@ -144,8 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $("#device-level label").on('click', function (e) {
-        var level = $().data("level");
+        var level = $(this).data("level");
         console.log("set device level to " + level);
+        (0, _debugger.setLogLevel)(level);
         $("#device-level label").removeClass("active");
         $(this).addClass("active").addClass("level-" + level);
     });
@@ -158,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-},{"./libs/client":2,"./libs/debugger":3,"./libs/logger":4,"./libs/qrcode":5,"babel-runtime/core-js/json/stringify":7,"uuid":91}],2:[function(require,module,exports){
+},{"./libs/client":2,"./libs/debugger":3,"./libs/logger":4,"./libs/qrcode":5,"uuid":91}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -183,10 +123,10 @@ function WebsocketClient(endpoint, id) {
 
     var emitter = new _events2.default();
 
-    this.send = function (name, value) {
+    this.send = function (method, args) {
         var message = {
-            name: name,
-            value: value
+            method: method,
+            arguments: args
         };
 
         websocket.send((0, _stringify2.default)(message));
@@ -243,6 +183,7 @@ var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 exports.init = init;
 exports.evalFramework = evalFramework;
 exports.evalRenderer = evalRenderer;
+exports.setLogLevel = setLogLevel;
 
 var _client = require('./client');
 
@@ -282,7 +223,6 @@ function defineProperty(scope, name, descriptor) {
     (0, _defineProperty2.default)(scope, name, descriptor);
 }
 
-var instanceId;
 function registerMethods(scope, debuggableScope) {
     for (var methodName in debuggableScope) {
         var methodFunction = debuggableScope[methodName];
@@ -312,6 +252,15 @@ function init(endpoint, id, frameworkCode, rendererCode) {
     exports.logger = logger = new _logger2.default(endpoint, id);
     exports.wsc = wsc = new _client2.default(endpoint, id);
 
+    var scope;
+    if (typeof global !== 'undefined') {
+        scope = global;
+    } else if (typeof window !== 'undefined') {
+        scope = window;
+    } else {
+        scope = {};
+    }
+    registerMethods(scope, debuggableScope);
     if (frameworkCode) {
         evalFramework(frameworkCode);
     } else {
@@ -330,12 +279,6 @@ function init(endpoint, id, frameworkCode, rendererCode) {
 }
 
 function evalCode(code) {
-
-    //var e = document.createElement('script');
-    //e.type = 'text/javascript';
-    //e.src  = 'data:text/javascript;charset=utf-8,'+escape(code);
-    //document.body.appendChild(e);
-
     var scope;
     if (typeof global !== 'undefined') {
         scope = global;
@@ -416,6 +359,10 @@ function evalRenderer(rendererCode) {
         scope = global || window;
     }
     registerMethods(scope, debuggableScope);
+}
+
+function setLogLevel(logLevel) {
+    wsc.send('setLogLevel', [logLevel]);
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./client":2,"./logger":4,"babel-runtime/core-js/object/define-property":8,"babel-runtime/helpers/toConsumableArray":11,"babel-runtime/helpers/typeof":12}],4:[function(require,module,exports){

@@ -20,6 +20,7 @@ var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 exports.init = init;
 exports.evalFramework = evalFramework;
 exports.evalRenderer = evalRenderer;
+exports.setLogLevel = setLogLevel;
 
 var _client = require('./client');
 
@@ -59,7 +60,6 @@ function defineProperty(scope, name, descriptor) {
     (0, _defineProperty2.default)(scope, name, descriptor);
 }
 
-var instanceId;
 function registerMethods(scope, debuggableScope) {
     for (var methodName in debuggableScope) {
         var methodFunction = debuggableScope[methodName];
@@ -89,6 +89,15 @@ function init(endpoint, id, frameworkCode, rendererCode) {
     exports.logger = logger = new _logger2.default(endpoint, id);
     exports.wsc = wsc = new _client2.default(endpoint, id);
 
+    var scope;
+    if (typeof global !== 'undefined') {
+        scope = global;
+    } else if (typeof window !== 'undefined') {
+        scope = window;
+    } else {
+        scope = {};
+    }
+    registerMethods(scope, debuggableScope);
     if (frameworkCode) {
         evalFramework(frameworkCode);
     } else {
@@ -107,12 +116,6 @@ function init(endpoint, id, frameworkCode, rendererCode) {
 }
 
 function evalCode(code) {
-
-    //var e = document.createElement('script');
-    //e.type = 'text/javascript';
-    //e.src  = 'data:text/javascript;charset=utf-8,'+escape(code);
-    //document.body.appendChild(e);
-
     var scope;
     if (typeof global !== 'undefined') {
         scope = global;
@@ -193,4 +196,8 @@ function evalRenderer(rendererCode) {
         scope = global || window;
     }
     registerMethods(scope, debuggableScope);
+}
+
+function setLogLevel(logLevel) {
+    wsc.send('setLogLevel', [logLevel]);
 }
