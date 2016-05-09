@@ -28,13 +28,16 @@ $npm install -g weex-toolkit
 $weex foo/bar/input_path  [options]
 
 Options:
-  --qr     display QR code for native runtime, default action          
+  --qr     display QR code for native runtime, **default action**
   -o       transform weex we file to JS Bundle, output path must specified
            (single JS bundle file or dir)        
   --watch  using with -o , watch input path , auto run transform if change
            happen
   -s       start a http file server, weex .we file will be transforme to JS
            bundle on the server , specify local root path using the option
+  --port    http listening port number ,default is 8081            
+  --wsport  websocket listening port number ,default is 8082
+  --version show version of weex toolkit 
   --help   Show help                                                   
 ```
 
@@ -44,6 +47,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160509(0.0.30) : add --port &  --wsport options , show encoding url when QR displayed
 * 160506(0.0.29) : improve --watch & -s feature ; fixing hot-reload with playground App.
 * 160505(0.0.25) : support batch transform  & option --watch added
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
