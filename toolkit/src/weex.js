@@ -14,12 +14,15 @@ const fs = require('fs'),
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server');
 
-
+const VERSION = require('../package.json').version
 const WEEX_FILE_EXT = "we"
 const WEEX_TRANSFORM_TMP = "weex_tmp"
 const H5_Render_DIR = "h5_render"
-const PREVIEW_SERVER_PORT = "8081"
-const WEBSOCKET_PORT = "8082"
+const NO_PORT_SPECIFIED =  -1
+const DEFAULT_HTTP_PORT  = "8081"
+const DEFAULT_WEBSOCKET_PORT = "8082"
+var HTTP_PORT = NO_PORT_SPECIFIED         //will update when argvProcess
+var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  //will update when argvProcess
 const NO_JSBUNDLE_OUTPUT = "no JSBundle output"
 
 class Previewer{
@@ -140,12 +143,14 @@ class Previewer{
         }
         
         let server = httpServer.createServer(options)
-        server.listen(PREVIEW_SERVER_PORT, "0.0.0.0", function () {
-            console.log((new Date()) + `http  is listening on port ${PREVIEW_SERVER_PORT}`)
+        let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT
+        //console.log(`http port: ${port}`)        
+        server.listen(port, "0.0.0.0", function () {
+            console.log((new Date()) + `http  is listening on port ${port}`)
 
             if (self.transformServerPath){
                 let IP =  nwUtils.getPublicIP()                
-                console.log(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${IP}:${PREVIEW_SERVER_PORT}/`  )
+                console.log(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${IP}:${port}/`  )
                 return 
             }
             
@@ -155,7 +160,7 @@ class Previewer{
 	            return
             }
             
-            var previewUrl = `http://${self.host}:${PREVIEW_SERVER_PORT}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/?hot-reload_controller&page=${fileName}&loader=xhr`
+            var previewUrl = `http://${self.host}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/?hot-reload_controller&page=${fileName}&loader=xhr`
             if (self.shouldOpenBrowser){
                 opener(previewUrl)
             }else{
@@ -177,28 +182,24 @@ class Previewer{
     }
 
     showQR(fileName){
-        let host = this.host
-        if (this.host == "127.0.0.1"){  // TODO: update to use nw-utils.js 
-	        let ifaces = os.networkInterfaces()
-	        let address = _.flatten(_.values(ifaces))
-	        address = _.filter( address , (ifObj) =>  ( (ifObj.family == "IPv4") && (ifObj.address != "127.0.0.1") ) )
-	        if (address.length > 0 ){
-	            host = address[0].address
-	        }
-        }
-        let jsBundleURL = `http://${host}:${PREVIEW_SERVER_PORT}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
-        console.log(`listen host is ${host} , you can change it by -h option`)
+        let IP =  nwUtils.getPublicIP()
+        let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
+        let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
+        console.log(`following QR encoding url\n${jsBundleURL}`)
         qrcode.generate(jsBundleURL)
-        console.log("please access https://github.com/alibaba/weex to download Weex Playground app")
+        console.log("please access https://github.com/alibaba/weex to download Weex Playground app for scanning")
     }
 
     startWebSocket(){
         let server = http.createServer(function(request, response) {
             response.writeHead(404) 
             response.end() 
-        }) 
-        server.listen(WEBSOCKET_PORT, function() {
-            console.log((new Date()) + `WebSocket  is listening on port ${WEBSOCKET_PORT}`) 
+        })
+        let port = (WEBSOCKET_PORT == NO_PORT_SPECIFIED) ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT
+
+        //console.log(`ws port: ${port}`)
+        server.listen(port, function() {
+            console.log((new Date()) + `WebSocket  is listening on port ${port}`) 
         }) 
         let wsServer = new WebSocketServer({
             httpServer: server,
@@ -277,6 +278,7 @@ var argv = yargs
         .describe('qr', 'display QR code for native runtime, default action')
         .option('h' , {demand:false})
         .default('h',"127.0.0.1")
+        .default('h',"127.0.0.1")
         .option('o' , {demand:false})
         .default('o',NO_JSBUNDLE_OUTPUT)
         .describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)')
@@ -285,6 +287,12 @@ var argv = yargs
         .option('s' , {demand:false})
         .default('s', null)
         .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
+        .option('port' , {demand:false})
+        .default('port',NO_PORT_SPECIFIED)
+        .describe('port', 'http listening port number ,default is 8081')
+        .option('wsport' , {demand:false})
+        .default('wsport',NO_PORT_SPECIFIED)
+        .describe('wsport', 'websocket listening port number ,default is 8082')    
         .help('help')
         .argv  ;
 
@@ -297,7 +305,7 @@ var argv = yargs
     }
 
     if (argv.version){
-        console.log(require('../package.json').version)
+        console.log(VERSION)
         return
     }
 
@@ -332,6 +340,9 @@ var argv = yargs
     }
     var transformWatch =  argv.watch
 
+
+    HTTP_PORT = argv.port
+    WEBSOCKET_PORT = argv.wsport
 
     new Previewer(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR ,  transformServerPath)
 
