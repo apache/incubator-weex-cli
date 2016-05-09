@@ -1,49 +1,14 @@
 import uuid from 'uuid';
 import WebsocketClient from './libs/client';
-import WebscoketLogger from './libs/logger';
-import {init, setLogLevel, logger} from './libs/debugger';
-import qrcode from './libs/qrcode';
+import {init, setLogLevel, wsc} from './libs/debugger';
 
 const ENDPOINT = 'framework';
 const ID = location.hash.replace('#', '') || uuid.v1();
 const hasFrameworkCode = !!window.createInstance;
 init(ENDPOINT, ID, hasFrameworkCode);
 
-function generateNativeQRCode() {
-    var host = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`;
-    var rendererUrl = WebsocketClient.getServerUrl('renderer', ID);
-    var loggerUrl = WebscoketLogger.getServerUrl('renderer', ID);
-    var qrUrl = `http://weex-remote-debugger?_wx_debug=${encodeURIComponent(rendererUrl)}`
-
-    var $slogan = document.querySelector('#slogan');
-    $slogan.style.display = 'flex';
-
-    var $qrcode = document.querySelector('#qrcode');
-    var el = qrcode(qrUrl);
-    $qrcode.innerHTML = '';
-    $qrcode.appendChild(el);
-}
-
-function hideNativeQRCode() {
-    var $slogan = document.querySelector('#slogan');
-    $slogan.style.display = 'none';
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     location.hash = ID;
-
-    logger.on(function(event) {
-        var {id, endpoint, message} = event;
-        if (id === ID && endpoint === 'server') {
-            if (message === 'framework connected') {
-                generateNativeQRCode();
-            } else if (message === 'renderer connected') {
-                hideNativeQRCode();
-            }
-        } else if (id === ID && endpoint === ENDPOINT) {
-            //appendLog(message);
-        }
-    });
 
     $("#clear").on('click', function() {
         $("#logger").html("");

@@ -1,17 +1,15 @@
 import WebsocketClient from './client';
-import WebsocketLogger from './logger';
+import qrcode from './qrcode';
 
 function debuggableDecorator(target, name, descriptor) {
     descriptor = descriptor
     var fn = descriptor.value;
 
     descriptor.value = function() {
-        logger.log(`proxy ${name}`, [...arguments]);
         wsc.send(name, [...arguments]);
-    }
+    };
 
     wsc.on(name, function(args) {
-        logger.log(`adapt ${name}`, args);
         fn && fn(...args);
     });
 
@@ -53,9 +51,7 @@ function registerMethods(scope, debuggableScope) {
 }
 
 export var wsc;
-export var logger;
 export function init(endpoint, id, frameworkCode, rendererCode) {
-    logger = new WebsocketLogger(endpoint, id);
     wsc = new WebsocketClient(endpoint, id);
 
     var scope;
@@ -115,7 +111,15 @@ var debuggableScope = {
     callNative: true,
     callJS: true,
     __logger (scopeFunction, flag, message) {
+        hideNativeQRCode();
         printLog(flag, message);
+    },
+    __connect (scopeFunction, message) {
+        if (message === 'framework') {
+            generateNativeQRCode();
+        } else if (message === 'renderer') {
+            hideNativeQRCode();
+        }
     },
     setEnvironment (scopeFunction, env) {
         global.WXEnvironment = env;
@@ -165,4 +169,24 @@ export function evalRenderer(rendererCode) {
 
 export function setLogLevel(logLevel) {
     wsc.send('setLogLevel', [logLevel]);
+}
+
+function generateNativeQRCode() {
+    var host = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`;
+    const ID = location.hash.replace('#', '') || uuid.v1();
+    var rendererUrl = WebsocketClient.getServerUrl('renderer', ID);
+    var qrUrl = `http://weex-remote-debugger?_wx_debug=${encodeURIComponent(rendererUrl)}`;
+
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'flex';
+
+    var $qrcode = document.querySelector('#qrcode');
+    var el = qrcode(qrUrl);
+    $qrcode.innerHTML = '';
+    $qrcode.appendChild(el);
+}
+
+function hideNativeQRCode() {
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'none';
 }

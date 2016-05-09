@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.logger = exports.wsc = undefined;
+exports.wsc = undefined;
 
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
@@ -26,9 +26,9 @@ var _client = require('./client');
 
 var _client2 = _interopRequireDefault(_client);
 
-var _logger = require('./logger');
+var _qrcode = require('./qrcode');
 
-var _logger2 = _interopRequireDefault(_logger);
+var _qrcode2 = _interopRequireDefault(_qrcode);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,12 +37,10 @@ function debuggableDecorator(target, name, descriptor) {
     var fn = descriptor.value;
 
     descriptor.value = function () {
-        logger.log('proxy ' + name, [].concat(Array.prototype.slice.call(arguments)));
         wsc.send(name, [].concat(Array.prototype.slice.call(arguments)));
     };
 
     wsc.on(name, function (args) {
-        logger.log('adapt ' + name, args);
         fn && fn.apply(undefined, (0, _toConsumableArray3.default)(args));
     });
 
@@ -84,9 +82,7 @@ function registerMethods(scope, debuggableScope) {
 }
 
 var wsc = exports.wsc = undefined;
-var logger = exports.logger = undefined;
 function init(endpoint, id, frameworkCode, rendererCode) {
-    exports.logger = logger = new _logger2.default(endpoint, id);
     exports.wsc = wsc = new _client2.default(endpoint, id);
 
     var scope;
@@ -151,7 +147,15 @@ var debuggableScope = {
     callNative: true,
     callJS: true,
     __logger: function __logger(scopeFunction, flag, message) {
+        hideNativeQRCode();
         printLog(flag, message);
+    },
+    __connect: function __connect(scopeFunction, message) {
+        if (message === 'framework') {
+            generateNativeQRCode();
+        } else if (message === 'renderer') {
+            hideNativeQRCode();
+        }
     },
     setEnvironment: function setEnvironment(scopeFunction, env) {
         global.WXEnvironment = env;
@@ -200,4 +204,24 @@ function evalRenderer(rendererCode) {
 
 function setLogLevel(logLevel) {
     wsc.send('setLogLevel', [logLevel]);
+}
+
+function generateNativeQRCode() {
+    var host = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    var ID = location.hash.replace('#', '') || uuid.v1();
+    var rendererUrl = _client2.default.getServerUrl('renderer', ID);
+    var qrUrl = 'http://weex-remote-debugger?_wx_debug=' + encodeURIComponent(rendererUrl);
+
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'flex';
+
+    var $qrcode = document.querySelector('#qrcode');
+    var el = (0, _qrcode2.default)(qrUrl);
+    $qrcode.innerHTML = '';
+    $qrcode.appendChild(el);
+}
+
+function hideNativeQRCode() {
+    var $slogan = document.querySelector('#slogan');
+    $slogan.style.display = 'none';
 }
