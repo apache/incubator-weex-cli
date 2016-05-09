@@ -1,5 +1,9 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -11,6 +15,8 @@ var _stringify2 = _interopRequireDefault(_stringify);
 var _regenerator = require('babel-runtime/regenerator');
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
+
+exports.startListen = startListen;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -57,10 +63,10 @@ var DS = {
     })
 };
 
-app.use(views("page", { pagemap: { html: 'underscore' } }));
+app.use(views(path.join(__dirname, "../", "page"), { pagemap: { html: 'underscore' } }));
 app.use(r.get('/', DS.index));
 var appStatic = koa();
-appStatic.use(staticServer("build"));
+appStatic.use(staticServer(path.join(__dirname, "../", "build")));
 app.use(mount('/static', appStatic));
 var appPage = koa();
 appPage.use(staticServer("page"));
@@ -240,6 +246,10 @@ webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee3(nex
 app.use(webRouter.routes());
 //app.use(serveStatic(rootpath));
 
-app.listen(4000);
-var IP = nwUtils.getPublicIP();
-console.log('http listening http://' + IP + ':4000/');
+function startListen() {
+    var port = arguments.length <= 0 || arguments[0] === undefined ? 4000 : arguments[0];
+
+    app.listen(port);
+    var IP = nwUtils.getPublicIP();
+    console.log('weex debugger server started\nplease access http://' + IP + ':4000/');
+}

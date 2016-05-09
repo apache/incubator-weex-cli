@@ -29,10 +29,10 @@ var DS = {
   }
 };
 
-app.use(views("page",{ pagemap: {html: 'underscore'} }))
+app.use(views( path.join(__dirname , "../","page") ,{ pagemap: {html: 'underscore'} }))
 app.use(r.get('/',DS.index))
 var appStatic = koa()
-appStatic.use(staticServer("build"))
+appStatic.use(staticServer(path.join(__dirname , "../","build")))
 app.use(mount('/static',appStatic))
 var appPage = koa()
 appPage.use(staticServer("page"))
@@ -173,7 +173,8 @@ webRouter.get('/getScriptText', function*(next) {
 app.use(webRouter.routes());
 //app.use(serveStatic(rootpath));
 
-
-app.listen(4000)
-let IP =  nwUtils.getPublicIP()
-console.log(`http listening http://${IP}:4000/`)
+export function startListen(port = 4000){
+    app.listen(port)
+    let IP =  nwUtils.getPublicIP()
+    console.log(`weex debugger server started\nplease access http://${IP}:4000/`)
+}

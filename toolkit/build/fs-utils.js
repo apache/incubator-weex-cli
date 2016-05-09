@@ -1,14 +1,9 @@
 'use strict';
 
 var fs = require('fs'),
-    lie = require('lie'),
     _ = require("underscore"),
     weexTransformer = require('weex-transformer'),
     path = require('path');
-
-if (!global.Promise) {
-  global.Promise = lie;
-}
 
 function deleteFolderRecursive(path) {
   if (fs.existsSync(path)) {
