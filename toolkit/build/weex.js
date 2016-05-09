@@ -30,11 +30,15 @@ var fs = require('fs'),
     fsUtils = require('../build/fs-utils'),
     debuggerServer = require('../build/debugger-server');
 
+var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
 var WEEX_TRANSFORM_TMP = "weex_tmp";
 var H5_Render_DIR = "h5_render";
-var PREVIEW_SERVER_PORT = "8081";
-var WEBSOCKET_PORT = "8082";
+var NO_PORT_SPECIFIED = -1;
+var DEFAULT_HTTP_PORT = "8081";
+var DEFAULT_WEBSOCKET_PORT = "8082";
+var HTTP_PORT = NO_PORT_SPECIFIED; //will update when argvProcess
+var WEBSOCKET_PORT = NO_PORT_SPECIFIED; //will update when argvProcess
 var NO_JSBUNDLE_OUTPUT = "no JSBundle output";
 
 var Previewer = function () {
@@ -169,12 +173,14 @@ var Previewer = function () {
             }
 
             var server = httpServer.createServer(options);
-            server.listen(PREVIEW_SERVER_PORT, "0.0.0.0", function () {
-                console.log(new Date() + ('http  is listening on port ' + PREVIEW_SERVER_PORT));
+            var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
+            //console.log(`http port: ${port}`)       
+            server.listen(port, "0.0.0.0", function () {
+                console.log(new Date() + ('http  is listening on port ' + port));
 
                 if (self.transformServerPath) {
                     var IP = nwUtils.getPublicIP();
-                    console.log('we file in local path ' + self.transformServerPath + ' will be transformer to JS bundle\nplease access http://' + IP + ':' + PREVIEW_SERVER_PORT + '/');
+                    console.log('we file in local path ' + self.transformServerPath + ' will be transformer to JS bundle\nplease access http://' + IP + ':' + port + '/');
                     return;
                 }
 
@@ -183,7 +189,7 @@ var Previewer = function () {
                     return;
                 }
 
-                var previewUrl = 'http://' + self.host + ':' + PREVIEW_SERVER_PORT + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/?hot-reload_controller&page=' + fileName + '&loader=xhr';
+                var previewUrl = 'http://' + self.host + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/?hot-reload_controller&page=' + fileName + '&loader=xhr';
                 if (self.shouldOpenBrowser) {
                     opener(previewUrl);
                 } else {
@@ -206,22 +212,12 @@ var Previewer = function () {
     }, {
         key: 'showQR',
         value: function showQR(fileName) {
-            var host = this.host;
-            if (this.host == "127.0.0.1") {
-                // TODO: update to use nw-utils.js
-                var ifaces = os.networkInterfaces();
-                var address = _.flatten(_.values(ifaces));
-                address = _.filter(address, function (ifObj) {
-                    return ifObj.family == "IPv4" && ifObj.address != "127.0.0.1";
-                });
-                if (address.length > 0) {
-                    host = address[0].address;
-                }
-            }
-            var jsBundleURL = 'http://' + host + ':' + PREVIEW_SERVER_PORT + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
-            console.log('listen host is ' + host + ' , you can change it by -h option');
+            var IP = nwUtils.getPublicIP();
+            var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
+            var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
+            console.log('following QR encoding url\n' + jsBundleURL);
             qrcode.generate(jsBundleURL);
-            console.log("please access https://github.com/alibaba/weex to download Weex Playground app");
+            console.log("please access https://github.com/alibaba/weex to download Weex Playground app for scanning");
         }
     }, {
         key: 'startWebSocket',
@@ -230,8 +226,11 @@ var Previewer = function () {
                 response.writeHead(404);
                 response.end();
             });
-            server.listen(WEBSOCKET_PORT, function () {
-                console.log(new Date() + ('WebSocket  is listening on port ' + WEBSOCKET_PORT));
+            var port = WEBSOCKET_PORT == NO_PORT_SPECIFIED ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT;
+
+            //console.log(`ws port: ${port}`)
+            server.listen(port, function () {
+                console.log(new Date() + ('WebSocket  is listening on port ' + port));
             });
             var wsServer = new WebSocketServer({
                 httpServer: server,
@@ -313,7 +312,7 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').help('help').argv;
+var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').help('help').argv;
 
 (function argvProcess() {
 
@@ -323,7 +322,7 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
     }
 
     if (argv.version) {
-        console.log(require('../package.json').version);
+        console.log(VERSION);
         return;
     }
 
@@ -357,6 +356,9 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
         process.exit(1);
     }
     var transformWatch = argv.watch;
+
+    HTTP_PORT = argv.port;
+    WEBSOCKET_PORT = argv.wsport;
 
     new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath);
 })();
