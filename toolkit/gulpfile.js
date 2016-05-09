@@ -4,7 +4,10 @@ var fs = require('fs')
   babel = require('gulp-babel'),
   rename = require('gulp-rename'),
   concat = require('gulp-concat'),
-  coffee = require("gulp-coffee"),
+  browserify = require("browserify"),
+  source = require('vinyl-source-stream'),
+  path = require('path'),
+  less = require('gulp-less'),
   wrap  = require('gulp-wrap');    
 
 
@@ -17,7 +20,8 @@ gulp.task('clean', function() {
 gulp.task('babel',['clean'],function(){
   return  gulp.src('src/**/*.js')
   .pipe(babel({
-    presets: ['es2015']
+      presets: ['es2015'],
+      plugins: ['transform-runtime']
   }))
   .pipe(gulp.dest('./build'));    
 })
@@ -28,8 +32,25 @@ gulp.task('weex',['babel'],function(){
   .pipe(gulp.dest('./bin'))
 })
 
+gulp.task('browserify',['babel'],function(callback){
+    browserify("./build/debugger-client.js", { debug: false })
+        .bundle()
+        .pipe(source('debugger-client-browserify.js'))  //vinyl-source-stream
+        .pipe(gulp.dest('./build/'))
+    return callback()
+})
 
-gulp.task('build',['weex'],function(cb){
+gulp.task('less',function(){
+    return gulp.src('./src/css/**/*.less')
+    .pipe(less({
+      paths: [ path.join(__dirname, 'src/css/', 'includes') ]
+    }))
+    .pipe(gulp.dest('./build/css'))    ;
+})
+
+
+gulp.task('build',['weex','browserify','less'],function(cb){
+    
   return cb()
 })
 

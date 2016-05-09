@@ -1,0 +1,152 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+#slogan {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #ffffff;
+  filter: blur(10px);
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  padding-top: 44px;
+}
+#slogan .wrap {
+  margin-top: -212px;
+}
+#slogan .wrap h1 {
+  font-size: 64px;
+  font-family: Arial;
+  color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+}
+#slogan .wrap p {
+  margin: 10px 0;
+  text-align: center;
+  font-size: 32px;
+  font-family: sans-serif;
+  color: rgba(25, 25, 25, 0.8);
+}
+#qrcode {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+#logs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: #49483E;
+}
+#logs .lines {
+  padding-top: 44px;
+}
+#logs .line {
+  padding: 5px;
+  border-bottom: 1px solid rgba(100, 100, 100, 0.5);
+  color: #444;
+  font-size: 14px;
+  background: #49483E;
+}
+#logs .line span,
+#logs .line a {
+  display: inline-block;
+}
+#logs .line a {
+  cursor: context-menu;
+}
+#logs .line a:hover {
+  background: #12120f;
+}
+#logs .line .function_name {
+  color: #A6E22E;
+  font-weight: bold;
+}
+#logs .line .l_bracket,
+#logs .line .l_square_bracket,
+#logs .line .l_brace {
+  color: #F8F8F0;
+  padding-right: 0.2em;
+}
+#logs .line .r_bracket,
+#logs .line .r_square_bracket,
+#logs .line .r_brace {
+  color: #F8F8F0;
+  padding-left: 0.2em;
+}
+#logs .line .string_arg {
+  color: #E6DB74;
+}
+#logs .line .boolean_arg,
+#logs .line .number_arg {
+  color: #AE81FF;
+}
+#logs .line .object_key {
+  color: #E6DB74;
+}
+#logs .line .arg_separator,
+#logs .line .key_separator {
+  color: #F8F8F0;
+  padding-right: 0.5em;
+}
+#logs .line .string_quote {
+  color: #a4971d;
+}
+#logs .line.hide {
+  display: none;
+}
+.nav {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  top: 0;
+  background-color: #e5e5e5;
+  font-weight: lighter;
+  font-family: sans-serif;
+  position: fixed;
+}
+.logo {
+  float: left;
+  font-size: x-large;
+  line-height: 44px;
+  padding-left: 10px;
+  flex: 1;
+  white-space: nowrap;
+}
+.controls {
+  padding: 0 5px;
+  display: table;
+}
+.controls > * {
+  float: left;
+}
+.btn {
+  box-sizing: border-box;
+  padding: 8px 10px;
+  background-color: #60ADF8;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  margin: 6px 0;
+}
+.wrapper-search {
+  margin-right: 5px;
+}
+#search {
+  width: 200px;
+  height: 28px;
+  margin: 5px 0;
+  font-size: 16px;
+}

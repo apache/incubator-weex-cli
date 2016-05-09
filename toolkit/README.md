@@ -1,26 +1,41 @@
 Weex-Toolkit
 ============
 
-Weex CLI tool set 
+Weex CLI tool set
+
+## Pre Install
+some dependencies need recent version of npm to install
+
+if your
+```
+$ npm --version
+```
+output less then `2.15.1`, please run below cmd upgrade your npm at first
+```
+sudo npm install -g npm
+```
 
 ## Install
 ```
-$npm install -g -f weex-toolkit
+$npm install -g weex-toolkit
 ```
 
 ##  Usage
 
-### weex
-Weex file preview tool with hot reload 
+
+### Usage
 ```
-Usage:
-weex  foo/bar/your_next_best_weex_script_file.we [options]
+$weex foo/bar/input_path  [options]
 
 Options:
-  --qr    display QR code for Weex Playground app, default action.               
-  -o      transform weex JS bundle only, specify bundle file name using the option
-  -s      start a http file server, weex .we file will be transform to JS bundle on the server. specify local root path using the option
-  --help  Show help                                                       
+  --qr     display QR code for native runtime, default action          
+  -o       transform weex we file to JS Bundle, output path must specified
+           (single JS bundle file or dir)        
+  --watch  using with -o , watch input path , auto run transform if change
+           happen
+  -s       start a http file server, weex .we file will be transforme to JS
+           bundle on the server , specify local root path using the option
+  --help   Show help                                                   
 ```
 
 
@@ -29,6 +44,8 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160506(0.0.29) : improve --watch & -s feature ; fixing hot-reload with playground App.
+* 160505(0.0.25) : support batch transform  & option --watch added
 * 160427(0.0.22) : improve -s feedback information & update upstream transformer lib
 * 160418 : temporary turnoff H5 preview
 * 160401 : format for opensource
