@@ -6,18 +6,13 @@ var staticServer = require('koa-static')
 var opener = require("opener");
 
 const path = require('path');
-// const wget = require('wget');
-// const curl = require('node-curl');
 const fs = require('fs');
-// const del = require('del');
 const http = require('http');
-// const Get = require('get');
 const EventEmitter = require('events');
 const uuid = require('uuid');
-const serve = require('koa-serve');
-//const serveStatic = require('koa-serve-static');
+
 const Router = require('koa-router');
-const websockify = require('koa-websocket');
+const websockify = require('./libs/koa-websocket');
 const emitter = new EventEmitter();
 const app = websockify(koa());
 
@@ -45,22 +40,15 @@ WebSocket Router
 ===================================
 */
 var wsRouter = Router();
-var frameworkWS, rendererWS;
+
 
 wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var that = this;
     var ws = this.websocket;
     var id = this.params.id;
     var endpoint = this.params.endpoint;
-
-    if(endpoint === 'framework') {
-        frameworkWS = ws;
-    } else if (endpoint === 'renderer') {
-        rendererWS = ws;
-    }
-
     if (endpoint !== 'framework' || id !== 0 ) {
-        frameworkWS.send(JSON.stringify({
+        ws.send(JSON.stringify({
             method: '__connect',
             arguments: [endpoint]
         }));
