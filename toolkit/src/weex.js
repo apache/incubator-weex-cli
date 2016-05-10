@@ -3,8 +3,7 @@ const fs = require('fs'),
     path = require('path'),
     opener = require('opener'),
     httpServer = require('http-server'),
-    http = require('http'),
-    WebSocketServer = require('websocket').server,
+    wsServer = require('ws').Server,
     watch =  require('node-watch'),
     os  = require('os'),
     _   = require("underscore"),
@@ -189,31 +188,20 @@ class Previewer{
         qrcode.generate(jsBundleURL)
         console.log("please access https://github.com/alibaba/weex to download Weex Playground app for scanning")
     }
-
     startWebSocket(){
-        let server = http.createServer(function(request, response) {
-            response.writeHead(404) 
-            response.end() 
-        })
         let port = (WEBSOCKET_PORT == NO_PORT_SPECIFIED) ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT
-
-        //console.log(`ws port: ${port}`)
-        server.listen(port, function() {
-            console.log((new Date()) + `WebSocket  is listening on port ${port}`) 
-        }) 
-        let wsServer = new WebSocketServer({
-            httpServer: server,
-            autoAcceptConnections: false
-        })
+        let wss = wsServer({port: port})
         let self = this
-        wsServer.on('request',function(request){
-            let connection = request.accept('echo-protocol', request.origin) 
-            connection.sendUTF("ws server ok")
-            self.wsConnection = connection
+        console.log((new Date()) + `WebSocket  is listening on port ${port}`)         
+        wss.on('connection', function connection(ws) {
+            ws.on('message', function incoming(message) {
+                console.log('received: %s', message);
+            });
+            ws.send("ws server ok")
+            self.wsConnection = ws
             self.watchForWSRefresh()
-        }) 
+        })
     }
-
     /**
      * websocket refresh cmd
      */
@@ -223,7 +211,7 @@ class Previewer{
             if (/\.we$/gi.test(fileName)){            
                 let transformP  = self.transformTarget(self.inputPath,self.outputPath)
                 transformP.then( function(fileName){
-                    self.wsConnection.sendUTF("refresh")
+                    self.wsConnection.send("refresh")                    
                 })
             }
         });

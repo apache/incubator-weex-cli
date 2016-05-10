@@ -28,18 +28,13 @@ var staticServer = require('koa-static');
 var opener = require("opener");
 
 var path = require('path');
-// const wget = require('wget');
-// const curl = require('node-curl');
 var fs = require('fs');
-// const del = require('del');
 var http = require('http');
-// const Get = require('get');
 var EventEmitter = require('events');
 var uuid = require('uuid');
-var serve = require('koa-serve');
-//const serveStatic = require('koa-serve-static');
+
 var Router = require('koa-router');
-var websockify = require('koa-websocket');
+var websockify = require('./libs/koa-websocket');
 var emitter = new EventEmitter();
 var app = websockify(koa());
 
@@ -79,7 +74,6 @@ WebSocket Router
 ===================================
 */
 var wsRouter = Router();
-var frameworkWS, rendererWS;
 
 wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _callee(next) {
     var that, ws, id, endpoint, subscriberHandler;
@@ -101,15 +95,8 @@ wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _cal
                     id = this.params.id;
                     endpoint = this.params.endpoint;
 
-
-                    if (endpoint === 'framework') {
-                        frameworkWS = ws;
-                    } else if (endpoint === 'renderer') {
-                        rendererWS = ws;
-                    }
-
-                    if (endpoint !== 'framework' || id !== '0') {
-                        frameworkWS.send((0, _stringify2.default)({
+                    if (endpoint !== 'framework' || id !== 0) {
+                        ws.send((0, _stringify2.default)({
                             method: '__connect',
                             arguments: [endpoint]
                         }));
@@ -136,10 +123,10 @@ wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _cal
 
                     emitter.on('debugger', subscriberHandler);
 
-                    _context2.next = 13;
+                    _context2.next = 12;
                     return next;
 
-                case 13:
+                case 12:
                 case 'end':
                     return _context2.stop();
             }
