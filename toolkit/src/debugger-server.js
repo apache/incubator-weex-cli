@@ -1,9 +1,9 @@
-var koa = require("koa")
-var mount = require('koa-mount')
-var r =   require('koa-route')
-var views = require('koa-views')
-var staticServer = require('koa-static')
-var opener = require("opener");
+const koa = require("koa")
+const mount = require('koa-mount')
+const r =   require('koa-route')
+const views = require('koa-views')
+const staticServer = require('koa-static')
+const opener = require("opener");
 
 const path = require('path');
 const fs = require('fs');
@@ -18,18 +18,21 @@ const app = websockify(koa());
 
 const nwUtils =  require('./nw-utils')
 
+var DEBUGGER_SERVER_PORT = 4000
+
 // Debugger Server
 var DS = { 
   index: function *(){
       yield this.render("weex-debugger")
   }
 };
-
 app.use(views( path.join(__dirname , "../","page") ,{ pagemap: {html: 'underscore'} }))
 app.use(r.get('/',DS.index))
+
 var appStatic = koa()
 appStatic.use(staticServer(path.join(__dirname , "../","build")))
 app.use(mount('/static',appStatic))
+
 var appPage = koa()
 appPage.use(staticServer("page"))
 app.use(mount('/page',appPage))
@@ -40,7 +43,6 @@ WebSocket Router
 ===================================
 */
 var wsRouter = Router();
-
 
 wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var that = this;
@@ -90,6 +92,7 @@ wsRouter.all('/debugger/:id/:endpoint', function*(next) {
 
 app.ws.use(wsRouter.routes());
 
+
 /* 
 ===================================
 Http Router
@@ -131,15 +134,16 @@ webRouter.get('/getScriptText', function*(next) {
 });
 
 webRouter.get('/launchDebugger', function*(next) {
-    var debuggerURL = 'http://localhost:4000/#0';
+    let IP =  nwUtils.getPublicIP()    
+    var debuggerURL = `http://${IP}:${DEBUGGER_SERVER_PORT}/#0`;
     opener(debuggerURL);
 });
 
 app.use(webRouter.routes());
-//app.use(serveStatic(rootpath));
 
-export function startListen(port = 4000){
+export function startListen(port = DEBUGGER_SERVER_PORT){
+    DEBUGGER_SERVER_PORT = port
     app.listen(port)
     let IP =  nwUtils.getPublicIP()
-    console.log(`weex debugger server started\nplease access http://${IP}:4000/`)
+    console.log(`weex debugger server started\nplease access http://${IP}:${port}/`)
 }

@@ -40,6 +40,8 @@ var app = websockify(koa());
 
 var nwUtils = require('./nw-utils');
 
+var DEBUGGER_SERVER_PORT = 4000;
+
 // Debugger Server
 var DS = {
     index: _regenerator2.default.mark(function index() {
@@ -58,12 +60,13 @@ var DS = {
         }, index, this);
     })
 };
-
 app.use(views(path.join(__dirname, "../", "page"), { pagemap: { html: 'underscore' } }));
 app.use(r.get('/', DS.index));
+
 var appStatic = koa();
 appStatic.use(staticServer(path.join(__dirname, "../", "build")));
 app.use(mount('/static', appStatic));
+
 var appPage = koa();
 appPage.use(staticServer("page"));
 app.use(mount('/page', appPage));
@@ -192,16 +195,17 @@ webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee2(nex
 }));
 
 webRouter.get('/launchDebugger', _regenerator2.default.mark(function _callee3(next) {
-    var debuggerURL;
+    var IP, debuggerURL;
     return _regenerator2.default.wrap(function _callee3$(_context4) {
         while (1) {
             switch (_context4.prev = _context4.next) {
                 case 0:
-                    debuggerURL = 'http://localhost:4000/#0';
+                    IP = nwUtils.getPublicIP();
+                    debuggerURL = 'http://' + IP + ':' + DEBUGGER_SERVER_PORT + '/#0';
 
                     opener(debuggerURL);
 
-                case 2:
+                case 3:
                 case 'end':
                     return _context4.stop();
             }
@@ -210,12 +214,12 @@ webRouter.get('/launchDebugger', _regenerator2.default.mark(function _callee3(ne
 }));
 
 app.use(webRouter.routes());
-//app.use(serveStatic(rootpath));
 
 function startListen() {
-    var port = arguments.length <= 0 || arguments[0] === undefined ? 4000 : arguments[0];
+    var port = arguments.length <= 0 || arguments[0] === undefined ? DEBUGGER_SERVER_PORT : arguments[0];
 
+    DEBUGGER_SERVER_PORT = port;
     app.listen(port);
     var IP = nwUtils.getPublicIP();
-    console.log('weex debugger server started\nplease access http://' + IP + ':4000/');
+    console.log('weex debugger server started\nplease access http://' + IP + ':' + port + '/');
 }
