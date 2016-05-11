@@ -44,13 +44,13 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	;__weex_define__("@weex-component/48c34d39ea9ced4ad5f95df361368f61", [], function(__weex_require__, __weex_exports__, __weex_module__){
+	;__weex_define__("@weex-component/50c4a966770a11c745d1edbe468d1d01", [], function(__weex_require__, __weex_exports__, __weex_module__){
 	'use strict';
 
 	__webpack_require__(1);
 	__webpack_require__(3);
 
-	var c = __webpack_require__(6);
+	var c = __webpack_require__(7);
 
 	__weex_module__.exports = {
 	    data: function () {return {
@@ -58,10 +58,10 @@
 	    }}
 	};
 
-	__weex_module__.exports.style = __webpack_require__(7);
-	__weex_module__.exports.template = __webpack_require__(8);
+	__weex_module__.exports.style = __webpack_require__(8);
+	__weex_module__.exports.template = __webpack_require__(9);
 	})
-	;__weex_bootstrap__("@weex-component/48c34d39ea9ced4ad5f95df361368f61", {"transformerVersion":"0.3.1"},undefined)
+	;__weex_bootstrap__("@weex-component/50c4a966770a11c745d1edbe468d1d01", {"transformerVersion":"0.3.1"},undefined)
 
 /***/ },
 /* 1 */
@@ -128,9 +128,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	;__weex_define__("@weex-component/copyright", [], function(__weex_require__, __weex_exports__, __weex_module__){
-	__webpack_require__(4);
 
 	;
+	    __webpack_require__(4);
+
 	    __weex_module__.exports = {
 	        data: function () {return {
 	            className: ''
@@ -140,12 +141,15 @@
 	        }
 	    }
 
-	;__weex_module__.exports.template={
+	    __weex_module__.exports.style = __webpack_require__(6)
+
+	;__weex_module__.exports.template = __weex_module__.exports.template || {}
+	;Object.assign(__weex_module__.exports.template, {
 	  "type": "container",
 	  "children": [
 	    {
 	      "type": "text",
-	      "classList": function () {return [this.className]},
+	      "classList": function () {return [this.className, 'highlight']},
 	      "attr": {
 	        "value": "Copy right @ 2016 Weex"
 	      }
@@ -154,16 +158,15 @@
 	      "type": "company"
 	    }
 	  ]
-	}
-	;__weex_module__.exports.style={
+	})
+	;__weex_module__.exports.style = __weex_module__.exports.style || {}
+	;Object.assign(__weex_module__.exports.style, {
 	  "copyright": {
 	    "textAlign": "center",
 	    "paddingTop": 20,
-	    "paddingBottom": 20,
-	    "color": "#666666",
-	    "fontSize": 26
+	    "paddingBottom": 20
 	  }
-	}
+	})
 	})
 
 /***/ },
@@ -180,7 +183,8 @@
 	    }}
 	}
 
-	;__weex_module__.exports.template={
+	;__weex_module__.exports.template = __weex_module__.exports.template || {}
+	;Object.assign(__weex_module__.exports.template, {
 	  "type": "container",
 	  "children": [
 	    {
@@ -195,7 +199,7 @@
 	      }
 	    }
 	  ]
-	}
+	})
 	})
 
 /***/ },
@@ -208,10 +212,21 @@
 /* 6 */
 /***/ function(module, exports) {
 
-	exports.name = 'Weex-Loader';
+	module.exports={
+	  "highlight": {
+	    "color": "#666666",
+	    "fontSize": 26
+	  }
+	}
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	exports.name = 'Weex-Loader';
+
+/***/ },
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports={
@@ -226,7 +241,7 @@
 	}
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports={
