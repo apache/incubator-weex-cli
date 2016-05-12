@@ -16,6 +16,12 @@ gulp.task('clean', function() {
   return del.sync(['bin/*']);
 });
 
+gulp.task('dump',['clean'],function(callback){
+    gulp.src("vendor/**/*")
+        .pipe(gulp.dest('./build/vendor'));
+    return callback()    
+});
+
 
 gulp.task('babel',['clean'],function(){
   return  gulp.src('src/**/*.js')
@@ -40,16 +46,21 @@ gulp.task('browserify',['babel'],function(callback){
     return callback()
 })
 
-gulp.task('less',function(){
-    return gulp.src('./src/css/**/*.less')
-    .pipe(less({
-      paths: [ path.join(__dirname, 'src/css/', 'includes') ]
-    }))
-    .pipe(gulp.dest('./build/css'))    ;
+gulp.task('less',function(callback){
+    gulp.src('./src/css/**/*.less')
+        .pipe(less({
+            paths: [ path.join(__dirname, 'src/css/', 'includes') ]
+        }))
+        .pipe(gulp.dest('./build/css'));
+
+    gulp.src('./src/css/**/*.css')    
+        .pipe(gulp.dest('./build/css'));
+
+    return callback()
 })
 
 
-gulp.task('build',['weex','browserify','less'],function(cb){
+gulp.task('build',['dump','weex','browserify','less'],function(cb){
     
   return cb()
 })
