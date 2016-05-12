@@ -6,11 +6,11 @@ export default function WebsocketClient(endpoint, id) {
 
     var emitter = new EventEmitter();
 
-    this.send = function(name, value) {
+    this.send = function(method, args) {
         var message = {
-            name: name,
-            value: value
-        }
+            method: method,
+            arguments: args
+        };
         
         websocket.send(JSON.stringify(message));
     }
@@ -21,11 +21,17 @@ export default function WebsocketClient(endpoint, id) {
 
     websocket.addEventListener('open', function() {
         console.log('debugger open');
+        $("#status").text("connected").removeClass("warning");
     });
 
     websocket.addEventListener('message', function(event) {
         var message = JSON.parse(event.data);
-        emitter.emit(message.name, message.value);
+        emitter.emit(message.method, message.arguments);
+    });
+
+    websocket.addEventListener('close', function() {
+        console.log('debugger close');
+        return $("#status").text("disconnected").addClass("warning");
     });
 }
 

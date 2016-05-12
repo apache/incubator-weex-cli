@@ -25,24 +25,22 @@ var mount = require('koa-mount');
 var r = require('koa-route');
 var views = require('koa-views');
 var staticServer = require('koa-static');
+var opener = require("opener");
 
 var path = require('path');
-// const wget = require('wget');
-// const curl = require('node-curl');
 var fs = require('fs');
-// const del = require('del');
 var http = require('http');
-// const Get = require('get');
 var EventEmitter = require('events');
 var uuid = require('uuid');
-var serve = require('koa-serve');
-//const serveStatic = require('koa-serve-static');
+
 var Router = require('koa-router');
-var websockify = require('koa-websocket');
+var websockify = require('./libs/koa-websocket');
 var emitter = new EventEmitter();
 var app = websockify(koa());
 
 var nwUtils = require('./nw-utils');
+
+var DEBUGGER_SERVER_PORT = 4000;
 
 // Debugger Server
 var DS = {
@@ -62,24 +60,16 @@ var DS = {
         }, index, this);
     })
 };
-
 app.use(views(path.join(__dirname, "../", "page"), { pagemap: { html: 'underscore' } }));
 app.use(r.get('/', DS.index));
+
 var appStatic = koa();
 appStatic.use(staticServer(path.join(__dirname, "../", "build")));
 app.use(mount('/static', appStatic));
 
-function WSLogger(ws, id, endpoint) {
-    this.log = function (message) {
-        var event = {
-            endpoint: endpoint,
-            id: id,
-            message: message
-        };
-        // console.log(event)
-        emitter.emit('logger', event);
-    };
-}
+var appPage = koa();
+appPage.use(staticServer("page"));
+app.use(mount('/page', appPage));
 
 /* 
 ===================================
@@ -87,52 +77,12 @@ WebSocket Router
 ===================================
 */
 var wsRouter = Router();
-wsRouter.all('/logger/:id/:endpoint', _regenerator2.default.mark(function _callee(next) {
-    var that, ws, id, endpoint, logger, handler;
+
+wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _callee(next) {
+    var that, ws, id, endpoint, subscriberHandler;
     return _regenerator2.default.wrap(function _callee$(_context2) {
         while (1) {
             switch (_context2.prev = _context2.next) {
-                case 0:
-                    handler = function handler(event) {
-                        if (event.id === id) {
-                            ws.send((0, _stringify2.default)(event));
-                        }
-                    };
-
-                    that = this;
-                    ws = this.websocket;
-                    id = this.params.id;
-                    endpoint = this.params.endpoint;
-                    logger = new WSLogger(ws, id, endpoint);
-
-
-                    ws.on('message', function (message) {
-                        // 接受来自各个端的debugger信息
-                        logger.log(message);
-                    });
-
-                    ws.on('close', function () {
-                        emitter.removeListener('logger', handler);
-                    });
-
-                    emitter.on('logger', handler);
-
-                    _context2.next = 11;
-                    return next;
-
-                case 11:
-                case 'end':
-                    return _context2.stop();
-            }
-        }
-    }, _callee, this);
-}));
-
-wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _callee2(next) {
-    var that, ws, id, endpoint, logger, subscriberHandler;
-    return _regenerator2.default.wrap(function _callee2$(_context3) {
-        while (1) {
-            switch (_context3.prev = _context3.next) {
                 case 0:
                     subscriberHandler = function subscriberHandler(event) {
                         // 同一个debugger（id相同）下，向不同的终端（endpoint不同）发送
@@ -147,10 +97,13 @@ wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _cal
                     ws = this.websocket;
                     id = this.params.id;
                     endpoint = this.params.endpoint;
-                    logger = new WSLogger(ws, id, 'server');
 
-
-                    logger.log(endpoint + ' connected');
+                    if (endpoint !== 'framework' || id !== 0) {
+                        ws.send((0, _stringify2.default)({
+                            method: '__connect',
+                            arguments: [endpoint]
+                        }));
+                    }
 
                     ws.on('message', function (message) {
                         // 接受来自各个端的消息，通知所有订阅者
@@ -173,15 +126,15 @@ wsRouter.all('/debugger/:id/:endpoint', _regenerator2.default.mark(function _cal
 
                     emitter.on('debugger', subscriberHandler);
 
-                    _context3.next = 13;
+                    _context2.next = 12;
                     return next;
 
-                case 13:
+                case 12:
                 case 'end':
-                    return _context3.stop();
+                    return _context2.stop();
             }
         }
-    }, _callee2, this);
+    }, _callee, this);
 }));
 
 app.ws.use(wsRouter.routes());
@@ -193,15 +146,15 @@ Http Router
 */
 var rootpath = path.dirname(__dirname);
 var webRouter = Router();
-webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee3(next) {
+webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee2(next) {
     var callback, scriptPath, body;
-    return _regenerator2.default.wrap(function _callee3$(_context4) {
+    return _regenerator2.default.wrap(function _callee2$(_context3) {
         while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context3.prev = _context3.next) {
                 case 0:
                     callback = this.query.callback;
                     scriptPath = this.query.path;
-                    _context4.next = 4;
+                    _context3.next = 4;
                     return new _promise2.default(function (resolve, reject) {
                         http.get(scriptPath, function (res) {
                             var chunks = [];
@@ -221,7 +174,7 @@ webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee3(nex
                     });
 
                 case 4:
-                    body = _context4.sent;
+                    body = _context3.sent;
 
 
                     this.response.status = 200;
@@ -235,18 +188,38 @@ webRouter.get('/getScriptText', _regenerator2.default.mark(function _callee3(nex
 
                 case 8:
                 case 'end':
+                    return _context3.stop();
+            }
+        }
+    }, _callee2, this);
+}));
+
+webRouter.get('/launchDebugger', _regenerator2.default.mark(function _callee3(next) {
+    var IP, debuggerURL;
+    return _regenerator2.default.wrap(function _callee3$(_context4) {
+        while (1) {
+            switch (_context4.prev = _context4.next) {
+                case 0:
+                    IP = nwUtils.getPublicIP();
+                    debuggerURL = 'http://' + IP + ':' + DEBUGGER_SERVER_PORT + '/#0';
+
+                    opener(debuggerURL);
+
+                case 3:
+                case 'end':
                     return _context4.stop();
             }
         }
     }, _callee3, this);
 }));
+
 app.use(webRouter.routes());
-//app.use(serveStatic(rootpath));
 
 function startListen() {
-    var port = arguments.length <= 0 || arguments[0] === undefined ? 4000 : arguments[0];
+    var port = arguments.length <= 0 || arguments[0] === undefined ? DEBUGGER_SERVER_PORT : arguments[0];
 
+    DEBUGGER_SERVER_PORT = port;
     app.listen(port);
     var IP = nwUtils.getPublicIP();
-    console.log('weex debugger server started\nplease access http://' + IP + ':4000/');
+    console.log('weex debugger server started\nplease access http://' + IP + ':' + port + '/');
 }

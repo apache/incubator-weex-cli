@@ -21,8 +21,7 @@ var fs = require('fs'),
     path = require('path'),
     opener = require('opener'),
     httpServer = require('http-server'),
-    http = require('http'),
-    WebSocketServer = require('websocket').server,
+    wsServer = require('ws').Server,
     watch = require('node-watch'),
     os = require('os'),
     _ = require("underscore"),
@@ -224,29 +223,19 @@ var Previewer = function () {
     }, {
         key: 'startWebSocket',
         value: function startWebSocket() {
-            var server = http.createServer(function (request, response) {
-                response.writeHead(404);
-                response.end();
-            });
             var port = WEBSOCKET_PORT == NO_PORT_SPECIFIED ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT;
-
-            //console.log(`ws port: ${port}`)
-            server.listen(port, function () {
-                console.log(new Date() + ('WebSocket  is listening on port ' + port));
-            });
-            var wsServer = new WebSocketServer({
-                httpServer: server,
-                autoAcceptConnections: false
-            });
+            var wss = wsServer({ port: port });
             var self = this;
-            wsServer.on('request', function (request) {
-                var connection = request.accept('echo-protocol', request.origin);
-                connection.sendUTF("ws server ok");
-                self.wsConnection = connection;
+            console.log(new Date() + ('WebSocket  is listening on port ' + port));
+            wss.on('connection', function connection(ws) {
+                ws.on('message', function incoming(message) {
+                    console.log('received: %s', message);
+                });
+                ws.send("ws server ok");
+                self.wsConnection = ws;
                 self.watchForWSRefresh();
             });
         }
-
         /**
          * websocket refresh cmd
          */
@@ -259,7 +248,7 @@ var Previewer = function () {
                 if (/\.we$/gi.test(fileName)) {
                     var transformP = self.transformTarget(self.inputPath, self.outputPath);
                     transformP.then(function (fileName) {
-                        self.wsConnection.sendUTF("refresh");
+                        self.wsConnection.send("refresh");
                     });
                 }
             });

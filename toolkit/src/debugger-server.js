@@ -1,26 +1,24 @@
-var koa = require("koa")
-var mount = require('koa-mount')
-var r =   require('koa-route')
-var views = require('koa-views')
-var staticServer = require('koa-static')
+const koa = require("koa")
+const mount = require('koa-mount')
+const r =   require('koa-route')
+const views = require('koa-views')
+const staticServer = require('koa-static')
+const opener = require("opener");
 
 const path = require('path');
-// const wget = require('wget');
-// const curl = require('node-curl');
 const fs = require('fs');
-// const del = require('del');
 const http = require('http');
-// const Get = require('get');
 const EventEmitter = require('events');
 const uuid = require('uuid');
-const serve = require('koa-serve');
-//const serveStatic = require('koa-serve-static');
+
 const Router = require('koa-router');
-const websockify = require('koa-websocket');
+const websockify = require('./libs/koa-websocket');
 const emitter = new EventEmitter();
 const app = websockify(koa());
 
 const nwUtils =  require('./nw-utils')
+
+var DEBUGGER_SERVER_PORT = 4000
 
 // Debugger Server
 var DS = { 
@@ -28,25 +26,12 @@ var DS = {
       yield this.render("weex-debugger")
   }
 };
-
 app.use(views( path.join(__dirname , "../","page") ,{ pagemap: {html: 'underscore'} }))
 app.use(r.get('/',DS.index))
+
 var appStatic = koa()
 appStatic.use(staticServer(path.join(__dirname , "../","build")))
 app.use(mount('/static',appStatic))
-
-
-function WSLogger(ws, id, endpoint) {
-    this.log = function(message) {
-        var event = {
-            endpoint: endpoint,
-            id: id,
-            message: message
-        };
-        // console.log(event)
-        emitter.emit('logger', event);
-    }
-}
 
 /* 
 ===================================
@@ -54,43 +39,18 @@ WebSocket Router
 ===================================
 */
 var wsRouter = Router();
-wsRouter.all('/logger/:id/:endpoint', function*(next) {
-    var that = this;
-    var ws = this.websocket;
-    var id = this.params.id;
-    var endpoint = this.params.endpoint;
-
-    var logger = new WSLogger(ws, id, endpoint);
-
-    function handler(event) {
-        if (event.id === id) {
-            ws.send(JSON.stringify(event));    
-        }
-    }
-
-    ws.on('message', function(message) {
-        // 接受来自各个端的debugger信息
-        logger.log(message);
-    });
-
-    ws.on('close', function() {
-        emitter.removeListener('logger', handler);
-    });
-
-    emitter.on('logger', handler);
-
-    yield next;
-});
 
 wsRouter.all('/debugger/:id/:endpoint', function*(next) {
     var that = this;
     var ws = this.websocket;
     var id = this.params.id;
     var endpoint = this.params.endpoint;
-
-    var logger = new WSLogger(ws, id, 'server');
-
-    logger.log(endpoint + ' connected');
+    if (endpoint !== 'framework' || id !== 0 ) {
+        ws.send(JSON.stringify({
+            method: '__connect',
+            arguments: [endpoint]
+        }));
+    }
 
     function subscriberHandler(event) {
         // 同一个debugger（id相同）下，向不同的终端（endpoint不同）发送
@@ -127,6 +87,7 @@ wsRouter.all('/debugger/:id/:endpoint', function*(next) {
 });
 
 app.ws.use(wsRouter.routes());
+
 
 /* 
 ===================================
@@ -167,11 +128,18 @@ webRouter.get('/getScriptText', function*(next) {
         this.response.body = body;
     }
 });
-app.use(webRouter.routes());
-//app.use(serveStatic(rootpath));
 
-export function startListen(port = 4000){
+webRouter.get('/launchDebugger', function*(next) {
+    let IP =  nwUtils.getPublicIP()    
+    var debuggerURL = `http://${IP}:${DEBUGGER_SERVER_PORT}/#0`;
+    opener(debuggerURL);
+});
+
+app.use(webRouter.routes());
+
+export function startListen(port = DEBUGGER_SERVER_PORT){
+    DEBUGGER_SERVER_PORT = port
     app.listen(port)
     let IP =  nwUtils.getPublicIP()
-    console.log(`weex debugger server started\nplease access http://${IP}:4000/`)
+    console.log(`weex debugger server started\nplease access http://${IP}:${port}/`)
 }
