@@ -67,10 +67,6 @@ var appStatic = koa();
 appStatic.use(staticServer(path.join(__dirname, "../", "build")));
 app.use(mount('/static', appStatic));
 
-var appPage = koa();
-appPage.use(staticServer("page"));
-app.use(mount('/page', appPage));
-
 /* 
 ===================================
 WebSocket Router

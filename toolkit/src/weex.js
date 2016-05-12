@@ -67,7 +67,14 @@ class Previewer{
             watch(inputPath, function (fileName){
                 if (/\.we$/gi.test(fileName)){
                     console.log(`${fileName} updated`)
-                    self.transforme(inputPath,outputPath)
+                    let outputPath = self.outputPath
+                    try{                    
+                        if (fs.lstatSync(outputPath).isDirectory()){
+                            let fn = path.basename(fileName).replace(/\..+/, '')            
+                            outputPath = path.join(outputPath , `${fn}.js`)
+                        }
+                    }catch(e){}
+                    self.transforme(fileName,outputPath)
                 }
             })
         }else{

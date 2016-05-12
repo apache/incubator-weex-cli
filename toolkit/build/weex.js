@@ -87,7 +87,14 @@ var Previewer = function () {
                 watch(inputPath, function (fileName) {
                     if (/\.we$/gi.test(fileName)) {
                         console.log(fileName + ' updated');
-                        self.transforme(inputPath, outputPath);
+                        var _outputPath = self.outputPath;
+                        try {
+                            if (fs.lstatSync(_outputPath).isDirectory()) {
+                                var fn = path.basename(fileName).replace(/\..+/, '');
+                                _outputPath = path.join(_outputPath, fn + '.js');
+                            }
+                        } catch (e) {}
+                        self.transforme(fileName, _outputPath);
                     }
                 });
             })();
