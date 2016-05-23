@@ -22,13 +22,9 @@ var hasFrameworkCode = !!window.createInstance;
 document.addEventListener('DOMContentLoaded', function () {
     location.hash = ID;
 
-    $("#device-level label").on('click', function (e) {
-        var level = $(this).data("level");
-        console.log("set device level to " + level);
-        (0, _debugger.setLogLevel)(level);
-        $("#device-level label").removeClass("active");
-        $(this).addClass("active").addClass("level-" + level);
-    });
-
     (0, _debuggerPage.initVue)();
+    /* bootstrap popover init */
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
 });

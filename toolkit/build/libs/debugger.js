@@ -162,8 +162,8 @@ var debuggableScope = {
     setEnvironment: function setEnvironment(scopeFunction, env) {
         global.WXEnvironment = env;
         var deviceLevel = env.logLevel;
-        $("#device-level-" + deviceLevel).attr('checked', 'checked');
-        $("#device-level-" + deviceLevel).parent().addClass('active');
+        _debuggerPage.vueInstance.deviceLevel = deviceLevel;
+        _debuggerPage.vueInstance.updateDeviceLevel();
     }
 };
 

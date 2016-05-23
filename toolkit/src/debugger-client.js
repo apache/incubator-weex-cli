@@ -11,13 +11,9 @@ init(ENDPOINT, ID, hasFrameworkCode);
 document.addEventListener('DOMContentLoaded', function() {
     location.hash = ID;
 
-    $("#device-level label").on('click', function(e) {
-        var level = $(this).data("level");
-        console.log("set device level to " + level);
-        setLogLevel(level);
-        $("#device-level label").removeClass("active");
-        $(this).addClass("active").addClass("level-" + level);
+    initVue();
+    /* bootstrap popover init */
+    $(function () { 
+        $('[data-toggle="popover"]').popover()
     });
-
-    initVue()
 });

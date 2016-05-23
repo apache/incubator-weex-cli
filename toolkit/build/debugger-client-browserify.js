@@ -23,15 +23,11 @@ var hasFrameworkCode = !!window.createInstance;
 document.addEventListener('DOMContentLoaded', function () {
     location.hash = ID;
 
-    $("#device-level label").on('click', function (e) {
-        var level = $(this).data("level");
-        console.log("set device level to " + level);
-        (0, _debugger.setLogLevel)(level);
-        $("#device-level label").removeClass("active");
-        $(this).addClass("active").addClass("level-" + level);
-    });
-
     (0, _debuggerPage.initVue)();
+    /* bootstrap popover init */
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
 });
 },{"./debugger-page":2,"./libs/client":3,"./libs/debugger":4,"uuid":92}],2:[function(require,module,exports){
 "use strict";
@@ -39,7 +35,11 @@ document.addEventListener('DOMContentLoaded', function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.vueInstance = undefined;
 exports.initVue = initVue;
+
+var _debugger = require("./libs/debugger");
+
 var _ = require("underscore");
 
 var LOG_LEVEL_LIST = ["all", "verbose", "debug", "info", "warn", "error"];
@@ -54,7 +54,9 @@ function initVue() {
             ],
             feLogLevel: "info",
             feLogLevelForClass: [],
-            feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }
+            feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
+            deviceLevel: "",
+            deviceLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }
         },
         methods: {
             clearLog: function clearLog() {
@@ -80,13 +82,30 @@ function initVue() {
                     this.feLogLevelClassObj["" + l] = false;
                 }
                 this.feLogLevelClassObj["" + currentLevel] = true;
+            },
+            changeDeviceLevel: function changeDeviceLevel(e) {
+                var level = $(e.target).data("level");
+                if (!level) {
+                    return;
+                }
+                this.deviceLevel = level;
+                this.updateDeviceLevel();
+                (0, _debugger.setLogLevel)(level);
+            },
+            updateDeviceLevel: function updateDeviceLevel() {
+                if (!this.deviceLevel || this.deviceLevel.length < 1) {
+                    return;
+                }
+                for (var l in this.deviceLevelClassObj) {
+                    this.deviceLevelClassObj["" + l] = false;
+                }
+                this.deviceLevelClassObj["" + this.deviceLevel] = true;
             }
         }
     });
-
     vueInstance.updateFeLogLevel();
 }
-},{"underscore":90}],3:[function(require,module,exports){
+},{"./libs/debugger":4,"underscore":90}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -313,8 +332,8 @@ var debuggableScope = {
     setEnvironment: function setEnvironment(scopeFunction, env) {
         global.WXEnvironment = env;
         var deviceLevel = env.logLevel;
-        $("#device-level-" + deviceLevel).attr('checked', 'checked');
-        $("#device-level-" + deviceLevel).parent().addClass('active');
+        _debuggerPage.vueInstance.deviceLevel = deviceLevel;
+        _debuggerPage.vueInstance.updateDeviceLevel();
     }
 };
 

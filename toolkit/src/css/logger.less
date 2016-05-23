@@ -37,7 +37,10 @@
 }
 
 #logs {
-  height: 100%;
+    height: 100%;
+    h2{
+        text-align: center;
+    }
 }
 
 .btn-group span {
@@ -48,16 +51,8 @@
   padding-left: 8px;
 }
 
-#logger {
-  min-height: 500px;
-  border: 1px solid #DDDDDD;
-  border-radius: 4px 4px 4px 4px;
-  margin: 15px 0;
-  padding: 8px;
-  overflow:auto;
-}
 
-#level {
+#level , #device-level {
   margin-top: 20px;
   margin-bottom: 4px;
 }
@@ -73,10 +68,23 @@
 }
 
 #logger {
+    border: 1px solid #337ab7;
+    border-radius: 4px 4px 4px 4px;
+    margin: 15px 0;
+    margin-top: 0;
+    padding: 8px;
+    height: 400px;        
+    overflow: auto;
+    .panel{
+        border: none;
+    }
+    .panel-body{
+        min-height: 400px;
+    }
     .log {
         font-family:monospace;
-        white-space: pre;
         display: none;
+        margin-bottom: 5px;
         &.error {
             color: #ff0000;
             background: #ffebeb;
@@ -101,7 +109,6 @@
         display: block;
     }
 }
-
 
 label.btn span {
   font-size: 1em ;

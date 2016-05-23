@@ -3,7 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.vueInstance = undefined;
 exports.initVue = initVue;
+
+var _debugger = require("./libs/debugger");
+
 var _ = require("underscore");
 
 var LOG_LEVEL_LIST = ["all", "verbose", "debug", "info", "warn", "error"];
@@ -18,7 +22,9 @@ function initVue() {
             ],
             feLogLevel: "info",
             feLogLevelForClass: [],
-            feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }
+            feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
+            deviceLevel: "",
+            deviceLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }
         },
         methods: {
             clearLog: function clearLog() {
@@ -44,9 +50,26 @@ function initVue() {
                     this.feLogLevelClassObj["" + l] = false;
                 }
                 this.feLogLevelClassObj["" + currentLevel] = true;
+            },
+            changeDeviceLevel: function changeDeviceLevel(e) {
+                var level = $(e.target).data("level");
+                if (!level) {
+                    return;
+                }
+                this.deviceLevel = level;
+                this.updateDeviceLevel();
+                (0, _debugger.setLogLevel)(level);
+            },
+            updateDeviceLevel: function updateDeviceLevel() {
+                if (!this.deviceLevel || this.deviceLevel.length < 1) {
+                    return;
+                }
+                for (var l in this.deviceLevelClassObj) {
+                    this.deviceLevelClassObj["" + l] = false;
+                }
+                this.deviceLevelClassObj["" + this.deviceLevel] = true;
             }
         }
     });
-
     vueInstance.updateFeLogLevel();
 }

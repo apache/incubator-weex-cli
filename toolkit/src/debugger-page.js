@@ -2,6 +2,8 @@ const _ = require("underscore")
 
 let LOG_LEVEL_LIST = ["all","verbose","debug","info","warn","error"]
 
+import {setLogLevel } from './libs/debugger';
+
 export var  vueInstance
 export function initVue(){
     window._vueInstance = vueInstance = new Vue({
@@ -12,7 +14,9 @@ export function initVue(){
             ],
             feLogLevel:"info",
             feLogLevelForClass:[],
-            feLogLevelClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false}            
+            feLogLevelClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false},
+            deviceLevel:"",            
+            deviceLevelClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false}            
         },
         methods:{
             clearLog(){
@@ -34,9 +38,22 @@ export function initVue(){
                     this.feLogLevelClassObj[`${l}`] = false
                 }
                 this.feLogLevelClassObj[`${currentLevel}`] = true
+            },
+            changeDeviceLevel(e){
+                let level = $(e.target).data("level")
+                if (!(level)){return}
+                this.deviceLevel = level
+                this.updateDeviceLevel()
+                setLogLevel(level)                
+            },
+            updateDeviceLevel(){
+                if (!this.deviceLevel || this.deviceLevel.length < 1){return;}
+                for (let l in  this.deviceLevelClassObj){
+                    this.deviceLevelClassObj[`${l}`] = false
+                }
+                this.deviceLevelClassObj[`${this.deviceLevel}`] = true
             }
         }
     })
-    
     vueInstance.updateFeLogLevel()
 }
