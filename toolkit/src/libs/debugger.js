@@ -1,5 +1,6 @@
 import WebsocketClient from './client';
 import qrcode from './qrcode';
+import {vueInstance} from '../debugger-page';
 
 function debuggableDecorator(target, name, descriptor) {
     descriptor = descriptor
@@ -135,11 +136,7 @@ function printLog(flag, message) {
         flag = 'info';
     }
 
-    html = $("<div/>").text(message).html();
-    $("#logger").append("<p class='" + flag + " log'>" + html + "</p>");
-    div = $("#logger")[0];
-    return div.scrollTop = div.scrollHeight;
-    //console.log(flag, message);
+    vueInstance.logs.push({content:message,flag:flag})
 }
 
 export function evalFramework(frameworkCode) {
@@ -167,6 +164,7 @@ export function evalRenderer(rendererCode) {
     registerMethods(scope, debuggableScope);
 }
 
+//TODO: not a suitable place , need refactoring
 export function setLogLevel(logLevel) {
     wsc.send('setLogLevel', [logLevel]);
 }

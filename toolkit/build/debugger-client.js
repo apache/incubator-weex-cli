@@ -10,6 +10,8 @@ var _client2 = _interopRequireDefault(_client);
 
 var _debugger = require('./libs/debugger');
 
+var _debuggerPage = require('./debugger-page');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ENDPOINT = 'framework';
@@ -20,10 +22,6 @@ var hasFrameworkCode = !!window.createInstance;
 document.addEventListener('DOMContentLoaded', function () {
     location.hash = ID;
 
-    $("#clear").on('click', function () {
-        $("#logger").html("");
-        return false;
-    });
     $("#level li a").on('click', function (e) {
         var level;
         level = $(this).data("level");
@@ -44,12 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#device-level label").removeClass("active");
         $(this).addClass("active").addClass("level-" + level);
     });
-    $("#debug-js label").on('click', function (e) {
-        var checked = $("#debug-js input")[0].checked;
-        if (!checked) {
-            $("#debug-js label").removeClass("active");
-        } else {
-            $("#debug-js label").addClass("active");
-        }
-    });
+
+    (0, _debuggerPage.initVue)();
 });

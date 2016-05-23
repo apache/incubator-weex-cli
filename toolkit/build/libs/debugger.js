@@ -30,6 +30,8 @@ var _qrcode = require('./qrcode');
 
 var _qrcode2 = _interopRequireDefault(_qrcode);
 
+var _debuggerPage = require('../debugger-page');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function debuggableDecorator(target, name, descriptor) {
@@ -171,11 +173,7 @@ function printLog(flag, message) {
         flag = 'info';
     }
 
-    html = $("<div/>").text(message).html();
-    $("#logger").append("<p class='" + flag + " log'>" + html + "</p>");
-    div = $("#logger")[0];
-    return div.scrollTop = div.scrollHeight;
-    //console.log(flag, message);
+    _debuggerPage.vueInstance.logs.push({ content: message, flag: flag });
 }
 
 function evalFramework(frameworkCode) {
@@ -202,6 +200,7 @@ function evalRenderer(rendererCode) {
     registerMethods(scope, debuggableScope);
 }
 
+//TODO: not a suitable place , need refactoring
 function setLogLevel(logLevel) {
     wsc.send('setLogLevel', [logLevel]);
 }
