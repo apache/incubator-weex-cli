@@ -49,17 +49,16 @@
         
     </div>
     <div class="row">
-        <ul class="nav nav-pills" id="level">
-            <li class="active"><a href="#" data-level="all">All</a></li>
-            <li><a href="#" data-level="error">Error</a></li>
-            <li><a href="#" data-level="warn">Warn</a></li>
-            <li><a href="#" data-level="info">Info</a></li>
-            <li><a href="#" data-level="debug">Debug</a></li>
-            <li><a href="#" data-level="verbose">Verbose</a></li>
-
+        <ul class="nav nav-pills" id="level"  v-on:click="changeDisplayLevel">
+            <li v-bind:class="{'active':feLogLevelClassObj.error}"><a href="#" data-level="error">Error</a></li>
+            <li v-bind:class="{'active':feLogLevelClassObj.warn}"><a href="#" data-level="warn">Warn</a></li>
+            <li v-bind:class="{'active':feLogLevelClassObj.info}"><a href="#" data-level="info">Info</a></li>
+            <li v-bind:class="{'active':feLogLevelClassObj.debug}"><a href="#" data-level="debug">Debug</a></li>
+            <li v-bind:class="{'active':feLogLevelClassObj.verbose}"><a href="#" data-level="verbose">Verbose</a></li>
+            <li v-bind:class="{'active':feLogLevelClassObj.all}"><a href="#" data-level="all">All</a></li>
         </ul>
 
-        <div id="logger">
+        <div id="logger" v-bind:class="feLogLevelForClass"  >
             <p class="{{log.flag}} log" v-for="log in logs">
                 {{log.content}}
             </p>

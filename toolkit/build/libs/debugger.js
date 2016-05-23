@@ -172,7 +172,6 @@ function printLog(flag, message) {
     if (flag == null) {
         flag = 'info';
     }
-
     _debuggerPage.vueInstance.logs.push({ content: message, flag: flag });
 }
 
@@ -224,3 +223,5 @@ function hideNativeQRCode() {
     var $slogan = document.querySelector('#slogan');
     $slogan.style.display = 'none';
 }
+
+window._hideNativeQRCode = hideNativeQRCode; //just for debug debugger

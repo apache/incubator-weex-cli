@@ -35,11 +35,9 @@
   align-items: center;
   cursor: pointer;
 }
-
 #logs {
   height: 100%;
 }
-
 .btn-group span {
   display: block;
   float: right;
@@ -47,107 +45,97 @@
   line-height: 20px;
   padding-left: 8px;
 }
-
 #logger {
   min-height: 500px;
   border: 1px solid #DDDDDD;
   border-radius: 4px 4px 4px 4px;
   margin: 15px 0;
   padding: 8px;
-  overflow:auto;
+  overflow: auto;
 }
-
 #level {
   margin-top: 20px;
   margin-bottom: 4px;
 }
-
 #status {
   float: right;
   font-style: italic;
   color: #00AA00;
 }
-
 #status.warning {
   color: #DD0000;
 }
-
 #logger .log {
-  font-family:monospace;
+  font-family: monospace;
   white-space: pre;
-}
-
-.level-error .log, .level-warn .log, .level-info .log, .level-debug .log, .level-verbose .log {
   display: none;
 }
-
-.level-error .log.error, .level-warn .log.warn, .level-info .log.info, .level-debug .log.debug,.level-verbose .log.verbose {
-  display: block;
-}
-
-.log.error {
+#logger .log.error {
   color: #ff0000;
   background: #ffebeb;
 }
-
-.log.warn {
+#logger .log.warn {
   color: #ffa500;
 }
-
-.log.info {
+#logger .log.info {
   color: #6495eb;
 }
-
-.log.debug {
+#logger .log.debug {
   color: #008000;
 }
-
-.log.verbose {
+#logger .log.verbose {
   color: #808080;
 }
-
-
-
+#logger.level-error .log.error,
+#logger.level-warn .log.warn,
+#logger.level-info .log.info,
+#logger.level-debug #logger.log.debug,
+#logger.level-verbose #logger.log.verbose {
+  display: block;
+}
+#logger.level-all .log {
+  display: block;
+}
 label.btn span {
   font-size: 1em ;
 }
-
-label input[type="radio"] ~ i.fa.fa-circle-o{
-  color: #c8c8c8;    display: inline;
+label input[type="radio"] ~ i.fa.fa-circle-o {
+  color: #c8c8c8;
+  display: inline;
 }
-label input[type="radio"] ~ i.fa.fa-check-circle-o{
+label input[type="radio"] ~ i.fa.fa-check-circle-o {
   display: none;
 }
-label input[type="radio"]:checked ~ i.fa.fa-circle-o{
+label input[type="radio"]:checked ~ i.fa.fa-circle-o {
   display: none;
 }
-label input[type="radio"]:checked ~ i.fa.fa-check-circle-o{
-  color: #7AA3CC;    display: inline;
+label input[type="radio"]:checked ~ i.fa.fa-check-circle-o {
+  color: #7AA3CC;
+  display: inline;
 }
 label:hover input[type="radio"] ~ i.fa {
   color: #7AA3CC;
 }
-
-label input[type="checkbox"] ~ i.fa.fa-square-o{
-  color: #c8c8c8;    display: inline;
+label input[type="checkbox"] ~ i.fa.fa-square-o {
+  color: #c8c8c8;
+  display: inline;
 }
-label input[type="checkbox"] ~ i.fa.fa-check-square-o{
+label input[type="checkbox"] ~ i.fa.fa-check-square-o {
   display: none;
 }
-label input[type="checkbox"]:checked ~ i.fa.fa-square-o{
+label input[type="checkbox"]:checked ~ i.fa.fa-square-o {
   display: none;
 }
-label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o{
-  color: #7AA3CC;    display: inline;
+label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o {
+  color: #7AA3CC;
+  display: inline;
 }
 label:hover input[type="checkbox"] ~ i.fa {
   color: #7AA3CC;
 }
-
-div[data-toggle="buttons"] label.active{
+div[data-toggle="buttons"] label.active {
   color: #7AA3CC;
 }
-
 div[data-toggle="buttons"] label {
   display: inline-block;
   padding: 6px 12px;
@@ -170,11 +158,10 @@ div[data-toggle="buttons"] label {
   -o-user-select: none;
   user-select: none;
 }
-
 div[data-toggle="buttons"] label:hover {
   color: #7AA3CC;
 }
-
-div[data-toggle="buttons"] label:active, div[data-toggle="buttons"] label.active {
+div[data-toggle="buttons"] label:active,
+div[data-toggle="buttons"] label.active {
   -webkit-box-shadow: none;
 }
