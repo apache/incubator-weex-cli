@@ -62,7 +62,14 @@
         </div>
     </div>
     <div class="row">
-        <h4 >Weex Log output:</h4>
+        <div class="col-md-2">        
+            <h4 >Weex Log output:</h4>
+        </div>
+        <div class="col-md-1 col-md-offset-9">
+            <p id="status"></p>
+        </div>
+    </div>
+    <div class="row">
         <div id="logger" v-bind:class="feLogLevelForClass"  >
             <div class="panel panel-primary">
                 <div class="panel-body">
@@ -77,7 +84,6 @@
     <div class="row">
         <div class="span12">
             <button v-on:click="clearLog"  class="btn btn-primary" id="clear">Clear</button>
-            <p id="status"></p>
         </div>
     </div>
 </div>
