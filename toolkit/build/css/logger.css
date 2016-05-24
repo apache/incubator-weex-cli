@@ -36,6 +36,7 @@
   cursor: pointer;
 }
 #logs {
+  display: none;
   height: 100%;
 }
 #logs h2 {
@@ -57,6 +58,7 @@
   font-style: italic;
   color: #00AA00;
   margin: 0;
+  line-height: 40px;
 }
 #status.warning {
   color: #DD0000;
@@ -107,43 +109,6 @@
 #logger.level-all .log {
   display: block;
 }
-label.btn span {
-  font-size: 1em ;
-}
-label input[type="radio"] ~ i.fa.fa-circle-o {
-  color: #c8c8c8;
-  display: inline;
-}
-label input[type="radio"] ~ i.fa.fa-check-circle-o {
-  display: none;
-}
-label input[type="radio"]:checked ~ i.fa.fa-circle-o {
-  display: none;
-}
-label input[type="radio"]:checked ~ i.fa.fa-check-circle-o {
-  color: #7AA3CC;
-  display: inline;
-}
-label:hover input[type="radio"] ~ i.fa {
-  color: #7AA3CC;
-}
-label input[type="checkbox"] ~ i.fa.fa-square-o {
-  color: #c8c8c8;
-  display: inline;
-}
-label input[type="checkbox"] ~ i.fa.fa-check-square-o {
-  display: none;
-}
-label input[type="checkbox"]:checked ~ i.fa.fa-square-o {
-  display: none;
-}
-label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o {
-  color: #7AA3CC;
-  display: inline;
-}
-label:hover input[type="checkbox"] ~ i.fa {
-  color: #7AA3CC;
-}
 div[data-toggle="buttons"] label.active {
   color: #7AA3CC;
 }
@@ -175,4 +140,9 @@ div[data-toggle="buttons"] label:hover {
 div[data-toggle="buttons"] label:active,
 div[data-toggle="buttons"] label.active {
   -webkit-box-shadow: none;
+}
+.auto-scroll-checkbox {
+  position: relative;
+  top: 3px;
+  margin-left: 6px;
 }

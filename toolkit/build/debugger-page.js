@@ -24,7 +24,8 @@ function initVue() {
             feLogLevelForClass: [],
             feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
             deviceLevel: "",
-            deviceLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }
+            deviceLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
+            isAutoScroll: false
         },
         methods: {
             clearLog: function clearLog() {
@@ -68,8 +69,29 @@ function initVue() {
                     this.deviceLevelClassObj["" + l] = false;
                 }
                 this.deviceLevelClassObj["" + this.deviceLevel] = true;
+            },
+            autoScrollClick: function autoScrollClick() {
+                var self = this;
+                setTimeout(function () {
+                    if (self.isAutoScroll) {
+                        activeLogAutoScroll();
+                    } else {
+                        disableLogAutoScroll();
+                    }
+                }, 30);
             }
         }
     });
     vueInstance.updateFeLogLevel();
+}
+
+var LogAutoScrollMark;
+function activeLogAutoScroll() {
+    LogAutoScrollMark = setInterval(function () {
+        return $("#logger").scrollTop($("#logger").prop('scrollHeight'));
+    }, 100);
+}
+
+function disableLogAutoScroll() {
+    clearInterval(LogAutoScrollMark);
 }

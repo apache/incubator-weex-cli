@@ -220,8 +220,8 @@ function generateNativeQRCode() {
 }
 
 function hideNativeQRCode() {
-    var $slogan = document.querySelector('#slogan');
-    $slogan.style.display = 'none';
+    $('#slogan').hide();
+    $("#logs").show();
 }
 
 window._hideNativeQRCode = hideNativeQRCode; //just for debug debugger

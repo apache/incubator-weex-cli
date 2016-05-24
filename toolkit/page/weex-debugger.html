@@ -82,7 +82,16 @@
         
     </div>
     <div class="row">
-        <div class="span12">
+        <div class="col-md-2">
+            <span class="label label-info">
+                autoScroll
+                <input v-on:click="autoScrollClick"  v-model="isAutoScroll""  class="auto-scroll-checkbox" type="checkbox" >
+            </span>
+
+        </div>
+            
+
+        <div class="col-md-1 col-md-offset-9">
             <button v-on:click="clearLog"  class="btn btn-primary" id="clear">Clear</button>
         </div>
     </div>
