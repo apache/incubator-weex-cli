@@ -40,7 +40,7 @@ var app = websockify(koa());
 
 var nwUtils = require('./nw-utils');
 
-var DEBUGGER_SERVER_PORT = 4000;
+var DEBUGGER_SERVER_PORT = 8687;
 
 // Debugger Server
 var DS = {
@@ -66,10 +66,6 @@ app.use(r.get('/', DS.index));
 var appStatic = koa();
 appStatic.use(staticServer(path.join(__dirname, "../", "build")));
 app.use(mount('/static', appStatic));
-
-var appPage = koa();
-appPage.use(staticServer("page"));
-app.use(mount('/page', appPage));
 
 /* 
 ===================================

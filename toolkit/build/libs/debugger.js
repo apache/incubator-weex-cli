@@ -30,6 +30,8 @@ var _qrcode = require('./qrcode');
 
 var _qrcode2 = _interopRequireDefault(_qrcode);
 
+var _debuggerPage = require('../debugger-page');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function debuggableDecorator(target, name, descriptor) {
@@ -160,8 +162,8 @@ var debuggableScope = {
     setEnvironment: function setEnvironment(scopeFunction, env) {
         global.WXEnvironment = env;
         var deviceLevel = env.logLevel;
-        $("#device-level-" + deviceLevel).attr('checked', 'checked');
-        $("#device-level-" + deviceLevel).parent().addClass('active');
+        _debuggerPage.vueInstance.deviceLevel = deviceLevel;
+        _debuggerPage.vueInstance.updateDeviceLevel();
     }
 };
 
@@ -170,12 +172,7 @@ function printLog(flag, message) {
     if (flag == null) {
         flag = 'info';
     }
-
-    html = $("<div/>").text(message).html();
-    $("#logger").append("<p class='" + flag + " log'>" + html + "</p>");
-    div = $("#logger")[0];
-    return div.scrollTop = div.scrollHeight;
-    //console.log(flag, message);
+    _debuggerPage.vueInstance.logs.push({ content: message, flag: flag });
 }
 
 function evalFramework(frameworkCode) {
@@ -202,6 +199,7 @@ function evalRenderer(rendererCode) {
     registerMethods(scope, debuggableScope);
 }
 
+//TODO: not a suitable place , need refactoring
 function setLogLevel(logLevel) {
     wsc.send('setLogLevel', [logLevel]);
 }
@@ -222,6 +220,12 @@ function generateNativeQRCode() {
 }
 
 function hideNativeQRCode() {
-    var $slogan = document.querySelector('#slogan');
-    $slogan.style.display = 'none';
+    $('#slogan').hide();
+    $("#logs").show();
+    (0, _debuggerPage.setLoggerHeight)();
+    $(window).resize(function () {
+        (0, _debuggerPage.setLoggerHeight)();
+    });
 }
+
+window._hideNativeQRCode = hideNativeQRCode; //just for debug debugger

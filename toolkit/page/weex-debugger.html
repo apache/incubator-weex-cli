@@ -6,13 +6,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 <meta name="format-detection" content="telephone=no, email=no" />
-<link rel="stylesheet" href="/static/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/static/vendor/bootstrap/bootstrap.css">
 <link rel="stylesheet" href="/static/vendor/font-awesome.min.css">
 <link rel="stylesheet" href="/static/css/logger.css">
 
 <script src="/static/vendor/jquery-1.9.1.min.js"></script>
-
-<script src="//g.alicdn.com/mtb/??lib-flexible/0.3.4/flexible.js,lib-env/1.5.10/env.js,lib-qrcode/1.0.1/qrcode.js"></script>
+<script src="/static/vendor/bootstrap/bootstrap.js"></script>
+<script src="/static/vendor/vue/vue.js"></script>
+<script src="//g.alicdn.com/mtb/??lib-env/1.5.10/env.js,lib-qrcode/1.0.1/qrcode.js"></script>
 <script src="/static/debugger-client-browserify.js"></script>
 </head>
 <body>
@@ -24,54 +25,78 @@
     </div>
 </div>
 <div id="logs" class="container">
-    <div class="row">
-        <label> Device Log Level: </label>
-        <div class="btn-group" data-toggle="buttons" id="device-level">
-            <label class="btn" data-level="all">
-                <input type="radio" id="device-level-all" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>All</span>
-            </label>
-            <label class="btn" data-level="error">
-                <input type="radio" id="device-level-error" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Error</span>
-            </label>
-            <label class="btn" data-level="warn">
-                <input type="radio" id="device-level-warn" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Warn</span>
-            </label>
-            <label class="btn" data-level="info">
-                <input type="radio" id="device-level-info" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Info</span>
-            </label>
-            <label class="btn" data-level="debug">
-                <input type="radio" id="device-level-debug" name='level'><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Debug</span>
-            </label>
-            <label class="btn" data-level="verbose">
-                <input type="radio" id="device-level-verbose" name='level' ><i class="fa fa-circle-o fa-2x"></i><i class="fa fa-check-circle-o fa-2x"></i><span>Verbose</span>
-            </label>
+    <h2>Weex Debugger</h2>
+    <div class="level-controller row">
+        <div class="col-md-5">
+            <div class="panel panel-info">
+                <div class="panel-heading">Display Log Level</div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group" aria-hidden="true" id="level"  v-on:click="changeDisplayLevel">
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.error}" data-level="error">Error</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.warn}" data-level="warn">Warn</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.info}" data-level="info">Info</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.debug}" data-level="debug">Debug</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.verbose}" data-level="verbose">Verbose</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.all}" data-level="all">All</button>
+                    </div>
+                </div>
+            </div>
+            
         </div>
-        <div class="btn-group" data-toggle="buttons" id="debug-js">
-            <label class="btn">
-                <input type="checkbox" name='email3'><i class="fa fa-square-o fa-2x"></i><i class="fa fa-check-square-o fa-2x"></i><span>Debug JS</span>
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <ul class="nav nav-pills" id="level">
-            <li class="active"><a href="#" data-level="all">All</a></li>
-            <li><a href="#" data-level="error">Error</a></li>
-            <li><a href="#" data-level="warn">Warn</a></li>
-            <li><a href="#" data-level="info">Info</a></li>
-            <li><a href="#" data-level="debug">Debug</a></li>
-            <li><a href="#" data-level="verbose">Verbose</a></li>
-
-        </ul>
-
-        <div id="logger">
+        <div class="col-md-5 col-md-offset-2">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    Device Log Level <span  style="cursor: pointer;" data-container="body" data-toggle="popover" data-placement="right" data-content="set how many log device send to weex debugger, too many log will make device slow" >⁈</span>
+                </div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group" aria-hidden="true" id="device-level"  v-on:click="changeDeviceLevel">
+                        <button class="btn btn-default" v-bind:class="{'active':deviceLevelClassObj.error}" data-level="error">Error</button>
+                        <button class="btn btn-default" v-bind:class="{'active':deviceLevelClassObj.warn}" data-level="warn">Warn</button>
+                        <button class="btn btn-default" v-bind:class="{'active':deviceLevelClassObj.info}" data-level="info">Info</button>
+                        <button class="btn btn-default" v-bind:class="{'active':deviceLevelClassObj.debug}" data-level="debug">Debug</button>
+                        <button class="btn btn-default" v-bind:class="{'active':deviceLevelClassObj.verbose}" data-level="verbose">Verbose</button>
+                        <button class="btn btn-default" v-bind:class="{'active':deviceLevelClassObj.all}" data-level="all">All</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
-        <div class="span12">
-            <button class="btn btn-primary" id="clear">Clear</button>
+        <div class="col-md-2">        
+            <h4 >Weex Log output:</h4>
+        </div>
+        <div class="col-md-1 col-md-offset-9">
             <p id="status"></p>
         </div>
     </div>
+    <div class="row">
+        <div id="logger" v-bind:class="feLogLevelForClass"  >
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <div class="well well-sm {{log.flag}} log" v-for="log in logs">
+                        {{log.content}}
+                    </div>
+                </div>
+            </div>            
+        </div>
+        
+    </div>
+    
+    <div class="bottom-action row" >
+        <div class="col-md-2">
+            <span class="label label-info">
+                autoScroll
+                <input v-on:click="autoScrollClick"  v-model="isAutoScroll""  class="auto-scroll-checkbox" type="checkbox" >
+            </span>
+
+        </div>
+        
+
+        <div class="col-md-1 col-md-offset-9">
+            <button v-on:click="clearLog"  class="btn btn-primary" id="clear">Clear</button>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

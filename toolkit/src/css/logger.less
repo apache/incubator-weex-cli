@@ -37,7 +37,11 @@
 }
 
 #logs {
-  height: 100%;
+    display: none;
+    height: 100%;
+    h2{
+        text-align: center;
+    }
 }
 
 .btn-group span {
@@ -48,101 +52,68 @@
   padding-left: 8px;
 }
 
-#logger {
-  min-height: 500px;
-  border: 1px solid #DDDDDD;
-  border-radius: 4px 4px 4px 4px;
-  margin: 15px 0;
-  padding: 8px;
-  overflow:auto;
-}
 
-#level {
+#level , #device-level {
   margin-top: 20px;
   margin-bottom: 4px;
 }
 
 #status {
-  float: right;
   font-style: italic;
   color: #00AA00;
+  margin: 0;
+  line-height: 40px;
 }
 
 #status.warning {
   color: #DD0000;
 }
 
-#logger .log {
-  font-family:monospace;
-  white-space: pre;
+.level-controller  .panel{
+    margin-bottom: 0px;
+}
+#logger {
+    border: 1px solid #337ab7;
+    border-radius: 4px 4px 4px 4px;
+    margin: 15px 0;
+    margin-top: 0;
+    padding: 8px;
+    overflow: auto;
+    .panel{
+        border: none;
+    }
+    .panel-body{
+        min-height: 400px; //will be reset by script
+    }
+    .log {
+        font-family:monospace;
+        display: none;
+        margin-bottom: 5px;
+        &.error {
+            color: #ff0000;
+            background: #ffebeb;
+        }
+        &.warn {
+            color: #ffa500;
+        }
+        &.info {
+            color: #6495eb;
+        }
+        &.debug {
+            color: #008000;
+        }
+        &.verbose {
+            color: #808080;
+        }
+    }
+    &.level-error .log.error, &.level-warn .log.warn, &.level-info .log.info, &.level-debug &.log.debug, &.level-verbose &.log.verbose {
+        display: block;
+    }
+    &.level-all .log{
+        display: block;
+    }
 }
 
-.level-error .log, .level-warn .log, .level-info .log, .level-debug .log, .level-verbose .log {
-  display: none;
-}
-
-.level-error .log.error, .level-warn .log.warn, .level-info .log.info, .level-debug .log.debug,.level-verbose .log.verbose {
-  display: block;
-}
-
-.log.error {
-  color: #ff0000;
-  background: #ffebeb;
-}
-
-.log.warn {
-  color: #ffa500;
-}
-
-.log.info {
-  color: #6495eb;
-}
-
-.log.debug {
-  color: #008000;
-}
-
-.log.verbose {
-  color: #808080;
-}
-
-
-
-label.btn span {
-  font-size: 1em ;
-}
-
-label input[type="radio"] ~ i.fa.fa-circle-o{
-  color: #c8c8c8;    display: inline;
-}
-label input[type="radio"] ~ i.fa.fa-check-circle-o{
-  display: none;
-}
-label input[type="radio"]:checked ~ i.fa.fa-circle-o{
-  display: none;
-}
-label input[type="radio"]:checked ~ i.fa.fa-check-circle-o{
-  color: #7AA3CC;    display: inline;
-}
-label:hover input[type="radio"] ~ i.fa {
-  color: #7AA3CC;
-}
-
-label input[type="checkbox"] ~ i.fa.fa-square-o{
-  color: #c8c8c8;    display: inline;
-}
-label input[type="checkbox"] ~ i.fa.fa-check-square-o{
-  display: none;
-}
-label input[type="checkbox"]:checked ~ i.fa.fa-square-o{
-  display: none;
-}
-label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o{
-  color: #7AA3CC;    display: inline;
-}
-label:hover input[type="checkbox"] ~ i.fa {
-  color: #7AA3CC;
-}
 
 div[data-toggle="buttons"] label.active{
   color: #7AA3CC;
@@ -177,4 +148,11 @@ div[data-toggle="buttons"] label:hover {
 
 div[data-toggle="buttons"] label:active, div[data-toggle="buttons"] label.active {
   -webkit-box-shadow: none;
+}
+
+
+.auto-scroll-checkbox{
+    position: relative;
+    top: 3px;
+    margin-left:6px;
 }
