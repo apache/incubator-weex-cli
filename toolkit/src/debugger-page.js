@@ -69,6 +69,8 @@ export function initVue(){
         }
     })
     vueInstance.updateFeLogLevel()
+
+
 }
 
 var LogAutoScrollMark;
@@ -80,5 +82,14 @@ function disableLogAutoScroll(){
     clearInterval(LogAutoScrollMark)
 }
 
+
+export function setLoggerHeight(){
+    let loggerTop = $("#logger").position()['top']
+    let bottomHeight = $(".bottom-action").height()
+    let viewportHeight = $(window).height()
+
+    let target = viewportHeight - (loggerTop + bottomHeight + 80)
+    $("#logger .panel-body").css("min-height" , `${target}px`)
+}
 
 

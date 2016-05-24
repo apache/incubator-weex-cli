@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.vueInstance = undefined;
 exports.initVue = initVue;
+exports.setLoggerHeight = setLoggerHeight;
 
 var _debugger = require("./libs/debugger");
 
@@ -94,4 +95,13 @@ function activeLogAutoScroll() {
 
 function disableLogAutoScroll() {
     clearInterval(LogAutoScrollMark);
+}
+
+function setLoggerHeight() {
+    var loggerTop = $("#logger").position()['top'];
+    var bottomHeight = $(".bottom-action").height();
+    var viewportHeight = $(window).height();
+
+    var target = viewportHeight - (loggerTop + bottomHeight + 80);
+    $("#logger .panel-body").css("min-height", target + "px");
 }

@@ -222,6 +222,10 @@ function generateNativeQRCode() {
 function hideNativeQRCode() {
     $('#slogan').hide();
     $("#logs").show();
+    (0, _debuggerPage.setLoggerHeight)();
+    $(window).resize(function () {
+        (0, _debuggerPage.setLoggerHeight)();
+    });
 }
 
 window._hideNativeQRCode = hideNativeQRCode; //just for debug debugger

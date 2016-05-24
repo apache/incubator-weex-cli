@@ -1,6 +1,6 @@
 import WebsocketClient from './client';
 import qrcode from './qrcode';
-import {vueInstance} from '../debugger-page';
+import {setLoggerHeight , vueInstance} from '../debugger-page';
 
 function debuggableDecorator(target, name, descriptor) {
     descriptor = descriptor
@@ -186,6 +186,10 @@ function generateNativeQRCode() {
 function hideNativeQRCode() {
     $('#slogan').hide()
     $("#logs").show()
+    setLoggerHeight()
+    $( window ).resize(function() {
+        setLoggerHeight()        
+    })
 }
 
 window._hideNativeQRCode = hideNativeQRCode //just for debug debugger

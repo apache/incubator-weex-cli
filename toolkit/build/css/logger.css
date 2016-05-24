@@ -63,13 +63,15 @@
 #status.warning {
   color: #DD0000;
 }
+.level-controller .panel {
+  margin-bottom: 0px;
+}
 #logger {
   border: 1px solid #337ab7;
   border-radius: 4px 4px 4px 4px;
   margin: 15px 0;
   margin-top: 0;
   padding: 8px;
-  height: 400px;
   overflow: auto;
 }
 #logger .panel {
