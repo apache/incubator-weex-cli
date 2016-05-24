@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
