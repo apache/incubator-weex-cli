@@ -70,11 +70,11 @@
         </div>
     </div>
     <div class="row">
-        <div id="logger" v-bind:class="feLogLevelForClass"  >
+        <div id="logger" v-bind:class="feLogLevelForClass"  v-on:wheel="wheellogger">
             <div class="panel panel-primary">
                 <div class="panel-body">
                     <div class="well well-sm {{log.flag}} log" v-for="log in logs">
-                        {{log.content}}
+                        <pre>{{{log.content}}}</pre>
                     </div>
                 </div>
             </div>            
