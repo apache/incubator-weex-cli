@@ -18,6 +18,7 @@ var fs = require('fs'),
     fse = require('fs-extra'),
     path = require('path'),
     opener = require('opener'),
+    npmlog = require('npmlog'),
     httpServer = require('http-server'),
     wsServer = require('ws').Server,
     watch = require('node-watch'),
@@ -27,7 +28,8 @@ var fs = require('fs'),
     weexTransformer = require('weex-transformer'),
     nwUtils = require('../build/nw-utils'),
     fsUtils = require('../build/fs-utils'),
-    debuggerServer = require('../build/debugger-server');
+    debuggerServer = require('../build/debugger-server'),
+    weFileCreate = require('../build/create');
 
 var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
@@ -82,11 +84,11 @@ var Previewer = function () {
 
         if (transformWatch) {
             (function () {
-                console.log('watching ' + inputPath);
+                npmlog.info('watching ' + inputPath);
                 var self = _this;
                 watch(inputPath, function (fileName) {
                     if (/\.we$/gi.test(fileName)) {
-                        console.log(fileName + ' updated');
+                        npmlog.info(fileName + ' updated');
                         var _outputPath = self.outputPath;
                         try {
                             if (fs.lstatSync(_outputPath).isDirectory()) {
@@ -115,8 +117,8 @@ var Previewer = function () {
                     try {
                         fs.lstatSync(outputPath).isDirectory;
                     } catch (e) {
-                        console.log(yargs.help());
-                        console.log("when input path is dir , output path must be dir too");
+                        npmlog.info(yargs.help());
+                        npmlog.info("when input path is dir , output path must be dir too");
                         process.exit(1);
                     }
 
@@ -145,10 +147,10 @@ var Previewer = function () {
                     self.startServer(jsBundlePathForRender);
                     self.startWebSocket();
                 } else {
-                    console.log('weex JS bundle saved at ' + path.resolve(outputPath));
+                    npmlog.info('weex JS bundle saved at ' + path.resolve(outputPath));
                 }
             }).catch(function (e) {
-                console.error(e);
+                npmlog.error(e);
             });
         }
     }, {
@@ -180,13 +182,13 @@ var Previewer = function () {
 
             var server = httpServer.createServer(options);
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
-            //console.log(`http port: ${port}`)       
+            //npmlog.info(`http port: ${port}`)       
             server.listen(port, "0.0.0.0", function () {
-                console.log(new Date() + ('http  is listening on port ' + port));
+                npmlog.info(new Date() + ('http  is listening on port ' + port));
 
                 if (self.transformServerPath) {
                     var IP = nwUtils.getPublicIP();
-                    console.log('we file in local path ' + self.transformServerPath + ' will be transformer to JS bundle\nplease access http://' + IP + ':' + port + '/');
+                    npmlog.info('we file in local path ' + self.transformServerPath + ' will be transformer to JS bundle\nplease access http://' + IP + ':' + port + '/');
                     return;
                 }
 
@@ -199,18 +201,18 @@ var Previewer = function () {
                 if (self.shouldOpenBrowser) {
                     opener(previewUrl);
                 } else {
-                    console.log('weex preview url:  ' + previewUrl);
+                    npmlog.info('weex preview url:  ' + previewUrl);
                 }
             });
 
             process.on('SIGINT', function () {
-                console.log("weex  server stoped");
+                npmlog.info("weex  server stoped");
                 fsUtils.deleteFolderRecursive(WEEX_TRANSFORM_TMP);
                 process.exit();
             });
 
             process.on('SIGTERM', function () {
-                console.log("weex server stoped");
+                npmlog.info("weex server stoped");
                 fsUtils.deleteFolderRecursive(WEEX_TRANSFORM_TMP);
                 process.exit();
             });
@@ -221,9 +223,9 @@ var Previewer = function () {
             var IP = nwUtils.getPublicIP();
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
             var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
-            console.log('following QR encoding url\n' + jsBundleURL);
+            npmlog.info('following QR encoding url\n' + jsBundleURL);
             qrcode.generate(jsBundleURL);
-            console.log("please access https://github.com/alibaba/weex to download Weex Playground app for scanning");
+            npmlog.info("please access https://github.com/alibaba/weex to download Weex Playground app for scanning");
         }
     }, {
         key: 'startWebSocket',
@@ -231,10 +233,10 @@ var Previewer = function () {
             var port = WEBSOCKET_PORT == NO_PORT_SPECIFIED ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT;
             var wss = wsServer({ port: port });
             var self = this;
-            console.log(new Date() + ('WebSocket  is listening on port ' + port));
+            npmlog.info(new Date() + ('WebSocket  is listening on port ' + port));
             wss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
-                    console.log('received: %s', message);
+                    npmlog.info('received: %s', message);
                 });
                 ws.send("ws server ok");
                 self.wsConnection = ws;
@@ -284,7 +286,7 @@ var Previewer = function () {
                             return console.info('    line' + l.line + ',column' + l.column + ':\n        ' + l.reason + '\n');
                         });
                     } catch (e) {
-                        console.error(e);
+                        npmlog.error(e);
                     }
 
                     var bundleWritePath = void 0;
@@ -308,7 +310,9 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").default('h', "127.0.0.1").option('o', { demand: false }).default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').help('help').argv;
+var argv = yargs.usage('\nUsage: $0 foo/bar/we_file_or_dir_path  [options]\nUsage: $0 create [name]  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('p') /* for weex create */
+.alias('p', 'parted').describe('p', '[for create sub cmd]create parted files "js/css/html"').boolean('f') /* for weex create */
+.alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').argv;
 
 (function argvProcess() {
 
@@ -317,8 +321,21 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
         return;
     }
 
+    if (argv._[0] == "create") {
+        if (argv.output == NO_JSBUNDLE_OUTPUT) {
+            argv.output = ".";
+        }
+        argv._ = argv._.slice(1);
+        if (argv._.length < 1) {
+            npmlog.error("please add your we file name, eg:\n$weex create we_file_name");
+            return;
+        }
+        weFileCreate.create(argv);
+        return;
+    }
+
     if (argv.version) {
-        console.log(VERSION);
+        npmlog.info(VERSION);
         return;
     }
 
@@ -327,7 +344,7 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
     var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir
 
     if (badWePath && !transformServerPath) {
-        console.log(yargs.help());
+        npmlog.info(yargs.help());
         process.exit(1);
     }
 
@@ -336,8 +353,8 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
         try {
             var res = fs.accessSync(transformServerPath);
         } catch (e) {
-            console.log(yargs.help());
-            console.log('path ' + absPath + ' not accessible');
+            npmlog.info(yargs.help());
+            npmlog.info('path ' + absPath + ' not accessible');
             process.exit(1);
         }
     }
@@ -347,8 +364,8 @@ var argv = yargs.usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]').boole
     var displayQR = true; //argv.qr  ? true : false
     var outputPath = argv.o; // js bundle file path  or  transform output dir path
     if (typeof outputPath != "string") {
-        console.log(yargs.help());
-        console.log("must specify output path ");
+        npmlog.info(yargs.help());
+        npmlog.info("must specify output path ");
         process.exit(1);
     }
     var transformWatch = argv.watch;
