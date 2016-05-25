@@ -71,15 +71,16 @@ var Previewer = function () {
                 this.outputPath = outputPath;
             }
 
-        if (fs.lstatSync(inputPath).isFile()) {
-            try {
+        try {
+            if (fs.lstatSync(inputPath).isFile()) {
+
                 if (fs.lstatSync(outputPath).isDirectory()) {
                     var fileName = path.basename(inputPath).replace(/\..+/, '');
                     this.outputPath = outputPath = path.join(this.outputPath, fileName + '.js');
                 }
-            } catch (e) {
-                //fs.lstatSync my raise when outputPath is file but not exist yet.
             }
+        } catch (e) {
+            //fs.lstatSync my raise when outputPath is file but not exist yet.
         }
 
         if (transformWatch) {
@@ -310,8 +311,7 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('\nUsage: $0 foo/bar/we_file_or_dir_path  [options]\nUsage: $0 create [name]  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('p') /* for weex create */
-.alias('p', 'parted').describe('p', '[for create sub cmd]create parted files "js/css/html"').boolean('f') /* for weex create */
+var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('f') /* for weex create */
 .alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').argv;
 
 (function argvProcess() {
@@ -327,7 +327,7 @@ var argv = yargs.usage('\nUsage: $0 foo/bar/we_file_or_dir_path  [options]\nUsag
         }
         argv._ = argv._.slice(1);
         if (argv._.length < 1) {
-            npmlog.error("please add your we file name, eg:\n$weex create we_file_name");
+            npmlog.error("\nplease add your we file name, eg:\n$weex create we_file_name");
             return;
         }
         weFileCreate.create(argv);
@@ -341,7 +341,17 @@ var argv = yargs.usage('\nUsage: $0 foo/bar/we_file_or_dir_path  [options]\nUsag
 
     var inputPath = argv._[0];
     var transformServerPath = argv.s;
+
     var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir
+
+    try {
+        fs.accessSync(inputPath, fs.F_OK);
+    } catch (e) {
+        if (!transformServerPath) {
+            npmlog.error('\n ' + inputPath + ' not accessable');
+        }
+        badWePath = true;
+    }
 
     if (badWePath && !transformServerPath) {
         npmlog.info(yargs.help());

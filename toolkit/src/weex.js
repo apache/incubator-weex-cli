@@ -53,16 +53,18 @@ class Previewer{
             this.outputPath =  outputPath               
         }
 
-        if (fs.lstatSync(inputPath).isFile()){
-            try{
+        try{        
+            if (fs.lstatSync(inputPath).isFile()){
+
                 if (fs.lstatSync(outputPath).isDirectory()){
                     let fileName = path.basename(inputPath).replace(/\..+/, '')            
                     this.outputPath =  outputPath = path.join(this.outputPath , `${fileName}.js`)
                 }
-            }catch(e){
-                //fs.lstatSync my raise when outputPath is file but not exist yet.
             }
+        }catch(e){
+            //fs.lstatSync my raise when outputPath is file but not exist yet.
         }
+            
 
         if (transformWatch){
             npmlog.info(`watching ${inputPath}`)
@@ -293,9 +295,6 @@ var argv = yargs
         .option('wsport' , {demand:false})
         .default('wsport',NO_PORT_SPECIFIED)
         .describe('wsport', 'websocket listening port number ,default is 8082')
-        .boolean('p') /* for weex create */
-        .alias('p', 'parted')
-        .describe('p', '[for create sub cmd]create parted files "js/css/html"')
         .boolean('f') /* for weex create */
         .alias('f', 'force')
         .describe('f', '[for create sub cmd]force to replace exsisting file(s)')
@@ -328,12 +327,21 @@ var argv = yargs
 
     var inputPath =  argv._[0]
     var transformServerPath = argv.s
-    var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir 
+
+    var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir
+    
+    try {
+        fs.accessSync(inputPath, fs.F_OK);
+    } catch (e) {
+        if (!transformServerPath) { npmlog.error(`\n ${inputPath} not accessable`)}
+        badWePath = true
+    }        
 
     if ( badWePath  &&  !transformServerPath ){
         npmlog.info(yargs.help())
         process.exit(1)
     }
+
 
     if (transformServerPath){
         var absPath = path.resolve(transformServerPath)
