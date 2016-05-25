@@ -179,11 +179,13 @@ function parseWeexFile(loader, params, source) {
         }
 
         if (template) {
-            content += '\n;module.exports.template=' + template;
+            content += '\n;module.exports.template = module.exports.template || {}' + 
+                        '\n;Object.assign(module.exports.template, ' + template + ')';
         }
 
         if (style) {
-            content += '\n;module.exports.style=' + style;
+            content += '\n;module.exports.style = module.exports.style || {}' + 
+                        '\n;Object.assign(module.exports.style, ' + style + ')';
         }
 
         if (results.config) {
@@ -204,16 +206,20 @@ function parseWeexFile(loader, params, source) {
 function partedLoader(type, loader, params, source) {
     var promise;
     switch(type) {
+        case 'js':
         case 'script':
             var config = JSON.stringify({
                 transformerVersion: transformerVersion
             });
             promise = parseScript(loader, params, source, config);
             break;
+        case 'css':
         case 'style':
             promise = parseStyle(loader, params, source);
             break;
+        case 'html':
         case 'tpl':
+        case 'template':
             promise = parseTemplate(loader, params, source);
             break;
         case 'we':
@@ -238,7 +244,8 @@ function loader(source) {
     var promise = partedLoader(type, this, params, source);
 
     promise.then(function(result) {
-        if (type === 'style' || type === 'tpl' || type === 'template') {
+        if (type === 'style' || type === 'css' ||
+            type === 'html' || type === 'tpl' || type === 'template') {
             result = 'module.exports=' + result;
         }
         // console.log('\n[' + type + ', ' + params.resourcePath + ']\n', source, '\n=========>\n', result + '\n');

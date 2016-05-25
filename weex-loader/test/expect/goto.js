@@ -41,4 +41,4 @@ define('@weex-component/goto', function (require, exports, module) {
 ;})
 
 // require module
-bootstrap('@weex-component/goto', {"transformerVersion":"0.3.0"})
+bootstrap('@weex-component/goto', {"transformerVersion":"0.3.1"})

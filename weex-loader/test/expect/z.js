@@ -11,4 +11,4 @@ define('@weex-component/z', function (require, exports, module) {
 ;})
 
 // require module
-bootstrap('@weex-component/z', {"downgrade":{"ios":{"appVersion":">=13.0.0"},"android":{"appVersion":"<=0.0.0"}},"transformerVersion":"0.3.0"}, {"a":1,"b":2})
+bootstrap('@weex-component/z', {"downgrade":{"ios":{"appVersion":">=13.0.0"},"android":{"appVersion":"<=0.0.0"}},"transformerVersion":"0.3.1"}, {"a":1,"b":2})

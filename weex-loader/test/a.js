@@ -1,5 +1,5 @@
 require('./b?name=goto');
-require('./expect/copyright.we?name=copyright');
+require('./copyright.we?name=copyright');
 
 var c = require('./lib/c');
 
