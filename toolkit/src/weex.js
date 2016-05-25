@@ -2,6 +2,7 @@ const fs = require('fs'),
     fse = require('fs-extra'),
     path = require('path'),
     opener = require('opener'),
+    npmlog = require('npmlog'),     
     httpServer = require('http-server'),
     wsServer = require('ws').Server,
     watch =  require('node-watch'),
@@ -11,7 +12,9 @@ const fs = require('fs'),
     weexTransformer = require('weex-transformer'),
     nwUtils =  require('../build/nw-utils'),      
     fsUtils = require('../build/fs-utils'),      
-    debuggerServer =  require('../build/debugger-server');
+    debuggerServer =  require('../build/debugger-server'),
+    weFileCreate = require('../build/create');
+
 
 const VERSION = require('../package.json').version
 const WEEX_FILE_EXT = "we"
@@ -50,23 +53,25 @@ class Previewer{
             this.outputPath =  outputPath               
         }
 
-        if (fs.lstatSync(inputPath).isFile()){
-            try{
+        try{        
+            if (fs.lstatSync(inputPath).isFile()){
+
                 if (fs.lstatSync(outputPath).isDirectory()){
                     let fileName = path.basename(inputPath).replace(/\..+/, '')            
                     this.outputPath =  outputPath = path.join(this.outputPath , `${fileName}.js`)
                 }
-            }catch(e){
-                //fs.lstatSync my raise when outputPath is file but not exist yet.
             }
+        }catch(e){
+            //fs.lstatSync my raise when outputPath is file but not exist yet.
         }
+            
 
         if (transformWatch){
-            console.log(`watching ${inputPath}`)
+            npmlog.info(`watching ${inputPath}`)
             let self = this
             watch(inputPath, function (fileName){
                 if (/\.we$/gi.test(fileName)){
-                    console.log(`${fileName} updated`)
+                    npmlog.info(`${fileName} updated`)
                     let outputPath = self.outputPath
                     try{                    
                         if (fs.lstatSync(outputPath).isDirectory()){
@@ -92,8 +97,8 @@ class Previewer{
             try{
                 fs.lstatSync(outputPath).isDirectory
             }catch(e){
-                console.log(yargs.help())
-                console.log("when input path is dir , output path must be dir too")
+                npmlog.info(yargs.help())
+                npmlog.info("when input path is dir , output path must be dir too")
                 process.exit(1)    
             }
             
@@ -117,10 +122,10 @@ class Previewer{
                 self.startServer(jsBundlePathForRender)
                 self.startWebSocket()
             }else{
-                console.log('weex JS bundle saved at ' + path.resolve(outputPath));          
+                npmlog.info('weex JS bundle saved at ' + path.resolve(outputPath));          
             }
         }).catch(function(e){
-            console.error(e)
+            npmlog.error(e)
         })        
     }
 
@@ -150,13 +155,13 @@ class Previewer{
         
         let server = httpServer.createServer(options)
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT
-        //console.log(`http port: ${port}`)        
+        //npmlog.info(`http port: ${port}`)        
         server.listen(port, "0.0.0.0", function () {
-            console.log((new Date()) + `http  is listening on port ${port}`)
+            npmlog.info((new Date()) + `http  is listening on port ${port}`)
 
             if (self.transformServerPath){
                 let IP =  nwUtils.getPublicIP()                
-                console.log(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${IP}:${port}/`  )
+                npmlog.info(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${IP}:${port}/`  )
                 return 
             }
             
@@ -170,18 +175,18 @@ class Previewer{
             if (self.shouldOpenBrowser){
                 opener(previewUrl)
             }else{
-                console.log(`weex preview url:  ${previewUrl}`)
+                npmlog.info(`weex preview url:  ${previewUrl}`)
             }
         })
 
         process.on('SIGINT', function () {
-            console.log("weex  server stoped")
+            npmlog.info("weex  server stoped")
             fsUtils.deleteFolderRecursive(WEEX_TRANSFORM_TMP)        
             process.exit() 
         }) 
 
         process.on('SIGTERM', function () {
-            console.log("weex server stoped")
+            npmlog.info("weex server stoped")
             fsUtils.deleteFolderRecursive(WEEX_TRANSFORM_TMP)
             process.exit() 
         }) 
@@ -191,18 +196,18 @@ class Previewer{
         let IP =  nwUtils.getPublicIP()
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
-        console.log(`following QR encoding url\n${jsBundleURL}`)
+        npmlog.info(`following QR encoding url\n${jsBundleURL}`)
         qrcode.generate(jsBundleURL)
-        console.log("please access https://github.com/alibaba/weex to download Weex Playground app for scanning")
+        npmlog.info("please access https://github.com/alibaba/weex to download Weex Playground app for scanning")
     }
     startWebSocket(){
         let port = (WEBSOCKET_PORT == NO_PORT_SPECIFIED) ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT
         let wss = wsServer({port: port})
         let self = this
-        console.log((new Date()) + `WebSocket  is listening on port ${port}`)         
+        npmlog.info((new Date()) + `WebSocket  is listening on port ${port}`)         
         wss.on('connection', function connection(ws) {
             ws.on('message', function incoming(message) {
-                console.log('received: %s', message);
+                npmlog.info('received: %s', message);
             });
             ws.send("ws server ok")
             self.wsConnection = ws
@@ -244,7 +249,7 @@ class Previewer{
                         logs,
                         (l)=>  console.info(   `    line${l.line},column${l.column}:\n        ${l.reason}\n`   ) )
                 } catch(e){
-                    console.error(e)
+                    npmlog.error(e)
                 }
 
                 let bundleWritePath
@@ -268,18 +273,20 @@ class Previewer{
 
 var yargs = require('yargs')
 var argv = yargs
-        .usage('Usage: $0 foo/bar/we_file_or_dir_path  [options]')
+        .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]')
         .boolean('qr')
         .describe('qr', 'display QR code for native runtime, default action')
         .option('h' , {demand:false})
         .default('h',"127.0.0.1")
-        .default('h',"127.0.0.1")
+        .alias('h', 'host')
         .option('o' , {demand:false})
+        .alias('o', 'output')
         .default('o',NO_JSBUNDLE_OUTPUT)
-        .describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)')
+        .describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path')
         .option('watch' , {demand:false})
         .describe('watch', 'using with -o , watch input path , auto run transform if change happen')
         .option('s' , {demand:false})
+        .alias('s', 'server')
         .default('s', null)
         .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
         .option('port' , {demand:false})
@@ -287,7 +294,10 @@ var argv = yargs
         .describe('port', 'http listening port number ,default is 8081')
         .option('wsport' , {demand:false})
         .default('wsport',NO_PORT_SPECIFIED)
-        .describe('wsport', 'websocket listening port number ,default is 8082')    
+        .describe('wsport', 'websocket listening port number ,default is 8082')
+        .boolean('f') /* for weex create */
+        .alias('f', 'force')
+        .describe('f', '[for create sub cmd]force to replace exsisting file(s)')
         .help('help')
         .argv  ;
 
@@ -299,27 +309,47 @@ var argv = yargs
         return
     }
 
+    if (argv._[0] == "create"){
+        if (argv.output == NO_JSBUNDLE_OUTPUT){argv.output = "."}
+        argv._ = argv._.slice(1)
+        if (argv._.length < 1 ){
+            npmlog.error("\nplease add your we file name, eg:\n$weex create we_file_name")
+            return 
+        }
+        weFileCreate.create(argv)
+        return
+    }
+
     if (argv.version){
-        console.log(VERSION)
+        npmlog.info(VERSION)
         return
     }
 
     var inputPath =  argv._[0]
     var transformServerPath = argv.s
-    var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir 
+
+    var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir
+    
+    try {
+        fs.accessSync(inputPath, fs.F_OK);
+    } catch (e) {
+        if (!transformServerPath) { npmlog.error(`\n ${inputPath} not accessable`)}
+        badWePath = true
+    }        
 
     if ( badWePath  &&  !transformServerPath ){
-        console.log(yargs.help())
+        npmlog.info(yargs.help())
         process.exit(1)
     }
+
 
     if (transformServerPath){
         var absPath = path.resolve(transformServerPath)
         try{
             var res = fs.accessSync(transformServerPath)
         }catch(e){
-            console.log(yargs.help())            
-            console.log(`path ${absPath} not accessible`)
+            npmlog.info(yargs.help())            
+            npmlog.info(`path ${absPath} not accessible`)
             process.exit(1)
         }
     }
@@ -329,8 +359,8 @@ var argv = yargs
     var displayQR =    true //argv.qr  ? true : false
     var outputPath = argv.o  // js bundle file path  or  transform output dir path
     if ( typeof outputPath  != "string"){
-        console.log(yargs.help())    
-        console.log("must specify output path ")
+        npmlog.info(yargs.help())    
+        npmlog.info("must specify output path ")
         process.exit(1)    
     }
     var transformWatch =  argv.watch
