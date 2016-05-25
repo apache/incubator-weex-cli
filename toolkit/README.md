@@ -49,7 +49,7 @@ Options:
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
-* 160525(0.0.36) : add `create` sub command for create we file using standard weex template
+* 160525(0.0.37) : add `create` sub command for create we file using standard weex template
 * 160509(0.0.30) : add --port &  --wsport options , show encoding url when QR displayed
 * 160506(0.0.29) : improve --watch & -s feature ; fixing hot-reload with playground App.
 * 160505(0.0.25) : support batch transform  & option --watch added
