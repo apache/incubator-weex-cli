@@ -65,6 +65,10 @@ export function initVue(){
                         }
                     }
                     ,30)
+            },
+            wheellogger(e){
+                disableLogAutoScroll()
+                this.isAutoScroll = false
             }
         }
     })
@@ -88,8 +92,9 @@ export function setLoggerHeight(){
     let bottomHeight = $(".bottom-action").height()
     let viewportHeight = $(window).height()
 
-    let target = viewportHeight - (loggerTop + bottomHeight + 80)
+    let target = viewportHeight - (loggerTop + bottomHeight + 60)
     $("#logger .panel-body").css("min-height" , `${target}px`)
+    $("#logger").css("height" , `${target}px`)    
 }
 
 

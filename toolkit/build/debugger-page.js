@@ -80,6 +80,10 @@ function initVue() {
                         disableLogAutoScroll();
                     }
                 }, 30);
+            },
+            wheellogger: function wheellogger(e) {
+                disableLogAutoScroll();
+                this.isAutoScroll = false;
             }
         }
     });
@@ -102,6 +106,7 @@ function setLoggerHeight() {
     var bottomHeight = $(".bottom-action").height();
     var viewportHeight = $(window).height();
 
-    var target = viewportHeight - (loggerTop + bottomHeight + 80);
+    var target = viewportHeight - (loggerTop + bottomHeight + 60);
     $("#logger .panel-body").css("min-height", target + "px");
+    $("#logger").css("height", target + "px");
 }

@@ -104,12 +104,17 @@
 #logger.level-error .log.error,
 #logger.level-warn .log.warn,
 #logger.level-info .log.info,
-#logger.level-debug #logger.log.debug,
-#logger.level-verbose #logger.log.verbose {
+#logger.level-debug .log.debug,
+#logger.level-verbose .log.verbose {
   display: block;
 }
 #logger.level-all .log {
   display: block;
+}
+#logger pre {
+  color: inherit;
+  background-color: transparent;
+  border: none;
 }
 div[data-toggle="buttons"] label.active {
   color: #7AA3CC;
