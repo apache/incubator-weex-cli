@@ -257,6 +257,10 @@ function checkStyle(cssText, output, locationInfo) {
     cssText.split(';').forEach(function (declarationText) {
       var k, v, vResult
       var pair = declarationText.trim().split(':')
+      if (pair.length > 2) {
+        pair[1] = pair.slice(1).join(':')
+        pair = pair.slice(0, 2)
+      }
       if (pair.length === 2) {
         k = pair[0].trim()
         k = util.hyphenedToCamelCase(k)

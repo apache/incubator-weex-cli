@@ -188,14 +188,15 @@ describe('parse', function () {
   })
 
   it('parse style', function (done) {
-    var code = '<container><text></text><text style="color: #FF0000; background-color: rgba(2,2,2,2); padding: 8px;"></text><text style="x: a; y: b; z: {{c}}"></container>'
+    var code = '<container><text></text><text style="color: #FF0000; background-color: rgba(2,2,2,2); padding: 8px;"></text><text style="x: a; y: b; z: {{c}}"></text><text style="background-color: {{active ? \'#ff0000\' : \'#00ff00\'}};"></text></container>'
     var expected = {
       jsonTemplate: {
         type: 'container',
         children: [
           {type: 'text'},
           {type: 'text', style: {color: '#FF0000', padding: 8}},
-          {type: 'text', style: {x: 'a', y: 'b', z: function () {return this.c}}}
+          {type: 'text', style: {x: 'a', y: 'b', z: function () {return this.c}}},
+          {type: 'text', style: {backgroundColor: function () {return this.active?'#ff0000':'#00ff00'}}}
         ]
       },
       deps: ['container', 'text'],
