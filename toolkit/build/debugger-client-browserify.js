@@ -433,6 +433,18 @@ function hideNativeQRCode() {
     $(window).resize(function () {
         (0, _debuggerPage.setLoggerHeight)();
     });
+
+    $("#page-title").css("left", ($(window).width() - 350) / 2 + 'px');
+
+    setTimeout(function () {
+        $("#page-title").css("transition", "all 2s");
+        $("#page-title").css("left", "25px");
+        setTimeout(function () {
+            $("#page-title").css("left", "105px");
+            $("#page-title").addClass("vertical");
+            $("#logs").css("top", "20px");
+        }, 1000);
+    }, 1000);
 }
 
 window._hideNativeQRCode = hideNativeQRCode; //just for debug debugger

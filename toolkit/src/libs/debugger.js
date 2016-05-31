@@ -190,6 +190,18 @@ function hideNativeQRCode() {
     $( window ).resize(function() {
         setLoggerHeight()        
     })
+
+    $("#page-title").css("left",`${($(window).width() - 350 )/2}px`)
+
+    setTimeout(()=>{
+        $("#page-title").css("transition","all 2s")            
+        $("#page-title").css("left","25px")            
+        setTimeout(()=>{
+            $("#page-title").css("left","105px")                        
+            $("#page-title").addClass("vertical")
+            $("#logs").css("top","20px")
+        },1000)
+    },1000)
 }
 
 window._hideNativeQRCode = hideNativeQRCode //just for debug debugger

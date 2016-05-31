@@ -39,9 +39,9 @@
 #logs {
     display: none;
     height: 100%;
-    h2{
-        text-align: center;
-    }
+    position: relative;
+    top: 70px;
+    transition: top 2s;
 }
 
 .btn-group span {
@@ -162,4 +162,20 @@ div[data-toggle="buttons"] label:active, div[data-toggle="buttons"] label.active
     position: relative;
     top: 3px;
     margin-left:6px;
+}
+
+
+#page-title{
+    //transition: all 2s;
+    font-size: 48px;
+    position: absolute;
+    left: 0px;//will be set by script
+    &.vertical{
+        transform: rotate(90deg);
+        transform-origin: left top 0;
+        float: left;
+        position: absolute;
+        top: 27px;
+        left: 75px;        
+    }
 }
