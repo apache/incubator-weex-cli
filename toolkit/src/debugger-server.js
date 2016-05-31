@@ -18,7 +18,7 @@ const app = websockify(koa());
 
 const nwUtils =  require('./nw-utils')
 
-var DEBUGGER_SERVER_PORT = 8687
+export var DEBUGGER_SERVER_PORT = 8687
 
 // Debugger Server
 var DS = { 

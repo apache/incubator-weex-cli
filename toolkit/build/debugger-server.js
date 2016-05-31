@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.DEBUGGER_SERVER_PORT = undefined;
 
 var _promise = require('babel-runtime/core-js/promise');
 
@@ -40,7 +41,7 @@ var app = websockify(koa());
 
 var nwUtils = require('./nw-utils');
 
-var DEBUGGER_SERVER_PORT = 8687;
+var DEBUGGER_SERVER_PORT = exports.DEBUGGER_SERVER_PORT = 8687;
 
 // Debugger Server
 var DS = {
@@ -214,7 +215,7 @@ app.use(webRouter.routes());
 function startListen() {
     var port = arguments.length <= 0 || arguments[0] === undefined ? DEBUGGER_SERVER_PORT : arguments[0];
 
-    DEBUGGER_SERVER_PORT = port;
+    exports.DEBUGGER_SERVER_PORT = DEBUGGER_SERVER_PORT = port;
     app.listen(port);
     var IP = nwUtils.getPublicIP();
     console.log('weex debugger server started\nplease access http://' + IP + ':' + port + '/');

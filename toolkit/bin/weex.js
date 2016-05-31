@@ -318,8 +318,12 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUs
 
 (function argvProcess() {
 
+    HTTP_PORT = argv.port;
+    WEBSOCKET_PORT = argv.wsport;
+
     if (argv.debugger) {
-        debuggerServer.startListen();
+        var port = HTTP_PORT == NO_PORT_SPECIFIED ? debuggerServer.DEBUGGER_SERVER_PORT : HTTP_PORT;
+        debuggerServer.startListen(port);
         return;
     }
 
@@ -343,9 +347,7 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUs
 
     var inputPath = argv._[0];
     var transformServerPath = argv.s;
-
-    var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir
-
+    var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir   
     try {
         fs.accessSync(inputPath, fs.F_OK);
     } catch (e) {
@@ -381,9 +383,5 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUs
         process.exit(1);
     }
     var transformWatch = argv.watch;
-
-    HTTP_PORT = argv.port;
-    WEBSOCKET_PORT = argv.wsport;
-
     new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath);
 })();
