@@ -79,8 +79,25 @@
     margin-top: 0;
     padding: 8px;
     overflow: auto;
+    transition: width 0.4s;    
     .panel{
         border: none;
+
+        .icon-fullscreen{
+            cursor: pointer;
+            opacity: 0.7 ;
+            background: url("../vendor/img/full_screen.png") no-repeat;
+            background-size: 35px 35px;
+            width: 35px;
+            height: 35px;
+            position: absolute;
+            bottom: 60px;
+            right: 30px;
+            &.out-fullscreen{
+                background: url("../vendor/img/out_fullscreen.png") no-repeat;
+                background-size: 35px 35px;                
+            }
+        }
     }
     .panel-body{
         min-height: 400px; //will be reset by script

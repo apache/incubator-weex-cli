@@ -4,14 +4,60 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.vueInstance = undefined;
-exports.initVue = initVue;
 exports.setLoggerHeight = setLoggerHeight;
+exports.initVue = initVue;
 
 var _debugger = require("./libs/debugger");
 
 var _ = require("underscore");
 
 var LOG_LEVEL_LIST = ["all", "verbose", "debug", "info", "warn", "error"];
+
+var LogAutoScrollMark;
+function activeLogAutoScroll() {
+    LogAutoScrollMark = setInterval(function () {
+        return $("#logger").scrollTop($("#logger").prop('scrollHeight'));
+    }, 100);
+}
+
+function disableLogAutoScroll() {
+    clearInterval(LogAutoScrollMark);
+}
+
+function logFullscreenActive() {
+    var hiddenEles = [$("#page-title"), $(".level-controller"), $(".ahead-log")];
+    _.each(hiddenEles, function (e) {
+        e.hide(500);
+    });
+    setTimeout(function () {
+        $("#logs").data("origin-width", $("#logs").width());
+        $("#logs").css("width", "100%");
+        setLoggerHeight();
+    }, 500);
+}
+
+function logFullscreenDisable() {
+    $("#logs").css("width", $("#logs").data("origin-width") + "px");
+    setTimeout(function () {
+        var hiddenEles = [$("#page-title"), $(".level-controller"), $(".ahead-log")];
+        _.each(hiddenEles, function (e) {
+            e.show(500);
+        });
+        setTimeout(function () {
+            setLoggerHeight();
+        }, 600);
+    }, 400);
+}
+
+function setLoggerHeight() {
+    var loggerTop = $("#logger").position()['top'];
+    var bottomHeight = $(".bottom-action").height();
+    var viewportHeight = $(window).height();
+
+    var target = viewportHeight - (loggerTop + bottomHeight + 60);
+    $("#logger .panel-body").css("min-height", target + "px");
+    $("#logger").css("height", target + "px");
+}
 
 var vueInstance = exports.vueInstance = undefined;
 function initVue() {
@@ -26,7 +72,8 @@ function initVue() {
             feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
             deviceLevel: "",
             deviceLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
-            isAutoScroll: false
+            isAutoScroll: false,
+            isFullscreen: false
         },
         methods: {
             clearLog: function clearLog() {
@@ -84,29 +131,17 @@ function initVue() {
             wheellogger: function wheellogger(e) {
                 disableLogAutoScroll();
                 this.isAutoScroll = false;
+            },
+            setFullscreen: function setFullscreen() {
+                if (this.isFullscreen) {
+                    logFullscreenDisable();
+                    this.isFullscreen = false;
+                } else {
+                    logFullscreenActive();
+                    this.isFullscreen = true;
+                }
             }
         }
     });
     vueInstance.updateFeLogLevel();
-}
-
-var LogAutoScrollMark;
-function activeLogAutoScroll() {
-    LogAutoScrollMark = setInterval(function () {
-        return $("#logger").scrollTop($("#logger").prop('scrollHeight'));
-    }, 100);
-}
-
-function disableLogAutoScroll() {
-    clearInterval(LogAutoScrollMark);
-}
-
-function setLoggerHeight() {
-    var loggerTop = $("#logger").position()['top'];
-    var bottomHeight = $(".bottom-action").height();
-    var viewportHeight = $(window).height();
-
-    var target = viewportHeight - (loggerTop + bottomHeight + 60);
-    $("#logger .panel-body").css("min-height", target + "px");
-    $("#logger").css("height", target + "px");
 }

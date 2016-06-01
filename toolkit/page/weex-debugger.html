@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row ahead-log">
         <div class="col-md-2">        
             <h4 >Weex Log output:</h4>
         </div>
@@ -76,6 +76,8 @@
                     <div class="well well-sm {{log.flag}} log" v-for="log in logs">
                         <pre>{{{log.content}}}</pre>
                     </div>
+                </div>
+                <div class="icon-fullscreen" v-bind:class="{'out-fullscreen':isFullscreen}"  v-on:click="setFullscreen" >
                 </div>
             </div>            
         </div>
