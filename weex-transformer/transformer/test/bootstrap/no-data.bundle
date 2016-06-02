@@ -1,3 +1,6 @@
+'transformerVersion: ###TRANSFORMER_VERSION###;'
+
+
 define('@weex-component/foo', function (require, exports, module) {
 
 ;
