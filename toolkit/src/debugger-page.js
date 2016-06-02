@@ -42,9 +42,6 @@ function  logFullscreenDisable(){
 }
 
 
-    
-
-
 
 export function setLoggerHeight(){
     let loggerTop = $("#logger").position()['top']
@@ -57,7 +54,12 @@ export function setLoggerHeight(){
 }
 
 
-
+function isFirstLevelMoreStrict(l0,l1){
+    if  ( LOG_LEVEL_LIST.indexOf(l0) < 0 || LOG_LEVEL_LIST.indexOf(l1) < 0  ){
+        throw "Bad Level"
+    }
+    return LOG_LEVEL_LIST.indexOf(l0)  >  LOG_LEVEL_LIST.indexOf(l1)
+}
 
 
 export var  vueInstance
@@ -69,8 +71,9 @@ export function initVue(){
                // {content:'log content',flag: 'log flag'} //
             ],
             feLogLevel:"info",
-            feLogLevelForClass:[],
-            feLogLevelClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false},
+            feLogLevelForClass:[], //  log display 
+            feLogLevelClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false},         //  button status
+            feLogLevelDisableClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false},        
             deviceLevel:"",            
             deviceLevelClassObj:{error:false , warn: false , info:false , debug:false , verbose: false , all: false},
             isAutoScroll:false,
@@ -110,6 +113,21 @@ export function initVue(){
                     this.deviceLevelClassObj[`${l}`] = false
                 }
                 this.deviceLevelClassObj[`${this.deviceLevel}`] = true
+
+                if (isFirstLevelMoreStrict(this.deviceLevel , this.feLogLevel)){
+                    this.feLogLevel = this.deviceLevel
+                    this.updateFeLogLevel()
+                }
+
+                let dLevel = LOG_LEVEL_LIST.indexOf(this.deviceLevel)
+                for (let l of LOG_LEVEL_LIST){
+                    if (LOG_LEVEL_LIST.indexOf(l) < dLevel){
+                        this.feLogLevelDisableClassObj[`${l}`] = true
+                    }else{
+                        this.feLogLevelDisableClassObj[`${l}`] = false          
+                    }
+                }
+                
             },
             autoScrollClick(){
                 let self = this

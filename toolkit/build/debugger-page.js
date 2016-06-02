@@ -4,10 +4,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.vueInstance = undefined;
+
+var _getIterator2 = require("babel-runtime/core-js/get-iterator");
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
 exports.setLoggerHeight = setLoggerHeight;
 exports.initVue = initVue;
 
 var _debugger = require("./libs/debugger");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _ = require("underscore");
 
@@ -59,6 +66,13 @@ function setLoggerHeight() {
     $("#logger").css("height", target + "px");
 }
 
+function isFirstLevelMoreStrict(l0, l1) {
+    if (LOG_LEVEL_LIST.indexOf(l0) < 0 || LOG_LEVEL_LIST.indexOf(l1) < 0) {
+        throw "Bad Level";
+    }
+    return LOG_LEVEL_LIST.indexOf(l0) > LOG_LEVEL_LIST.indexOf(l1);
+}
+
 var vueInstance = exports.vueInstance = undefined;
 function initVue() {
     window._vueInstance = exports.vueInstance = vueInstance = new Vue({
@@ -68,8 +82,9 @@ function initVue() {
                 // {content:'log content',flag: 'log flag'} //
             ],
             feLogLevel: "info",
-            feLogLevelForClass: [],
-            feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
+            feLogLevelForClass: [], //  log display
+            feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }, //  button status
+            feLogLevelDisableClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
             deviceLevel: "",
             deviceLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
             isAutoScroll: false,
@@ -117,6 +132,41 @@ function initVue() {
                     this.deviceLevelClassObj["" + l] = false;
                 }
                 this.deviceLevelClassObj["" + this.deviceLevel] = true;
+
+                if (isFirstLevelMoreStrict(this.deviceLevel, this.feLogLevel)) {
+                    this.feLogLevel = this.deviceLevel;
+                    this.updateFeLogLevel();
+                }
+
+                var dLevel = LOG_LEVEL_LIST.indexOf(this.deviceLevel);
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = (0, _getIterator3.default)(LOG_LEVEL_LIST), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var _l = _step.value;
+
+                        if (LOG_LEVEL_LIST.indexOf(_l) < dLevel) {
+                            this.feLogLevelDisableClassObj["" + _l] = true;
+                        } else {
+                            this.feLogLevelDisableClassObj["" + _l] = false;
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
             },
             autoScrollClick: function autoScrollClick() {
                 var self = this;

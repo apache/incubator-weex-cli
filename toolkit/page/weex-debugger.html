@@ -32,12 +32,12 @@
                 <div class="panel-heading">Display Log Level</div>
                 <div class="panel-body">
                     <div class="btn-group" role="group" aria-hidden="true" id="level"  v-on:click="changeDisplayLevel">
-                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.error}" data-level="error">Error</button>
-                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.warn}" data-level="warn">Warn</button>
-                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.info}" data-level="info">Info</button>
-                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.debug}" data-level="debug">Debug</button>
-                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.verbose}" data-level="verbose">Verbose</button>
-                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.all}" data-level="all">All</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.error ,'disabled': feLogLevelDisableClassObj.error  }" data-level="error">Error</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.warn, 'disabled': feLogLevelDisableClassObj.warn }" data-level="warn">Warn</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.info ,'disabled': feLogLevelDisableClassObj.info }" data-level="info">Info</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.debug ,'disabled': feLogLevelDisableClassObj.debug }" data-level="debug">Debug</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.verbose ,'disabled': feLogLevelDisableClassObj.verbose }" data-level="verbose">Verbose</button>
+                        <button class="btn btn-default" v-bind:class="{'active':feLogLevelClassObj.all ,'disabled': feLogLevelDisableClassObj.all }" data-level="all">All</button>
                     </div>
                 </div>
             </div>

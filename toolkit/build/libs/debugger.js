@@ -149,7 +149,9 @@ var debuggableScope = {
     callNative: true,
     callJS: true,
     __logger: function __logger(scopeFunction, flag, message) {
-        hideNativeQRCode();
+        if (!hideNativeQRCode.hidden) {
+            hideNativeQRCode();
+        }
         printLog(flag, message);
     },
     __connect: function __connect(scopeFunction, message) {
@@ -219,6 +221,7 @@ function generateNativeQRCode() {
     $qrcode.appendChild(el);
 }
 
+hideNativeQRCode.hidden = false;
 function hideNativeQRCode() {
     $('#slogan').hide();
     $("#logs").show();
@@ -238,6 +241,8 @@ function hideNativeQRCode() {
             $("#logs").css("top", "20px");
         }, 1000);
     }, 1000);
+
+    hideNativeQRCode.hidden = true;
 }
 
 window._hideNativeQRCode = hideNativeQRCode; //just for debug debugger
