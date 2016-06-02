@@ -127,6 +127,25 @@ describe('parse', function () {
     })
   })
 
+  it('parse child text content', function (done) {
+    var code = '<container><text>abc</text><h1>{{abc}}</h1></container>'
+    var expected = {
+      jsonTemplate: {
+        type: 'container',
+        children: [
+          {type: 'text', attr: {value: 'abc'}},
+          {type: 'h1', attr: {value: function () {return this.abc}}},
+        ]
+      },
+      deps: ['container', 'text', 'h1'],
+      log: []
+    }
+    templater.parse(code, function (err, result) {
+      expect(stringify(result)).eql(stringify(expected))
+      done()
+    })
+  })
+
   it('parse id', function (done) {
     var code = '<container><text></text><text id="abc"></text><text id="{{abc}}"></text></container>'
     var expected = {
