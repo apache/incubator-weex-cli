@@ -22,7 +22,7 @@ function removeEndingLineBreak(code) {
 }
 
 function addVersionInfo(code) {
-  return code.replace('###TRANSFORMER_VERSION###', transfomerVersion)
+  return code.replace(/###TRANSFORMER_VERSION###/g, transfomerVersion)
 }
 
 var transformer = require('../')
