@@ -196,9 +196,9 @@ class Previewer{
         let IP =  nwUtils.getPublicIP()
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
-        npmlog.info(`following QR encoding url\n${jsBundleURL}`)
+        console.log(`following QR encoding url\n${jsBundleURL}\n`)
         qrcode.generate(jsBundleURL)
-        npmlog.info("please access https://github.com/alibaba/weex to download Weex Playground app for scanning")
+        console.log("\nplease access https://github.com/alibaba/weex to download Weex Playground app for scanning")
     }
     startWebSocket(){
         let port = (WEBSOCKET_PORT == NO_PORT_SPECIFIED) ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT
