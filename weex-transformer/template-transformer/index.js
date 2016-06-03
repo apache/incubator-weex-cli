@@ -78,7 +78,7 @@ function walk(node, output, previousNode) {
       }
       if (child.nodeName.match(/^#/)) {
         // special rules for text content in <text>
-        if (child.nodeName === '#text' && originResult.type === 'text') {
+        if (child.nodeName === '#text' && child.value.trim()) {
           var tempResult = output.result
           output.result = originResult
           validator.checkAttr('value', child.value, output)
