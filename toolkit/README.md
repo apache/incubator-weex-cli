@@ -87,6 +87,7 @@ a http server will start running , your current directory(.) will be the documen
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160603(0.0.41) : fix occasional terminal QR display bug
 * 160602(0.0.39) : improve weex debugger ui 
 * 160525(0.0.38) : add examples , improve create sub command
 * 160525(0.0.37) : add `create` sub command for create we file using standard weex template
