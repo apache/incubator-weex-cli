@@ -1,4 +1,4 @@
-'transformerVersion: ###TRANSFORMER_VERSION###;'
+// {"transformerVersion": "###TRANSFORMER_VERSION###"}
 
 
 define('@weex-component/taobao-item', function (require, exports, module) {

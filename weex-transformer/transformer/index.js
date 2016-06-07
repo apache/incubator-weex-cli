@@ -42,7 +42,7 @@ function transform(name, code, path, elements, config) {
     }
   }
 
-  output = '\'transformerVersion: ' + transformerVersion + ';\'\n\n\n' + output
+  output = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n' + output
 
   logs = filterLogs(logs, config.logLevel)
 

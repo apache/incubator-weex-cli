@@ -173,7 +173,7 @@ describe('parse', function () {
     var elements = {}
 
     var output = transformer.transform('foo', readFile(path + '/component.html'), path, elements).result
-    var expected = '\'transformerVersion: ' + transformerVersion + ';\'\n\n\n'
+    var expected = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n'
         + readFile(path + '/component.bundle')
         + '\n// require module\nbootstrap(\'@weex-component/foo\', {"transformerVersion":"' + transformerVersion + '"})'
     expect(removeEndingLineBreak(output)).eql(expected)
@@ -184,7 +184,7 @@ describe('parse', function () {
     var elements = {}
 
     var output = transformer.transformOld('foo', readFile(path + '/component.html'), path, elements).result
-    var expected = '\'transformerVersion: ' + transformerVersion + ';\'\n\n\n'
+    var expected = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n'
         + readFile(path + '/component-old.bundle') + '\n// require module\nrender(\'foo\', {})'
     expect(output).eql(expected)
   })
@@ -200,7 +200,7 @@ describe('parse', function () {
     var bundleCode = outputParts.join('\n\n\n')
     var md5PathP = md5(Path.join(process.cwd(), path, './3rd/param.js'))
     var md5PathM = md5(Path.join(process.cwd(), './node_modules/md5/md5.js'))
-    var expected = '\'transformerVersion: ' + transformerVersion + ';\'\n\n\n'
+    var expected = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n'
         + readFile(path + '/require.bundle')
         + '\n// require module\nbootstrap(\'@weex-component/foo\', {"transformerVersion":"' + transformerVersion + '"})'
     expected = replaceContent(expected, {'###MD5P###': md5PathP, '###MD5M###': md5PathM})
