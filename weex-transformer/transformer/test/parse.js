@@ -173,7 +173,10 @@ describe('parse', function () {
     var elements = {}
 
     var output = transformer.transform('foo', readFile(path + '/component.html'), path, elements).result
-    expect(removeEndingLineBreak(output)).eql(readFile(path + '/component.bundle') + '\n// require module\nbootstrap(\'@weex-component/foo\', {"transformerVersion":"' + transformerVersion + '"})')
+    var expected = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n'
+        + readFile(path + '/component.bundle')
+        + '\n// require module\nbootstrap(\'@weex-component/foo\', {"transformerVersion":"' + transformerVersion + '"})'
+    expect(removeEndingLineBreak(output)).eql(expected)
   })
 
   it('generate old format', function () {
@@ -181,7 +184,9 @@ describe('parse', function () {
     var elements = {}
 
     var output = transformer.transformOld('foo', readFile(path + '/component.html'), path, elements).result
-    expect(output).eql(readFile(path + '/component-old.bundle') + '\n// require module\nrender(\'foo\', {})')
+    var expected = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n'
+        + readFile(path + '/component-old.bundle') + '\n// require module\nrender(\'foo\', {})'
+    expect(output).eql(expected)
   })
 
   it('require third party js', function () {
@@ -189,12 +194,15 @@ describe('parse', function () {
     var elements = {}
 
     var output = transformer.transform('foo', readFile(path + '/require.html'), path, elements).result
-    var pos = output.indexOf('\n\n\n')
-    var thirdPartyJsCode = output.slice(0, pos)
-    var bundleCode = output.slice(pos + 3)
+    var outputParts = output.split('\n\n\n')
+    var thirdPartyJsCode = outputParts[1]
+    outputParts.splice(1, 1)
+    var bundleCode = outputParts.join('\n\n\n')
     var md5PathP = md5(Path.join(process.cwd(), path, './3rd/param.js'))
     var md5PathM = md5(Path.join(process.cwd(), './node_modules/md5/md5.js'))
-    var expected = readFile(path + '/require.bundle') + '\n// require module\nbootstrap(\'@weex-component/foo\', {"transformerVersion":"' + transformerVersion + '"})'
+    var expected = '// {"transformerVersion": "' + transformerVersion + '"}\n\n\n'
+        + readFile(path + '/require.bundle')
+        + '\n// require module\nbootstrap(\'@weex-component/foo\', {"transformerVersion":"' + transformerVersion + '"})'
     expected = replaceContent(expected, {'###MD5P###': md5PathP, '###MD5M###': md5PathM})
     expect(removeEndingLineBreak(bundleCode)).eql(expected)
     var evalCode = thirdPartyJsCode + '; var param = browserifyRequire("' + md5PathP + '").getParam(); var md5 = browserifyRequire("' + md5PathM + '"); md5(param)'
