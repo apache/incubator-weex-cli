@@ -87,6 +87,7 @@ a http server will start running , your current directory(.) will be the documen
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160608(0.0.42) : upgrade upstream lib(http-server , weex-transformer) 
 * 160603(0.0.41) : fix occasional terminal QR display bug
 * 160602(0.0.39) : improve weex debugger ui 
 * 160525(0.0.38) : add examples , improve create sub command
