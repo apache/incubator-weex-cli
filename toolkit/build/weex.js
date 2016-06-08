@@ -159,9 +159,8 @@ var Previewer = function () {
         value: function tempDirInit() {
             fse.removeSync(WEEX_TRANSFORM_TMP);
 
-            //turnoff H5 preview
-            //fs.mkdirSync(WEEX_TRANSFORM_TMP)
-            //fse.copySync(`${__dirname}/../node_modules/weex-html5` , `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`)
+            fs.mkdirSync(WEEX_TRANSFORM_TMP);
+            fse.copySync(__dirname + '/../node_modules/weex-html5', WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
 
             fse.mkdirsSync(WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
         }
@@ -311,7 +310,7 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('f') /* for weex create */
+var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
 .alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').argv;
 
 (function argvProcess() {
@@ -372,8 +371,8 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUs
     }
 
     var host = argv.h;
-    var shouldOpenBrowser = false; //argv.n  ? false : true
-    var displayQR = true; //argv.qr  ? true : false
+    var shouldOpenBrowser = argv.np ? false : true;
+    var displayQR = argv.qr; //  ? true : false
     var outputPath = argv.o; // js bundle file path  or  transform output dir path
     if (typeof outputPath != "string") {
         npmlog.info(yargs.help());

@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "0.0.42",
+  "version": "0.1.0",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -35,7 +35,8 @@
     "qrcode-terminal": "^0.10.0",
     "underscore": "^1.8.3",
     "uuid": "^2.0.2",
-    "weex-transformer": "^0.4.1",
+    "weex-html5": "^0.2.14",      
+    "weex-transformer": "^0.3.1",
     "ws": "^1.1.0",
     "yargs": "^3.32.0"
   },
