@@ -33,8 +33,7 @@ Options:
            [for create sub cmd] it specified we file output path                    
   --watch  using with -o , watch input path , auto run transform if change
            happen
-  -s,--server  start a http file server, weex .we file will be transforme to JS
-           bundle on the server , specify local root path using the option
+  -s,--server  start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option
   --port   http listening port number ,default is 8081            
   --wsport websocket listening port number ,default is 8082
   -f, --force   [for create sub cmd] force to replace exsisting file(s)
