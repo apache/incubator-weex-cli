@@ -33,8 +33,7 @@ Options:
            [for create sub cmd] it specified we file output path                    
   --watch  using with -o , watch input path , auto run transform if change
            happen
-  -s,--server  start a http file server, weex .we file will be transforme to JS
-           bundle on the server , specify local root path using the option
+  -s,--server  start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option
   --port   http listening port number ,default is 8081            
   --wsport websocket listening port number ,default is 8082
   -f, --force   [for create sub cmd] force to replace exsisting file(s)
@@ -92,6 +91,7 @@ a http server will start running , your current directory(.) will be the documen
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160609(0.1.1) :  upgrade upstream weex-html5.
 * 160608(0.1.0) :  HTML5 preview (with hot-reload) come back.
 * 160608(0.0.42) : upgrade upstream lib(http-server , weex-transformer) 
 * 160603(0.0.41) : fix occasional terminal QR display bug
