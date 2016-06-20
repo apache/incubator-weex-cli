@@ -12,3 +12,5 @@ gulp plugin for weex transformer
 ## Weex Webpack loader
 A webpack loader for Weex.
 
+## Weexify
+A browserify transformer for Weex

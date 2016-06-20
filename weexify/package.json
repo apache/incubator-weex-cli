@@ -1,0 +1,27 @@
+{
+  "name": "weexify",
+  "version": "0.0.1",
+  "description": "compile weex .we for browserify",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alibaba/weex_toolchain.git"
+  },
+  "keywords": [
+    "weex",
+    "browserify"
+  ],
+  "author": "lvscar",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/alibaba/weex_toolchain/issues"
+  },
+  "homepage": "https://github.com/alibaba/weex_toolchain#readme",
+  "dependencies": {
+   "through": "^2.3.8",
+   "weex-transformer": "0.3.1"        
+  }
+}
