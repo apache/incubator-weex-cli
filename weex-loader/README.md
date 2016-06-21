@@ -94,9 +94,9 @@ module.exports.template = require('./main.tpl');
 
 **main.tpl as template**
 ```html
-<container>
+<div>
     <text class="h1">{{text}}</text>
-</container>
+</div>
 ```
 
 Then change the entry to `main.js` in `webpack.config.js`
