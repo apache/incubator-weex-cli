@@ -1,4 +1,4 @@
-# Weex Project
+# <= Weex Project =>
 
 ## How to start
 
