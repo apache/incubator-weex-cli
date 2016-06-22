@@ -3,7 +3,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 exports.generate = function () {
-  name = path.resolve('.').split(path.sep).pop()
+  const name = path.resolve('.').split(path.sep).pop()
   getName(name, function (err, result) {
     if (err) {
       return
@@ -28,13 +28,19 @@ function getName(defaultName, done) {
 
 function copy() {
   const files = []
-  const src = path.join(__dirname, 'assets')
+  const src = path.join(__dirname, '..', 'project-template')
   const dest = '.'
   walk(src, files)
   files.forEach(file => {
     const relative = path.relative(src, file)
     const finalPath = path.join(dest, relative)
-    fs.copySync(file, finalPath)
+    if (!fs.existsSync(finalPath)) {
+      console.log(`file: ${finalPath} created.`)
+      fs.copySync(file, finalPath)
+    }
+    else {
+      console.log(`file: ${finalPath} already existed.`)
+    }
   })
 }
 

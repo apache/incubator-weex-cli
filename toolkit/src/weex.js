@@ -14,7 +14,8 @@ const fs = require('fs'),
     nwUtils =  require('../build/nw-utils'),      
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server'),
-    weFileCreate = require('../build/create');
+    weFileCreate = require('../build/create'),
+    generator = require('../build/generator')
 
 
 const VERSION = require('../package.json').version
@@ -286,7 +287,9 @@ class Previewer{
 
 var yargs = require('yargs')
 var argv = yargs
-        .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]')
+        .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' +
+            // '\nUsage: weex create [name]  [options]' +
+            '\nUsage: weex init')
         .boolean('qr')
         .describe('qr', 'display QR code for native runtime, default action')
         .option('h' , {demand:false})
@@ -329,14 +332,13 @@ var argv = yargs
         return
     }
 
-    if (argv._[0] == "create"){
-        if (argv.output == NO_JSBUNDLE_OUTPUT){argv.output = "."}
-        argv._ = argv._.slice(1)
-        if (argv._.length < 1 ){
-            npmlog.error("\nplease add your we file name, eg:\n$weex create we_file_name")
-            return 
-        }
-        weFileCreate.create(argv)
+    if (argv._[0] === 'init') {
+        generator.generate();
+        return;
+    }
+
+    if (argv._[0] === "create"){
+        npmlog.warn('\nSorry, "weex create" is no longer supported, we recommand you please try "weex init" instead.')
         return
     }
 

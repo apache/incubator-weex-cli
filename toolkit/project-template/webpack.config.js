@@ -1,9 +1,11 @@
 require('webpack')
 require('weex-loader')
 
+var path = require('path')
+
 module.exports = {
   entry: {
-    main: './src/main.we?entry=true'
+    main: path.join(__dirname, 'src', 'main.we?entry=true')
   },
   output: {
     path: 'dist',
