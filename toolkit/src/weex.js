@@ -9,7 +9,6 @@ const fs = require('fs'),
     os  = require('os'),
     _   = require("underscore"),
     qrcode = require('qrcode-terminal'),    
-    weexTransformer = require('weex-transformer'),
     webpack = require('webpack'),
     webpackLoader = require('weex-loader'),
     nwUtils =  require('../build/nw-utils'),      
@@ -25,8 +24,8 @@ const H5_Render_DIR = "h5_render"
 const NO_PORT_SPECIFIED =  -1
 const DEFAULT_HTTP_PORT  = "8081"
 const DEFAULT_WEBSOCKET_PORT = "8082"
-var HTTP_PORT = NO_PORT_SPECIFIED         //will update when argvProcess
-var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  //will update when argvProcess
+var HTTP_PORT = NO_PORT_SPECIFIED         //will update when argvProcess function call
+var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  
 const NO_JSBUNDLE_OUTPUT = "no JSBundle output"
 
 class Previewer{
@@ -197,6 +196,7 @@ class Previewer{
         let IP =  nwUtils.getPublicIP()
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
+        // npmlog output will broken QR in some case ,some we using console.log
         console.log(`The following QR encoding url is\n${jsBundleURL}\n`)
         qrcode.generate(jsBundleURL)
         console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing weex server.\n")
@@ -220,8 +220,8 @@ class Previewer{
      */
     watchForWSRefresh(){
         let self = this
-        watch(this.inputPath, function(fileName){
-            if (/\.we$/gi.test(fileName)){            
+        watch(path.dirname(this.inputPath), function(fileName){
+            if (/\.js$|\.we$/gi.test(fileName)){            
                 let transformP  = self.transformTarget(self.inputPath,self.outputPath)
                 transformP.then( function(fileName){
                     self.wsConnection.send("refresh")                    
@@ -243,9 +243,19 @@ class Previewer{
         }else{
             bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
         }
-        fse.copySync(inputPath , `${WEEX_TRANSFORM_TMP}/${filename}.we`)
+        // resolve.root , resolveLoader.root configure not work,so we copy
+        fse.copySync( path.dirname(inputPath) , `${WEEX_TRANSFORM_TMP}/` ,
+                      {
+                          clobber :true,
+                          dereference: true,                           
+                          filter:function(fn){
+                              return /\.we$|.json$|\.js$/.test(fn)
+                        }
+                      }
+                    )
+        let entryValue =   `./${WEEX_TRANSFORM_TMP}/${filename}.we?entry=true`
         let webpackConfig = {
-            entry:`./${WEEX_TRANSFORM_TMP}/${filename}.we?entry=true`,
+            entry: entryValue,
             output: {
                 path:   path.dirname(bundleWritePath),
                 filename: path.basename(bundleWritePath)
@@ -257,7 +267,9 @@ class Previewer{
                         loaders: ['weex-loader']
                     }
                 ]
-            }
+            },
+            debug:true,
+            bail:true
         };
 
         webpack(webpackConfig,function(err,result){
