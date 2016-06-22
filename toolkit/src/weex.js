@@ -10,6 +10,8 @@ const fs = require('fs'),
     _   = require("underscore"),
     qrcode = require('qrcode-terminal'),    
     weexTransformer = require('weex-transformer'),
+    webpack = require('webpack'),
+    webpackLoader = require('weex-loader'),
     nwUtils =  require('../build/nw-utils'),      
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server'),
@@ -235,29 +237,33 @@ class Previewer{
             promiseData.rejecter = reject
         })    
         let filename = path.basename(inputPath).replace(/\..+/, '')
-        fs.readFile(inputPath ,'utf8', function(err,data){
-            if (err){
-                promiseData.rejecter(err)
-            }else{
-                let res = weexTransformer.transform(filename,data, "")
-                let logs = res.logs
-                try{
-                    logs = _.filter(logs ,(l) => (  l.reason.indexOf("Warning:") == 0) || ( l.reason.indexOf("Error:") == 0 ) )
-                    if (logs.length > 0){console.info(`weex transformer complain:  ${inputPath} \n`)}            
-                    _.each(
-                        logs,
-                        (l)=>  console.info(   `    line${l.line},column${l.column}:\n        ${l.reason}\n`   ) )
-                } catch(e){
-                    npmlog.error(e)
-                }
+        let bundleWritePath
+        if (outputPath){
+            bundleWritePath = outputPath
+        }else{
+            bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
+        }
+        fse.copySync(inputPath , `${WEEX_TRANSFORM_TMP}/${filename}.we`)
+        let webpackConfig = {
+            entry:`./${WEEX_TRANSFORM_TMP}/${filename}.we?entry=true`,
+            output: {
+                path:   path.dirname(bundleWritePath),
+                filename: path.basename(bundleWritePath)
+            },
+            module: {
+                loaders: [
+                    {
+                        test: /\.we(\?[^?]+)?$/,
+                        loaders: ['weex-loader']
+                    }
+                ]
+            }
+        };
 
-                let bundleWritePath
-                if (outputPath){
-                    bundleWritePath = outputPath
-                }else{
-                    bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
-                }
-                fs.writeFileSync(bundleWritePath , res.result)
+        webpack(webpackConfig,function(err,result){
+            if (err){
+                promiseData.rejecter(err)                
+            }else{
                 if (outputPath){
                     promiseData.resolver(false)            
                 }else{
@@ -267,7 +273,6 @@ class Previewer{
         })
         return promiseData.promise
     }
-
 }
 
 var yargs = require('yargs')

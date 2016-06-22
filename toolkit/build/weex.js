@@ -26,6 +26,8 @@ var fs = require('fs'),
     _ = require("underscore"),
     qrcode = require('qrcode-terminal'),
     weexTransformer = require('weex-transformer'),
+    webpack = require('webpack'),
+    webpackLoader = require('weex-loader'),
     nwUtils = require('../build/nw-utils'),
     fsUtils = require('../build/fs-utils'),
     debuggerServer = require('../build/debugger-server'),
@@ -223,9 +225,9 @@ var Previewer = function () {
             var IP = nwUtils.getPublicIP();
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
             var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
-            console.log('following QR encoding url\n' + jsBundleURL + '\n');
+            console.log('The following QR encoding url is\n' + jsBundleURL + '\n');
             qrcode.generate(jsBundleURL);
-            console.log("\nplease access https://github.com/alibaba/weex to download Weex Playground app for scanning");
+            console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing weex server.\n");
         }
     }, {
         key: 'startWebSocket',
@@ -269,33 +271,31 @@ var Previewer = function () {
                 promiseData.rejecter = reject;
             });
             var filename = path.basename(inputPath).replace(/\..+/, '');
-            fs.readFile(inputPath, 'utf8', function (err, data) {
+            var bundleWritePath = void 0;
+            if (outputPath) {
+                bundleWritePath = outputPath;
+            } else {
+                bundleWritePath = WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + filename + '.js';
+            }
+            fse.copySync(inputPath, WEEX_TRANSFORM_TMP + '/' + filename + '.we');
+            var webpackConfig = {
+                entry: './' + WEEX_TRANSFORM_TMP + '/' + filename + '.we?entry=true',
+                output: {
+                    path: path.dirname(bundleWritePath),
+                    filename: path.basename(bundleWritePath)
+                },
+                module: {
+                    loaders: [{
+                        test: /\.we(\?[^?]+)?$/,
+                        loaders: ['weex-loader']
+                    }]
+                }
+            };
+
+            webpack(webpackConfig, function (err, result) {
                 if (err) {
                     promiseData.rejecter(err);
                 } else {
-                    var res = weexTransformer.transform(filename, data, "");
-                    var logs = res.logs;
-                    try {
-                        logs = _.filter(logs, function (l) {
-                            return l.reason.indexOf("Warning:") == 0 || l.reason.indexOf("Error:") == 0;
-                        });
-                        if (logs.length > 0) {
-                            console.info('weex transformer complain:  ' + inputPath + ' \n');
-                        }
-                        _.each(logs, function (l) {
-                            return console.info('    line' + l.line + ',column' + l.column + ':\n        ' + l.reason + '\n');
-                        });
-                    } catch (e) {
-                        npmlog.error(e);
-                    }
-
-                    var bundleWritePath = void 0;
-                    if (outputPath) {
-                        bundleWritePath = outputPath;
-                    } else {
-                        bundleWritePath = WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + filename + '.js';
-                    }
-                    fs.writeFileSync(bundleWritePath, res.result);
                     if (outputPath) {
                         promiseData.resolver(false);
                     } else {
