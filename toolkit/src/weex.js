@@ -189,7 +189,7 @@ class Previewer{
             npmlog.info("weex server stoped")
             fsUtils.deleteFolderRecursive(WEEX_TRANSFORM_TMP)
             process.exit() 
-        }) 
+        })
     }
 
     showQR(fileName){
@@ -243,17 +243,8 @@ class Previewer{
         }else{
             bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
         }
-        // resolve.root , resolveLoader.root configure not work,so we copy
-        fse.copySync( path.dirname(inputPath) , `${WEEX_TRANSFORM_TMP}/` ,
-                      {
-                          clobber :true,
-                          dereference: true,                           
-                          filter:function(fn){
-                              return /\.we$|.json$|\.js$/.test(fn)
-                        }
-                      }
-                    )
-        let entryValue =   `./${WEEX_TRANSFORM_TMP}/${filename}.we?entry=true`
+        inputPath = path.resolve(inputPath)
+        var entryValue = `${inputPath}?entry=true`;
         let webpackConfig = {
             entry: entryValue,
             output: {
@@ -268,6 +259,12 @@ class Previewer{
                     }
                 ]
             },
+            resolve:{
+                root:[ path.dirname(inputPath),  path.join (path.dirname(inputPath) ,"node_modules/")]
+            },
+            resolveLoader: {
+                root: [ path.join( path.dirname(__dirname), "node_modules/")]
+            },                
             debug:true,
             bail:true
         };
@@ -317,6 +314,7 @@ var argv = yargs
         .alias('f', 'force')
         .describe('f', '[for create sub cmd]force to replace exsisting file(s)')
         .help('help')
+        .epilog('for example & more information visit https://www.npmjs.com/package/weex-toolkit')
         .argv  ;
 
 
@@ -353,7 +351,7 @@ var argv = yargs
     try {
         fs.accessSync(inputPath, fs.F_OK);
     } catch (e) {
-        if (!transformServerPath) { npmlog.error(`\n ${inputPath} not accessable`)}
+        if (!transformServerPath && !!inputPath) { npmlog.error(`\n ${inputPath} not accessable`)}
         badWePath = true
     }        
 

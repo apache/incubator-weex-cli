@@ -37,6 +37,9 @@
     "uuid": "^2.0.2",
     "weex-html5": "^0.2.18",      
     "weex-transformer": "^0.3.1",
+    "webpack": "^1.13.1",
+    "weex-components": "^0.0.6",
+    "weex-loader": "^0.1.5",
     "ws": "^1.1.0",
     "yargs": "^3.32.0"
   },
@@ -51,9 +54,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-wrap": "^0.11.0",
     "vinyl-source-stream": "^1.1.0",
-    "webpack": "^1.13.1",
-    "weex-components": "^0.0.6",
-    "weex-loader": "^0.1.5",
     "vue": "^1.0.24"
   },
   "bin": {

@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs'),
+    fse = require('fs-extra'),
     _ = require("underscore"),
     weexTransformer = require('weex-transformer'),
     path = require('path');
@@ -21,17 +22,30 @@ function deleteFolderRecursive(path) {
   }
 }
 
-function copyRecursiveSync(src, dest) {
+function copyRecursiveSync(src, dest, reFilter) {
   var exists = fs.existsSync(src);
   var stats = exists && fs.statSync(src);
   var isDirectory = exists && stats.isDirectory();
   if (exists && isDirectory) {
-    fs.mkdirSync(dest);
+    try {
+      fs.mkdirSync(dest);
+    } catch (e) {
+      fse.removeSync(dest);
+      fs.mkdirSync(dest);
+    }
     fs.readdirSync(src).forEach(function (childItemName) {
-      copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+      if (reFilter.test(childItemName) && /[^(weex_tmp)]/.test(childItemName)) {
+        // TODO: hardcode
+        copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+      }
     });
   } else {
-    fs.linkSync(src, dest);
+    try {
+      fs.linkSync(src, dest);
+    } catch (e) {
+      fse.removeSync(dest);
+      fs.linkSync(src, dest);
+    }
   }
 }
 
