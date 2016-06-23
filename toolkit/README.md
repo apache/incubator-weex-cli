@@ -91,6 +91,7 @@ a http server will start running , your current directory(.) will be the documen
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160622(0.2.1) :  support require other module & cli feedback improve
 * 160609(0.1.1) :  upgrade upstream weex-html5.
 * 160608(0.1.0) :  HTML5 preview (with hot-reload) come back.
 * 160608(0.0.42) : upgrade upstream lib(http-server , weex-transformer) 

@@ -25,11 +25,13 @@ var fs = require('fs'),
     os = require('os'),
     _ = require("underscore"),
     qrcode = require('qrcode-terminal'),
-    weexTransformer = require('weex-transformer'),
+    webpack = require('webpack'),
+    webpackLoader = require('weex-loader'),
     nwUtils = require('../build/nw-utils'),
     fsUtils = require('../build/fs-utils'),
     debuggerServer = require('../build/debugger-server'),
-    weFileCreate = require('../build/create');
+    weFileCreate = require('../build/create'),
+    generator = require('../build/generator');
 
 var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
@@ -38,8 +40,8 @@ var H5_Render_DIR = "h5_render";
 var NO_PORT_SPECIFIED = -1;
 var DEFAULT_HTTP_PORT = "8081";
 var DEFAULT_WEBSOCKET_PORT = "8082";
-var HTTP_PORT = NO_PORT_SPECIFIED; //will update when argvProcess
-var WEBSOCKET_PORT = NO_PORT_SPECIFIED; //will update when argvProcess
+var HTTP_PORT = NO_PORT_SPECIFIED; //will update when argvProcess function call
+var WEBSOCKET_PORT = NO_PORT_SPECIFIED;
 var NO_JSBUNDLE_OUTPUT = "no JSBundle output";
 
 var Previewer = function () {
@@ -223,9 +225,10 @@ var Previewer = function () {
             var IP = nwUtils.getPublicIP();
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
             var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
-            console.log('following QR encoding url\n' + jsBundleURL + '\n');
+            // npmlog output will broken QR in some case ,some we using console.log
+            console.log('The following QR encoding url is\n' + jsBundleURL + '\n');
             qrcode.generate(jsBundleURL);
-            console.log("\nplease access https://github.com/alibaba/weex to download Weex Playground app for scanning");
+            console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing weex server.\n");
         }
     }, {
         key: 'startWebSocket',
@@ -251,8 +254,8 @@ var Previewer = function () {
         key: 'watchForWSRefresh',
         value: function watchForWSRefresh() {
             var self = this;
-            watch(this.inputPath, function (fileName) {
-                if (/\.we$/gi.test(fileName)) {
+            watch(path.dirname(this.inputPath), function (fileName) {
+                if (/\.js$|\.we$/gi.test(fileName)) {
                     var transformP = self.transformTarget(self.inputPath, self.outputPath);
                     transformP.then(function (fileName) {
                         self.wsConnection.send("refresh");
@@ -269,33 +272,40 @@ var Previewer = function () {
                 promiseData.rejecter = reject;
             });
             var filename = path.basename(inputPath).replace(/\..+/, '');
-            fs.readFile(inputPath, 'utf8', function (err, data) {
+            var bundleWritePath = void 0;
+            if (outputPath) {
+                bundleWritePath = outputPath;
+            } else {
+                bundleWritePath = WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + filename + '.js';
+            }
+            inputPath = path.resolve(inputPath);
+            var entryValue = inputPath + '?entry=true';
+            var webpackConfig = {
+                entry: entryValue,
+                output: {
+                    path: path.dirname(bundleWritePath),
+                    filename: path.basename(bundleWritePath)
+                },
+                module: {
+                    loaders: [{
+                        test: /\.we(\?[^?]+)?$/,
+                        loaders: ['weex-loader']
+                    }]
+                },
+                resolve: {
+                    root: [path.dirname(inputPath), path.join(path.dirname(inputPath), "node_modules/")]
+                },
+                resolveLoader: {
+                    root: [path.join(path.dirname(__dirname), "node_modules/")]
+                },
+                debug: true,
+                bail: true
+            };
+
+            webpack(webpackConfig, function (err, result) {
                 if (err) {
                     promiseData.rejecter(err);
                 } else {
-                    var res = weexTransformer.transform(filename, data, "");
-                    var logs = res.logs;
-                    try {
-                        logs = _.filter(logs, function (l) {
-                            return l.reason.indexOf("Warning:") == 0 || l.reason.indexOf("Error:") == 0;
-                        });
-                        if (logs.length > 0) {
-                            console.info('weex transformer complain:  ' + inputPath + ' \n');
-                        }
-                        _.each(logs, function (l) {
-                            return console.info('    line' + l.line + ',column' + l.column + ':\n        ' + l.reason + '\n');
-                        });
-                    } catch (e) {
-                        npmlog.error(e);
-                    }
-
-                    var bundleWritePath = void 0;
-                    if (outputPath) {
-                        bundleWritePath = outputPath;
-                    } else {
-                        bundleWritePath = WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + filename + '.js';
-                    }
-                    fs.writeFileSync(bundleWritePath, res.result);
                     if (outputPath) {
                         promiseData.resolver(false);
                     } else {
@@ -310,8 +320,10 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
-.alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').argv;
+var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' +
+// '\nUsage: weex create [name]  [options]' +
+'\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
+.alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').epilog('for example & more information visit https://www.npmjs.com/package/weex-toolkit').argv;
 
 (function argvProcess() {
 
@@ -324,16 +336,13 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUs
         return;
     }
 
-    if (argv._[0] == "create") {
-        if (argv.output == NO_JSBUNDLE_OUTPUT) {
-            argv.output = ".";
-        }
-        argv._ = argv._.slice(1);
-        if (argv._.length < 1) {
-            npmlog.error("\nplease add your we file name, eg:\n$weex create we_file_name");
-            return;
-        }
-        weFileCreate.create(argv);
+    if (argv._[0] === 'init') {
+        generator.generate();
+        return;
+    }
+
+    if (argv._[0] === "create") {
+        npmlog.warn('\nSorry, "weex create" is no longer supported, we recommand you please try "weex init" instead.');
         return;
     }
 
@@ -348,7 +357,7 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUs
     try {
         fs.accessSync(inputPath, fs.F_OK);
     } catch (e) {
-        if (!transformServerPath) {
+        if (!transformServerPath && !!inputPath) {
             npmlog.error('\n ' + inputPath + ' not accessable');
         }
         badWePath = true;

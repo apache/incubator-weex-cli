@@ -9,11 +9,13 @@ const fs = require('fs'),
     os  = require('os'),
     _   = require("underscore"),
     qrcode = require('qrcode-terminal'),    
-    weexTransformer = require('weex-transformer'),
+    webpack = require('webpack'),
+    webpackLoader = require('weex-loader'),
     nwUtils =  require('../build/nw-utils'),      
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server'),
-    weFileCreate = require('../build/create');
+    weFileCreate = require('../build/create'),
+    generator = require('../build/generator')
 
 
 const VERSION = require('../package.json').version
@@ -23,8 +25,8 @@ const H5_Render_DIR = "h5_render"
 const NO_PORT_SPECIFIED =  -1
 const DEFAULT_HTTP_PORT  = "8081"
 const DEFAULT_WEBSOCKET_PORT = "8082"
-var HTTP_PORT = NO_PORT_SPECIFIED         //will update when argvProcess
-var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  //will update when argvProcess
+var HTTP_PORT = NO_PORT_SPECIFIED         //will update when argvProcess function call
+var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  
 const NO_JSBUNDLE_OUTPUT = "no JSBundle output"
 
 class Previewer{
@@ -188,13 +190,14 @@ class Previewer{
             npmlog.info("weex server stoped")
             fsUtils.deleteFolderRecursive(WEEX_TRANSFORM_TMP)
             process.exit() 
-        }) 
+        })
     }
 
     showQR(fileName){
         let IP =  nwUtils.getPublicIP()
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
+        // npmlog output will broken QR in some case ,some we using console.log
         console.log(`The following QR encoding url is\n${jsBundleURL}\n`)
         qrcode.generate(jsBundleURL)
         console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing weex server.\n")
@@ -218,8 +221,8 @@ class Previewer{
      */
     watchForWSRefresh(){
         let self = this
-        watch(this.inputPath, function(fileName){
-            if (/\.we$/gi.test(fileName)){            
+        watch(path.dirname(this.inputPath), function(fileName){
+            if (/\.js$|\.we$/gi.test(fileName)){            
                 let transformP  = self.transformTarget(self.inputPath,self.outputPath)
                 transformP.then( function(fileName){
                     self.wsConnection.send("refresh")                    
@@ -235,29 +238,42 @@ class Previewer{
             promiseData.rejecter = reject
         })    
         let filename = path.basename(inputPath).replace(/\..+/, '')
-        fs.readFile(inputPath ,'utf8', function(err,data){
-            if (err){
-                promiseData.rejecter(err)
-            }else{
-                let res = weexTransformer.transform(filename,data, "")
-                let logs = res.logs
-                try{
-                    logs = _.filter(logs ,(l) => (  l.reason.indexOf("Warning:") == 0) || ( l.reason.indexOf("Error:") == 0 ) )
-                    if (logs.length > 0){console.info(`weex transformer complain:  ${inputPath} \n`)}            
-                    _.each(
-                        logs,
-                        (l)=>  console.info(   `    line${l.line},column${l.column}:\n        ${l.reason}\n`   ) )
-                } catch(e){
-                    npmlog.error(e)
-                }
+        let bundleWritePath
+        if (outputPath){
+            bundleWritePath = outputPath
+        }else{
+            bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
+        }
+        inputPath = path.resolve(inputPath)
+        var entryValue = `${inputPath}?entry=true`;
+        let webpackConfig = {
+            entry: entryValue,
+            output: {
+                path:   path.dirname(bundleWritePath),
+                filename: path.basename(bundleWritePath)
+            },
+            module: {
+                loaders: [
+                    {
+                        test: /\.we(\?[^?]+)?$/,
+                        loaders: ['weex-loader']
+                    }
+                ]
+            },
+            resolve:{
+                root:[ path.dirname(inputPath),  path.join (path.dirname(inputPath) ,"node_modules/")]
+            },
+            resolveLoader: {
+                root: [ path.join( path.dirname(__dirname), "node_modules/")]
+            },                
+            debug:true,
+            bail:true
+        };
 
-                let bundleWritePath
-                if (outputPath){
-                    bundleWritePath = outputPath
-                }else{
-                    bundleWritePath = `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${filename}.js`
-                }
-                fs.writeFileSync(bundleWritePath , res.result)
+        webpack(webpackConfig,function(err,result){
+            if (err){
+                promiseData.rejecter(err)                
+            }else{
                 if (outputPath){
                     promiseData.resolver(false)            
                 }else{
@@ -267,12 +283,13 @@ class Previewer{
         })
         return promiseData.promise
     }
-
 }
 
 var yargs = require('yargs')
 var argv = yargs
-        .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]\nUsage: weex create [name]  [options]')
+        .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' +
+            // '\nUsage: weex create [name]  [options]' +
+            '\nUsage: weex init')
         .boolean('qr')
         .describe('qr', 'display QR code for native runtime, default action')
         .option('h' , {demand:false})
@@ -300,6 +317,7 @@ var argv = yargs
         .alias('f', 'force')
         .describe('f', '[for create sub cmd]force to replace exsisting file(s)')
         .help('help')
+        .epilog('for example & more information visit https://www.npmjs.com/package/weex-toolkit')
         .argv  ;
 
 
@@ -314,14 +332,13 @@ var argv = yargs
         return
     }
 
-    if (argv._[0] == "create"){
-        if (argv.output == NO_JSBUNDLE_OUTPUT){argv.output = "."}
-        argv._ = argv._.slice(1)
-        if (argv._.length < 1 ){
-            npmlog.error("\nplease add your we file name, eg:\n$weex create we_file_name")
-            return 
-        }
-        weFileCreate.create(argv)
+    if (argv._[0] === 'init') {
+        generator.generate();
+        return;
+    }
+
+    if (argv._[0] === "create"){
+        npmlog.warn('\nSorry, "weex create" is no longer supported, we recommand you please try "weex init" instead.')
         return
     }
 
@@ -336,7 +353,7 @@ var argv = yargs
     try {
         fs.accessSync(inputPath, fs.F_OK);
     } catch (e) {
-        if (!transformServerPath) { npmlog.error(`\n ${inputPath} not accessable`)}
+        if (!transformServerPath && !!inputPath) { npmlog.error(`\n ${inputPath} not accessable`)}
         badWePath = true
     }        
 
