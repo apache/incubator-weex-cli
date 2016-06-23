@@ -25,9 +25,13 @@ const H5_Render_DIR = "h5_render"
 const NO_PORT_SPECIFIED =  -1
 const DEFAULT_HTTP_PORT  = "8081"
 const DEFAULT_WEBSOCKET_PORT = "8082"
-var HTTP_PORT = NO_PORT_SPECIFIED         //will update when argvProcess function call
-var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  
 const NO_JSBUNDLE_OUTPUT = "no JSBundle output"
+const DEFAULT_HOST  = "127.0.0.1"
+
+//will update when argvProcess function call
+var HTTP_PORT = NO_PORT_SPECIFIED         
+var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  
+
 
 class Previewer{
 
@@ -161,7 +165,10 @@ class Previewer{
             npmlog.info((new Date()) + `http  is listening on port ${port}`)
 
             if (self.transformServerPath){
-                let IP =  nwUtils.getPublicIP()                
+                let IP =  nwUtils.getPublicIP()
+                if (self.host != DEFAULT_HOST){
+                    IP = self.host
+                }
                 npmlog.info(  `we file in local path ${self.transformServerPath} will be transformer to JS bundle\nplease access http://${IP}:${port}/`  )
                 return 
             }
@@ -194,7 +201,10 @@ class Previewer{
     }
 
     showQR(fileName){
-        let IP =  nwUtils.getPublicIP()
+        let IP =   nwUtils.getPublicIP()
+        if (this.host != DEFAULT_HOST){
+            IP = this.host
+        }
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
         // npmlog output will broken QR in some case ,some we using console.log
@@ -293,7 +303,7 @@ var argv = yargs
         .boolean('qr')
         .describe('qr', 'display QR code for native runtime, default action')
         .option('h' , {demand:false})
-        .default('h',"127.0.0.1")
+        .default('h',DEFAULT_HOST)
         .alias('h', 'host')
         .option('o' , {demand:false})
         .alias('o', 'output')
@@ -301,9 +311,7 @@ var argv = yargs
         .describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path')
         .option('watch' , {demand:false})
         .describe('watch', 'using with -o , watch input path , auto run transform if change happen')
-        .option('s' , {demand:false})
-        .alias('s', 'server')
-        .default('s', null)
+        .option('s' , {demand:false, alias: 'server', type: 'string'})
         .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
         .option('port' , {demand:false})
         .default('port',NO_PORT_SPECIFIED)

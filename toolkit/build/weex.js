@@ -40,9 +40,12 @@ var H5_Render_DIR = "h5_render";
 var NO_PORT_SPECIFIED = -1;
 var DEFAULT_HTTP_PORT = "8081";
 var DEFAULT_WEBSOCKET_PORT = "8082";
-var HTTP_PORT = NO_PORT_SPECIFIED; //will update when argvProcess function call
-var WEBSOCKET_PORT = NO_PORT_SPECIFIED;
 var NO_JSBUNDLE_OUTPUT = "no JSBundle output";
+var DEFAULT_HOST = "127.0.0.1";
+
+//will update when argvProcess function call
+var HTTP_PORT = NO_PORT_SPECIFIED;
+var WEBSOCKET_PORT = NO_PORT_SPECIFIED;
 
 var Previewer = function () {
     function Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath) {
@@ -190,6 +193,9 @@ var Previewer = function () {
 
                 if (self.transformServerPath) {
                     var IP = nwUtils.getPublicIP();
+                    if (self.host != DEFAULT_HOST) {
+                        IP = self.host;
+                    }
                     npmlog.info('we file in local path ' + self.transformServerPath + ' will be transformer to JS bundle\nplease access http://' + IP + ':' + port + '/');
                     return;
                 }
@@ -223,6 +229,9 @@ var Previewer = function () {
         key: 'showQR',
         value: function showQR(fileName) {
             var IP = nwUtils.getPublicIP();
+            if (this.host != DEFAULT_HOST) {
+                IP = this.host;
+            }
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
             var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
             // npmlog output will broken QR in some case ,some we using console.log
@@ -322,7 +331,7 @@ var Previewer = function () {
 var yargs = require('yargs');
 var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' +
 // '\nUsage: weex create [name]  [options]' +
-'\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', "127.0.0.1").alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false }).alias('s', 'server').default('s', null).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
+'\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', DEFAULT_HOST).alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false, alias: 'server', type: 'string' }).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
 .alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').epilog('for example & more information visit https://www.npmjs.com/package/weex-toolkit').argv;
 
 (function argvProcess() {
