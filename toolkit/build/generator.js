@@ -35,7 +35,7 @@ function copy() {
   walk(src, files);
   files.forEach(function (file) {
     var relative = path.relative(src, file);
-    var finalPath = path.join(dest, relative);
+    var finalPath = path.join(dest, relative).replace(/\.npmignore$/, '.gitignore');
     if (!fs.existsSync(finalPath)) {
       console.log('file: ' + finalPath + ' created.');
       fs.copySync(file, finalPath);
