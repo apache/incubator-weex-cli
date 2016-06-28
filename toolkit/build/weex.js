@@ -264,6 +264,9 @@ var Previewer = function () {
         value: function watchForWSRefresh() {
             var self = this;
             watch(path.dirname(this.inputPath), function (fileName) {
+                if (!!fileName.match('' + WEEX_TRANSFORM_TMP)) {
+                    return;
+                }
                 if (/\.js$|\.we$/gi.test(fileName)) {
                     var transformP = self.transformTarget(self.inputPath, self.outputPath);
                     transformP.then(function (fileName) {

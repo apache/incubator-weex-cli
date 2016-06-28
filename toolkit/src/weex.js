@@ -232,7 +232,10 @@ class Previewer{
     watchForWSRefresh(){
         let self = this
         watch(path.dirname(this.inputPath), function(fileName){
-            if (/\.js$|\.we$/gi.test(fileName)){            
+            if (!!fileName.match(`${WEEX_TRANSFORM_TMP}`))  {
+                return
+            }
+            if (/\.js$|\.we$/gi.test(fileName)){
                 let transformP  = self.transformTarget(self.inputPath,self.outputPath)
                 transformP.then( function(fileName){
                     self.wsConnection.send("refresh")                    

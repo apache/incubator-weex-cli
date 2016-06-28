@@ -34,7 +34,8 @@ function copyRecursiveSync(src, dest, reFilter) {
       fs.mkdirSync(dest);
     }
     fs.readdirSync(src).forEach(function (childItemName) {
-      if (reFilter.test(childItemName)) {
+      if (reFilter.test(childItemName) && /[^(weex_tmp)]/.test(childItemName)) {
+        // TODO: hardcode
         copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
       }
     });
