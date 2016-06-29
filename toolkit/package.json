@@ -41,6 +41,7 @@
     "webpack": "^1.13.1",
     "weex-components": "^0.0.6",
     "weex-loader": "^0.1.5",
+    "weex-devtool":"*",
     "ws": "^1.1.0",
     "yargs": "^3.32.0"
   },
@@ -59,5 +60,8 @@
   },
   "bin": {
     "weex": "bin/weex.js"
+  },
+  "commands":{
+    "debug":"weex-devtool.weex-devtool"
   }
 }

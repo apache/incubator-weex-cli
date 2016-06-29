@@ -33,7 +33,8 @@ var fs = require('fs'),
     fsUtils = require('../build/fs-utils'),
     debuggerServer = require('../build/debugger-server'),
     weFileCreate = require('../build/create'),
-    generator = require('../build/generator');
+    generator = require('../build/generator'),
+    Commands = require('../build/commands');
 
 var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
@@ -75,8 +76,8 @@ var Previewer = function () {
             this.serverMark = true;
             // when no js bundle output specified, start server for playgroundApp(now) or H5 renderer.                 
         } else {
-                this.outputPath = outputPath;
-            }
+            this.outputPath = outputPath;
+        }
 
         try {
             if (fs.lstatSync(inputPath).isFile()) {
@@ -122,30 +123,30 @@ var Previewer = function () {
             if (fs.lstatSync(inputPath).isFile()) {
                 transformP = this.transformTarget(inputPath, outputPath); // outputPath may be null , meaning start server
             } else if (fs.lstatSync(inputPath).isDirectory) {
-                    try {
-                        fs.lstatSync(outputPath).isDirectory;
-                    } catch (e) {
-                        npmlog.info(yargs.help());
-                        npmlog.info("when input path is dir , output path must be dir too");
-                        process.exit(1);
-                    }
-
-                    var filesInTarget = fs.readdirSync(inputPath);
-                    filesInTarget = _.filter(filesInTarget, function (fileName) {
-                        return fileName.length > 2;
-                    });
-                    filesInTarget = _.filter(filesInTarget, function (fileName) {
-                        return fileName.substring(fileName.length - 2, fileName.length) == WEEX_FILE_EXT;
-                    });
-
-                    var filesInTargetPromiseList = _.map(filesInTarget, function (fileName) {
-                        var ip = path.join(inputPath, fileName);
-                        fileName = fileName.replace(/\.we/, '');
-                        var op = path.join(outputPath, fileName + '.js');
-                        return self.transformTarget(ip, op);
-                    });
-                    transformP = _promise2.default.all(filesInTargetPromiseList);
+                try {
+                    fs.lstatSync(outputPath).isDirectory;
+                } catch (e) {
+                    npmlog.info(yargs.help());
+                    npmlog.info("when input path is dir , output path must be dir too");
+                    process.exit(1);
                 }
+
+                var filesInTarget = fs.readdirSync(inputPath);
+                filesInTarget = _.filter(filesInTarget, function (fileName) {
+                    return fileName.length > 2;
+                });
+                filesInTarget = _.filter(filesInTarget, function (fileName) {
+                    return fileName.substring(fileName.length - 2, fileName.length) == WEEX_FILE_EXT;
+                });
+
+                var filesInTargetPromiseList = _.map(filesInTarget, function (fileName) {
+                    var ip = path.join(inputPath, fileName);
+                    fileName = fileName.replace(/\.we/, '');
+                    var op = path.join(outputPath, fileName + '.js');
+                    return self.transformTarget(ip, op);
+                });
+                transformP = _promise2.default.all(filesInTargetPromiseList);
+            }
 
             transformP.then(function (jsBundlePathForRender) {
                 if (self.serverMark == true) {
@@ -359,7 +360,9 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' +
         npmlog.warn('\nSorry, "weex create" is no longer supported, we recommand you please try "weex init" instead.');
         return;
     }
-
+    if (argv._[0] && Commands.exec(argv._[0], process.argv.slice(3))) {
+        return;
+    }
     if (argv.version) {
         npmlog.info(VERSION);
         return;
