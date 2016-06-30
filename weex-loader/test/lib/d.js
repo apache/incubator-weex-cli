@@ -1,1 +1,0 @@
-exports.name = 'Alibaba Group';
