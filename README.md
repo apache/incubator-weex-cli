@@ -124,6 +124,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
 
 ## Changelog
+* 160707(0.4.0) : add weex debugger
 * 160628(0.3.4) : fix hot-reload continuous refresh  bug
 * 160624(0.3.2) : supported `weex init` to generate a weex project
 * 160623(0.2.2) : make "-h" specify host IP work for QR code 

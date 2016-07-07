@@ -16,7 +16,7 @@ const fs = require('fs'),
     debuggerServer =  require('../build/debugger-server'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator'),
-    commands=require('../build/commands')
+    commands= require('../build/commands')
 
 const VERSION = require('../package.json').version
 const WEEX_FILE_EXT = "we"
