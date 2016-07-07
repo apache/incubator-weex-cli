@@ -121,7 +121,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 
 ## Issue & Feedback
 
-[Github Issue List](https://github.com/alibaba/weex_toolchain/issues)
+[Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
 * 160707(0.4.0) : add weex debugger
