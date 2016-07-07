@@ -25,7 +25,7 @@ $npm install -g weex-toolkit
 ```
 weex foo/bar/we_file_or_dir_path  [options]
 weex init
-
+weex debug
 Options:
   --qr     display QR code for native runtime, 
   -o,--output  transform weex we file to JS Bundle, output path (single JS bundle file or dir)
@@ -79,6 +79,45 @@ a QR code will display in your terminal , using Playground App scan that.
 $weex -s .
 ```
 a http server will start running , your current directory(.) will be the document root for the server , every weex .we file will be transforme to JS Bundle when access through the server
+
+
+## weex debug command
+#### usage
+```
+weex debug [options] [we_file|bundles_dir]
+            
+  Options:
+
+    -h, --help           output usage information
+    -V, --verbose        display logs of debugger server
+    -v, --version        display version
+    -p, --port [port]    set debugger server port
+    -e, --entry [entry]  set the entry bundlejs path when you specific the bundle server root path
+    -m, --mode [mode]    set build mode [transformer|loader]
+```
+
+#### start debugger
+```
+$weex debug
+```
+this command will start debug server and launch a chrome opening `DeviceList` page.
+this page will display a qrcode ,you can use `Playground App` scan it for starting debug.
+
+#### start debugger with a we file
+```
+$weex debug your_weex.we
+```
+this command will compile `your_weex.we` to `your_weex.js`  and start the debug server as upon command.
+`your_weex.js` will deploy on the server and displayed in `DeviceList` page as  another qrcode contain the url of your_weex.js
+
+
+#### start debugger with a directory of we files
+```
+$weex debug your/we/path  -e index.we
+``` 
+this command will build every file in your/we/path and deploy them on the bundle server. your directory will mapping to  http://localhost:port/weex/ 
+use -e to set the entry of these bundles. and the url of "index.we" will display on device list page as another qrcode 
+
 
 ## Issue & Feedback
 

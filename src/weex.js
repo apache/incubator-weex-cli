@@ -15,8 +15,8 @@ const fs = require('fs'),
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server'),
     weFileCreate = require('../build/create'),
-    generator = require('../build/generator')
-
+    generator = require('../build/generator'),
+    commands=require('../build/commands')
 
 const VERSION = require('../package.json').version
 const WEEX_FILE_EXT = "we"
@@ -352,7 +352,9 @@ var argv = yargs
         npmlog.warn('\nSorry, "weex create" is no longer supported, we recommand you please try "weex init" instead.')
         return
     }
-
+    if(argv._[0]&&commands.exec(argv._[0],process.argv.slice(3))){
+        return
+    }
     if (argv.version){
         npmlog.info(VERSION)
         return
