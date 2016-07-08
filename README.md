@@ -124,6 +124,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 160707(0.4.2) : upgrade upstream devtool
 * 160707(0.4.1) : add weex debugger
 * 160628(0.3.4) : fix hot-reload continuous refresh  bug
 * 160624(0.3.2) : supported `weex init` to generate a weex project
