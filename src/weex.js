@@ -206,7 +206,8 @@ class Previewer{
             IP = this.host
         }
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? DEFAULT_HTTP_PORT : HTTP_PORT       
-        let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}`
+        let wsport = (WEBSOCKET_PORT == NO_PORT_SPECIFIED) ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT
+        let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}?wsport=${wsport}`
         // npmlog output will broken QR in some case ,some we using console.log
         console.log(`The following QR encoding url is\n${jsBundleURL}\n`)
         qrcode.generate(jsBundleURL)
