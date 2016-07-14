@@ -183,7 +183,7 @@ var Previewer = function () {
 
             if (this.transformServerPath) {
                 options.root = this.transformServerPath;
-                options.before = [fsUtils.getTransformerWraper(options.root)];
+                options.before = [fsUtils.getTransformerWraper(options.root, self.transformTarget)];
             }
 
             var server = httpServer.createServer(options);
@@ -314,6 +314,8 @@ var Previewer = function () {
                 debug: true,
                 bail: true
             };
+            //console.log(webpackConfig.resolve)
+            //console.log(webpackConfig.resolveLoader)       
 
             webpack(webpackConfig, function (err, result) {
                 if (err) {

@@ -155,7 +155,7 @@ class Previewer{
         
         if (this.transformServerPath){
             options.root = this.transformServerPath
-            options.before = [ fsUtils.getTransformerWraper(options.root) ]      
+            options.before = [ fsUtils.getTransformerWraper(options.root  ,  self.transformTarget ) ]    
         }
         
         let server = httpServer.createServer(options)
@@ -282,6 +282,8 @@ class Previewer{
             debug:true,
             bail:true
         };
+        //console.log(webpackConfig.resolve)
+        //console.log(webpackConfig.resolveLoader)        
 
         webpack(webpackConfig,function(err,result){
             if (err){

@@ -1,102 +1,101 @@
 'use strict';
 
 var fs = require('fs'),
+    os = require('os'),
     fse = require('fs-extra'),
     _ = require("underscore"),
-    weexTransformer = require('weex-transformer'),
     path = require('path');
 
 function deleteFolderRecursive(path) {
-  if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function (file, index) {
-      var curPath = path + "/" + file;
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // recurse
-        deleteFolderRecursive(curPath);
-      } else {
-        // delete file
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(path);
-  }
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(function (file, index) {
+            var curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) {
+                // recurse
+                deleteFolderRecursive(curPath);
+            } else {
+                // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
 }
 
 function copyRecursiveSync(src, dest, reFilter) {
-  var exists = fs.existsSync(src);
-  var stats = exists && fs.statSync(src);
-  var isDirectory = exists && stats.isDirectory();
-  if (exists && isDirectory) {
-    try {
-      fs.mkdirSync(dest);
-    } catch (e) {
-      fse.removeSync(dest);
-      fs.mkdirSync(dest);
+    var exists = fs.existsSync(src);
+    var stats = exists && fs.statSync(src);
+    var isDirectory = exists && stats.isDirectory();
+    if (exists && isDirectory) {
+        try {
+            fs.mkdirSync(dest);
+        } catch (e) {
+            fse.removeSync(dest);
+            fs.mkdirSync(dest);
+        }
+        fs.readdirSync(src).forEach(function (childItemName) {
+            if (reFilter.test(childItemName) && /[^(weex_tmp)]/.test(childItemName)) {
+                // TODO: hardcode
+                copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+            }
+        });
+    } else {
+        try {
+            fs.linkSync(src, dest);
+        } catch (e) {
+            fse.removeSync(dest);
+            fs.linkSync(src, dest);
+        }
     }
-    fs.readdirSync(src).forEach(function (childItemName) {
-      if (reFilter.test(childItemName) && /[^(weex_tmp)]/.test(childItemName)) {
-        // TODO: hardcode
-        copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
-      }
-    });
-  } else {
-    try {
-      fs.linkSync(src, dest);
-    } catch (e) {
-      fse.removeSync(dest);
-      fs.linkSync(src, dest);
-    }
-  }
 }
 
 //wrapper for union
 
-function getTransformerWraper(rootPath) {
+function getTransformerWraper(rootPath, transformerFunc) {
 
-  var transformerWraper = function transformerWraper(req, res) {
-    var filePath = req.url;
-    if (filePath.endsWith(".we")) {
-      //console.log(filePath)
-      if (filePath[0] == "/") {
-        filePath = filePath.substring(1, filePath.length);
-      }
-      filePath = path.join(rootPath, filePath);
-      fs.readFile(filePath, 'utf8', function (err, data) {
-        if (err) {
-          console.error(err);
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Server Error\n');
+    var transformerWraper = function transformerWraper(req, res) {
+        var filePath = req.url;
+        if (filePath.endsWith(".we")) {
+            (function () {
+                if (filePath[0] == "/") {
+                    filePath = filePath.substring(1, filePath.length);
+                }
+
+                var wePath = path.join(rootPath, filePath);
+                //console.log(`file ${filePath}`)                                                 
+                //console.log(`root  ${rootPath}`)         
+                //console.log(`we ${wePath}`)                             
+                var filename = path.basename(wePath).replace(/\..+/, '');
+                var tmpdir = os.tmpdir();
+                var jsPath = path.join(tmpdir, filename + '.js');
+                var transformP = transformerFunc(wePath, jsPath);
+                transformP.then(function () {
+                    fs.readFile(jsPath, 'utf8', function (err, data) {
+                        if (err) {
+                            console.error(err);
+                            res.writeHead(500, { 'Content-Type': 'text/plain' });
+                            res.end('Server Error\n');
+                        } else {
+                            res.writeHead(200, { 'Content-Type': 'application/javascript' });
+                            res.end(data);
+                        }
+                    });
+                }).catch(function (e) {
+                    console.error(e);
+                    res.writeHead(500, { 'Content-Type': 'text/plain' });
+                    res.end('Server Error\n');
+                });
+            })();
         } else {
-          var filename = path.basename(filePath).replace(/\..+/, '');
-          var transRes = weexTransformer.transform(filename, data, "");
-          var logs = transRes.logs;
-          try {
-            logs = _.filter(logs, function (l) {
-              return l.reason.indexOf("Warning:") == 0 || l.reason.indexOf("Error:") == 0;
-            });
-            if (logs.length > 0) {
-              console.info('weex transformer complain:  ' + filePath + ' \n');
-            }
-            _.each(logs, function (l) {
-              return console.info('    line' + l.line + ',column' + l.column + ':\n        ' + l.reason + '\n');
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          res.writeHead(200, { 'Content-Type': 'text/plain' });
-          res.end(transRes.result);
+            res.emit('next');
         }
-      });
-    } else {
-      res.emit('next');
-    }
-  };
+    };
 
-  return transformerWraper;
+    return transformerWraper;
 }
 
 module.exports = {
-  deleteFolderRecursive: deleteFolderRecursive,
-  copyRecursiveSync: copyRecursiveSync,
-  getTransformerWraper: getTransformerWraper
+    deleteFolderRecursive: deleteFolderRecursive,
+    copyRecursiveSync: copyRecursiveSync,
+    getTransformerWraper: getTransformerWraper
 };

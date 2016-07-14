@@ -1,7 +1,7 @@
 const fs = require('fs'),
+      os = require('os'),
     fse = require('fs-extra'),      
     _   = require("underscore"),
-    weexTransformer = require('weex-transformer'),
     path = require('path');
 
 
@@ -51,44 +51,47 @@ function copyRecursiveSync(src, dest , reFilter) {
 
 //wrapper for union
 
-function getTransformerWraper(rootPath){
-  
-  let  transformerWraper = function(req,res)  {
-    let filePath = req.url
-    if (filePath.endsWith(".we")){
-      //console.log(filePath)
-      if (filePath[0] == "/"){
-        filePath  = filePath.substring(1, filePath.length )
-      }
-      filePath = path.join(rootPath, filePath)
-      fs.readFile(filePath , 'utf8' , function(err,data){
-        if (err){
-          console.error(err)
-          res.writeHead(500, { 'Content-Type': 'text/plain' })
-          res.end('Server Error\n')    
-        }else{
-          let filename = path.basename(filePath).replace(/\..+/, '')        
-          let transRes = weexTransformer.transform(filename,data, "")
-          let logs = transRes.logs
-          try{
-            logs = _.filter(logs ,(l) => (  l.reason.indexOf("Warning:") == 0) || ( l.reason.indexOf("Error:") == 0 ) )
-            if (logs.length > 0){console.info(`weex transformer complain:  ${filePath} \n`)}
-            _.each(
-              logs,
-              (l)=>  console.info(   `    line${l.line},column${l.column}:\n        ${l.reason}\n`   ) )
-          } catch(e){
-            console.error(e)
-          }
-          res.writeHead(200, { 'Content-Type': 'text/plain' })
-          res.end(transRes.result);    
-        }
-      })
-    }else{
-      res.emit('next')
-    }
-  }
+function getTransformerWraper(rootPath ,  transformerFunc ){
 
-  return  transformerWraper
+    
+    let  transformerWraper = function(req,res)  {
+        let filePath = req.url
+        if (filePath.endsWith(".we")){
+            if (filePath[0] == "/"){
+                filePath  = filePath.substring(1, filePath.length )
+            }
+
+            let wePath = path.join(rootPath, filePath)
+            //console.log(`file ${filePath}`)                                                  
+            //console.log(`root  ${rootPath}`)          
+            //console.log(`we ${wePath}`)                              
+            let filename = path.basename(wePath).replace(/\..+/, '')        
+            let tmpdir = os.tmpdir()
+            let jsPath = path.join(tmpdir, `${filename}.js`  )
+            let transformP =   transformerFunc( wePath , jsPath )
+            transformP.then(function(){
+                fs.readFile(jsPath , 'utf8' , function(err,data){
+                    if (err){
+                        console.error(err)
+                        res.writeHead(500, { 'Content-Type': 'text/plain' })
+                        res.end('Server Error\n')
+                    }else{
+                        res.writeHead(200, { 'Content-Type': 'application/javascript' })
+                        res.end(data);    
+                    }
+                })
+            }).catch(function(e){
+                console.error(e)
+                res.writeHead(500, { 'Content-Type': 'text/plain' })
+                res.end('Server Error\n')
+            })
+                
+                }else{
+                    res.emit('next')
+                }
+    }
+
+    return  transformerWraper
 }
 
 

@@ -37,7 +37,6 @@
     "underscore": "^1.8.3",
     "uuid": "^2.0.2",
     "weex-html5": "^0.2.23-beta",
-    "weex-transformer": "^0.3.1",
     "webpack": "^1.13.1",
     "weex-components": "^0.0.6",
     "weex-loader": "^0.1.5",
