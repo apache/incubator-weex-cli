@@ -2,9 +2,10 @@
 
 var fs = require('fs'),
     os = require('os'),
+    url = require('url'),
+    path = require('path'),
     fse = require('fs-extra'),
-    _ = require("underscore"),
-    path = require('path');
+    _ = require("underscore");
 
 function deleteFolderRecursive(path) {
     if (fs.existsSync(path)) {
@@ -54,7 +55,8 @@ function copyRecursiveSync(src, dest, reFilter) {
 function getTransformerWraper(rootPath, transformerFunc) {
 
     var transformerWraper = function transformerWraper(req, res) {
-        var filePath = req.url;
+        var urlObj = url.parse(req.url);
+        var filePath = urlObj.pathname;
         if (filePath.endsWith(".we")) {
             (function () {
                 if (filePath[0] == "/") {

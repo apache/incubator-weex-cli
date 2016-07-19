@@ -156,6 +156,8 @@ class Previewer{
         if (this.transformServerPath){
             options.root = this.transformServerPath
             options.before = [ fsUtils.getTransformerWraper(options.root  ,  self.transformTarget ) ]    
+        }else{
+            options.before = [ fsUtils.getTransformerWraper(process.cwd() ,  self.transformTarget ) ]     
         }
         
         let server = httpServer.createServer(options)
@@ -275,7 +277,7 @@ class Previewer{
                 ]
             },
             resolve:{
-                root:[ path.dirname(inputPath),  path.join (path.dirname(inputPath) ,"node_modules/")]
+                root:[ path.dirname(inputPath),  path.join (path.dirname(inputPath) ,"node_modules/") ,process.cwd(), path.join(process.cwd(), "node_modules/")  ]
             },
             resolveLoader: {
                 root: [ path.join( path.dirname(__dirname), "node_modules/")]

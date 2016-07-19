@@ -186,6 +186,8 @@ var Previewer = function () {
             if (this.transformServerPath) {
                 options.root = this.transformServerPath;
                 options.before = [fsUtils.getTransformerWraper(options.root, self.transformTarget)];
+            } else {
+                options.before = [fsUtils.getTransformerWraper(process.cwd(), self.transformTarget)];
             }
 
             var server = httpServer.createServer(options);
@@ -236,7 +238,8 @@ var Previewer = function () {
                 IP = this.host;
             }
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
-            var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName;
+            var wsport = WEBSOCKET_PORT == NO_PORT_SPECIFIED ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT;
+            var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName + '?wsport=' + wsport;
             // npmlog output will broken QR in some case ,some we using console.log
             console.log('The following QR encoding url is\n' + jsBundleURL + '\n');
             qrcode.generate(jsBundleURL);
@@ -308,7 +311,7 @@ var Previewer = function () {
                     }]
                 },
                 resolve: {
-                    root: [path.dirname(inputPath), path.join(path.dirname(inputPath), "node_modules/")]
+                    root: [path.dirname(inputPath), path.join(path.dirname(inputPath), "node_modules/"), process.cwd(), path.join(process.cwd(), "node_modules/")]
                 },
                 resolveLoader: {
                     root: [path.join(path.dirname(__dirname), "node_modules/")]

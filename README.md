@@ -10,14 +10,24 @@ if your
 ```
 $ npm --version
 ```
-output less then `2.15.1`, please run below cmd upgrade your npm at first
+output less then `2.15.1`, please run below cmd to upgrade your npm at first
 ```
-sudo npm install -g npm
+$ npm install -g npm
+```
+
+### Install node-gyp
+if your
+```
+$ node-gyp --version
+```
+output less then `3.4.0` or no node-gpy installed in your system , please run below cmd to install or upgrade node-gyp
+```
+$ npm install -g node-gyp
 ```
 
 ## Install
 ```
-$npm install -g weex-toolkit
+$ npm install -g weex-toolkit
 ```
 
 ## Usage
@@ -124,7 +134,8 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
-* 1607014(0.4.3) : improve -s implementation, remove dependence of weex transformer ; improve Weex Playground App support ; upgrade upstream devtool
+* 160719(0.4.4) : improve document ; improve -s implementation ; upgrade upstream devtool
+* 160714(0.4.3) : improve -s implementation, remove dependence of weex transformer ; improve Weex Playground App support ; upgrade upstream devtool
 * 160707(0.4.2) : upgrade upstream devtool
 * 160707(0.4.1) : add weex debugger
 * 160628(0.3.4) : fix hot-reload continuous refresh  bug
