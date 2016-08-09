@@ -305,9 +305,10 @@ class Previewer{
 
 var yargs = require('yargs')
 var argv = yargs
-        .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' +
-            // '\nUsage: weex create [name]  [options]' +
-            '\nUsage: weex init')
+    .usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]'
+           + '\nUsage: weex debug [options] [we_file|bundles_dir]'   
+           + '\nUsage: weex init'           
+              )
         .boolean('qr')
         .describe('qr', 'display QR code for native runtime, default action')
         .option('h' , {demand:false})
@@ -333,7 +334,7 @@ var argv = yargs
         .alias('f', 'force')
         .describe('f', '[for create sub cmd]force to replace exsisting file(s)')
         .help('help')
-        .epilog('for example & more information visit https://www.npmjs.com/package/weex-toolkit')
+        .epilog('weex debug -h for Weex debug help information.\n\nfor cmd example & more information please visit https://www.npmjs.com/package/weex-toolkit')
         .argv  ;
 
 

@@ -134,6 +134,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 160809(0.4.5) : upgrade upstream devtool , improve cli help information.
 * 160719(0.4.4) : improve document ; improve -s implementation ; upgrade upstream devtool
 * 160714(0.4.3) : improve -s implementation, remove dependence of weex transformer ; improve Weex Playground App support ; upgrade upstream devtool
 * 160707(0.4.2) : upgrade upstream devtool
