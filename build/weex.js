@@ -323,6 +323,17 @@ var Previewer = function () {
             webpack(webpackConfig, function (err, result) {
                 if (err) {
                     promiseData.rejecter(err);
+                    if (err.name == "ModuleNotFoundError") {
+                        (function () {
+                            var moduleName = "THE_MISSING_MODULE_NAME";
+                            if (err.dependencies.length > 0 && err.dependencies[0].request) {
+                                moduleName = err.dependencies[0].request;
+                            }
+                            setTimeout(function () {
+                                return npmlog.info('Please try to enter directory where your we file saved, and run command \'npm install ' + moduleName + '\'');
+                            }, 100);
+                        })();
+                    }
                 } else {
                     if (outputPath) {
                         promiseData.resolver(false);

@@ -285,12 +285,18 @@ class Previewer{
             debug:true,
             bail:true
         };
-        //console.log(webpackConfig.resolve)
-        //console.log(webpackConfig.resolveLoader)        
 
         webpack(webpackConfig,function(err,result){
             if (err){
-                promiseData.rejecter(err)                
+                promiseData.rejecter(err)
+                if (err.name == "ModuleNotFoundError"){
+                    let moduleName = "THE_MISSING_MODULE_NAME"
+                    if ((err.dependencies.length > 0 )  && err.dependencies[0].request)   {
+                        moduleName = err.dependencies[0].request
+                    }
+                    setTimeout(()=>
+                               npmlog.info(`Please try to enter directory where your we file saved, and run command 'npm install ${moduleName}'`),100)  
+                }
             }else{
                 if (outputPath){
                     promiseData.resolver(false)            
