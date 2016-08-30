@@ -90,6 +90,13 @@ $weex -s .
 ```
 a http server will start running , your current directory(.) will be the document root for the server , every weex .we file will be transforme to JS Bundle when access through the server
 
+## Troubleshoot Installation Problems
+
+### invalid name '@f/defaults'
+
+Action: upgrade node version
+
+[issue](https://github.com/weexteam/weex-toolkit/issues/17) 
 
 ## weex debug command
 #### usage
@@ -134,6 +141,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 160830(0.4.7) : improve CLI feedback when module not found error happen
 * 160809(0.4.6) : upgrade upstream weex-html5 ,weex-loader ,devtool
 * 160809(0.4.5) : upgrade upstream devtool , improve cli help information.
 * 160719(0.4.4) : improve document ; improve -s implementation ; upgrade upstream devtool
