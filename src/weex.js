@@ -8,9 +8,9 @@ const fs = require('fs'),
     watch =  require('node-watch'),
     os  = require('os'),
     _   = require("underscore"),
-    qrcode = require('qrcode-terminal'),    
     webpack = require('webpack'),
     webpackLoader = require('weex-loader'),
+    qrcode = require('qrcode-terminal-alpha'),          
     nwUtils =  require('../build/nw-utils'),      
     fsUtils = require('../build/fs-utils'),      
     debuggerServer =  require('../build/debugger-server'),
@@ -212,7 +212,7 @@ class Previewer{
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}?wsport=${wsport}`
         // npmlog output will broken QR in some case ,some we using console.log
         console.log(`The following QR encoding url is\n${jsBundleURL}\n`)
-        qrcode.generate(jsBundleURL)
+        qrcode.generate(jsBundleURL,{small:true})
         console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing weex server.\n")
     }
     startWebSocket(){
