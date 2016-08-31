@@ -241,7 +241,7 @@ var Previewer = function () {
             // npmlog output will broken QR in some case ,some we using console.log
             console.log('The following QR encoding url is\n' + jsBundleURL + '\n');
             qrcode.generate(jsBundleURL, { small: true });
-            console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing weex server.\n");
+            console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing WeexToolkit.\n");
         }
     }, {
         key: 'startWebSocket',
