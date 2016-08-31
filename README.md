@@ -141,6 +141,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 160831(0.4.9 beta) : render small size QR terminal code on Mac&Linux Platform
 * 160830(0.4.8) : more CLI feedback when compile time error happen
 * 160830(0.4.7) : improve CLI feedback when module not found error happen
 * 160809(0.4.6) : upgrade upstream weex-html5 ,weex-loader ,devtool
