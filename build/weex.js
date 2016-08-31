@@ -317,8 +317,6 @@ var Previewer = function () {
                 debug: true,
                 bail: true
             };
-            //console.log(webpackConfig.resolve)
-            //console.log(webpackConfig.resolveLoader)       
 
             webpack(webpackConfig, function (err, result) {
                 if (err) {
@@ -333,6 +331,12 @@ var Previewer = function () {
                                 return npmlog.info('Please try to enter directory where your we file saved, and run command \'npm install ' + moduleName + '\'');
                             }, 100);
                         })();
+                    } else {
+                        if (err.error) {
+                            setTimeout(function () {
+                                return npmlog.error(err.error);
+                            }, 100);
+                        }
                     }
                 } else {
                     if (outputPath) {

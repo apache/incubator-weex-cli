@@ -296,6 +296,10 @@ class Previewer{
                     }
                     setTimeout(()=>
                                npmlog.info(`Please try to enter directory where your we file saved, and run command 'npm install ${moduleName}'`),100)  
+                }else{
+                    if (err.error){
+                        setTimeout(()=>npmlog.error(err.error),100)
+                    }
                 }
             }else{
                 if (outputPath){
