@@ -37,7 +37,8 @@ weex foo/bar/we_file_or_dir_path  [options]
 weex init
 weex debug
 Options:
-  --qr     display QR code for native runtime, 
+  --qr       display QR code for PlaygroundApp
+  --smallqr  display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI         
   -o,--output  transform weex we file to JS Bundle, output path (single JS bundle file or dir)
            [for create sub cmd] it specified we file output path                    
   --watch  using with -o , watch input path , auto run transform if change
@@ -141,8 +142,8 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
-* 160831(0.4.9 beta) : render small size QR terminal code on Mac&Linux Platform
-* 160830(0.4.8) : more CLI feedback when compile time error happen
+* 160901(0.4.10) : add --smallqr argument for render small scale version of QR code ; make devtool support listen IP assigning
+* 160831(0.4.8) : more CLI feedback when compile time error happen
 * 160830(0.4.7) : improve CLI feedback when module not found error happen
 * 160809(0.4.6) : upgrade upstream weex-html5 ,weex-loader ,devtool
 * 160809(0.4.5) : upgrade upstream devtool , improve cli help information.
