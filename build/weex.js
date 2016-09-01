@@ -49,7 +49,7 @@ var HTTP_PORT = NO_PORT_SPECIFIED;
 var WEBSOCKET_PORT = NO_PORT_SPECIFIED;
 
 var Previewer = function () {
-    function Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath) {
+    function Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, smallQR, transformServerPath) {
         var _this = this;
 
         (0, _classCallCheck3.default)(this, Previewer);
@@ -58,6 +58,7 @@ var Previewer = function () {
         this.host = host;
         this.shouldOpenBrowser = shouldOpenBrowser;
         this.displayQR = displayQR;
+        this.smallQR = smallQR;
         this.transformServerPath = transformServerPath;
 
         this.serverMark = false;
@@ -203,7 +204,7 @@ var Previewer = function () {
                     return;
                 }
 
-                if (self.displayQR) {
+                if (self.displayQR || self.smallQR) {
                     self.showQR(fileName);
                     return;
                 }
@@ -240,7 +241,7 @@ var Previewer = function () {
             var jsBundleURL = 'http://' + IP + ':' + port + '/' + WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR + '/' + fileName + '?wsport=' + wsport;
             // npmlog output will broken QR in some case ,some we using console.log
             console.log('The following QR encoding url is\n' + jsBundleURL + '\n');
-            qrcode.generate(jsBundleURL, { small: true });
+            qrcode.generate(jsBundleURL, { small: this.smallQR });
             console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing WeexToolkit.\n");
         }
     }, {
@@ -353,7 +354,7 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + '\nUsage: weex debug [options] [we_file|bundles_dir]' + '\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for native runtime, default action').option('h', { demand: false }).default('h', DEFAULT_HOST).alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false, alias: 'server', type: 'string' }).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
+var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + '\nUsage: weex debug [options] [we_file|bundles_dir]' + '\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for PlaygroundApp').boolean('smallqr').describe('smallqr', 'display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI').option('h', { demand: false }).default('h', DEFAULT_HOST).alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false, alias: 'server', type: 'string' }).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
 .alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').epilog('weex debug -h for Weex debug help information.\n\nfor cmd example & more information please visit https://www.npmjs.com/package/weex-toolkit').argv;
 
 (function argvProcess() {
@@ -415,6 +416,7 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
     var host = argv.h;
     var shouldOpenBrowser = argv.np ? false : true;
     var displayQR = argv.qr; //  ? true : false
+    var smallQR = argv.smallqr;
     var outputPath = argv.o; // js bundle file path  or  transform output dir path
     if (typeof outputPath != "string") {
         npmlog.info(yargs.help());
@@ -422,5 +424,5 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
         process.exit(1);
     }
     var transformWatch = argv.watch;
-    new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, transformServerPath);
+    new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, smallQR, transformServerPath);
 })();

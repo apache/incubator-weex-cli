@@ -35,11 +35,12 @@ var WEBSOCKET_PORT   = NO_PORT_SPECIFIED
 
 class Previewer{
 
-    constructor( inputPath , outputPath , transformWatch ,host , shouldOpenBrowser  , displayQR ,  transformServerPath ){
+    constructor( inputPath , outputPath , transformWatch ,host , shouldOpenBrowser  , displayQR , smallQR ,  transformServerPath ){
         this.inputPath = inputPath
         this.host = host
         this.shouldOpenBrowser = shouldOpenBrowser
         this.displayQR = displayQR
+        this.smallQR = smallQR        
         this.transformServerPath = transformServerPath
         
         this.serverMark = false
@@ -176,7 +177,7 @@ class Previewer{
             }
             
 
-            if (self.displayQR){
+            if (self.displayQR || self.smallQR){
 	            self.showQR(fileName)
 	            return
             }
@@ -212,7 +213,7 @@ class Previewer{
         let jsBundleURL = `http://${IP}:${port}/${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}/${fileName}?wsport=${wsport}`
         // npmlog output will broken QR in some case ,some we using console.log
         console.log(`The following QR encoding url is\n${jsBundleURL}\n`)
-        qrcode.generate(jsBundleURL,{small:true})
+        qrcode.generate(jsBundleURL,{small: this.smallQR})
         console.log("\nPlease download Weex Playground app from https://github.com/alibaba/weex and scan this QR code to run your app, make sure your phone is connected to the same Wi-Fi network as your computer runing WeexToolkit.\n")
     }
     startWebSocket(){
@@ -320,7 +321,9 @@ var argv = yargs
            + '\nUsage: weex init'           
               )
         .boolean('qr')
-        .describe('qr', 'display QR code for native runtime, default action')
+        .describe('qr', 'display QR code for PlaygroundApp')
+         .boolean('smallqr')
+        .describe('smallqr', 'display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI')    
         .option('h' , {demand:false})
         .default('h',DEFAULT_HOST)
         .alias('h', 'host')
@@ -405,6 +408,7 @@ var argv = yargs
     var host = argv.h  
     var shouldOpenBrowser =    argv.np ? false: true
     var displayQR =  argv.qr  //  ? true : false
+    var smallQR = argv.smallqr 
     var outputPath = argv.o  // js bundle file path  or  transform output dir path
     if ( typeof outputPath  != "string"){
         npmlog.info(yargs.help())    
@@ -412,6 +416,6 @@ var argv = yargs
         process.exit(1)    
     }
     var transformWatch =  argv.watch
-    new Previewer(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR ,  transformServerPath)
+    new Previewer(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR , smallQR ,  transformServerPath)
 
 })()
