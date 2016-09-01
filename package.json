@@ -39,7 +39,7 @@
     "weex-html5": "^0.3.2",
     "webpack": "^1.13.1",
     "weex-components": "^0.2.0",
-    "weex-loader": "^0.2.3",
+    "weex-loader": "^0.3.0-alpha",
     "ws": "^1.1.0",
     "yargs": "^3.32.0",
     "weex-devtool":"^0.2.37"
