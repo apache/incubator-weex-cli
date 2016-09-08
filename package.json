@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "0.4.10",
+  "version": "0.5.0",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,8 +13,11 @@
   "author": "lvscar@gmail.com",
   "license": "GPL-3.0+",
   "dependencies": {
-    "babel-plugin-transform-runtime": "^6.7.5",
-    "babel-runtime": "^6.6.1",
+    "babel-core": "6.1.21",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-runtime": "^6.11.6",
     "co": "^4.6.0",
     "debug": "^2.2.0",
     "events": "^1.1.0",
@@ -36,13 +39,13 @@
     "qrcode-terminal-alpha": "^0.11.0",
     "underscore": "^1.8.3",
     "uuid": "^2.0.2",
-    "weex-html5": "^0.3.2",
     "webpack": "^1.13.1",
     "weex-components": "^0.2.0",
+    "weex-devtool": "^0.2.38",
+    "weex-html5": "^0.3.2",
     "weex-loader": "^0.3.1",
     "ws": "^1.1.0",
-    "yargs": "^3.32.0",
-    "weex-devtool":"^0.2.38"
+    "yargs": "^3.32.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.6.0",
@@ -60,7 +63,7 @@
   "bin": {
     "weex": "bin/weex.js"
   },
-  "commands":{
-    "debug":"weex-devtool.weex-devtool"
+  "commands": {
+    "debug": "weex-devtool.weex-devtool"
   }
 }
