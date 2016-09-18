@@ -329,6 +329,9 @@ var Previewer = function () {
                             var moduleName = "THE_MISSING_MODULE_NAME";
                             if (err.dependencies.length > 0 && err.dependencies[0].request) {
                                 moduleName = err.dependencies[0].request;
+                                if (moduleName.indexOf("/") > 0) {
+                                    moduleName = moduleName.split("/")[0];
+                                }
                             }
                             setTimeout(function () {
                                 return npmlog.info('Please try to enter directory where your we file saved, and run command \'npm install ' + moduleName + '\'');
