@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -43,7 +43,7 @@
     "weex-components": "^0.2.0",
     "weex-devtool": "^0.2.38",
     "weex-html5": "^0.3.2",
-    "weex-loader": "^0.3.2",
+    "weex-loader": "^0.3.3",
     "ws": "^1.1.0",
     "yargs": "^3.32.0"
   },
