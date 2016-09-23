@@ -33,6 +33,8 @@ var HTTP_PORT = NO_PORT_SPECIFIED
 var WEBSOCKET_PORT   = NO_PORT_SPECIFIED  
 
 
+webpackLoader.setLogLevel("WARN")
+
 class Previewer{
 
     constructor( inputPath , outputPath , transformWatch ,host , shouldOpenBrowser  , displayQR , smallQR ,  transformServerPath ){
@@ -98,8 +100,8 @@ class Previewer{
 
         let transformP
         let self = this        
-        if (fs.lstatSync(inputPath).isFile()){      
-            transformP  = this.transformTarget(inputPath , outputPath) // outputPath may be null , meaning start server
+        if (fs.lstatSync(inputPath).isFile()){
+            transformP  = self.transformTarget(inputPath , outputPath) // outputPath may be null , meaning start server
         }else if (fs.lstatSync(inputPath).isDirectory){
             try{
                 fs.lstatSync(outputPath).isDirectory
@@ -287,7 +289,27 @@ class Previewer{
             bail:true
         };
 
-        webpack(webpackConfig,function(err,result){
+        webpack(webpackConfig,function(err,stats){
+            console.log( stats.hasWarnings())
+            console.log( stats.hasErrors())
+            var jsonStats = stats.toJson();
+            if(jsonStats.errors.length > 0)
+                console.error(jsonStats.errors)
+            
+            if(jsonStats.warnings.length > 0)
+                
+                _.each(jsonStats.warnings,function(w){
+                    console.log("-----")
+                    
+                    let [eSource,eInfo] = w.split("\n")
+                    let eSourceArray =  eSource.split("!")
+                    console.log(eSourceArray[eSourceArray.length -1])
+
+                    console.log(eInfo)
+
+                    console.log("-----")                    
+                })
+
             if (err){
                 promiseData.rejecter(err)
                 if (err.name == "ModuleNotFoundError"){
