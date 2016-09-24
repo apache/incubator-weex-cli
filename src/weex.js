@@ -12,7 +12,8 @@ const fs = require('fs'),
     webpackLoader = require('weex-loader'),
     qrcode = require('qrcode-terminal-alpha'),          
     nwUtils =  require('../build/nw-utils'),      
-    fsUtils = require('../build/fs-utils'),      
+    fsUtils = require('../build/fs-utils'),
+    displayUtils = require('../build/display-utils'),            
     debuggerServer =  require('../build/debugger-server'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator'),
@@ -290,26 +291,8 @@ class Previewer{
         };
 
         webpack(webpackConfig,function(err,stats){
-            console.log( stats.hasWarnings())
-            console.log( stats.hasErrors())
-            var jsonStats = stats.toJson();
-            if(jsonStats.errors.length > 0)
-                console.error(jsonStats.errors)
-            
-            if(jsonStats.warnings.length > 0)
-                
-                _.each(jsonStats.warnings,function(w){
-                    console.log("-----")
-                    
-                    let [eSource,eInfo] = w.split("\n")
-                    let eSourceArray =  eSource.split("!")
-                    console.log(eSourceArray[eSourceArray.length -1])
-
-                    console.log(eInfo)
-
-                    console.log("-----")                    
-                })
-
+            setTimeout(()=>            
+                       displayUtils.displayWebpackStats(stats) , 300)           
             if (err){
                 promiseData.rejecter(err)
                 if (err.name == "ModuleNotFoundError"){

@@ -2,10 +2,6 @@
 
 'use strict';
 
-var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
-
-var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
-
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -35,6 +31,7 @@ var fs = require('fs'),
     qrcode = require('qrcode-terminal-alpha'),
     nwUtils = require('../build/nw-utils'),
     fsUtils = require('../build/fs-utils'),
+    displayUtils = require('../build/display-utils'),
     debuggerServer = require('../build/debugger-server'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator'),
@@ -328,30 +325,9 @@ var Previewer = function () {
             };
 
             webpack(webpackConfig, function (err, stats) {
-                console.log(stats.hasWarnings());
-                console.log(stats.hasErrors());
-                var jsonStats = stats.toJson();
-                if (jsonStats.errors.length > 0) console.log(jsonStats.errors);
-
-                if (jsonStats.warnings.length > 0) _.each(jsonStats.warnings, function (w) {
-                    console.log("-----");
-
-                    var _w$split = w.split("\n");
-
-                    var _w$split2 = (0, _slicedToArray3.default)(_w$split, 2);
-
-                    var eSource = _w$split2[0];
-                    var eInfo = _w$split2[1];
-
-
-                    var eSourceArray = eSource.split("!");
-                    console.log(eSourceArray[eSourceArray.length - 1]);
-
-                    console.log(eInfo);
-                    //console.log(w);
-                    console.log("-----");
-                });
-
+                setTimeout(function () {
+                    return displayUtils.displayWebpackStats(stats);
+                }, 300);
                 if (err) {
                     promiseData.rejecter(err);
                     if (err.name == "ModuleNotFoundError") {
