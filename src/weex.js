@@ -307,7 +307,10 @@ class Previewer{
                                npmlog.info(`Please try to enter directory where your we file saved, and run command 'npm install ${moduleName}'`),100)  
                 }else{
                     if (err.error){
-                        setTimeout(()=>npmlog.error(err.error),100)
+                        setTimeout(function(){
+                            npmlog.error("critical syntax Error found , please check root tags or css syntax in your we file")
+                            //console.log(err.error)
+                        },100)
                     }
                 }
             }else{

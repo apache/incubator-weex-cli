@@ -40,14 +40,18 @@ function displayWebpackStats(webPackStatsObj){
     }else{
         displayWebpackStats.runAgain = true 
     }
+
+    if  ( (!webPackStatsObj) ||  (!webPackStatsObj.toJson)){
+        return 
+    }
     
     var jsonStats = webPackStatsObj.toJson()
     
-    if (webPackStatsObj.hasErrors() &&  jsonStats.errors.length > 0 ){
+    if (webPackStatsObj.hasErrors && webPackStatsObj.hasErrors() &&  jsonStats.errors.length > 0 ){
         showLoaderErr(jsonStats.errors)
     }
     
-    if(webPackStatsObj.hasWarnings() &&  jsonStats.warnings.length > 0){
+    if(webPackStatsObj.hasWarnings  && webPackStatsObj.hasWarnings() &&  jsonStats.warnings.length > 0){
         showLoaderWarn(jsonStats.warnings)
     }
 }

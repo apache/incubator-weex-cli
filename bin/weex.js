@@ -346,7 +346,8 @@ var Previewer = function () {
                     } else {
                         if (err.error) {
                             setTimeout(function () {
-                                return npmlog.error(err.error);
+                                npmlog.error("critical syntax Error found , please check root tags in your we file");
+                                //console.log(err.error)
                             }, 100);
                         }
                     }
