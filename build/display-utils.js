@@ -29,7 +29,8 @@ function showLoaderErr(errJSONArray) {
 }
 
 function showLoaderWarn(warnJSONObjArray) {
-    console.log("Found Warning in your weex file:\n");
+
+    var showWarningTitle = false;
     _.each(warnJSONObjArray, function (wStr) {
         try {
             var _wStr$split = wStr.split("\n");
@@ -41,6 +42,10 @@ function showLoaderWarn(warnJSONObjArray) {
 
             source = source.split("!");
             source = source[source.length - 1];
+            if (info.indexOf("NOTE:") == -1 && showWarningTitle == false) {
+                console.log("Found Warning in your weex file:\n");
+                showWarningTitle = true;
+            }
             if (info.indexOf("NOTE:") == -1) {
                 npmlog.warn(source.trim() + " : " + info.trim());
             }
