@@ -142,8 +142,8 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 160927(0.5.8):  fix Unknown plugin "transform-runtime" problem 
 * 160927(0.5.7):  display Weex we file syntax error&Warning found in transformer
-* 160923(0.5.3):  fix Unknown plugin "transform-runtime" problem 
 * 160908(0.5.0) : support ES2015 in script tag!
 * 160901(0.4.10) : add --smallqr argument for render small scale version of QR code ; make devtool support listen IP assigning
 * 160831(0.4.8) : more CLI feedback when compile time error happen
