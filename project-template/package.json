@@ -12,14 +12,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "weex-components": "^0.2.0"
+  },
   "devDependencies": {
+    "babel-cli": "~6.4.5",
     "babel-loader": "^6.2.5",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-runtime": "^6.11.6",
     "serve": "^1.4.0",
     "webpack": "^1.13.1",
-    "weex-html5": "^0.3.0",
+    "weex-html5": "^0.3.2",
     "weex-loader": "^0.3.1"
   }
 }
