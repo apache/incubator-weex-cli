@@ -142,6 +142,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 161024(0.5.9):  upgrade upstream dependencies
 * 160927(0.5.8):  fix Unknown plugin "transform-runtime" problem 
 * 160927(0.5.7):  display Weex we file syntax error&Warning found in transformer
 * 160908(0.5.0) : support ES2015 in script tag!
