@@ -106,7 +106,7 @@ weex debug [options] [we_file|bundles_dir]
             
   Options:
 
-    -h, --help           output usage information
+    --help               output usage information
     -V, --verbose        display logs of debugger server
     -v, --version        display version
     -p, --port [port]    set debugger server port
@@ -142,20 +142,21 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
-* 161028(0.5.10): update project template which generate by weex init
-* 161024(0.5.9):  upgrade upstream dependencies
-* 160927(0.5.8):  fix Unknown plugin "transform-runtime" problem 
-* 160927(0.5.7):  display Weex we file syntax error&Warning found in transformer
-* 160908(0.5.0) : support ES2015 in script tag!
-* 160901(0.4.10) : add --smallqr argument for render small scale version of QR code ; make devtool support listen IP assigning
-* 160831(0.4.8) : more CLI feedback when compile time error happen
-* 160830(0.4.7) : improve CLI feedback when module not found error happen
-* 160809(0.4.6) : upgrade upstream weex-html5 ,weex-loader ,devtool
-* 160809(0.4.5) : upgrade upstream devtool , improve cli help information.
-* 160719(0.4.4) : improve document ; improve -s implementation ; upgrade upstream devtool
-* 160714(0.4.3) : improve -s implementation, remove dependence of weex transformer ; improve Weex Playground App support ; upgrade upstream devtool
-* 160707(0.4.2) : upgrade upstream devtool
-* 160707(0.4.1) : add weex debugger
+* 161101(0.6.0):  Upgrade weex-toolkit into a module architecture. Reduce the file size downloaded for the first time installation. 
+* 161028(0.5.10): Update project template which generate by weex init
+* 161024(0.5.9):  Upgrade upstream dependencies
+* 160927(0.5.8):  Fix Unknown plugin "transform-runtime" problem 
+* 160927(0.5.7):  Display Weex we file syntax error&Warning found in transformer
+* 160908(0.5.0) : Support ES2015 in script tag!
+* 160901(0.4.10) : Add --smallqr argument for render small scale version of QR code ; make devtool support listen IP assigning
+* 160831(0.4.8) : More CLI feedback when compile time error happen
+* 160830(0.4.7) : Improve CLI feedback when module not found error happen
+* 160809(0.4.6) : Upgrade upstream weex-html5 ,weex-loader ,devtool
+* 160809(0.4.5) : Upgrade upstream devtool , improve cli help information.
+* 160719(0.4.4) : Improve document ; improve -s implementation ; upgrade upstream devtool
+* 160714(0.4.3) : Improve -s implementation, remove dependence of weex transformer ; improve Weex Playground App support ; upgrade upstream devtool
+* 160707(0.4.2) : Upgrade upstream devtool
+* 160707(0.4.1) : Add weex debugger
 * 160628(0.3.4) : fix hot-reload continuous refresh  bug
 * 160624(0.3.2) : supported `weex init` to generate a weex project
 * 160623(0.2.2) : make "-h" specify host IP work for QR code 

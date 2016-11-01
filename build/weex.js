@@ -32,8 +32,7 @@ var fs = require('fs'),
     displayUtils = require('../build/display-utils'),
     debuggerServer = require('../build/debugger-server'),
     weFileCreate = require('../build/create'),
-    generator = require('../build/generator'),
-    commands = require('../build/commands');
+    generator = require('../build/generator');
 
 var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
@@ -365,7 +364,7 @@ var Previewer = function () {
 
 var yargs = require('yargs');
 var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + '\nUsage: weex debug [options] [we_file|bundles_dir]' + '\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for PlaygroundApp').boolean('smallqr').describe('smallqr', 'display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI').option('h', { demand: false }).default('h', DEFAULT_HOST).alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false, alias: 'server', type: 'string' }).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
-.alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').help('help').epilog('weex debug -h for Weex debug help information.\n\nfor cmd example & more information please visit https://www.npmjs.com/package/weex-toolkit').argv;
+.alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').epilog('weex debug -h for Weex debug help information.\n\nfor cmd example & more information please visit https://www.npmjs.com/package/weex-toolkit').argv;
 
 (function argvProcess() {
 
@@ -387,11 +386,14 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
         npmlog.warn('\nSorry, "weex create" is no longer supported, we recommand you please try "weex init" instead.');
         return;
     }
-    if (argv._[0] && commands.exec(argv._[0], process.argv.slice(3))) {
-        return;
-    }
+
     if (argv.version) {
         npmlog.info(VERSION);
+        return;
+    }
+
+    var isSplitCommandMatched = require('split-command')(require('../package.json'));
+    if (isSplitCommandMatched) {
         return;
     }
 
@@ -408,7 +410,7 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
     }
 
     if (badWePath && !transformServerPath) {
-        npmlog.info(yargs.help());
+        yargs.showHelp();
         process.exit(1);
     }
 
@@ -417,7 +419,7 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
         try {
             var res = fs.accessSync(transformServerPath);
         } catch (e) {
-            npmlog.info(yargs.help());
+            yargs.showHelp();
             npmlog.info('path ' + absPath + ' not accessible');
             process.exit(1);
         }
@@ -429,7 +431,7 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
     var smallQR = argv.smallqr;
     var outputPath = argv.o; // js bundle file path  or  transform output dir path
     if (typeof outputPath != "string") {
-        npmlog.info(yargs.help());
+        yargs.showHelp();
         npmlog.info("must specify output path ");
         process.exit(1);
     }
