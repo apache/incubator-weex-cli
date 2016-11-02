@@ -142,7 +142,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
-* 161101(0.6.0):  Upgrade weex-toolkit into a module architecture. Reduce the file size downloaded for the first time installation. 
+* 161102(0.6.2):  Upgrade weex-toolkit into a module architecture. Reduce the file size downloaded for the first time installation. 
 * 161028(0.5.10): Update project template which generate by weex init
 * 161024(0.5.9):  Upgrade upstream dependencies
 * 160927(0.5.8):  Fix Unknown plugin "transform-runtime" problem 
