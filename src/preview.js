@@ -91,7 +91,7 @@ let Previewer = {
     let entry = this.params.entry; 
     let output = this.params.ouput;
     if (this.params.output == 'no JSBundle output'){
-      output = null;
+      this.params.output = null;
       this.initTemDir();
       this.serverMark = true;                          
     }
@@ -124,7 +124,7 @@ let Previewer = {
           }
       })
     }else{
-      this.transforme(entry,output);
+      this.transforme(entry,this.params.output);
     }
   },
   
@@ -445,18 +445,21 @@ let Previewer = {
   },
   
   watchForWSRefresh(fileName){
-      let self = this;
-      watch(path.dirname(this.params.entry), function(fileName){
-          if (!!fileName.match(`${self.params.temDir}`))  {
-              return
-          }
-          if (/\.(js|we|vue)$/gi.test(fileName)){
-              let transformP  = self.transformTarget(self.params.entry, self.params.output)
-              transformP.then( function(fileName){
-                  self.wsConnection.send("refresh")                    
-              })
-          }
-      });
+    let self = this;
+    watch(path.dirname(this.params.entry), function(fileName){
+        
+        if (!!fileName.match(`${self.params.temDir}`))  {
+            return
+        }
+        console.log(fileName);
+        if (/\.(js|we|vue)$/gi.test(fileName)){
+            let transformP  = self.transformTarget(self.params.entry, self.params.output)
+            transformP.then( function(fileName){
+                console.log('refresh!');
+                self.wsConnection.send("refresh");                    
+            })
+        }
+    });
   },
   
   open(url) {
@@ -467,7 +470,6 @@ let Previewer = {
     }
   },
 };
-
 
 module.exports = function(args) {
   Previewer.init(args);

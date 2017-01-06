@@ -104,7 +104,7 @@ var Previewer = {
     var entry = this.params.entry;
     var output = this.params.ouput;
     if (this.params.output == 'no JSBundle output') {
-      output = null;
+      this.params.output = null;
       this.initTemDir();
       this.serverMark = true;
     }
@@ -139,7 +139,7 @@ var Previewer = {
         });
       })();
     } else {
-      this.transforme(entry, output);
+      this.transforme(entry, this.params.output);
     }
   },
 
@@ -424,12 +424,15 @@ var Previewer = {
   watchForWSRefresh: function watchForWSRefresh(fileName) {
     var self = this;
     watch(path.dirname(this.params.entry), function (fileName) {
+
       if (!!fileName.match('' + self.params.temDir)) {
         return;
       }
+      console.log(fileName);
       if (/\.(js|we|vue)$/gi.test(fileName)) {
         var transformP = self.transformTarget(self.params.entry, self.params.output);
         transformP.then(function (fileName) {
+          console.log('refresh!');
           self.wsConnection.send("refresh");
         });
       }
