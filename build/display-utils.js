@@ -13,12 +13,10 @@ function showLoaderErr(errJSONArray) {
     console.log("Found Error in your weex file:\n");
     _.each(errJSONArray, function (eStr) {
         if (eStr.indexOf("?entry=true") != -1) {
-            var _eStr$split = eStr.split("?entry=true");
-
-            var _eStr$split2 = (0, _slicedToArray3.default)(_eStr$split, 2);
-
-            var source = _eStr$split2[0];
-            var info = _eStr$split2[1];
+            var _eStr$split = eStr.split("?entry=true"),
+                _eStr$split2 = (0, _slicedToArray3.default)(_eStr$split, 2),
+                source = _eStr$split2[0],
+                info = _eStr$split2[1];
 
             npmlog.error(source.trim() + " : " + info.trim());
         } else {
@@ -33,12 +31,10 @@ function showLoaderWarn(warnJSONObjArray) {
     var showWarningTitle = false;
     _.each(warnJSONObjArray, function (wStr) {
         try {
-            var _wStr$split = wStr.split("\n");
-
-            var _wStr$split2 = (0, _slicedToArray3.default)(_wStr$split, 2);
-
-            var source = _wStr$split2[0];
-            var info = _wStr$split2[1];
+            var _wStr$split = wStr.split("\n"),
+                _wStr$split2 = (0, _slicedToArray3.default)(_wStr$split, 2),
+                source = _wStr$split2[0],
+                info = _wStr$split2[1];
 
             source = source.split("!");
             source = source[source.length - 1];

@@ -8,7 +8,8 @@ var fs = require('fs')
   source = require('vinyl-source-stream'),
   path = require('path'),
   less = require('gulp-less'),
-  wrap  = require('gulp-wrap');    
+  wrap  = require('gulp-wrap'),
+  plumber = require('gulp-plumber');
 
 
 gulp.task('clean', function() {
@@ -23,12 +24,14 @@ gulp.task('dump',['clean'],function(callback){
 });
 
 
-gulp.task('babel',['clean'],function(){
+gulp.task('babel',function(){
   return  gulp.src('src/**/*.js')
   .pipe(babel({
       presets: ['es2015'],
       plugins: ['transform-runtime']
   }))
+ // .on('error', console.error.bind(console))
+  .pipe(plumber())
   .pipe(gulp.dest('./build'));    
 })
 
@@ -60,7 +63,7 @@ gulp.task('less',function(callback){
 })
 
 
-gulp.task('build',['dump','weex','browserify','less'],function(cb){
+gulp.task('build',['weex','browserify'],function(cb){
     
   return cb()
 })
@@ -69,5 +72,5 @@ gulp.task('watch',function(){
   gulp.watch('src/**/*.js',['build']);
 });
 
-gulp.task('default',['build']);
+gulp.task('default',['watch']);
 

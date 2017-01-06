@@ -213,7 +213,7 @@ webRouter.get('/launchDebugger', _regenerator2.default.mark(function _callee3(ne
 app.use(webRouter.routes());
 
 function startListen() {
-    var port = arguments.length <= 0 || arguments[0] === undefined ? DEBUGGER_SERVER_PORT : arguments[0];
+    var port = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEBUGGER_SERVER_PORT;
 
     exports.DEBUGGER_SERVER_PORT = DEBUGGER_SERVER_PORT = port;
     app.listen(port);

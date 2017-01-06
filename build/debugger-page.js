@@ -82,7 +82,7 @@ function initVue() {
                 // {content:'log content',flag: 'log flag'} //
             ],
             feLogLevel: "info",
-            feLogLevelForClass: [], //  log display
+            feLogLevelForClass: [], //  log display 
             feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }, //  button status
             feLogLevelDisableClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
             deviceLevel: "",

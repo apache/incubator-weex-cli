@@ -20,3 +20,6 @@ export function getPublicIP(){
 	}
     return publicIP
 }
+
+
+

@@ -18,6 +18,8 @@ const fs = require('fs'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator');
 
+const preview = require('../build/preview');
+
 const VERSION = require('../package.json').version
 const WEEX_FILE_EXT = "we"
 const WEEX_TRANSFORM_TMP = "weex_tmp"
@@ -142,9 +144,10 @@ class Previewer{
         fse.removeSync(WEEX_TRANSFORM_TMP)
 
         fs.mkdirSync(WEEX_TRANSFORM_TMP)
-        fse.copySync(`${__dirname}/../node_modules/weex-html5` , `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`) 
-        
-        fse.mkdirsSync(`${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`)  
+        // fse.copySync(`${__dirname}/../node_modules/weex-html5` , `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`);
+        fse.copySync(`${__dirname}/vue-template/template` , `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`);
+      
+        fse.mkdirsSync(`${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`);
     }
 
     startServer(fileName){
@@ -346,12 +349,13 @@ var argv = yargs
         .option('s' , {demand:false, alias: 'server', type: 'string'})
         .describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option')
         .option('port' , {demand:false})
-        .default('port',NO_PORT_SPECIFIED)
+        .default('port',8081)
         .describe('port', 'http listening port number ,default is 8081')
         .option('wsport' , {demand:false})
         .default('wsport',NO_PORT_SPECIFIED)
         .describe('wsport', 'websocket listening port number ,default is 8082')
         .boolean('np' , {demand:false})
+        .alias('np', 'notopen')
         .describe('np', 'do not open preview browser automatic')
         .boolean('f') /* for weex create */
         .alias('f', 'force')
@@ -362,17 +366,18 @@ var argv = yargs
 
 (function argvProcess(){
 
-    HTTP_PORT = argv.port
-    WEBSOCKET_PORT = argv.wsport
-    
+    HTTP_PORT = argv.port;
+    WEBSOCKET_PORT = argv.wsport;
+    console.log(argv);
     if (argv.debugger){
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? debuggerServer.DEBUGGER_SERVER_PORT : HTTP_PORT ;     
         debuggerServer.startListen(port)
         return
     }
-
+    
     if (argv._[0] === 'init') {
-        generator.generate();
+      
+        generator.generate(argv._[1]);
         return;
     }
 
@@ -392,7 +397,8 @@ var argv = yargs
         return
     }
 
-    var inputPath =  argv._[0]
+    var inputPath =  argv._[0];
+    
     var transformServerPath = argv.s
     var badWePath =  !!( !inputPath ||   (inputPath.length < 2)  ) //we path can be we file or dir    
     try {
@@ -429,6 +435,7 @@ var argv = yargs
         process.exit(1)    
     }
     var transformWatch =  argv.watch
-    new Previewer(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR , smallQR ,  transformServerPath)
+    preview(argv);
+    // new preview(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR , smallQR ,  transformServerPath)
 
 })()

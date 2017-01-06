@@ -114,7 +114,7 @@ function initVue() {
                 // {content:'log content',flag: 'log flag'} //
             ],
             feLogLevel: "info",
-            feLogLevelForClass: [], //  log display
+            feLogLevelForClass: [], //  log display 
             feLogLevelClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false }, //  button status
             feLogLevelDisableClassObj: { error: false, warn: false, info: false, debug: false, verbose: false, all: false },
             deviceLevel: "",
@@ -629,14 +629,14 @@ var _symbol = require("../core-js/symbol");
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
-var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj; };
+var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof(obj);
 } : function (obj) {
-  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
 },{"../core-js/symbol":10,"../core-js/symbol/iterator":11}],14:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
@@ -3639,7 +3639,8 @@ function isUndefined(arg) {
 
 var rng;
 
-if (global.crypto && crypto.getRandomValues) {
+var crypto = global.crypto || global.msCrypto; // for IE 11
+if (crypto && crypto.getRandomValues) {
   // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
   // Moderately fast, high quality
   var _rnds8 = new Uint8Array(16);

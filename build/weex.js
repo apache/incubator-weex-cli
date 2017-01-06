@@ -34,6 +34,8 @@ var fs = require('fs'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator');
 
+var preview = require('../build/preview');
+
 var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
 var WEEX_TRANSFORM_TMP = "weex_tmp";
@@ -75,7 +77,7 @@ var Previewer = function () {
             this.outputPath = outputPath = null;
             this.tempDirInit();
             this.serverMark = true;
-            // when no js bundle output specified, start server for playgroundApp(now) or H5 renderer.                 
+            // when no js bundle output specified, start server for playgroundApp(now) or H5 renderer.                   
         } else {
             this.outputPath = outputPath;
         }
@@ -169,7 +171,8 @@ var Previewer = function () {
             fse.removeSync(WEEX_TRANSFORM_TMP);
 
             fs.mkdirSync(WEEX_TRANSFORM_TMP);
-            fse.copySync(__dirname + '/../node_modules/weex-html5', WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
+            // fse.copySync(`${__dirname}/../node_modules/weex-html5` , `${WEEX_TRANSFORM_TMP}/${H5_Render_DIR}`);
+            fse.copySync(__dirname + '/vue-template/template', WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
 
             fse.mkdirsSync(WEEX_TRANSFORM_TMP + '/' + H5_Render_DIR);
         }
@@ -193,7 +196,7 @@ var Previewer = function () {
 
             var server = httpServer.createServer(options);
             var port = HTTP_PORT == NO_PORT_SPECIFIED ? DEFAULT_HTTP_PORT : HTTP_PORT;
-            //npmlog.info(`http port: ${port}`)       
+            //npmlog.info(`http port: ${port}`)        
             server.listen(port, "0.0.0.0", function () {
                 npmlog.info(new Date() + ('http  is listening on port ' + port));
 
@@ -363,14 +366,14 @@ var Previewer = function () {
 }();
 
 var yargs = require('yargs');
-var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + '\nUsage: weex debug [options] [we_file|bundles_dir]' + '\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for PlaygroundApp').boolean('smallqr').describe('smallqr', 'display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI').option('h', { demand: false }).default('h', DEFAULT_HOST).alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false, alias: 'server', type: 'string' }).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', NO_PORT_SPECIFIED).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
+var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + '\nUsage: weex debug [options] [we_file|bundles_dir]' + '\nUsage: weex init').boolean('qr').describe('qr', 'display QR code for PlaygroundApp').boolean('smallqr').describe('smallqr', 'display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI').option('h', { demand: false }).default('h', DEFAULT_HOST).alias('h', 'host').option('o', { demand: false }).alias('o', 'output').default('o', NO_JSBUNDLE_OUTPUT).describe('o', 'transform weex we file to JS Bundle, output path must specified (single JS bundle file or dir)\n[for create sub cmd]it specified we file output path').option('watch', { demand: false }).describe('watch', 'using with -o , watch input path , auto run transform if change happen').option('s', { demand: false, alias: 'server', type: 'string' }).describe('s', 'start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option').option('port', { demand: false }).default('port', 8081).describe('port', 'http listening port number ,default is 8081').option('wsport', { demand: false }).default('wsport', NO_PORT_SPECIFIED).describe('wsport', 'websocket listening port number ,default is 8082').boolean('np', { demand: false }).alias('np', 'notopen').describe('np', 'do not open preview browser automatic').boolean('f') /* for weex create */
 .alias('f', 'force').describe('f', '[for create sub cmd]force to replace exsisting file(s)').epilog('weex debug -h for Weex debug help information.\n\nfor cmd example & more information please visit https://www.npmjs.com/package/weex-toolkit').argv;
 
 (function argvProcess() {
 
     HTTP_PORT = argv.port;
     WEBSOCKET_PORT = argv.wsport;
-
+    console.log(argv);
     if (argv.debugger) {
         var port = HTTP_PORT == NO_PORT_SPECIFIED ? debuggerServer.DEBUGGER_SERVER_PORT : HTTP_PORT;
         debuggerServer.startListen(port);
@@ -378,7 +381,8 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
     }
 
     if (argv._[0] === 'init') {
-        generator.generate();
+
+        generator.generate(argv._[1]);
         return;
     }
 
@@ -398,8 +402,9 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
     }
 
     var inputPath = argv._[0];
+
     var transformServerPath = argv.s;
-    var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir   
+    var badWePath = !!(!inputPath || inputPath.length < 2); //we path can be we file or dir    
     try {
         fs.accessSync(inputPath, fs.F_OK);
     } catch (e) {
@@ -436,5 +441,6 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
         process.exit(1);
     }
     var transformWatch = argv.watch;
-    new Previewer(inputPath, outputPath, transformWatch, host, shouldOpenBrowser, displayQR, smallQR, transformServerPath);
+    preview(argv);
+    // new preview(inputPath , outputPath , transformWatch, host , shouldOpenBrowser , displayQR , smallQR ,  transformServerPath)
 })();
