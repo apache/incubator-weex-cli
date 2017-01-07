@@ -18,8 +18,7 @@ const fs = require('fs'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator');
 
-const preview = require('../build/preview');
-
+const preview = require('weex-previewer');
 const VERSION = require('../package.json').version
 const WEEX_FILE_EXT = "we"
 const WEEX_TRANSFORM_TMP = "weex_tmp"
@@ -368,7 +367,6 @@ var argv = yargs
 
     HTTP_PORT = argv.port;
     WEBSOCKET_PORT = argv.wsport;
-    console.log(argv);
     if (argv.debugger){
         let port = (HTTP_PORT == NO_PORT_SPECIFIED) ? debuggerServer.DEBUGGER_SERVER_PORT : HTTP_PORT ;     
         debuggerServer.startListen(port)

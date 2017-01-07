@@ -36,8 +36,7 @@ var fs = require('fs'),
     weFileCreate = require('../build/create'),
     generator = require('../build/generator');
 
-var preview = require('../build/preview');
-
+var preview = require('weex-previewer');
 var VERSION = require('../package.json').version;
 var WEEX_FILE_EXT = "we";
 var WEEX_TRANSFORM_TMP = "weex_tmp";

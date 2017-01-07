@@ -371,8 +371,8 @@ var Previewer = {
   },
   showQR: function showQR() {
     var IP = this.getIP();
-    var wsport = WEBSOCKET_PORT == NO_PORT_SPECIFIED ? DEFAULT_WEBSOCKET_PORT : WEBSOCKET_PORT;
-    var jsBundleURL = 'http://' + IP + ':' + this.param.port + '/' + this.params.temDir + '/' + this.params.h5RenderDir + '/' + this.params.entry + '?wsport=' + this.params.websocketPort;
+    var wsport = this.params.websocketPort;
+    var jsBundleURL = 'http://' + IP + ':' + this.params.port + '/' + this.params.temDir + '/' + this.params.h5RenderDir + '/' + this.module + '.js?wsport=' + this.params.websocketPort;
     // npmlog output will broken QR in some case ,some we using console.log
     console.log('The following QR encoding url is\n' + jsBundleURL + '\n');
     qrcode.generate(jsBundleURL, { small: this.params.smallqr });
@@ -402,8 +402,8 @@ var Previewer = {
   },
   getIP: function getIP() {
     var IP = nwUtils.getPublicIP();
-    if (this.parmas.host != '') {
-      IP = this.host;
+    if (this.params.host != '') {
+      IP = this.params.host;
     }
     return IP;
   },
