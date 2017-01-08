@@ -372,7 +372,6 @@ var argv = yargs.usage('\nUsage: weex foo/bar/we_file_or_dir_path  [options]' + 
 
     HTTP_PORT = argv.port;
     WEBSOCKET_PORT = argv.wsport;
-    console.log(argv);
     if (argv.debugger) {
         var port = HTTP_PORT == NO_PORT_SPECIFIED ? debuggerServer.DEBUGGER_SERVER_PORT : HTTP_PORT;
         debuggerServer.startListen(port);

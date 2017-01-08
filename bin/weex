@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var xtoolkit = require('xtoolkit');
+var path = require('path');
+
+xtoolkit.command('init','local:' +  path.join(__dirname,'../src/weex-init.js'));
+
+xtoolkit.command('','local:' +  path.join(__dirname,'../src/weex-preview.js'));

@@ -50,6 +50,7 @@
     "weex-html5": "^0.4.1",
     "weex-loader": "^0.3.4",
     "ws": "^1.1.0",
+    "xtoolkit": "~0.0.2",
     "yargs": "^6.3.0"
   },
   "devDependencies": {
@@ -68,7 +69,7 @@
     "vue-cli": "^2.7.0"
   },
   "bin": {
-    "weex": "bin/weex.js"
+    "weex": "bin/weex"
   },
   "splitCommands": {
     "debug": {
