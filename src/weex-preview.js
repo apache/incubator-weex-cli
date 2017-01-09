@@ -23,6 +23,7 @@ if ( badWePath  &&  !transformServerPath ){
     process.exit(1)
 }
 
+
 if (transformServerPath){
     var absPath = path.resolve(transformServerPath)
     try{
@@ -33,16 +34,11 @@ if (transformServerPath){
         process.exit(1)
     }
 }
-
-var host = argv.h  
 var shouldOpenBrowser =    argv.np ? false: true
-var displayQR =  argv.qr  //  ? true : false
-var smallQR = argv.smallqr 
 var outputPath = argv.o  // js bundle file path  or  transform output dir path
 if ( typeof outputPath  != "string"){
     yargs.showHelp();    
     npmlog.info("must specify output path ");
     process.exit(1); 
 }
-let transformWatch = argv.watch;
 preview(argv);

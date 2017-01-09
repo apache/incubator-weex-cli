@@ -20,7 +20,7 @@ var argv = yargs
      .boolean('smallqr')
     .describe('smallqr', 'display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI')    
     .option('h' , {demand:false})
-    .default('h',DEFAULT_HTTP_PORT)
+    .default('h',DEFAULT_HOST)
     .alias('h', 'host')
     .option('o' , {demand:false})
     .alias('o', 'output')

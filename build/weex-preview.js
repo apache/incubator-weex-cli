@@ -35,16 +35,11 @@ if (transformServerPath) {
         process.exit(1);
     }
 }
-
-var host = _initYargs.argv.h;
 var shouldOpenBrowser = _initYargs.argv.np ? false : true;
-var displayQR = _initYargs.argv.qr; //  ? true : false
-var smallQR = _initYargs.argv.smallqr;
 var outputPath = _initYargs.argv.o; // js bundle file path  or  transform output dir path
 if (typeof outputPath != "string") {
     _initYargs.yargs.showHelp();
     npmlog.info("must specify output path ");
     process.exit(1);
 }
-var transformWatch = _initYargs.argv.watch;
 preview(_initYargs.argv);

@@ -9,7 +9,8 @@
   <meta name="apple-touch-fullscreen" content="yes">
   <meta name="format-detection" content="telephone=no, email=no">
   <link rel="stylesheet" href="./assets/style.css">
-  <script srccc="./config.js"></script>
+  <script src="./config.js"></script>
+  <script src="./assets/url.js"></script>
   <script src="./assets/qrcode.js"></script>
   <script src="./assets/vue.js"></script>
 </head>
@@ -20,7 +21,7 @@
     <div id="app">
       <div class="mock-phone">
         <div class="inner">
-          <iframe id="preview" :src="src"></iframe>
+          <iframe id="preview" src="./weex.html"></iframe>
         </div>
         <div class="camera"></div>
         <div class="earpiece"></div>
@@ -34,27 +35,14 @@
     </div>
   </template>
   <script>
-    function getUrlParam(key,searchStr) {
-      var reg = new RegExp('[?|&]' + key + '=([^&]+)');
-      searchStr = searchStr || location.search;
-      var match = searchStr.match(reg)
-      return match && match[1]
-    }
-    let module = getUrlParam('page') || 'app.js';
-    var protocol = location.protocol + '//'
-    var hostname = typeof CURRENT_IP === 'string' ? CURRENT_IP : location.hostname
-    var port = location.port ? ':' + location.port : ''
-    var url = protocol + hostname + port + location.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, module);
+    console.log('QR CODE URL: ' + url)
     new Vue({
       el: '#app',
       template: '#app-template',
-      data: { 
-        val: url ,
-        src: "./weex.html?req=" + Math.floor(Math.random() * 100000),
-      },
+      data: { val: url },
       mounted: function () {
         var qrcodedraw = new QRCodeLib.QRCodeDraw()
-        qrcodedraw.draw(this.$refs.canvas, this.val.replace('.web',''), function () {})
+        qrcodedraw.draw(this.$refs.canvas, this.val, function () {})
       }
     })
   </script>
