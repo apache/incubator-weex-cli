@@ -1,0 +1,21 @@
+{
+  "prompts": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "label": "Project name"
+    },
+    "description": {
+      "type": "string",
+      "required": true,
+      "label": "Project description",
+      "default": "A Weex project"
+    },
+    "author": {
+      "type": "string",
+      "label": "Author"
+    }
+  },
+  "skipInterpolation": "**/*.{vue,html,js}",
+  "completeMessage": "To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run build\n  npm run serve\n  open http://localhost:8080/"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "weex-template",
+  "version": "0.1.0",
+  "description": "Weex template for vue-cli",
+  "keywords": ["weex", "template"],
+  "author": "jinjiang <zhaojinjiang@me.com>",
+  "license": "GPL-3.0"
+}

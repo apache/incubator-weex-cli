@@ -26,12 +26,12 @@ gulp.task('dump',['clean'],function(callback){
 
 gulp.task('babel',function(){
   return  gulp.src('src/**/*.js')
+  .pipe(plumber())
   .pipe(babel({
       presets: ['es2015'],
       plugins: ['transform-runtime']
   }))
- // .on('error', console.error.bind(console))
-  .pipe(plumber())
+  
   .pipe(gulp.dest('./build'));    
 })
 
@@ -63,7 +63,7 @@ gulp.task('less',function(callback){
 })
 
 
-gulp.task('build',['weex','browserify'],function(cb){
+gulp.task('build',['browserify'],function(cb){
     
   return cb()
 })
