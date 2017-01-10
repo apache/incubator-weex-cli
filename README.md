@@ -15,6 +15,16 @@ output less then `2.15.1`, please run below cmd to upgrade your npm at first
 $ npm install -g npm
 ```
 
+### Install node-gyp
+if your
+```
+$ node-gyp --version
+```
+output less then `3.4.0` or no node-gpy installed in your system , please run below cmd to install or upgrade node-gyp
+```
+$ npm install -g node-gyp
+```
+
 ## Install
 ```
 $ npm install -g weex-toolkit
@@ -99,11 +109,6 @@ And you can use playgroud app to scan the qrcode one the page to preview it on y
 $weex compile your_best_weex.we --output .
 ```
 `your_best_weex.we` will be transform to JS Bundle file `your_best_weex.js` , saved in your current directory
-#### compile some `we file` to JS Bundle
-```
-$weex compile path/to/\*.vue,\*.we ./
-```
-all `we vue files` in directory `path/to` will be compiled to JS Bundle.
 
 
 ## weex debug command
