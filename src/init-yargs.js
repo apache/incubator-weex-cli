@@ -14,7 +14,7 @@ var argv = yargs
     .option('wsport' , {demand:false})
     .default('wsport',8082)
     .describe('wsport', 'websocket listening port number ,default is 8082')
-    .epilog('Usage:weex <command>\n\nwhere <command> is one of:\n\n \tdebug , run , compile\n\nweex <command> --help      help on <command>')
+    .epilog('Usage:weex <command>\n\nwhere <command> is one of:\n\n       debug               start weex debugger\n       compile             compile we/vue file\n       run                 run your project\n\nweex <command> --help      help on <command>')
     .argv  ;
 
 
