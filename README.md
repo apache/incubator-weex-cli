@@ -46,7 +46,6 @@ Options:
   -s,--server  start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option
   -h, --host  specify server listening  IP 
   --port   http listening port number ,default is 8081            
-  --wsport websocket listening port number ,default is 8082
   -f, --force   [for create sub cmd] force to replace exsisting file(s)
   --np     do not open preview browser automatic        
   --version show version of weex toolkit 
@@ -55,10 +54,56 @@ Options:
 
 ## Examples
 
+#### create a new project
+
+```
+$weex init your_project_name
+```
+Your new project directory list below:
+
+```
+ |—— .gitignore
+    |—— README.md
+    |—— .eslintrc
+    |—— .babelrc
+    |-- app.js
+    |—— assets
+    |—— /src
+    |     |—— index.vue
+    |—— /build
+    |—— weex.html
+    |—— index.html
+```
+Switch to the project directory and run:
+``` 
+npm install
+
+```
+Some npm commands you can use:
+
+```bash
+# build both two js bundles for Weex and Web
+npm run build
+
+# start a Web server at 8080 port
+npm run serve
+
+# start weex-devtool for debugging with native
+npm run debug
+```
+
+
+#### preview a `vue file` using Weex HTML5 renderer 
+```
+$weex your_best_weex.vue
+```
+
 #### preview a `we file` using Weex HTML5 renderer 
 ```
 $weex your_best_weex.we
 ```
+
+And you can use playgroud app to scan the qrcode one the page to preview it on your mobile device
 
 #### transform a `we file` to JS Bundle
 ```
@@ -71,25 +116,6 @@ $weex your_best_weex.we -o .
 $weex your_best_weex.we -o . --watch
 ```
 
-#### transform every we file in a directory 
-```
-$weex we/file/storage/path -o outputpath
-```
-every `we file` in `we/file/storage/path` we be transform to JS Bundle, saved in `outputpath` path
-
-#### preview your we file using Weex Playground App
-download & install [weex playground App](http://alibaba.github.io/weex/download.html)
-```
-$weex your_best_weex.we --qr
-```
-a QR code will display in your terminal , using Playground App scan that.
-
-
-#### start http server
-```
-$weex -s .
-```
-a http server will start running , your current directory(.) will be the document root for the server , every weex .we file will be transforme to JS Bundle when access through the server
 
 ## Troubleshoot Installation Problems
 
@@ -142,6 +168,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 170110(1.0.0-beta.1) support vue2.0 and add vue-loader
 * 161102(0.6.2):  Upgrade weex-toolkit into a module architecture. Reduce the file size downloaded for the first time installation. 
 * 161028(0.5.10): Update project template which generate by weex init
 * 161024(0.5.9):  Upgrade upstream dependencies
