@@ -1,14 +1,10 @@
 var fs = require('fs')
   gulp = require("gulp"),
-  del = require('del'),
   babel = require('gulp-babel'),
   rename = require('gulp-rename'),
   concat = require('gulp-concat'),
   browserify = require("browserify"),
-  source = require('vinyl-source-stream'),
   path = require('path'),
-  less = require('gulp-less'),
-  wrap  = require('gulp-wrap'),
   plumber = require('gulp-plumber');
 
 
