@@ -18,8 +18,8 @@
     "npmlog": "^4.0.0",
     "opener": "^1.4.1",
     "weex-components": "^0.2.0",
-    "weex-previewer": "^1.0.1",
-    "xtoolkit": "^0.1.0",
+    "weex-previewer": "^1.0.8",
+    "xtoolkit": "^0.1.7",
     "yargs": "^6.6.0"
   },
   "devDependencies": {

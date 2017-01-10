@@ -14,6 +14,9 @@ var argv = yargs
     .option('wsport' , {demand:false})
     .default('wsport',8082)
     .describe('wsport', 'websocket listening port number ,default is 8082')
+    .default('output','no JSBundle output')
+    .describe('output', 'to build the js bundle to the specify a path')
+    .describe('wsport', 'websocket listening port number ,default is 8082')
     .epilog('Usage:weex <command>\n\nwhere <command> is one of:\n\n \tdebug , run , compile\n\nweex <command> --help      help on <command>')
     .argv  ;
 

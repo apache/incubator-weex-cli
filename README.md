@@ -37,18 +37,10 @@ weex foo/bar/we_file_or_dir_path  [options]
 weex init
 weex debug
 Options:
-  --qr       display QR code for PlaygroundApp
-  --smallqr  display small-scale version of QR code for PlaygroundApp,try it if you use default font in CLI         
-  -o,--output  transform weex we file to JS Bundle, output path (single JS bundle file or dir)
-           [for create sub cmd] it specified we file output path                    
-  --watch  using with -o , watch input path , auto run transform if change
-           happen
-  -s,--server  start a http file server, weex .we file will be transforme to JS bundle on the server , specify local root path using the option
   -h, --host  specify server listening  IP 
-  --port   http listening port number ,default is 8081            
-  -f, --force   [for create sub cmd] force to replace exsisting file(s)
-  --np     do not open preview browser automatic        
+  --port   http listening port number ,default is 8081                 
   --version show version of weex toolkit 
+  --output  build the js bundle file to a specify path
   --help   Show help                                                   
 ```
 
@@ -75,9 +67,9 @@ Your new project directory list below:
     |—— index.html
 ```
 Switch to the project directory and run:
-``` 
-npm install
 
+```
+npm install
 ```
 Some npm commands you can use:
 
@@ -107,14 +99,11 @@ And you can use playgroud app to scan the qrcode one the page to preview it on y
 
 #### transform a `we file` to JS Bundle
 ```
-$weex your_best_weex.we -o .
+$weex your_best_weex.we --output .
 ```
 `your_best_weex.we` will be transform to JS Bundle file `your_best_weex.js` , saved in your current directory
 
-#### transform a `we file` to JS Bundle , watch this file ，auto run transformer if change happen.
-```
-$weex your_best_weex.we -o . --watch
-```
+
 
 
 ## Troubleshoot Installation Problems
