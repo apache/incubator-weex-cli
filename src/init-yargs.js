@@ -17,7 +17,7 @@ var argv = yargs
     .default('output','no JSBundle output')
     .describe('output', 'to build the js bundle to the specify a path')
     .describe('wsport', 'websocket listening port number ,default is 8082')
-    .epilog('Usage:weex <command>\n\nwhere <command> is one of:\n\n       debug               start weex debugger\n       compile             compile we/vue file\n       run                 run your project\n\nweex <command> --help      help on <command>')
+    .epilog('Usage:weex <command>\n\nwhere <command> is one of:\n\n       debug               start weex debugger\n       compile             compile we/vue file\n       run                 run your project\n\nweex  <command> --help      help on <command>')
     .argv  ;
 
 

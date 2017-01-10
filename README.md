@@ -33,15 +33,22 @@ $ npm install -g weex-toolkit
 ## Usage
 
 ```
-weex foo/bar/we_file_or_dir_path  [options]
-weex init
-weex debug
-Options:
-  -h, --host  specify server listening  IP 
-  --port   http listening port number ,default is 8081                 
-  --version show version of weex toolkit 
-  --output  build the js bundle file to a specify path
-  --help   Show help                                                   
+Usage: weex <foo/bar/we_file_or_dir_path>  [options]
+Usage: weex init [projectName]
+
+选项：
+  --port    http listening port number ,default is 8081           [默认值: 8081]
+  --wsport  websocket listening port number ,default is 8082      [默认值: 8082]
+
+Usage:weex <command>
+
+where <command> is one of:
+
+       debug               start weex debugger
+       compile             compile we/vue file
+       run                 run your project
+
+weex <command> --help      help on <command>                                               
 ```
 
 ## Examples
@@ -97,22 +104,12 @@ $weex your_best_weex.we
 
 And you can use playgroud app to scan the qrcode one the page to preview it on your mobile device
 
-#### transform a `vue file` to JS Bundle
+#### compile a `we file` to JS Bundle
 ```
-$weex your_best_weex.vue --output .
+$weex compile your_best_weex.we --output .
 ```
 `your_best_weex.we` will be transform to JS Bundle file `your_best_weex.js` , saved in your current directory
 
-
-
-
-## Troubleshoot Installation Problems
-
-### invalid name '@f/defaults'
-
-Action: upgrade node version
-
-[issue](https://github.com/weexteam/weex-toolkit/issues/17) 
 
 ## weex debug command
 #### usage
