@@ -9,6 +9,6 @@ xtoolkit.command('','local:../src/weex-preview.js');
 xtoolkit.command('compile','npm:weex-builder');
 xtoolkit.command('debug','npm:weex-devtool');
 xtoolkit.command('','local:../src/weex-preview.js');
-xtoolkit.command('run','npm:weexpack','run');
+xtoolkit.command('run','npm:weexpack.run');
 xtoolkit.command('create','npm:weexpack','init');
 xtoolkit.version(require('../package.json').version);
