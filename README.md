@@ -97,9 +97,9 @@ $weex your_best_weex.we
 
 And you can use playgroud app to scan the qrcode one the page to preview it on your mobile device
 
-#### transform a `we file` to JS Bundle
+#### transform a `vue file` to JS Bundle
 ```
-$weex your_best_weex.we --output .
+$weex your_best_weex.vue --output .
 ```
 `your_best_weex.we` will be transform to JS Bundle file `your_best_weex.js` , saved in your current directory
 
