@@ -5,7 +5,7 @@ xtoolkit.command('init','local:../src/weex-init.js');
 // if you want to preview now we wish you use  weex preview
 xtoolkit.command('preview','local:../src/weex-preview.js');
 //xtoolkit.command('debug','local:' +  path.join(__dirname,'../build/weex-debug.js'));
-xtoolkit.command('','local:../src/weex.js');
+xtoolkit.command('','local:../src/weex-preview.js');
 xtoolkit.command('compile','npm:weex-builder');
 xtoolkit.command('debug','npm:weex-devtool');
 xtoolkit.command('','local:../src/weex-preview.js');
