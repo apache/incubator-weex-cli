@@ -1,6 +1,13 @@
-# Weex Template using vue
+# Weex Template
 
 Weex template for [vue-cli](https://github.com/vuejs/vue-cli).
 
-Github: https://github.com/Jinjiang/weex-template
+## Usage
 
+```bash
+# Install vue-cli first.
+npm install -g vue-cli
+
+# Start a Weex Project.
+vue init Jinjiang/weex-template <project-name>
+```

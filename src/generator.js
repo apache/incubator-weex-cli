@@ -86,7 +86,7 @@ function replace(name,dirpath) {
     var content = fs.readFileSync(filePath , {
       encoding: 'utf-8'
     })
-    content = content.replace(/<=\s*(.+)\s*=>/ig, function (defaultName) {
+    content = content.replace(/{{\s*(.+)\s*}}/ig, function (defaultName) {
       return name || defaultName
     })
     fs.writeFileSync(filePath, content)
