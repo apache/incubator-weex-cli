@@ -8,22 +8,12 @@ some dependencies need recent version of npm to install
 
 if your
 ```
-$ npm --version
+$ node -v
 ```
-output less then `2.15.1`, please run below cmd to upgrade your npm at first
-```
-$ npm install -g npm
-```
+output less then `6.0.0`, please upgrade your node at first
+you can use `n` to install newer node or download in https://nodejs.org/
+recommend  install the LTS version;
 
-### Install node-gyp
-if your
-```
-$ node-gyp --version
-```
-output less then `3.4.0` or no node-gpy installed in your system , please run below cmd to install or upgrade node-gyp
-```
-$ npm install -g node-gyp
-```
 
 ## Install
 ```
@@ -104,12 +94,17 @@ $weex your_best_weex.we
 
 And you can use playgroud app to scan the qrcode one the page to preview it on your mobile device
 
-#### compile a `we file` to JS Bundle
+#### compile a `.we .vue file` to JS Bundle
 ```
-$weex compile your_best_weex.we --output .
+$weex compile your_best_weex.we  .
 ```
 `your_best_weex.we` will be transform to JS Bundle file `your_best_weex.js` , saved in your current directory
 
+#### compile many `.we .vue files` to JS Bundle
+```
+$weex compile path/to/\*.vue,\*.js .
+```
+all .vue .we files of directory `path/to` will be compiled into directory `.` 
 
 ## weex debug command
 #### usage
@@ -147,7 +142,6 @@ $weex debug your/we/path  -e index.we
 ``` 
 this command will build every file in your/we/path and deploy them on the bundle server. your directory will mapping to  http://localhost:port/weex/ 
 use -e to set the entry of these bundles. and the url of "index.we" will display on device list page as another qrcode 
-
 
 ## Issue & Feedback
 
