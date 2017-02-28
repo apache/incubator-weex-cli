@@ -20,7 +20,7 @@
     "prompt": "^1.0.0",
     "weex-builder": "^0.1.18",
     "weex-components": "^0.2.0",
-    "weex-previewer": "^1.2.9",
+    "weex-previewer": "^1.3.1",
     "xtoolkit": "^0.1.7",
     "yargs": "^6.6.0"
   },
