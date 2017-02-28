@@ -34,16 +34,20 @@ Usage:weex <command>
 
 where <command> is one of:
 
-       debug               start weex debugger
-       compile             compile we/vue file
-       run                 run your project
+       init                                   create a vue project
+       debug                                  start weex debugger
+       compile                                compile we/vue file
+       create                                 create a weexpack project 
+       platform <add|remove> <ios|android>    add/remove ios/android platform
+       plugin <add|remove> <pluginName>       add/remove weexplugin 
+       run <ios|android>                      build your ios/android app and run
 
 weex <command> --help      help on <command>                                               
 ```
 
 ## Examples
 
-#### create a new project
+#### create a new vue project
 
 ```
 $weex init your_project_name
@@ -143,11 +147,14 @@ $weex debug your/we/path  -e index.we
 this command will build every file in your/we/path and deploy them on the bundle server. your directory will mapping to  http://localhost:port/weex/ 
 use -e to set the entry of these bundles. and the url of "index.we" will display on device list page as another qrcode 
 
+## pack command
+details for [weexpack](https://github.com/weexteam/weex-pack)
 ## Issue & Feedback
 
 [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
+* 1.0.1 release 
 * 170110(1.0.0-beta.1) support vue2.0 and add vue-loader
 * 161102(0.6.2):  Upgrade weex-toolkit into a module architecture. Reduce the file size downloaded for the first time installation. 
 * 161028(0.5.10): Update project template which generate by weex init
