@@ -149,7 +149,7 @@ use -e to set the entry of these bundles. and the url of "index.we" will display
 
 ## pack command
 details for [weexpack](https://github.com/weexteam/weex-pack)
-## Issue & Feedback
+
 
 ## trouble shooting
 #### #0
@@ -163,7 +163,9 @@ Error:permission denied.Please apply the write premission to the directory: "/Us
 ```
 if such a error occurs,  we suggest you run `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit`
 
-others please issue me [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
+## Issue & Feedback
+
+ [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
 
 ## Changelog
  
