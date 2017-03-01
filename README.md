@@ -1,3 +1,6 @@
+[![GitHub release](https://img.shields.io/github/release/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/releases)  [![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
+![Node Version](https://img.shields.io/node/v/weex-toolkit.svg "Node Version")
+
 Weex-Toolkit
 ============
 
