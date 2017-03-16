@@ -4,7 +4,7 @@
 Weex-Toolkit
 ============
 
-Weex CLI toolkit
+一个 Weex 官方命令行工具，它能够帮助进行项目开发时候的预览，调试等工作。
 
 [English Doc](./README.md)
 
