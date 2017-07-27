@@ -9,7 +9,7 @@
     "vue"
   ],
   "scripts": {
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack",
     "dev": "webpack --watch",
     "serve": "node build/init.js && serve -p 8080",
     "debug": "weex-devtool"

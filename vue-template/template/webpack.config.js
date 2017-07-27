@@ -11,10 +11,21 @@
 var path = require('path')
 var webpack = require('webpack')
 
+var WEEX_PREFIX_COMMENT = ' { "framework": "Vue" }';
+
 var bannerPlugin = new webpack.BannerPlugin(
-  '// { "framework": "Vue" }\n',
+  '//' + WEEX_PREFIX_COMMENT + '\n',
   { raw: true }
 )
+
+var uglifyPlugin = new webpack.optimize.UglifyJsPlugin({
+  output: { ascii_only: true },
+  compress: { warnings: false },
+  comments: function(astNode, comment) {
+    if (comment.value === WEEX_PREFIX_COMMENT) return true;
+    return false;
+  }
+});
 
 function getBaseConfig () {
   return {
@@ -74,7 +85,7 @@ function getBaseConfig () {
       //   }
       // })]
     },
-    plugins: [bannerPlugin]
+    plugins: process.env.NODE_ENV === 'production' ? [bannerPlugin, uglifyPlugin] : [bannerPlugin]
   }
 }
 
