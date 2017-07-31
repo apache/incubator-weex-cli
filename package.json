@@ -38,4 +38,5 @@
   "bin": {
     "weex": "bin/weex"
   }
+  
 }
