@@ -1,32 +1,72 @@
 {
-  "name": "weex-toolkit",
-  "version": "1.0.4",
-  "description": "Weex CLI Toolkit",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp"
+  "_args": [
+    [
+      {
+        "raw": "weex-toolkit",
+        "scope": null,
+        "escapedName": "weex-toolkit",
+        "name": "weex-toolkit",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/tancy"
+    ]
+  ],
+  "_from": "weex-toolkit@latest",
+  "_id": "weex-toolkit@1.0.5",
+  "_inCache": true,
+  "_location": "/weex-toolkit",
+  "_nodeVersion": "7.3.0",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/weex-toolkit-1.0.5.tgz_1491362546297_0.15017767623066902"
   },
-  "engines": {
-    "node": ">=6"
+  "_npmUser": {
+    "name": "exolution",
+    "email": "exolution@163.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/weexteam/weex-toolkit.git"
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "weex-toolkit",
+    "scope": null,
+    "escapedName": "weex-toolkit",
+    "name": "weex-toolkit",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
   },
-  "author": "tanhawk@163.com",
-  "license": "GPL-3.0+",
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/weex-toolkit/-/weex-toolkit-1.0.5.tgz",
+  "_shasum": "77f37c046d129439dd36bd2af3da211c296839d3",
+  "_shrinkwrap": null,
+  "_spec": "weex-toolkit",
+  "_where": "/Users/tancy",
+  "author": {
+    "name": "tanhawk@163.com"
+  },
+  "bin": {
+    "weex": "bin/weex"
+  },
+  "bugs": {
+    "url": "https://github.com/weexteam/weex-toolkit/issues"
+  },
   "dependencies": {
     "chalk": "^1.1.3",
+    "fs-extra": "^2.0.0",
     "npmlog": "^4.0.0",
     "opener": "^1.4.1",
     "prompt": "^1.0.0",
-    "fs-extra":"^2.0.0",
     "weex-builder": "^0.2.3",
     "weex-components": "^0.2.0",
     "weex-previewer": "^1.3.3",
     "xtoolkit": "^0.2.1",
     "yargs": "^6.6.0"
   },
+  "description": "Weex CLI Toolkit",
   "devDependencies": {
     "browserify": "^13.3.0",
     "eslint": "^3.14.0",
@@ -35,7 +75,41 @@
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2"
   },
-  "bin": {
-    "weex": "bin/weex"
-  }
+  "directories": {},
+  "dist": {
+    "shasum": "77f37c046d129439dd36bd2af3da211c296839d3",
+    "tarball": "https://registry.npmjs.org/weex-toolkit/-/weex-toolkit-1.0.5.tgz"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "gitHead": "4f95fa607ef6a5ffe91622398c3d4f8ec96e4dd0",
+  "homepage": "https://github.com/weexteam/weex-toolkit#readme",
+  "license": "GPL-3.0+",
+  "maintainers": [
+    {
+      "name": "exolution",
+      "email": "exolution@163.com"
+    },
+    {
+      "name": "jinjiang",
+      "email": "zhaojinjiang@me.com"
+    },
+    {
+      "name": "lvscar",
+      "email": "lvscar@gmail.com"
+    }
+  ],
+  "name": "weex-toolkit",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weexteam/weex-toolkit.git"
+  },
+  "scripts": {
+    "build": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.5"
 }
