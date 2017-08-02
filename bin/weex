@@ -1,9 +1,6 @@
 #!/usr/bin/env node
-
 var xtoolkit = require('xtoolkit');
 xtoolkit.command('init','local:../src/weex-init.js');
-// if you want to preview now we wish you use  weex preview
-//xtoolkit.command('debug','local:' +  path.join(__dirname,'../build/weex-debug.js'));
 xtoolkit.command('compile','npm:weex-builder').locate(require.resolve('weex-builder'));
 xtoolkit.command('debug','npm:weex-devtool');
 xtoolkit.command('','npm:weex-previewer').locate(require.resolve('weex-previewer'));
