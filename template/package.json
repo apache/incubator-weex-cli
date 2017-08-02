@@ -9,9 +9,10 @@
     "vue"
   ],
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack --watch",
-    "serve": "webpack && node build/init.js && serve -p 8080",
+    "build": "weex-builder src/ dist/",
+    "build-web":"npm run build & weex-builder app.js /dist/app.web.js --web&&weex-builder app.js /dist/app.weex.js",
+    "dev": "weex-builder src/ dist/ --watch",
+    "serve": "node build/init.js && serve -p 8080",
     "debug": "weex-devtool"
   },
   "dependencies": {
@@ -19,20 +20,16 @@
     "vue-router": "^2.1.1",
     "vuex": "^2.1.1",
     "vuex-router-sync": "^4.0.1",
-    "weex-vue-render": "^0.11.2"
+    "weex-vue-render": "^0.1.4",
+    "weex-builder":"^0.2.0"
   },
   "devDependencies": {
-    "babel-core": "^6.20.0",
-    "babel-loader": "^6.2.9",
-    "babel-preset-es2015": "^6.18.0",
+
     "css-loader": "^0.26.1",
-    "ip": "^1.1.4",
     "serve": "^1.4.0",
     "vue-loader": "^10.0.2",
-    "vue-template-compiler": "^2.1.8",
-    "webpack": "^1.14.0",
-    "weex-devtool": "^0.2.64",
-    "weex-loader": "^0.4.1",
-    "weex-vue-loader": "^0.2.5"
+    "weex-builder":"^0.2.0",
+    "weex-devtool": "^0.2.64"
+
   }
 }
