@@ -14,7 +14,6 @@ exports.generate = function (name) {
       copy(projectName,dirpath);
       replace(projectName,dirpath);
     })
-    
   } else {
     getName(name, chalk.green('Init your Project'), (err, result) => {
       if (err) {
@@ -23,10 +22,8 @@ exports.generate = function (name) {
       let projectName = result.name;
       const dirpath = path.join(process.cwd(),projectName);
       createProject(projectName,dirpath);
-    })    
+    })
   }
-  
-  
 }
 
 function getName(name, message = "Project Name", done) {
@@ -42,14 +39,12 @@ function getName(name, message = "Project Name", done) {
   prompt.get(schema, done)
 }
 
-
-
 // init a project
 function createProject(name, dirpath) {
   fs.mkdir(dirpath, 484, function (err) {
     if (err) {
       if (err.code == 'EEXIST') {
-        return console.log(chalk.red( 'the folder "' + name + '" exists! Please rename your project.')); 
+        return console.log(chalk.red( 'the folder "' + name + '" exists! Please rename your project.'));
       } else {
         console.error(err)
       }
@@ -60,17 +55,16 @@ function createProject(name, dirpath) {
   });
 }
 
-
 function copy(name,dirpath) {
   const files = []
-  const src = path.join(__dirname, '..', 'vue-template/template')  
+  const src = path.join(__dirname, '..', 'vue-template/template')
   walk(src, files);
   files.forEach(file => {
     const relative = path.relative(src, file)
     const finalPath = path.join(dirpath, relative).replace(/\.npmignore$/, '.gitignore')
     if (!fs.existsSync(finalPath)) {
       console.log(chalk.grey(`file: ${finalPath} created.`));
-      
+
       fs.copySync(file, finalPath)
     }
     else {

@@ -9,10 +9,9 @@
   <meta name="apple-touch-fullscreen" content="yes">
   <meta name="format-detection" content="telephone=no, email=no">
   <link rel="stylesheet" href="./assets/style.css">
-  <script src="./config.js"></script>
   <script src="./assets/url.js"></script>
   <script src="./assets/qrcode.js"></script>
-  <script src="./node_modules/vue/dist/vue.js"></script>
+  <script src="./assets/vue.min.js"></script>
 </head>
 <body>
   <h1>Weex Preview</h1>
@@ -21,7 +20,7 @@
     <div id="app">
       <div class="mock-phone">
         <div class="inner">
-          <iframe id="preview" src="./weex.html"></iframe>
+          <iframe id="preview" src="./preview.html?phantom_limb=true"></iframe>
         </div>
         <div class="camera"></div>
         <div class="earpiece"></div>
@@ -30,6 +29,8 @@
       <div id="qrcode">
         <h2>QRCode</h2>
         <a :href="val" target="_blank"><canvas ref="canvas" width="200" height="200"></canvas></a>
+        <br/>
+        <a href="./preview.html" target="_blank">H5 Preview Link</a>
         <p class="bundle-url"><a :href="val" target="_blank">{{val}}</a></p>
       </div>
     </div>
