@@ -136,7 +136,7 @@ $weex debug
 $weex debug your_weex.we
 ```
 执行这个命令会将 文件 `your_weex.we` 编译成 `your_weex.js` 然后启动一个调试服务器。
-`your_weex.js`将会存放到服务器的目录里， `DeviceList` 页面将会展示这个js的二维码，使用`[Playground App](https://weex.apache.org/cn/playground.html)`扫描它，就能狗看到手机上的效果。
+`your_weex.js`将会存放到服务器的目录里， `DeviceList` 页面将会展示这个js的二维码，使用`[Playground App](https://weex.apache.org/cn/playground.html)`扫描它，就能够看到手机上的效果。
 
 
 #### start debugger with a directory of we files
