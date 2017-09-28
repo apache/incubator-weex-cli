@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "1.0.8-beta4",
+  "version": "1.0.9",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,14 +17,16 @@
   "license": "GPL-3.0+",
   "dependencies": {
     "chalk": "^1.1.3",
+    "check-node-version": "^2.1.0",
     "fs-extra": "^2.0.0",
+    "node-version": "^1.1.0",
     "npmlog": "^4.0.0",
     "opener": "^1.4.1",
     "prompt": "^1.0.0",
-    "weex-builder": "^0.2.8-beta4",
+    "weex-builder": "^0.2.9",
     "weex-components": "^0.2.0",
-    "weex-previewer": "^1.3.10-beta3",
-    "xtoolkit": "^0.2.9-beta1",
+    "weex-previewer": "^1.3.12",
+    "xtoolkit": "^0.2.9-beta5",
     "yargs": "^6.6.0"
   },
   "devDependencies": {
