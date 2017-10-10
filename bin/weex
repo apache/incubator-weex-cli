@@ -1,9 +1,58 @@
 #!/usr/bin/env node
+const xtoolkit = require('xtoolkit');
+const nodeVersion = require('node-version');
+const chalk = require('chalk');
+const minimist = require("minimist");
+const check = require('check-node-version');
+const PROGRAMS = check.PROGRAMS;
 
-var xtoolkit = require('xtoolkit');
-xtoolkit.command('init','local:../src/weex-init.js');
-// if you want to preview now we wish you use  weex preview
-//xtoolkit.command('debug','local:' +  path.join(__dirname,'../build/weex-debug.js'));
+// Throw an error if node version is too low
+if (nodeVersion.major < 6) {
+  console.error(`${red('Error!')} Serve requires at least version 6 of Node. Please upgrade!`)
+  process.exit(1)
+}
+
+const options = {
+  'node': '>=6',
+  'npm': '>=5'
+}
+
+const logVersionError = (name, err) => {
+  if (err.stderr) {
+    console.error(err.stderr);
+  }
+  else if (err.execError) {
+    console.error(err.execError.message);
+  }
+  else {
+    console.error(err.message);
+  }
+}
+
+const logResult = (result) => {
+  // display any non-compliant versions
+  Object.keys(PROGRAMS).forEach(function(name) {
+    if (result[name].isSatisfied === false) {
+      const raw = result[name].wanted.raw;
+      const info = result[name];
+      const range = result[name].wanted.range;
+      console.log(chalk.yellow(`\nWarning:${info.version ? ' Local version is '+info.version + ',': ''} Wanted ${name} version ${raw} (${range})`));
+      console.log(chalk.grey(PROGRAMS[name].getInstallInstructions(raw)));
+    }
+  });
+}
+
+check(options, (err, result) => {
+  if (err) {
+    console.error(err.message);
+    process.exit(1);
+    return;
+  }
+  logResult(result);
+});
+
+// xtoolkit.command('init','local:../src/weex-init.js');
+xtoolkit.command('init','npm:weexpack.create','');
 xtoolkit.command('compile','npm:weex-builder').locate(require.resolve('weex-builder'));
 xtoolkit.command('debug','npm:weex-devtool');
 xtoolkit.command('','npm:weex-previewer').locate(require.resolve('weex-previewer'));

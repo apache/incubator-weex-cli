@@ -1,0 +1,35 @@
+{
+  "name": "{{ name }}",
+  "description": "{{ description }}",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "keywords": [
+    "weex",
+    "vue"
+  ],
+  "scripts": {
+    "build": "weex-builder src/ dist/",
+    "build-web":"npm run build & weex-builder app.js /dist/app.web.js --web&&weex-builder app.js /dist/app.weex.js",
+    "dev": "weex-builder src/ dist/ --watch",
+    "serve": "node build/init.js && serve -p 8080",
+    "debug": "weex-devtool"
+  },
+  "dependencies": {
+    "vue": "^2.1.8",
+    "vue-router": "^2.1.1",
+    "vuex": "^2.1.1",
+    "vuex-router-sync": "^4.0.1",
+    "weex-vue-render": "^0.1.4",
+    "weex-builder":"^0.2.0"
+  },
+  "devDependencies": {
+
+    "css-loader": "^0.26.1",
+    "serve": "^1.4.0",
+    "vue-loader": "^10.0.2",
+    "weex-builder":"^0.2.0",
+    "weex-devtool": "^0.2.64"
+
+  }
+}
