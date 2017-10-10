@@ -170,9 +170,6 @@ Use `platform add|remove` to add or remove Weex app template and run it in your 
 ``` bash
 $ weex platform add iOS 
 ```
-If you use these commands firstly, you might see the prompt. Just enter Y.
-
-![install weexpack](https://gw.alicdn.com/tfs/TB19n4AQXXXXXawXVXXXXXXXXXX-577-70.png)
 
 Then run platform, you will see an iPhone simulator
 
@@ -207,17 +204,52 @@ Learn more about [weexpack](https://github.com/weexteam/weex-pack)
 
 
 
-## trouble shooting
-#### #0
-please make sure your node version is above 6.0
-#### #1
-first of all ,please do not install with "sudo" 
-if `permisiion denied` error occurs,please try `sudo chmod 777 /usr/local/lib/node_modules`
-#### #2
+## FAQ
+
+#### #Environment
+Please make sure your node version is above 6.0 and npm version is above 5.0.
+If you want to change your npm registry origin, do not use `cnpm`, we recommend you to use `nrm` or command like `npm config set registry https://registry.npm.taobao.org`.
+
+#### #Current working directory is not a weexpack project
+Since the 1.0.9 version, the `weex init` command has been removed. If you want to create the weex project, create it with the` weex create` command.
+
+#### #Permisiion denied
+First of all ,please do not install with "sudo" 
+If `permisiion denied` error occurs,please try `sudo chmod 777 /usr/local/lib/node_modules`
+
+If you see the following error
+
 ```
 Error:permission denied.Please apply the write premission to the directory: "/Users/yourUserName"
 ```
-if such a error occurs,  we suggest you run `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit`
+We suggest you run `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit`
+
+#### #Fsevents wanted error
+windows users may have fsevents installation problems, like:
+```
+fsevents@1.1.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"win32","arch":"ia32"})
+```
+You should remove your `node_module` of weex-toolkit, run command like this:
+
+```
+npm install --no-optional weex-toolkit -g
+``` 
+
+#### #Upgrade Error
+If you encounter an error during the upgrade process, please check your version of npm, the npm version should above 5.0.
+
+Then reload it with the following command:
+```
+rm -rf ~/.xtoolkit
+npm un weex-toolkit -g
+npm i weex-toolkit -g
+```
+
+#### #Tips
+
+If you are in use during the process, first check your package version is up to date, you can run `weex -v` and use `weex update weex-devtool@latest` to upgrade your package.
+
+
 
 ## Issue & Feedback
 

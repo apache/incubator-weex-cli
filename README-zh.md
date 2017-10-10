@@ -184,21 +184,49 @@ $ weex plugin add plugin_name
 ```
 
 
-## trouble shooting
-#### #0
-确保你本地的node版本是>=6.0.0的
-#### #1
+## 常见问题
+#### #Node 环境
+确保你本地的node版本是>=6以及npm版本是>=5的.
+
+#### #Current working directory is not a weexpack project
+自1.0.9版本后`weex init`命令已移除，如果要创建weex工程请通过`weex create`命令创建。
+
+#### #权限问题 Permisiion denied
 请不要使用sudo进行安装，关于npm 取消sudo进行全局模块的安装你可以使用下面的命令：
 ``` bash
 sudo chmod 777 /usr/local/lib/node_modules
 ```
 [消除mac下npm全局安装使用sudo命令](http://www.jackpu.com/xiao-chu-macxia-npmquan-ju-an-zhuang-shi-yong-sudoming-ling/)
 
-#### #2
+如果你看到了下面的报错
 ```
 Error:permission denied.Please apply the write premission to the directory: "/Users/yourUserName"
 ```
-如果遇见了上诉问题，你可以运行 `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit` 来解决
+我们建议你运行 `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit` 来解决
+
+#### #Windows用户安装可能有fsevents模块报错
+
+```
+Error:permission denied.Please apply the write premission to the directory: "/Users/yourUserName"
+```
+首先你应该删除安装路径中`weex-toolkit`中的`node_modules`（路径可以在报错命令行中看到）,删除后运行下面的命令:
+
+```
+npm install --no-optional weex-toolkit -g
+``` 
+
+#### 旧版本升级报错
+首先检查你的npm版本是否大于等于5.0，如果没有，请通过`npm update npm -g`升级。
+运行如下命令重新安装
+```
+rm -rf ~/.xtoolkit
+npm un weex-toolkit -g
+npm i weex-toolkit -g
+```
+
+#### #Tips
+如果你在使用过程中遇到了任何无法解决的问题，你应该尝试检查一下你的环境，通过运行`weex -v`查看你的包版本，通过`weex update weex-devtool@latest`更新最新的包来尝试解决问题。
+
 
 ## Issue & 反馈
 
