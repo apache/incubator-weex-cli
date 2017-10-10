@@ -231,6 +231,3 @@ npm i weex-toolkit -g
 ## Issue & 反馈
 
  [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
-
-
-
