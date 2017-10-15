@@ -52,11 +52,10 @@ check(options, (err, result) => {
 });
 
 // xtoolkit.command('init','local:../src/weex-init.js');
-xtoolkit.command('init','npm:weexpack.create','');
+xtoolkit.command('init','npm:weexpack.create');
 xtoolkit.command('compile','npm:weex-builder').locate(require.resolve('weex-builder'));
 xtoolkit.command('debug','npm:weex-devtool');
 xtoolkit.command('','npm:weex-previewer').locate(require.resolve('weex-previewer'));
-xtoolkit.command('create','npm:weexpack.create','');
 xtoolkit.command('platform','npm:weexpack.platform');
 xtoolkit.command('plugin','npm:weexpack.plugin');
 xtoolkit.command('build','npm:weexpack.build');
