@@ -1,10 +1,12 @@
 {
   "name": "weex-toolkit",
-  "version": "1.1.0-beta.2",
+  "version": "1.1.0-beta.3",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp"
+    "build": "babel src --out-dir bin",
+    "lint": "eslint src --fix",
+    "prepublish": "npm run lint && npm run build"
   },
   "engines": {
     "node": ">=6"
@@ -19,26 +21,21 @@
     "chalk": "^1.1.3",
     "check-node-version": "^2.1.0",
     "fs-extra": "^2.0.0",
-    "node-version": "^1.1.0",
     "npmlog": "^4.0.0",
     "opener": "^1.4.1",
     "prompt": "^1.0.0",
     "weex-builder": "^0.2.13-beta.2",
-    "weex-components": "^0.2.0",
     "weex-previewer": "^1.3.13",
     "xtoolkit": "^0.2.9-beta5",
     "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "browserify": "^13.3.0",
-    "eslint": "^3.14.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-concat": "^2.6.1",
-    "gulp-plumber": "^1.1.0",
-    "gulp-rename": "^1.2.2"
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^3.19.0"
   },
   "bin": {
-    "weex": "bin/weex"
+    "weex": "bin/weex.js"
   }
 }
