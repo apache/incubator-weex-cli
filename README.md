@@ -235,6 +235,15 @@ You should remove your `node_module` of weex-toolkit, run command like this:
 npm install --no-optional weex-toolkit -g
 ``` 
 
+#### #Vue dismatch error
+
+Try:
+
+```
+weex xbind repair toolkit-repair
+weex repair
+```
+
 #### #Upgrade Error
 If you encounter an error during the upgrade process, please check your version of npm, the npm version should above 5.0.
 

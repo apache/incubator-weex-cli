@@ -215,7 +215,7 @@ Error:permission denied.Please apply the write premission to the directory: "/Us
 npm install --no-optional weex-toolkit -g
 ``` 
 
-#### 旧版本升级报错
+#### #旧版本升级报错
 首先检查你的npm版本是否大于等于5.0，如果没有，请通过`npm update npm -g`升级。
 运行如下命令重新安装
 ```
@@ -223,7 +223,12 @@ rm -rf ~/.xtoolkit
 npm un weex-toolkit -g
 npm i weex-toolkit -g
 ```
-
+#### #vue dismatch错误
+尝试一下下面的命令:
+```
+weex xbind repair toolkit-repair
+weex repair
+```
 #### #Tips
 如果你在使用过程中遇到了任何无法解决的问题，你应该尝试检查一下你的环境，通过运行`weex -v`查看你的包版本，通过`weex update weex-devtool@latest`更新最新的包来尝试解决问题。
 
