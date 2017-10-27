@@ -254,6 +254,12 @@ npm un weex-toolkit -g
 npm i weex-toolkit -g
 ```
 
+#### Android SDK Environment
+
+If you want to run android project, you can use the [emulator of Android Studio](https://developer.android.com/studio/run/emulator.html) or a [real device](https://developer.android.com/studio/run/device.html)
+
+If you install Android SDk by Android studio, you should make sure the [Android 6.0 API](https://developer.android.com/about/versions/marshmallow/android-6.0.html) is installed.
+
 #### #Tips
 
 If you are in use during the process, first check your package version is up to date, you can run `weex -v` and use `weex update weex-devtool@latest` to upgrade your package.
