@@ -229,6 +229,24 @@ npm i weex-toolkit -g
 weex xbind repair toolkit-repair
 weex repair
 ```
+
+#### Android SDK 环境
+如果你想在你的电脑上运行安卓示例， 你可以使用[Android Studio上的虚拟机](https://developer.android.com/studio/run/emulator.html) 或者 [真机调试](https://developer.android.com/studio/run/device.html)
+
+如果你使用Android studio管理你的Android SDK，你需要确定下载了[Android 6.0 API](https://developer.android.com/about/versions/marshmallow/android-6.0.html)
+
+#### spawn E2BIG 错误
+
+这个问题可能发生在你运行`weex create/init/run/platform`命令的时候，你需要更新你的weexpack到最新版本来修复这个问题
+```
+$ weex update weexpack
+```
+如果当你升级时发生了带`..../.xtoolkit/...`的错误，你需要现删除`.xtoolkit`文件夹内的文件残留再进行升级
+```
+$ rm -rf ~/.xtoolkit
+$ weex update weexpack
+```
+
 #### #Tips
 如果你在使用过程中遇到了任何无法解决的问题，你应该尝试检查一下你的环境，通过运行`weex -v`查看你的包版本，通过`weex update weex-devtool@latest`更新最新的包来尝试解决问题。
 
