@@ -260,6 +260,20 @@ If you want to run android project, you can use the [emulator of Android Studio]
 
 If you install Android SDk by Android studio, you should make sure the [Android 6.0 API](https://developer.android.com/about/versions/marshmallow/android-6.0.html) is installed.
 
+#### spawn E2BIG
+
+This problem may occur when you use the commands `weex create/init/run/platform`.
+You need to update your weexpack to latest version.
+```
+$ weex update weexpack
+```
+If there have some error while update package, please remove `~/.xtoolkit` before update.
+```
+$ rm -rf ~/.xtoolkit
+$ weex update weexpack
+```
+
+
 #### #Tips
 
 If you are in use during the process, first check your package version is up to date, you can run `weex -v` and use `weex update weex-devtool@latest` to upgrade your package.
