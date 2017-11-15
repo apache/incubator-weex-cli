@@ -168,7 +168,7 @@ Now weex-toolkit can run the same commands of weexpack because of the new archit
 Use `platform add|remove` to add or remove Weex app template and run it in your target devices.
 
 ``` bash
-$ weex platform add iOS 
+$ weex platform add ios
 ```
 
 Then run platform, you will see an iPhone simulator
