@@ -1,24 +1,11 @@
+# Weex-Toolkit
+
 [![GitHub release](https://img.shields.io/github/release/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/releases)  [![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
 ![Node Version](https://img.shields.io/node/v/weex-toolkit.svg "Node Version")
-
-Weex-Toolkit
-============
 
 Weex CLI toolkit
 
 [Chinese Doc](./README-zh.md)
-
-## Pre Install
-some dependencies need recent version of npm to install
-
-if your
-```
-$ node -v
-```
-output less then `6.0.0`, please upgrade your node at first
-you can use `n` to install newer node or download in https://nodejs.org/
-recommend the LTS version of node
-
 
 ## Install
 ```
