@@ -27,7 +27,7 @@ $ npm install -g weex-toolkit
 
 ```
 Usage: weex <foo/bar/we_file_or_dir_path>  [options]
-Usage: weex init [projectName]
+Usage: weex create [projectName]
 
 选项：
   --port    http listening port number ,default is 8081           [默认值: 8081]
@@ -37,7 +37,7 @@ Usage:weex <command>
 
 where <command> is one of:
 
-       init                                   创建一个weex项目
+       init                                   创建一个weex项目 (已删除)
        debug                                  调试
        compile                                打包weex文件
        create                                 创建一个weexpack工程
@@ -53,7 +53,7 @@ weex <command> --help      help on <command>
 #### 创建项目
 
 ```
-$ weex init your_project_name
+$ weex create your_project_name
 ```
 你的目录结构如下：
 
