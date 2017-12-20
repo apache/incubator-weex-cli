@@ -37,7 +37,7 @@ Usage:weex <command>
 
 where <command> is one of:
 
-       init                                   创建一个weex项目 (已删除)
+       init                                   创建一个weex工程 (已弃用)
        debug                                  调试
        compile                                打包weex文件
        create                                 创建一个weexpack工程
