@@ -8,7 +8,7 @@ const path = require('path');
 const PROGRAMS = check.PROGRAMS;
 const {
   logger
-} = require('../src/utils');
+} = require('../lib/utils');
 
 const options = {
   'node': '>=6',

@@ -1,11 +1,13 @@
 {
   "name": "weex-toolkit",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint bin --fix",
-    "prepublish": "npm run lint"
+    "lint": "eslint src --fix",
+    "build": "babel src --out-dir lib",
+    "dev": "babel src --out-dir lib --watch",
+    "prepublish": "npm run lint && npm run build"
   },
   "engines": {
     "node": ">=6"
@@ -25,8 +27,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "eslint": "^3.19.0"
   },
   "bin": {
