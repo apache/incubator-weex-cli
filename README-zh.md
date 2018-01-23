@@ -6,7 +6,7 @@ Weex-Toolkit
 
 一个 Weex 官方命令行工具，它能够帮助进行项目开发时候的预览，调试等工作。
 
-[English Doc](./README.md) [常见问题](#faq)
+[English Doc](./README.md) | [常见问题](#faq)
 
 ## 环境准备
 
@@ -49,150 +49,86 @@ $ npm install -g weex-toolkit@latest
 ## 使用选项
 
 ```
-Usage: weex <foo/bar/we_file_or_dir_path>  [options]
-Usage: weex create [projectName]
-
-选项：
-  --port    http listening port number ,default is 8081           [默认值: 8081]
-  --wsport  websocket listening port number ,default is 8082      [默认值: 8082]
-
-Usage:weex <command>
+Usage: weex <command>
 
 where <command> is one of:
 
-       init                                   创建一个weex工程 (已弃用)
-       debug                                  调试
-       compile                                打包weex文件
-       create                                 创建一个weexpack工程
-       platform <add|remove> <ios|android>    添加iOS/android应用模板
-       plugin <add|remove> <pluginName>       添加/移除 插件
-       run <ios|android>                      打包你的weex项目，并且在你的设备上运行
+  debug         Start weex debugger
+  config        Configure the global configuration file
+  compile       Compile we/vue file
+  create        Create a weexpack project
+  preview       Preview a weex page
+  platform      Add/remove ios/android platform
+  plugin        Add/remove weexplugin
+  run           Build your ios/android app and run
+  update        Update weex package version
+  xbind         Binding a thrid-part tool
 
-weex <command> --help      help on <command>                                               
+  weex <command> --help      help on <command>                                              
 ```
-
-## Examples
 
 #### 创建项目
 
 ```
 $ weex create your_project_name
 ```
-你的目录结构如下：
+
+运行承购后的目录结构如下：
 
 ```
- |—— .gitignore
-    |—— README.md
-    |—— .eslintrc
-    |—— .babelrc
-    |-- app.js
-    |—— assets
-    |—— /src
-    |     |—— foo.vue
-    |—— /build
-    |—— weex.html
-    |—— index.html
-```
-进入你的目录，你可以运行下面的npm命令:
+| —— configs
+  | —— config.js                  global config of webpack
+  | —— helper.js                  helper functions
+  | —— logo.png                   
+  | —— plugin.js                  script for compile plugins
+  | —— utils.js                   tool functions
+  | —— vue-loader.conf.js         loader config of weex
+  | —— webpack.common.conf.js     webpack configuration for common environment
+  | —— webpack.dev.conf.js        webpack configuration for develop environment
+  | —— webpack.prod.conf.js       webpack configuration for production environment
+  | —— webpack.test.conf.js       webpack configuration for test environment
+| —— platforms
+  | —— platforms.json             platform meta data
+| —— plugins
+  | —— plugins.json               plugin data
+| —— src
+  | —— entry.js                   the entry file of whole bundle
+  | —— index.vue                  vue file source
+| —— test
+  | —— unit
+    | —— specs                    test scripts
+    | —— index.js                 source code and config test environment
+    | —— karma.conf.js            configuration for karma
+| —— web                          static source
+| —— .babelrc                     configuration for babel-loader
+| —— android.config.json          configuration for packing android project
+| —— ios.config.json              configuration for packing ios project
+| —— npm-shrinkwrap.json          npm dependence lock file
+| —— package.json                 
+| —— README.md                    
+| —— webpack.config.js            entry file of the webpack command
 
 ```
-npm install
+
+#### 预览项目
+进入目录，运行
 ```
-Some npm commands you can use:
-
-```bash
-# 同时打包weex和web文件
-npm run build
-
-# 启动一个web服务器
-npm run serve
-
+$ npm start
 ```
+如果在创建时选择了非自动安装的选项，在运行`npm start` 前需先运行 `npm install`, 运行成功后可以打开项目预览页面，如下
+![preview page](https://img.alicdn.com/tfs/TB1OGrdocLJ8KJjy0FnXXcFDpXa-1290-823.png)
 
+你可以通过访问`/index.html`, 如`localhost:8081/index.html`访问`web`端页面
 
-#### 预览weex页面 
+> 注:如果端口号被占用，服务器的端口号可能会发生改变，具体请参考控制台输出
+
+同时你也可以通过 [Weex Playground](http://weex.apache.org/cn/tools/playground.html) 扫描右边二维码预览真机效果
+
+#### 调试项目
 ```
-$ weex your_best_weex.vue
+$ weex debug
 ```
-
-#### 预览.we的文件
-```
-$ weex your_best_weex.we
-```
-
-你可以使用[playgroud](https://weex.apache.org/cn/playground.html)扫描二维码实现手机端的预览。
-
-#### 编译一个weex文件
-```
-$weex compile your_best_weex.we  .
-```
-`your_best_weex.we` 会被编译成 `your_best_weex.js` , 保存在你当前目录
-
-#### 编译多文件
-```
-$weex compile path/to/\*.vue,\*.js .
-```
-
-## 调试
-#### 使用说明
-```
-weex debug [options] [we_file|bundles_dir]
-            
-  Options:
-
-    --help               输出帮助信息
-    -V, --verbose        展示debug 服务器的log信息
-    -v, --version        展示当前版本
-    -p, --port [port]    设置 debugger 的端口
-    -e, --entry [entry]  指定入口文件，当你要调试一个项目目录的时候
-    -m, --mode [mode]    设计构建模式 [transformer|loader]
-```
-
-#### 启动 debugger
-```
-$weex debug
-```
-运行这个命令，系统会启动一个debug服务器，然后再chrome打开`DeviceList`页面。这个页面会有一个二维码，你可以使用`Playground App` 进行扫描，然后开始调试。
-
-#### 调试某一个文件
-```
-$weex debug your_weex.we
-```
-执行这个命令会将 文件 `your_weex.we` 编译成 `your_weex.js` 然后启动一个调试服务器。
-`your_weex.js`将会存放到服务器的目录里， `DeviceList` 页面将会展示这个js的二维码，使用`[Playground App](https://weex.apache.org/cn/playground.html)`扫描它，就能够看到手机上的效果。
-
-
-#### start debugger with a directory of we files
-```
-$ weex debug your/we/path  -e index.we
-``` 
-
-这个命令会编译 `your/we/path` 下面的每一个文件，然后发布到服务器的目录。
-使用 `-e` 来 设置这些bundles 的入口文件，然后这个入口文件 `index.we`就会在你的手机上显示出来。
-
-## weex-toolkit 对 weexpack的集成
-
-[weexpack](https://github.com/weexteam/weex-pack) 是基于 weex 快速搭建应用原型的利器。它能够帮助开发者通过命令行创建 Weex 工程，添加相应平台的 Weex app 模版，并基于模版从本地、GitHub 或者 Weex 应用市场安装插件，快速打包 Weex 应用并安装到手机运行，对于具有分享精神的开发者而言还能够创建 Weex 插件模版并发布插件到 Weex 应用市场。
-
-现在使用weex-toolkit同样支持对weexpack的命令调用,如果你当前的项目与weexpack生成的项目目录一致，那么你可以直接实现对于platform的操作，从而构建具体的android/ios app.
-
-### weex platform 以及 run 命令
-
-如果我们希望在模拟器或者真机上查看weex运行的效果，我们可以使用 platform 添加或者删除 Weex应用模板。
-
-``` bash
-$ weex platform add ios 
-```
-在第一次使用platform/plugin命令的时候，可能会遇到下面的界面，你只需要输入Y或者直接enter键即可。
-![install weexpack](https://gw.alicdn.com/tfs/TB19n4AQXXXXXawXVXXXXXXXXXX-577-70.png)
-
-添加ios平台，然后这个时候只要输入:
-
-``` bash
-$ weex run ios
-```
-
-就能看到启动的模拟器运行的效果了。
+详细使用请参考 [weex-debugger文档](https://github.com/weexteam/weex-debugger)
 
 
 ## 常见问题
