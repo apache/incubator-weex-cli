@@ -6,21 +6,44 @@ Weex-Toolkit
 
 一个 Weex 官方命令行工具，它能够帮助进行项目开发时候的预览，调试等工作。
 
-[English Doc](./README.md)
+[English Doc](./README.md) [常见问题](#faq)
 
-## 安装前需要注意
-安装前确保你的node版本是>=6.0,如果不是请升级你的node版本，我们推荐你使用[n](https://github.com/tj/n) 来进行版本管理。
+## 环境准备
+
+### 安装Node环境
+
+进入[NodeJS官方网站](https://nodejs.org)下载最新稳定版Node.
+
+Mac 可通过 `brew` 安装
+```
+brew install node
+```
+安装前建议你的node版本是 >= 6.0, 推荐使用[n](https://github.com/tj/n) 来进行版本管理，同时建议 npm 版本 >= 5
 
 查看自己的node版本:
 ```
 $ node -v
+v8.9.4
+$ npm -v
+v5.6.0
 ```
+### Android 环境准备
 
+安装 [Android Studio](https://developer.android.com/studio/index.html) 勾选安装android sdk,配置环境变量 [如何配置android环境变量](https://spring.io/guides/gs/android/)
 
+安装成功测试：
+`android -h` 和 `adb -h` 能查看到帮助信息
+
+### iOS环境准备(仅Mac可用)
+
+安装 [Xcode](https://developer.apple.com/xcode/) 同时安装最新版本 [cocoapod](https://cocoapods.org/) , cocoapod版本要求0.39+
+
+安装成功测试：
+`xcrun -h` 和 `pod -h` 能查看到 帮助信息
 
 ## 安装
 ```
-$ npm install -g weex-toolkit
+$ npm install -g weex-toolkit@latest
 ```
 
 ## 使用选项
@@ -147,9 +170,6 @@ $ weex debug your/we/path  -e index.we
 这个命令会编译 `your/we/path` 下面的每一个文件，然后发布到服务器的目录。
 使用 `-e` 来 设置这些bundles 的入口文件，然后这个入口文件 `index.we`就会在你的手机上显示出来。
 
-
-
-
 ## weex-toolkit 对 weexpack的集成
 
 [weexpack](https://github.com/weexteam/weex-pack) 是基于 weex 快速搭建应用原型的利器。它能够帮助开发者通过命令行创建 Weex 工程，添加相应平台的 Weex app 模版，并基于模版从本地、GitHub 或者 Weex 应用市场安装插件，快速打包 Weex 应用并安装到手机运行，对于具有分享精神的开发者而言还能够创建 Weex 插件模版并发布插件到 Weex 应用市场。
@@ -175,40 +195,41 @@ $ weex run ios
 就能看到启动的模拟器运行的效果了。
 
 
-### weex plugin 命令
-
-如果你想使用[插件市场](https://market.weex-project.io/)的插件，你可以使用
-
-```bash
-$ weex plugin add plugin_name
-```
-
-
 ## 常见问题
-#### #Node 环境
-确保你本地的node版本是>=6以及npm版本是>=5的.
 
-#### #Current working directory is not a weexpack project
-自1.0.9版本后`weex init`命令已移除，如果要创建weex工程请通过`weex create`命令创建。
+#### #Windows环境下node-gyp rebuild 错误 [#236](https://github.com/weexteam/weex-toolkit/issues/236)
+
+> node-gyp库需要针对用户环境进行定向编译，编译过程中需要c++编译环境，故需要配置安装python2.7以及VC++ build Tools依赖
+
+解决方法：
+方法 1
+下载windows命令行编译工具，改工具主要是通过从远端下载windows编译工具的方式，如果下载速度过慢，请采用方法2
+```
+npm install --global --production windows-build-tools
+```
+方法 2
+从微软官方网站下载vc++构建工具 [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools) , 进入 Python官网下载 [Python 2.7](https://www.python.org/) 并安装，注意添加进环境变量中，命令行运行 `python --version` 显示版本号信息即表示安装完成.
+
+方法 3
+下载完整版 [Visual Studio 2017](https://www.visualstudio.com/zh-hans/downloads/)
+
+#### #Failed to install Chromium r515411 [#224](https://github.com/weexteam/weex-toolkit/issues/224)
+> 该报错主要是因为pupeteer的chromium在国内访问速度较慢或根本无法访问，且国内镜像没有内置，对于无法翻墙的用户需要额外配置下载地址
+解决方法：
+运行 `npm config set PUPPETEER_DOWNLOAD_HOST https://storage.googleapis.com.cnpmjs.org`
+然后再次运行 `weex debug` ** 注：windows用户可能需要再另开个命令行工具运行，有部分机器环境变量设置无法立即生效 **
 
 #### #权限问题 Permisiion denied
-请不要使用sudo进行安装，关于npm 取消sudo进行全局模块的安装你可以使用下面的命令：
-``` bash
-sudo chmod 777 /usr/local/lib/node_modules
-```
-[消除mac下npm全局安装使用sudo命令](http://www.jackpu.com/xiao-chu-macxia-npmquan-ju-an-zhuang-shi-yong-sudoming-ling/)
 
 如果你看到了下面的报错
 ```
-Error:permission denied.Please apply the write premission to the directory: "/Users/yourUserName"
+Error:permission denied.Please apply the write premission to the directory
 ```
-我们建议你运行 `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit` 来解决
+解决方法：
+请不要使用sudo进行安装，我们建议你运行 `sudo chmod -R 777 <dirname>` 来解决
 
 #### #Windows用户安装可能有fsevents模块报错
 
-```
-Error:permission denied.Please apply the write premission to the directory: "/Users/yourUserName"
-```
 首先你应该删除安装路径中`weex-toolkit`中的`node_modules`（路径可以在报错命令行中看到）,删除后运行下面的命令:
 
 ```
