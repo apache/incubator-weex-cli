@@ -151,6 +151,7 @@ npm install --global --production windows-build-tools
 
 #### #Failed to install Chromium r515411 [#224](https://github.com/weexteam/weex-toolkit/issues/224)
 > 该报错主要是因为pupeteer的chromium在国内访问速度较慢或根本无法访问，且国内镜像没有内置，对于无法翻墙的用户需要额外配置下载地址
+
 解决方法：
 运行 `npm config set PUPPETEER_DOWNLOAD_HOST https://storage.googleapis.com.cnpmjs.org`
 然后再次运行 `weex debug` ** 注：windows用户可能需要再另开个命令行工具运行，有部分机器环境变量设置无法立即生效 **
