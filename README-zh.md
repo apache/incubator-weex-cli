@@ -73,7 +73,7 @@ where <command> is one of:
 $ weex create your_project_name
 ```
 
-运行承购后的目录结构如下：
+运行成功后的目录结构如下：
 
 ```
 | —— configs
