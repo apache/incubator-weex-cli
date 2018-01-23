@@ -4,6 +4,7 @@
 ![Node Version](https://img.shields.io/node/v/weex-toolkit.svg "Node Version")
 
 [weex-toolkit](https://github.com/weexteam/weex-toolkit) is an official command line tool to help developers to create, debug and build their Weex project.
+
 [中文文档](./README-zh.md) | [FAQ](#faq)
 
 ## Install
