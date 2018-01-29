@@ -1,11 +1,11 @@
-# Weex-Toolkit
+# Weex Toolkit
 
 [![GitHub release](https://img.shields.io/github/release/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/releases)  [![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
 ![Node Version](https://img.shields.io/node/v/weex-toolkit.svg "Node Version")
 
-# weex-toolkit
-
 [weex-toolkit](https://github.com/weexteam/weex-toolkit) is an official command line tool to help developers to create, debug and build their Weex project.
+
+[中文文档](./README-zh.md) | [FAQ](#faq)
 
 ## Install
 
