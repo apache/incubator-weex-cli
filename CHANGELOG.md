@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.2.8
+- Fix issues [weexteam/weex-toolkit/issues/251](https://github.com/weexteam/weex-toolkit/issues/251)
+
 ### 1.2.7
 - Upgrade `xtoolkit` to `0.2.19`.
 - Fix issues [weexteam/weex-toolkit/issues/236](https://github.com/weexteam/weex-toolkit/issues/236).
