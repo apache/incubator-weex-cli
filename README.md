@@ -122,14 +122,14 @@ Since the 1.0.9 version, the `weex init` command has been removed. If you want t
 
 #### #Permisiion denied
 First of all ,please do not install with "sudo" 
-If `permisiion denied` error occurs,please try `sudo chmod 777 /usr/local/lib/node_modules`
+If a `permisiion denied` error occurs,please try `sudo chmod 777 /usr/local/lib/node_modules`
 
 If you see the following error
 
 ```
-Error:permission denied.Please apply the write premission to the directory: "/Users/yourUserName"
+Error: permission denied. Please apply the write premission to the directory: "/Users/yourUserName"
 ```
-We suggest you run `sudo chmod 777 ~` or `mkdir ~/.xtoolkit&chmod 777 .xtoolkit`
+We suggest you run `sudo chmod 777 ~` or `mkdir ~/.xtoolkit && chmod 777 ~/.xtoolkit`
 
 #### #Fsevents wanted error
 windows users may have fsevents installation problems, like:
