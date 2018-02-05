@@ -1,5 +1,10 @@
 ## Changelog
 
+### 1.2.9
+- Fix issues [local loader cann't be resolve](https://github.com/weexteam/weex-builder/commit/346f7c37b0032f17b023d80c9e15306764484d23).
+- Format the log time to `00:00:00`.
+- Optimize the configuration of the write operation.
+
 ### 1.2.8
 - Fix issues [weexteam/weex-toolkit/issues/251](https://github.com/weexteam/weex-toolkit/issues/251)
 
