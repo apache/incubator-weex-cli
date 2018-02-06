@@ -133,6 +133,23 @@ $ weex debug
 
 ## 常见问题
 
+#### #Weex-toolkit 安装缓慢
+> npm镜像在国内访问速度较慢，无法翻墙的用户请使用taobao源进行安装，操作如下：
+```
+$ npm config set registry https://registry.npm.taobao.org/
+$ npm i weex-toolkit -g
+// or
+$ npm i weex-toolkit -g --registry https://registry.npm.taobao.org/
+```
+
+#### #Weex 工具链相关依赖下载缓慢
+> 如`weex-debugger`或是 `weexpack`依赖安装缓慢，请切换至淘宝源进行安装，操作如下:
+```
+$ weex config registry https://registry.npm.taobao.org/
+// 同时配置chromium下载源，否则安装`weex-debugger`时依旧会存在网络问题
+$ npm config set PUPPETEER_DOWNLOAD_HOST https://storage.googleapis.com.cnpmjs.org
+```
+
 #### #Windows环境下node-gyp rebuild 错误 [#236](https://github.com/weexteam/weex-toolkit/issues/236)
 
 > node-gyp库需要针对用户环境进行定向编译，编译过程中需要c++编译环境，故需要配置安装python2.7以及VC++ build Tools依赖
