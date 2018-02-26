@@ -21,8 +21,8 @@
   "dependencies": {
     "chalk": "^1.1.3",
     "check-node-version": "^2.1.0",
-    "weex-builder": "^0.3.14",
-    "weex-previewer": "^1.4.6",
+    "weex-builder": "^0.3.16",
+    "weex-previewer": "^1.4.8",
     "xtoolkit": "^0.2.23"
   },
   "devDependencies": {
