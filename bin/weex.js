@@ -12,7 +12,7 @@ const {
 
 const options = {
   'node': '>=6',
-  'npm': '>=5'
+  'npm': '=4'
 };
 
 const logResult = function logResult (result) {
@@ -22,8 +22,31 @@ const logResult = function logResult (result) {
       const raw = result[name].wanted.raw;
       const info = result[name];
       const range = result[name].wanted.range;
-      logger.warn('Warning:' + (info.version ? ' Local version is ' + info.version + ',' : '') + ' Wanted ' + name + ' version ' + raw + ' (' + range + ')');
-      logger.log(chalk.grey(PROGRAMS[name].getInstallInstructions(raw)));
+      if (name === 'node') {
+        logger.warn('Warning:' + (info.version ? ' Local version is ' + info.version + ',' : '') + ' Wanted ' + name + ' version ' + raw + ' (' + range + ')');
+        logger.log(chalk.grey(PROGRAMS[name].getInstallInstructions(raw)));
+      }
+      else {
+        if (info.version.toString().match(/\d+/)[0] === '5') {
+          logger.log(chalk.yellow(
+            `
+Warning: npm 5 is not supported yet
+${chalk.grey(
+    `
+It looks like you're using npm 5 which was recently released.
+Weex Toolkit doesn't work well with npm 5 yet, unfortunately.
+
+We recommend using npm 4 or yarn until some bugs are resolved.
+To install npm 4, you can run \`npm i npm@4 -g\`.
+
+You can follow the known issues with npm 5 at:
+https://github.com/npm/npm/issues/16991
+    `)}
+            `
+            )
+          );
+        }
+      }
     }
   });
 };
