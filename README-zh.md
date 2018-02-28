@@ -6,7 +6,7 @@ Weex-Toolkit
 
 一个 Weex 官方命令行工具，它能够帮助进行项目开发时候的预览，调试等工作。
 
-[English Doc](./README.md) | [常见问题](#faq)
+[English Doc](./README.md) | [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
 ## 环境准备
 
