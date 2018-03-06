@@ -1,11 +1,15 @@
 # Weex Toolkit
 
-[![GitHub release](https://img.shields.io/github/release/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/releases)  [![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
-![Node Version](https://img.shields.io/node/v/weex-toolkit.svg "Node Version")
-
-[weex-toolkit](https://github.com/weexteam/weex-toolkit) is an official command line tool to help developers to create, debug and build their Weex project.
+![image | left](https://img.shields.io/badge/PRs-welcome-brightgreen.svg "")
+![image | left](https://img.shields.io/badge/license-Apache--2.0-brightgreen.svg "")
+[![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
+[![Npm package](https://img.shields.io/npm/dm/weex-toolkit.svg)](https://www.npmjs.com/package/weex-toolkit)
 
 [中文文档](./README-zh.md) | [FAQ](#faq)
+
+## Introduction
+
+[weex-toolkit](https://github.com/weexteam/weex-toolkit) is an official command line tool to help developers to create, debug and build their Weex project.
 
 ## Install
 
