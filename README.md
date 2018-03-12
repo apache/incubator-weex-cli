@@ -183,7 +183,23 @@ If there have some error while update package, please remove `~/.xtoolkit` befor
 $ rm -rf ~/.xtoolkit
 $ weex update weexpack
 ```
+#### Encountered "Cannot read property 'xxx'" error while using weex modules
 
+Description:
+That's a very typical `Hosting` issue, you can see [Hosting MDN](https://developer.mozilla.org/en-US/docs/Glossary/Hoisting), try the flowing steps to fix it:
+1. If you want to fix an existing project:
+searching `webpack.common.config.js` file on `configs` folder, and change 
+```
+contents += `\nimport App from '${relativeVuePath}';\n`;
+```
+to 
+```
+contents += `\nconst App = require('${relativeVuePath}');\n`;
+```
+2. If you just want to create a normal weex project
+upgrade your `weexpack` to the latest version by `weex update weexpack@latest` command, then re-create again. the latest version should above `v1.0.13`.
+
+see: [weex-toolkit/issues/268](https://github.com/weexteam/weex-toolkit/issues/268)
 
 #### #Tips
 
