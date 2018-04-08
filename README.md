@@ -207,7 +207,7 @@ see: [weex-toolkit/issues/268](https://github.com/weexteam/weex-toolkit/issues/2
 
 #### #Tips
 
-If you are in use during the process, first check your package version is up to date, you can run `weex -v` and use `weex update weex-devtool@latest` to upgrade your package.
+If you have any unsolvable problems, try and check your system environment, your installed package version (`weex -v`), and upgrading to the latest package (`weex update weex-devtool@latest`) to see if the problems are resolved.
 
 
 
