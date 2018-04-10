@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "Weex CLI Toolkit",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -23,7 +23,7 @@
     "check-node-version": "^2.1.0",
     "weex-builder": "^0.3.16",
     "weex-previewer": "^1.4.8",
-    "xtoolkit": "^0.2.23"
+    "xtoolkit": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
