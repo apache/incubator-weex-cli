@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "1.2.10",
+  "version": "1.3.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -25982,9 +25982,9 @@
       "dev": true
     },
     "xtoolkit": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/xtoolkit/-/xtoolkit-1.0.0.tgz",
-      "integrity": "sha512-3r8l5HIj+WcUE1nJix2rD/dNF2F/29Y4JaxuXWD5bzZi/Inbv9gK7+ud/gKzsbvkk2pehgWd9eKXRw9Jvh5iXQ==",
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/xtoolkit/-/xtoolkit-1.0.1.tgz",
+      "integrity": "sha512-wsFwBFeoB0gfs34VIH9vx+LF6l8ihpA21sG3FCBJMyrLXrIlLggZRW2dBQ1ZKoX3Zl2tTornJPIHkd+2RI/9hg==",
       "requires": {
         "boxen": "1.3.0",
         "chalk": "1.1.3",
