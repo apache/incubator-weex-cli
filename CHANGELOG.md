@@ -1,5 +1,9 @@
 ## Changelog
 
+### 1.3.2
+- Upgrade `xtoolkit` to `v1.0.3`.
+- Fixed the error of `getaddrinfo ENOTFOUND` cause by no protocol http request.
+
 ### 1.3.1
 - Reduce the interference caused by the presentation of information.
 - Upgrade `weex-builder` to `v0.3.19`.
