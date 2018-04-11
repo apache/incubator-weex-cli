@@ -1,12 +1,16 @@
-[![GitHub release](https://img.shields.io/github/release/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/releases)  [![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
-![Node Version](https://img.shields.io/node/v/weex-toolkit.svg "Node Version")
+
 
 Weex-Toolkit
 ============
 
+![image | left](https://img.shields.io/badge/PRs-welcome-brightgreen.svg "")
+![image | left](https://img.shields.io/badge/license-Apache--2.0-brightgreen.svg "")
+[![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
+[![Npm package](https://img.shields.io/npm/dm/weex-toolkit.svg)](https://www.npmjs.com/package/weex-toolkit)
+
 一个 Weex 官方命令行工具，它能够帮助进行项目开发时候的预览，调试等工作。
 
-[English Doc](./README.md) | [常见问题](#faq)
+[English Doc](./README.md) | [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
 ## 环境准备
 
@@ -221,6 +225,21 @@ $ weex update weexpack
 $ rm -rf ~/.xtoolkit
 $ weex update weexpack
 ```
+
+#### 使用官方模板中web端调用weex模块报undefined
+造成该问题的主要原因是在后面的`weex-vue-render`引入方式从源码引入更改为包引入的方式，weex的注册发生在引入后， 故一旦在项目中使用import语法引入`.vue`文件时需要谨慎判断加载时序是否是在`weex.init`之后，在较早的模板中出现了语法提升[Hosting MDN](https://developer.mozilla.org/en-US/docs/Glossary/Hoisting)的问题，修改方案如下：
+1. 如果你想在已有项目中修复:
+在 `configs/webpack.common.config.js` 文件中更改
+```
+contents += `\nimport App from '${relativeVuePath}';\n`;
+```
+为
+```
+contents += `\nconst App = require('${relativeVuePath}');\n`;
+```
+2. 如果你想重新创建一个项目
+升级你的`weexpack`到最新版本，可通过`weex update weexpack@latest`命令升级，然后通过`weex create`命令重新创建项目，最新的版本应该为`v1.0.13`以上。
+[相关issues](https://github.com/weexteam/weex-toolkit/issues/268)
 
 #### #Tips
 如果你在使用过程中遇到了任何无法解决的问题，你应该尝试检查一下你的环境，通过运行`weex -v`查看你的包版本，通过`weex update weex-devtool@latest`更新最新的包来尝试解决问题。
