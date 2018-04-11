@@ -1,5 +1,12 @@
 ## Changelog
 
+### 1.3.0
+- Optimized version display interface while running `weex [command] -v`.
+
+### 1.2.10
+- Change recommand npm version to 4, cause of the [issues](https://github.com/npm/npm/issues/16991) on npm5.
+- Add changelog tips while a package can be upgreaded.
+
 ### 1.2.9
 - Fix issues [local loader cann't be resolve](https://github.com/weexteam/weex-builder/commit/346f7c37b0032f17b023d80c9e15306764484d23).
 - Format the log time to `00:00:00`.
