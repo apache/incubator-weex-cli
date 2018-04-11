@@ -1,5 +1,10 @@
 ## Changelog
 
+### 1.3.1
+- Reduce the interference caused by the presentation of information.
+- Upgrade `weex-builder` to `v0.3.19`.
+- Upgrade `weex-previewer` to `v1.5.0`.
+
 ### 1.3.0
 - Optimized version display interface while running `weex [command] -v`.
 
