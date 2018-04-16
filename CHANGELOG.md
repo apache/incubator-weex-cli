@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.3.3
+- Fixed `info.version.toString()` throw error on windows.
+
 ### 1.3.2
 - Upgrade `xtoolkit` to `v1.0.3`.
 - Fixed the error of `getaddrinfo ENOTFOUND` cause by no protocol http request.

@@ -18,17 +18,17 @@ const options = {
 const logResult = function logResult (result) {
   // display any non-compliant versions
   Object.keys(PROGRAMS).forEach(function (name) {
-    const raw = result[name].wanted && result[name].wanted.raw;
     const info = result[name];
-    const range = result[name].wanted && result[name].wanted.range;
-    if (result[name].isSatisfied === false) {
+    const raw = info.wanted && info.wanted.raw;
+    const range = info.wanted && info.wanted.range;
+    if (!info || !info.version) return;
+    if (info.isSatisfied === false) {
       logger.log(chalk.yellow('\nWarning:' + (info.version ? ' Local version is ' + info.version + ',' : '') + ' Wanted ' + name + ' version ' + raw + ' (' + range + ')'));
       logger.log(chalk.grey(PROGRAMS[name].getInstallInstructions(raw)));
     }
     else {
       if (info.version.toString().match(/\d+/)[0] === '5') {
-        logger.log(chalk.yellow(`
-Warning: npm 5 is not supported yet!
+        logger.log(chalk.yellow(`Warning: npm 5 is not supported yet!
 
 ${chalk.grey(`It looks like you're using npm 5 which was recently released.
 Weex Toolkit doesn't work well with npm 5 yet, unfortunately.
