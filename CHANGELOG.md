@@ -1,5 +1,9 @@
 ## Changelog
 
+### 1.3.4
+- Fixed parse error while checking update infomation of the package.
+- Upgrade `xtoolkit` to `v1.0.4`.
+
 ### 1.3.3
 - Fixed `info.version.toString()` throw error on windows.
 
