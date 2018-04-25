@@ -1,5 +1,12 @@
 ## Changelog
 
+
+### 1.3.5
+- Add `weex remove` command to remove a package from weex-toolkit.
+- Add upgrade notify for weex-toolkit.
+- Fixed [issue 373](https://github.com/weexteam/weex-toolkit/issues/373).
+- Fixed [issue 363](https://github.com/weexteam/weex-toolkit/issues/363).
+
 ### 1.3.4
 - Fixed parse error while checking update infomation of the package.
 - Upgrade `xtoolkit` to `v1.0.4`.
