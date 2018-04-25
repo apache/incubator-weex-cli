@@ -5,6 +5,8 @@ const xtoolkit = require('xtoolkit');
 const chalk = require('chalk');
 const check = require('check-node-version');
 const path = require('path');
+const updateNotifier = require('update-notifier');
+const pkg = require('../package.json');
 const PROGRAMS = check.PROGRAMS;
 const {
   logger
@@ -54,23 +56,26 @@ const checkVersion = () => {
   });
 }
 
-const commandName = 'weex';
+const binname = 'weex';
 
-const userinfo = '\nUsage: ' + commandName + ' <command>';
+const userinfo = `
+${chalk.underline('Usage:')}
+
+  $ ${chalk.green(`${binname} <command>`)}`;
 // This command help message is for weex-toolkit.
 const command = `
-where <command> is one of:
+${chalk.underline('Commands:')}
 
-  debug         Start weex debugger
-  config        Configure the global configuration file
-  compile       Compile we/vue file
-  create        Create a weexpack project
-  preview       Preview a weex page
-  platform      Add/remove ios/android platform
-  plugin        Add/remove weexplugin
-  run           Build your ios/android app and run
-  update        Update weex package version
-  xbind         Binding a thrid-part tool
+  ${chalk.green('debug')}         Start weex debugger
+  ${chalk.green('config')}        Configure the global configuration file
+  ${chalk.green('compile')}       Compile we/vue file
+  ${chalk.green('create')}        Create a weexpack project
+  ${chalk.green('preview')}       Preview a weex page
+  ${chalk.green('platform')}      Add/remove ios/android platform
+  ${chalk.green('plugin')}        Add/remove weexplugin
+  ${chalk.green('run')}           Build your ios/android app and run
+  ${chalk.green('update')}        Update weex package version
+  ${chalk.green('xbind')}         Binding a thrid-part tool
 
   weex <command> --help      help on <command>
 `;
@@ -88,6 +93,10 @@ const showHelp = () => {
   logger.log(userinfo);
   logger.log(command);
 };
+
+// Checks for available update and returns an instance
+const notifier = updateNotifier({pkg});
+notifier.notify();
 
 if (process.argv.length <= 3) {
   // Compatible with `weex xxx.vue`
