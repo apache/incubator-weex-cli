@@ -22,7 +22,7 @@ Mac 可通过 `brew` 安装
 ```
 brew install node
 ```
-安装前建议你的node版本是 >= 6.0, 推荐使用[n](https://github.com/tj/n) 来进行版本管理，同时建议 npm 版本 >= 5
+安装前建议你的node版本是 >= 6.0, 推荐使用[n](https://github.com/tj/n) 来进行版本管理，由于在`npm5`版本中还存在诸多未解决的问题，见 [npm5 已知问题](https://github.com/npm/npm/issues/16991)，在官方还未修复前，建议你使用`npm4`来进行工具使用，可运行 `npm i npm@4 -g` 进行安装。
 
 查看自己的node版本:
 ```

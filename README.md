@@ -19,7 +19,7 @@ $ npm install -g weex-toolkit
 You can use the `weex -v` command to confirm that the installation was successful.
 
 If you have never installed node.js, you should go to [nodejs.org]( https://nodejs.org/en/) to download and install it.
-> **NOTE:** The node version must be 6.0 or higher. You can try [n](https://github.com/tj/n) to manage your node versions. If an error occurs while installing, please go [weex-toolkit issues](https://github.com/weexteam/weex-toolkit/issues) or [weex-toolkit faq](https://github.com/weexteam/weex-toolkit#faq) to find solutions or have a discussion with us.
+> **NOTE:** The node version must be 6.0 or higher, you can try [n](https://github.com/tj/n) to manage your node versions, and we recommend that you use `npm4` before fixing the [konw issues](https://github.com/npm/npm/issues/16991) on `npm5`. If an error occurs while installing, please go [weex-toolkit issues](https://github.com/weexteam/weex-toolkit/issues) or [weex-toolkit faq](https://github.com/weexteam/weex-toolkit#faq) to find solutions or have a discussion with us.
 
 
 ## Commands
