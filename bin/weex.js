@@ -69,12 +69,13 @@ ${chalk.underline('Commands:')}
   ${chalk.green('debug')}         Start weex debugger
   ${chalk.green('config')}        Configure the global configuration file
   ${chalk.green('compile')}       Compile we/vue file
-  ${chalk.green('create')}        Create a weexpack project
+  ${chalk.green('create')}        Create a weex project
   ${chalk.green('preview')}       Preview a weex page
-  ${chalk.green('platform')}      Add/remove ios/android platform
-  ${chalk.green('plugin')}        Add/remove weexplugin
+  ${chalk.green('platform')}      Add/remove/update ios/android platform
+  ${chalk.green('plugin')}        Add/remove/create weex plugin
   ${chalk.green('run')}           Build your ios/android app and run
   ${chalk.green('update')}        Update weex package version
+  ${chalk.green('remove')}        Remove a package from weex-toolkit
   ${chalk.green('xbind')}         Binding a thrid-part tool
 
   weex <command> --help      help on <command>
