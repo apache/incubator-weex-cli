@@ -1,5 +1,7 @@
 ## Changelog
 
+### 1.3.6
+- Fixed dns timeout error on xtoolkit.
 
 ### 1.3.5
 - Add `weex remove` command to remove a package from weex-toolkit.
