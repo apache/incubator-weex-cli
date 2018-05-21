@@ -1,6 +1,9 @@
 ## Changelog
 
 ### 1.3.7
+- Upgrade `xtoolkit` to `v1.0.9`.
+
+### 1.3.7
 - Remove useless log message from xtoolkit.
 
 ### 1.3.6
