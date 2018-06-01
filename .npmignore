@@ -1,14 +1,11 @@
-.idea
-.project
-.svn
-.DS_Store
-.sass-cache
-*/.svn
-*/.DS_Store
-*/.idea
 .vscode/
 
 node_modules/
 npm-debug.log
 
 .github/
+
+src/
+lib/**/*.js.map
+
+typings/
