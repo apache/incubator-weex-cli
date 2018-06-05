@@ -147,7 +147,7 @@ To avoid this error, install weex-toolkit without the optional dependencies with
 npm install --no-optional weex-toolkit -g
 ``` 
 
-#### #Vue dismatch error
+#### #Vue mismatch error
 
 Try:
 
