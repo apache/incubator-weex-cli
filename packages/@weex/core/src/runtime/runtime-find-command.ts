@@ -32,7 +32,6 @@ export function findCommand(runtime: Runtime, parameters: IParameters) {
   if (commandPath.length === 0) {
     targetCommand = findDashedCommand(runtime.commands, parameters.options) || targetCommand
   }
-
   // store the resolved path as we go
   let resolvedPath: string[] = []
 
