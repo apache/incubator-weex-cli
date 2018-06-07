@@ -1,0 +1,5 @@
+name = 'throws'
+
+[[commands]]
+description = 'Throws and error'
+

@@ -1,0 +1,1 @@
+Plugin for add/remove/update weex plugins.
