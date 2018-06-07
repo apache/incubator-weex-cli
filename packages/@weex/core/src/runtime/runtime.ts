@@ -2,7 +2,7 @@
 import { resolve } from 'path'
 import { dissoc, is } from 'ramda'
 
-// domains
+// cores
 import { Command, ICommandLine } from '../core/command'
 import { Extension } from '../core/extension'
 import { Plugin } from '../core/plugin'
@@ -89,8 +89,8 @@ export class Runtime {
       newCommand.plugin = this.defaultPlugin
       this.defaultPlugin.commands.push(newCommand)
     }
-
     if (newCommand.name === this.brand) {
+      console.log('test')
       // we want to keep a reference to the default command, so we can find it later
       this.defaultCommand = newCommand
     }
@@ -141,6 +141,7 @@ export class Runtime {
     // load config and set defaults
     const config = loadConfig(this.brand, directory) || {}
     this.defaults = config.defaults
+    console.log('config->', config, directory)
     this.config = dissoc('defaults', config)
 
     return this

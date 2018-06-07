@@ -21,10 +21,8 @@ export async function run(this: Runtime, rawCommand?: string | string[], extraOp
 
   // attach the runtime
   toolbox.runtime = this
-
   // parse the parameters initially
   toolbox.parameters = parseParams(rawCommand, extraOptions)
-
   // find the command, and parse out aliases
   const { command, array } = findCommand(this, toolbox.parameters)
 
@@ -32,7 +30,7 @@ export async function run(this: Runtime, rawCommand?: string | string[], extraOp
   if (isNil(command)) {
     return toolbox
   }
-
+  console.log(command)
   // rebuild the parameters, now that we know the plugin and command
   toolbox.parameters = createParams({
     plugin: command.plugin.name,

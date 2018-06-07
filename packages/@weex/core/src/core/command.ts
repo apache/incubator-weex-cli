@@ -35,6 +35,7 @@ export class Command implements ICommandLine<Toolbox> {
   public alias
   public dashed
   public plugin
+  public defaultCommand
 
   constructor() {
     this.name = null
