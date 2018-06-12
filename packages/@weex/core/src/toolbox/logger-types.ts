@@ -1,17 +1,19 @@
 import { IToolbox } from '../index'
 import * as CLITable from 'cli-table2'
 
-export interface IPrint {
+export interface ILOGGER {
   /* Colors as seen from colors.js. */
   colors: any
   /* A green checkmark. */
   checkmark: string
   /* A red X marks the spot. */
   xmark: string
+  /* Set logLevel for debug/log/info/warn/error */
+  setLevel: (level: any) => void
   /* Prints a message to stdout. */
   info: (message: any) => void
   /* Prints a warning-colored message. */
-  warning: (message: any) => void
+  warn: (message: any) => void
   /* Prints a success-colored message. */
   success: (message: any) => void
   /* Prints an error-colored message. */
@@ -19,7 +21,7 @@ export interface IPrint {
   /* Prints debug information about any data, with an optional title. */
   debug: (value: any, title?: string) => void
   /* DEPRECATED: prints a normal line of text. */
-  fancy: (value: string) => void
+  log: (value: string) => void
   /* Prints a divider. */
   divider: () => void
   /* Finds the column widths for a table */
@@ -30,6 +32,8 @@ export interface IPrint {
   newline: () => void
   /* Prints a table of data (usually a 2-dimensional array). */
   table: (data: any, options?: any) => void
+  /* An `gauge`-powered progressbar. */
+  progress(steam?: any, options?: any): any
   /* An `ora`-powered spinner. */
   spin(options?: any): any
   /* Print help info for known CLI commands. */

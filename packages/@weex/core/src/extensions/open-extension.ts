@@ -1,5 +1,5 @@
 import { IToolbox } from '../core/toolbox'
-import { print } from '../toolbox/print-tools'
+import { open } from '../toolbox/open-tools'
 
 /**
  * Extensions to print to the console.
@@ -8,5 +8,5 @@ import { print } from '../toolbox/print-tools'
  */
 export default function attach(toolbox: IToolbox): void {
   // attach the feature set
-  toolbox.print = print
+  toolbox.open = open
 }

@@ -1,0 +1,6 @@
+{
+  "extends": ["eslint-config-standard", "eslint-config-prettier"],
+  "rules": {
+    "standard/no-callback-literal": "off"
+  }
+}

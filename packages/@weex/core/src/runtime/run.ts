@@ -30,7 +30,7 @@ export async function run(this: Runtime, rawCommand?: string | string[], extraOp
   if (isNil(command)) {
     return toolbox
   }
-  console.log(command)
+
   // rebuild the parameters, now that we know the plugin and command
   toolbox.parameters = createParams({
     plugin: command.plugin.name,
