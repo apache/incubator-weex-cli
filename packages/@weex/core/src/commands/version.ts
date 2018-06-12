@@ -4,6 +4,6 @@ export default {
   description: 'Output the version number',
   dashed: true,
   run: toolbox => {
-    toolbox.print.info(toolbox.meta.version())
+    toolbox.logger.info(toolbox.meta.version())
   },
 }

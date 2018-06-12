@@ -74,6 +74,28 @@ function subdirectories(
   }
 }
 
+/**
+ * Is this a local path?
+ *
+ * @param path The path to check.
+ * @returns `true` if the path is a local path, otherwise `false`.
+ */
+function isLocalPath(path: string) {
+  return /^[./]|(^[a-zA-Z]:)/.test(path);
+}
+
+/**
+ * Get the absolute path
+ *
+ * @param templatePath The path to check.
+ * @returns `true` if the path is a local path, otherwise `false`.
+ */
+function getAbsolutePath (templatePath) {
+  return path.isAbsolute(templatePath)
+    ? templatePath
+    : path.normalize(path.join(process.cwd(), templatePath));
+}
+
 const filesystem: IFilesystem = Object.assign(
   {
     eol: os.EOL, // end of line marker
@@ -84,6 +106,8 @@ const filesystem: IFilesystem = Object.assign(
     isNotFile,
     isDirectory,
     isNotDirectory,
+    isLocalPath,
+    getAbsolutePath
   },
   jetpack, // jetpack utilities
 )

@@ -5,7 +5,7 @@ import { Plugin } from './plugin'
 import {
   IFilesystem,
   IStrings,
-  IPrint,
+  ILOGGER,
   ISystem,
   ISemver,
   IHttp,
@@ -15,7 +15,6 @@ import {
   IMeta,
   IParameters,
 } from '..'
-
 export interface IParameters {
   /* The command arguments as an array. */
   array?: string[]
@@ -58,7 +57,7 @@ export interface IToolbox {
   http?: IHttp
   meta?: IMeta
   patching?: IPatching
-  print?: IPrint
+  logger?: ILOGGER
   prompt?: IPrompt
   semver?: ISemver
   strings?: IStrings

@@ -1,6 +1,6 @@
 export default {
   name: 'new',
-  alias: ['n', 'create'],
+  alias: ['n'],
   description: 'Creates a new cli',
   hidden: false,
   run: async toolbox => {
@@ -8,7 +8,7 @@ export default {
       parameters,
       template: { generate },
       filesystem,
-      print,
+      logger,
       strings,
       system,
     } = toolbox
@@ -21,13 +21,13 @@ export default {
     }
 
     if (!props.name || props.name.length === 0) {
-      print.error('You must provide a valid CLI name.')
-      print.error('Example: gluegun new foo')
+      logger.error('You must provide a valid CLI name.')
+      logger.error('Example: weex new foo')
       return undefined
     } else if (!/^[a-z0-9-]+$/.test(props.name)) {
       const validName = kebabCase(props.name)
-      print.error(`${props.name} is not a valid name. Use lower-case and dashes only.`)
-      print.error(`Suggested: gluegun new ${validName}`)
+      logger.error(`${props.name} is not a valid name. Use lower-case and dashes only.`)
+      logger.error(`Suggested: gluegun new ${validName}`)
       return undefined
     }
 
@@ -90,13 +90,13 @@ export default {
       stderr: 'inherit',
     })
 
-    print.info(`Generated ${props.name} CLI.`)
-    print.info(``)
-    print.info(`Next:`)
-    print.info(`  $ cd ${props.name}`)
-    print.info(`  $ npm link`)
-    print.info(`  $ ${props.name}`)
-    print.info(``)
+    logger.info(`Generated ${props.name} CLI.`)
+    logger.info(``)
+    logger.info(`Next:`)
+    logger.info(`  $ cd ${props.name}`)
+    logger.info(`  $ npm link`)
+    logger.info(`  $ ${props.name}`)
+    logger.info(``)
 
     // for tests
     return `new ${toolbox.parameters.first}`

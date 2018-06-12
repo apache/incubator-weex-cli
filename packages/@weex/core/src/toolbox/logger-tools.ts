@@ -1,14 +1,15 @@
 import * as CLITable from 'cli-table2'
 import * as importedColors from 'colors'
+import * as Gauge from 'gauge'
 import { commandInfo } from './meta-tools'
 import { Toolbox } from '../core/toolbox'
 import * as ora from 'ora'
 import { times, flip, prop } from 'ramda'
 
-// wtf typescript
+// hack typescript
 const colors: any = importedColors
 
-import { IPrint } from './print-types'
+import { ILOGGER } from './logger-types'
 
 // Generate array of arrays of the data rows for length checking
 // @ts-ignore
@@ -38,6 +39,27 @@ const CLI_TABLE_MARKDOWN = {
   right: '|',
   middle: '|',
 }
+
+const SEVERITY = {
+  debug: 1000,
+  log: 2000,
+  warn: 3000,
+  info: 3000,
+  error: 5000,
+  success: 10000
+}
+
+const LOGLEVEL = {
+  DEBUG: 'debug',
+  LOG: 'log',
+  WARN: 'warn',
+  INFO: 'info',
+  ERROR: 'error',
+  SUCCESS: 'success'
+};
+
+
+let DEFAULT_LOGLEVEL = LOGLEVEL.LOG
 
 /**
  * Sets the color scheme.
@@ -120,6 +142,17 @@ function table(data: string[][], options: any = {}): void {
 }
 
 /**
+ * Set log level for logger.
+ *
+ * Use this when you want to set the loglevel.
+ *
+ * @param message The message to write.
+ */
+function setLevel(logLevel: string): void{
+  DEFAULT_LOGLEVEL = logLevel;
+};
+
+/**
  * Prints text without theming.
  *
  * Use this when you're writing stuff outside the toolbox of our
@@ -127,8 +160,10 @@ function table(data: string[][], options: any = {}): void {
  *
  * @param message The message to write.
  */
-function fancy(message: string): void {
-  console.log(message)
+function log(message: string): void {
+  if (SEVERITY[LOGLEVEL.LOG] >= SEVERITY[DEFAULT_LOGLEVEL]) {
+    console.log(message)
+  }
 }
 
 /**
@@ -139,7 +174,9 @@ function fancy(message: string): void {
  * @param message The message to show.
  */
 function info(message: string): void {
-  console.log(colors.info(message))
+  if (SEVERITY[LOGLEVEL.INFO] >= SEVERITY[DEFAULT_LOGLEVEL]) {
+    console.log(colors.info(message))
+  }
 }
 
 /**
@@ -150,7 +187,9 @@ function info(message: string): void {
  * @param message The message to show.
  */
 function error(message: string): void {
-  console.log(colors.error(message))
+  if (SEVERITY[LOGLEVEL.ERROR] >= SEVERITY[DEFAULT_LOGLEVEL]) {
+    console.log(colors.error(message))
+  }
 }
 
 /**
@@ -160,8 +199,10 @@ function error(message: string): void {
  *
  * @param message The message to show.
  */
-function warning(message: string): void {
-  console.log(colors.warning(message))
+function warn(message: string): void {
+  if (SEVERITY[LOGLEVEL.WARN] >= SEVERITY[DEFAULT_LOGLEVEL]) {
+    console.log(colors.warning(message))
+  }
 }
 
 /**
@@ -174,10 +215,11 @@ function warning(message: string): void {
 function debug(message: string, title: string = 'DEBUG'): void {
   const topLine = `vvv -----[ ${title} ]----- vvv`
   const botLine = `^^^ -----[ ${title} ]----- ^^^`
-
-  console.log(colors.rainbow(topLine))
-  console.log(message)
-  console.log(colors.rainbow(botLine))
+  if (SEVERITY[LOGLEVEL.DEBUG] >= SEVERITY[DEFAULT_LOGLEVEL]) {
+    console.log(colors.rainbow(topLine))
+    console.log(message)
+    console.log(colors.rainbow(botLine))
+  }
 }
 
 /**
@@ -201,6 +243,9 @@ function spin(config?: string | object): any {
   return ora(config || '').start()
 }
 
+function progress(stream?: any, options?: any) {
+  return new Gauge(stream, options);
+}
 /**
  * Prints the list of commands.
  *
@@ -225,24 +270,26 @@ function printHelp(toolbox: Toolbox): void {
 const checkmark = colors.success('✔︎')
 const xmark = colors.error('ⅹ')
 
-const print: IPrint = {
+const logger: ILOGGER = {
   colors,
   newline,
   divider,
   findWidths,
   columnHeaderDivider,
   table,
-  fancy,
+  setLevel,
+  log,
   info,
   error,
-  warning,
+  warn,
   debug,
   success,
   spin,
+  progress,
   printCommands,
   printHelp,
   checkmark,
   xmark,
 }
 
-export { print, IPrint }
+export { logger, ILOGGER, LOGLEVEL}

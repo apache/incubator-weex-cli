@@ -10,5 +10,5 @@ test('loads the core extensions in the right order', () => {
     join(', '),
   )(r.extensions)
 
-  expect(list).toBe('meta, strings, print, filesystem, semver, system, prompt, http, template, patching')
+  expect(list).toBe('meta, strings, logger, filesystem, semver, system, prompt, http, template, patching')
 })

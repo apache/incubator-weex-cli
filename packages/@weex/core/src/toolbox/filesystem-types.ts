@@ -222,6 +222,16 @@ export interface IFilesystem {
    * Is this not a directory?
    */
   isNotDirectory(path: string): boolean
+
+  /**
+   * Is this not a local path?
+   */
+  isLocalPath(path: string): boolean
+  
+  /**
+   * Get the absolute path
+   */
+  getAbsolutePath(path: string): string
 }
 
 export interface IFilesystemAppendOptions {

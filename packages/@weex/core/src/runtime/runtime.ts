@@ -52,7 +52,7 @@ export class Runtime {
     const coreExtensions = [
       'meta',
       'strings',
-      'print',
+      'logger',
       'filesystem',
       'semver',
       'system',
@@ -90,7 +90,6 @@ export class Runtime {
       this.defaultPlugin.commands.push(newCommand)
     }
     if (newCommand.name === this.brand) {
-      console.log('test')
       // we want to keep a reference to the default command, so we can find it later
       this.defaultCommand = newCommand
     }
@@ -141,7 +140,7 @@ export class Runtime {
     // load config and set defaults
     const config = loadConfig(this.brand, directory) || {}
     this.defaults = config.defaults
-    console.log('config->', config, directory)
+
     this.config = dissoc('defaults', config)
 
     return this
@@ -171,7 +170,6 @@ export class Runtime {
       extensionFilePattern: options.extensionFilePattern,
       preloadedCommands: options.preloadedCommands,
     })
-
     this.plugins.push(plugin)
     plugin.extensions.forEach(extension => this.addExtension(extension.name, extension.setup))
     plugin.commands.forEach(command => this.addCommand(command))
@@ -192,7 +190,7 @@ export class Runtime {
 
     // find matching filesystem.subdirectories
     const subdirs = filesystem.subdirectories(directory, false, options.matching, true)
-
+    
     // load each one using `this.plugin`
     return subdirs.map(dir => this.addPlugin(dir, dissoc('matching', options)))
   }

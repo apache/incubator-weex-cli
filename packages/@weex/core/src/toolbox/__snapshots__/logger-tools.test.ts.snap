@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`info 1`] = `Array []`;
+
+exports[`setLevel 1`] = `Array []`;
