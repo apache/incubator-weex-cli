@@ -3,12 +3,12 @@ import * as os from 'os'
 import * as path from 'path'
 import { split } from 'ramda'
 import { Toolbox } from '../core/toolbox'
-import createExtension from './filesystem-extension'
+import createExtension from './fs-extension'
 
 test('has the proper interface', () => {
   const toolbox = new Toolbox()
   createExtension(toolbox)
-  const ext = toolbox.filesystem
+  const ext = toolbox.fs
 
   expect(ext).toBeTruthy()
 

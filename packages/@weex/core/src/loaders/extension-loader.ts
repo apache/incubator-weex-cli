@@ -1,6 +1,6 @@
 import { head, split } from 'ramda'
 import { Extension } from '../core/extension'
-import { filesystem } from '../toolbox/filesystem-tools'
+import { fs } from '../toolbox/fs-tools'
 import { strings } from '../toolbox/string-tools'
 import { loadModule } from './module-loader'
 
@@ -21,12 +21,12 @@ export function loadExtensionFromFile(file: string, options = {}): Extension {
   extension.file = file
 
   // not a file?
-  if (filesystem.isNotFile(file)) {
+  if (fs.isNotFile(file)) {
     throw new Error(`Error: couldn't load command (not a file): ${file}`)
   }
 
   // default is the name of the file without the extension
-  extension.name = head(split('.', (filesystem.inspect(file) as any).name))
+  extension.name = head(split('.', (fs.inspect(file) as any).name))
 
   // require in the module -- best chance to bomb is here
   let extensionModule = loadModule(file)

@@ -4,7 +4,7 @@ import { strings } from './string-tools'
 import * as os from 'os'
 import * as path from 'path'
 
-import { IFilesystem } from './filesystem-types'
+import { IFilesystem } from './fs-types'
 
 /**
  * Is this a file?
@@ -96,7 +96,7 @@ function getAbsolutePath (templatePath) {
     : path.normalize(path.join(process.cwd(), templatePath));
 }
 
-const filesystem: IFilesystem = Object.assign(
+const fs: IFilesystem = Object.assign(
   {
     eol: os.EOL, // end of line marker
     homedir: os.homedir, // get home directory
@@ -112,4 +112,4 @@ const filesystem: IFilesystem = Object.assign(
   jetpack, // jetpack utilities
 )
 
-export { filesystem, IFilesystem }
+export { fs, IFilesystem }

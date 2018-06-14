@@ -1,44 +1,21 @@
-// import * as expect from 'expect'
-// import { startsWith } from 'ramdasauce'
-// import { Runtime } from '../runtime/runtime'
+import * as expect from 'expect'
+import { Runtime } from '../runtime/runtime'
+import { fs } from '../'
 
-// const createRuntime = () => {
-//   const r = new Runtime()
-//   r.addCoreExtensions()
-//   r.addPlugin(`${__dirname}/../fixtures/good-plugins/generate`)
-//   return r
-// }
+const createRuntime = () => {
+  const r = new Runtime()
+  r.addCoreExtensions()
+  r.addPlugin(`${__dirname}/../fixtures/good-plugins/generate`)
+  return r
+}
 
-// test('generates a simple file', async () => {
-//   const toolbox = await createRuntime().run('simple')
+test('generates a simple file', async () => {
+  const toolbox = await createRuntime().run('simple')
 
-//   expect(toolbox.result).toBe('simple file\n')
-// })
+  expect(fs.exists(toolbox.result)).toBe('dir')
+  expect(fs.exists(`${toolbox.result}/README.md`)).toBe('file')
+  expect(fs.read(`${toolbox.result}/README.md`)).toBe('Simple File test')
 
-// test('supports props', async () => {
-//   const toolbox = await createRuntime().run('props Greetings_and_salutations', {
-//     stars: 5,
-//   })
+  await fs.removeAsync(toolbox.result)
+})
 
-//   expect(toolbox.result).toBe(`greetingsAndSalutations world
-// red
-// green
-// blue
-// *****
-// `)
-// })
-
-// test('detects missing templates', async () => {
-//   try {
-//     await createRuntime().run('missing')
-//   } catch (e) {
-//     expect(startsWith('template not found', e.message)).toBe(true)
-//   }
-// })
-
-// test('supports directories', async () => {
-//   const toolbox = await createRuntime().run('special location')
-
-//   expect(toolbox.result).toBe(`location
-// `)
-// })

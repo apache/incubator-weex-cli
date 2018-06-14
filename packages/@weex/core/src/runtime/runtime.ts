@@ -15,7 +15,7 @@ import { loadConfig } from '../loaders/config-loader'
 import { loadPluginFromDirectory } from '../loaders/plugin-loader'
 
 // tools
-import { filesystem } from '../toolbox/filesystem-tools'
+import { fs } from '../toolbox/fs-tools'
 import { strings } from '../toolbox/string-tools'
 
 // the special run function
@@ -53,15 +53,15 @@ export class Runtime {
       'meta',
       'strings',
       'logger',
-      'filesystem',
+      'fs',
       'semver',
       'system',
       'prompt',
       'http',
       'template',
       'patching',
+      'open'
     ]
-
     coreExtensions.filter(ex => !exclude.includes(ex)).forEach(ex => {
       this.addExtension(ex, require(`../extensions/${ex}-extension`))
     })
@@ -154,7 +154,7 @@ export class Runtime {
    * @returns The plugin that was created or null.
    */
   public addPlugin(directory: string, options: ILoadOptions = {}): Plugin | null {
-    if (!filesystem.isDirectory(directory)) {
+    if (!fs.isDirectory(directory)) {
       if (options.required) {
         throw new Error(`Error: couldn't load plugin (not a directory): ${directory}`)
       } else {
@@ -184,12 +184,12 @@ export class Runtime {
    * @return This runtime.
    */
   public addPlugins(directory: string, options: ILoadOptions & IMultiLoadOptions = {}): Plugin[] {
-    if (strings.isBlank(directory) || !filesystem.isDirectory(directory)) {
+    if (strings.isBlank(directory) || !fs.isDirectory(directory)) {
       return []
     }
 
-    // find matching filesystem.subdirectories
-    const subdirs = filesystem.subdirectories(directory, false, options.matching, true)
+    // find matching fs.subdirectories
+    const subdirs = fs.subdirectories(directory, false, options.matching, true)
     
     // load each one using `this.plugin`
     return subdirs.map(dir => this.addPlugin(dir, dissoc('matching', options)))

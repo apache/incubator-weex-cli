@@ -53,7 +53,7 @@ export interface IToolbox {
   runtime?: Runtime
 
   // known extensions
-  filesystem?: IFilesystem
+  fs?: IFilesystem
   http?: IHttp
   meta?: IMeta
   patching?: IPatching

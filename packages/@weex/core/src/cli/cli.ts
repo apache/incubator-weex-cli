@@ -9,7 +9,7 @@ export async function run(argv?: string[] | string): Promise<IToolbox> {
     .src(__dirname)
     .help()
     .version()
-    .exclude(['semver', 'prompt', 'http', 'patching'])
+    // .exclude(['semver', 'prompt', 'http', 'patching'])
     .plugins(`${__dirname}/../../../plugins`)
     .defaultCommand()
     .create()
