@@ -6,7 +6,7 @@ export { IToolbox, IRunContext, IParameters } from './core/toolbox'
 export { ICommandLine } from './core/command'
 
 // export the toolbox
-export { filesystem, IFilesystem } from './toolbox/filesystem-tools'
+export { fs, IFilesystem } from './toolbox/fs-tools'
 export { strings, IStrings } from './toolbox/string-tools'
 export { logger, ILOGGER } from './toolbox/logger-tools'
 export { system, ISystem } from './toolbox/system-tools'

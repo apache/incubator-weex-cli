@@ -1,6 +1,5 @@
 import { Options } from '../core/options'
-import { filesystem } from '../toolbox/filesystem-tools'
-import { strings } from '../toolbox/string-tools'
+import { fs } from '../toolbox/fs-tools'
 import { logger } from '../toolbox/logger-tools'
 import { IToolbox } from '../core/toolbox'
 import * as Handlebars from 'handlebars'
@@ -14,7 +13,7 @@ import * as match from 'minimatch'
 import * as download from 'download-git-repo'
 import * as inquirer from 'inquirer'
 
-const { isLocalPath, getAbsolutePath } = filesystem
+const { isLocalPath, getAbsolutePath } = fs
 const parser = Consolidate.handlebars.render
 
 // Support types from prompt-for which was used before
@@ -64,34 +63,41 @@ export default function attach(toolbox: IToolbox): void {
       const dirname = path.basename(directory);
       if (isLocalPath(template)) {
         const templatePath = getAbsolutePath(template);
-        if (filesystem.exists(templatePath)) {
+        if (fs.exists(templatePath)) {
           render(dirname, templatePath, directory, (err: any) => {
             if (err) {
+              reject(err)
               logger.error(err)
             }
             else {
+              resolve(`Generated ${dirname}`)
               logger.success(`Generated ${dirname}`);
             }
           }, data);
         }
         else {
           logger.error(`Local template "${template}" not found.`);
+          reject(`Local template "${template}" not found.`);
         }
       }
       // download template from git.
       else {
-        const tmp = path.join(filesystem.homedir(), '.weex-templates', template.replace(/\//g, '-'));
+        const tmp = path.join(fs.homedir(), '.weex-templates', template.replace(/\//g, '-'));
         const spinner = logger.spin(`Downloading template from ${template} repo`);
         spinner.start();
         // Remove if local template exists
-        if (filesystem.exists(tmp)){
-          filesystem.remove(tmp);
+        if (fs.exists(tmp)){
+          fs.remove(tmp);
         }
         download(template, tmp, options, err => {
           spinner.stop();
           if (err) logger.error('Failed to download repo ' + template + ': ' + err.message.trim());
           render(dirname, tmp, directory, err => {
-            if (err) logger.error(err);
+            if (err) {
+              reject(err);
+              logger.error(err);
+            }
+            resolve(`Generated ${dirname}`);
             logger.success(`Generated ${dirname}`);
           }, options && options.defaultProps);
         });
@@ -113,6 +119,7 @@ export default function attach(toolbox: IToolbox): void {
     const metalsmith = Metalsmith(path.join(source, 'template'));
     const data = Object.assign(metalsmith.metadata(), {
       destDirName: name,
+      isNotTest: true,
       inPlace: target === process.cwd()
     })
     opts['helpers'] && Object.keys(opts['helpers']).map(key => {
@@ -124,9 +131,10 @@ export default function attach(toolbox: IToolbox): void {
     if (opts['metalsmith'] && typeof opts['metalsmith']['before'] === 'function') {
       opts['metalsmith']['before'](metalsmith, opts, helpers);
     }
-    metalsmith.use(askQuestions(opts['prompts']))
-      .use(filterFiles(opts['filters']))
-      .use(renderTemplateFiles(opts['skipInterpolation']));
+    metalsmith
+    .use(askQuestions(opts['prompts']))
+    .use(filterFiles(opts['filters']))
+    .use(renderTemplateFiles(opts['skipInterpolation']));
   
     if (typeof opts['metalsmith'] === 'function') {
       opts['metalsmith'](metalsmith, opts, helpers);
@@ -212,7 +220,7 @@ export default function attach(toolbox: IToolbox): void {
     let promptDefault = prompt.default;
     if (typeof prompt.default === 'function') {
       promptDefault = function () {
-        return prompt.default.bind(this)(data);
+        return prompt.default(data);
       };
     }
 
@@ -383,10 +391,10 @@ export default function attach(toolbox: IToolbox): void {
     const js = path.join(dir, 'meta.js');
     let opts = {};
 
-    if (filesystem.exists(json)) {
-      opts = await filesystem.readAsync(json);
+    if (fs.exists(json)) {
+      opts = await fs.readAsync(json);
     }
-    else if (filesystem.exists(js)) {
+    else if (fs.exists(js)) {
       const req = require(path.resolve(js));
       if (req !== Object(req)) {
         throw new Error('meta.js needs to expose an object');
@@ -405,6 +413,9 @@ export default function attach(toolbox: IToolbox): void {
    * @param val
    */
   function setDefault (opts, key, val) {
+    if (typeof opts === 'string') {
+      opts = JSON.parse(opts)
+    }
     if (opts.schema) {
       opts.prompts = opts.schema;
       delete opts.schema;
@@ -427,7 +438,7 @@ export default function attach(toolbox: IToolbox): void {
    * @param opts
    */
   function setValidateName (opts) {
-    const name = opts.prompts.name;
+    const name = opts.prompts['name'] || '';
     const customValidate = name.validate;
     name.validate = name => {
       const its = validateName(name);

@@ -1,5 +1,5 @@
 import { test, is } from 'ramda'
-import { filesystem } from './filesystem-tools'
+import { fs } from './fs-tools'
 import { IPatchingPatchOptions, IPatching } from './patching-types'
 
 /**
@@ -11,7 +11,7 @@ import { IPatchingPatchOptions, IPatching } from './patching-types'
  */
 export async function exists(filename: string, findPattern: string | RegExp): Promise<boolean> {
   // sanity check the filename
-  if (!is(String, filename) || filesystem.isNotFile(filename)) {
+  if (!is(String, filename) || fs.isNotFile(filename)) {
     return false
   }
 
@@ -23,7 +23,7 @@ export async function exists(filename: string, findPattern: string | RegExp): Pr
 
   // read from jetpack -- they guard against a lot of the edge
   // cases and return nil if problematic
-  const contents = filesystem.read(filename)
+  const contents = fs.read(filename)
 
   // only let the strings pass
   if (!is(String, contents)) {
@@ -51,7 +51,7 @@ export async function update(
 
   // only write if they actually sent back something to write
   if (mutatedContents !== false) {
-    await filesystem.writeAsync(filename, mutatedContents, { atomic: true })
+    await fs.writeAsync(filename, mutatedContents, { atomic: true })
   }
 
   return mutatedContents
@@ -111,7 +111,7 @@ export async function patch(filename: string, opts: IPatchingPatchOptions = {}):
 
 export async function readFile(filename: string): Promise<string> {
   // bomb if the file doesn't exist
-  if (!filesystem.isFile(filename)) {
+  if (!fs.isFile(filename)) {
     throw new Error(`file not found ${filename}`)
   }
 
@@ -119,7 +119,7 @@ export async function readFile(filename: string): Promise<string> {
   const fileType = filename.endsWith('.json') ? 'json' : 'utf8'
 
   // read the file
-  return filesystem.readAsync(filename, fileType)
+  return fs.readAsync(filename, fileType)
 }
 
 export function patchString(data: string, opts: IPatchingPatchOptions = {}): string | false {

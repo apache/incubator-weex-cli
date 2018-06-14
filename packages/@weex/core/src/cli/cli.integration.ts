@@ -25,7 +25,7 @@ test('can create a new boilerplate cli', async () => {
   const toolbox = await cli('new foo')
   expect(toolbox.command.name).toBe('new')
 
-  const pkg = toolbox.filesystem.read(`${tmp}/foo/package.json`, 'json')
+  const pkg = toolbox.fs.read(`${tmp}/foo/package.json`, 'json')
 
   expect(typeof pkg).toBe('object')
   expect(pkg.name).toBe('foo')
@@ -45,7 +45,7 @@ test('can create a new boilerplate cli', async () => {
 
   // clean up
   process.chdir(pwd)
-  toolbox.filesystem.remove(`${tmp}/foo`)
+  toolbox.fs.remove(`${tmp}/foo`)
 })
 
 test('can create a new boilerplate TypeScript cli', async () => {
@@ -55,7 +55,7 @@ test('can create a new boilerplate TypeScript cli', async () => {
   const toolbox = await cli('new foo-ts --typescript')
   expect(toolbox.command.name).toBe('new')
 
-  const pkg = toolbox.filesystem.read(`${tmp}/foo-ts/package.json`, 'json')
+  const pkg = toolbox.fs.read(`${tmp}/foo-ts/package.json`, 'json')
 
   expect(typeof pkg).toBe('object')
   expect(pkg.name).toBe('foo-ts')
@@ -89,5 +89,5 @@ test('can create a new boilerplate TypeScript cli', async () => {
 
   // clean up
   process.chdir(pwd)
-  toolbox.filesystem.remove(`${tmp}/foo-ts`)
+  toolbox.fs.remove(`${tmp}/foo-ts`)
 })

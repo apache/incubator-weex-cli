@@ -98,22 +98,22 @@ export interface IFilesystem {
   findAsync(options: IFilesystemFindOptions): Promise<string[]>
 
   /**
-   * Returns details about a filesystem object found at a path.
+   * Returns details about a fs object found at a path.
    */
   inspect(path: string, options?: IFileSystemInspectOptions): IFileSystemInspectResult[] | void
 
   /**
-   * Returns details about a filesystem object found at a path.
+   * Returns details about a fs object found at a path.
    */
   inspectAsync(path: string, options?: IFileSystemInspectOptions): Promise<IFileSystemInspectResult[] | void>
 
   /**
-   * Returns details about a filesystem tree found at the path.
+   * Returns details about a fs tree found at the path.
    */
   inspectTree(path: string, options?: IFileSystemInspectTreeOptions): IFileSystemInspectTreeResult | void
 
   /**
-   * Returns details about a filesystem tree found at the path.
+   * Returns details about a fs tree found at the path.
    */
   inspectTreeAsync(path: string, options?: IFileSystemInspectTreeOptions): Promise<IFileSystemInspectTreeResult | void>
 
@@ -301,7 +301,7 @@ export interface IFilesystemExtensionExtra {
   eol: string
 
   /**
-   * The filesystem separator character.
+   * The fs separator character.
    */
   separator: string
 

@@ -1,6 +1,6 @@
 import { head, is, isNil, last, reject, split, takeLast } from 'ramda'
 import { Command, ICommandLine } from '../core/command'
-import { filesystem } from '../toolbox/filesystem-tools'
+import { fs } from '../toolbox/fs-tools'
 import { strings } from '../toolbox/string-tools'
 import { loadModule } from './module-loader'
 import { Options } from '../core/options'
@@ -20,14 +20,14 @@ export function loadCommandFromFile(file: string, options: Options = {}): Comman
   }
 
   // not a file?
-  if (filesystem.isNotFile(file)) {
+  if (fs.isNotFile(file)) {
     throw new Error(`Error: couldn't load command (this isn't a file): ${file}`)
   }
 
   // remember the file
   command.file = file
   // default name is the name without the file extension
-  command.name = head(split('.', (filesystem.inspect(file) as any).name))
+  command.name = head(split('.', (fs.inspect(file) as any).name))
   // strip the extension from the end of the commandPath
   command.commandPath = (options.commandPath || last(file.split('/commands/')).split('/')).map(
     f => ([`${command.name}.js`, `${command.name}.ts`].includes(f) ? command.name : f),

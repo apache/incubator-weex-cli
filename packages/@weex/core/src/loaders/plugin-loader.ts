@@ -2,7 +2,7 @@ import * as jetpack from 'fs-jetpack'
 import { map } from 'ramda'
 import { Plugin } from '../core/plugin'
 import { Options } from '../core/options'
-import { filesystem } from '../toolbox/filesystem-tools'
+import { fs } from '../toolbox/fs-tools'
 import { strings } from '../toolbox/string-tools'
 import { loadCommandFromFile, loadCommandFromPreload } from './command-loader'
 import { loadConfig } from './config-loader'
@@ -33,7 +33,7 @@ export function loadPluginFromDirectory(directory: string, options: Options = {}
   }
 
   // directory check
-  if (filesystem.isNotDirectory(directory)) {
+  if (fs.isNotDirectory(directory)) {
     throw new Error(`Error: couldn't load plugin (not a directory): ${directory}`)
   }
 
