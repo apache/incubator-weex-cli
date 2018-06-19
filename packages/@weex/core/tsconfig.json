@@ -9,6 +9,9 @@
     //   "./typings",
     //   "./node_modules/@types"
     // ],
+    "types": [
+      "node"
+    ],
     "sourceMap": true,
     "rootDir": "src",
     "noImplicitAny": false,

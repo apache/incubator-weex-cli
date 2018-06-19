@@ -1,5 +1,5 @@
 import * as CLITable from 'cli-table2'
-import * as importedColors from 'colors'
+import * as importedColors from 'colors/safe'
 import * as Gauge from 'gauge'
 import { commandInfo } from './meta-tools'
 import { Toolbox } from '../core/toolbox'
