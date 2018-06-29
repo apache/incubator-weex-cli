@@ -10,7 +10,6 @@ import { Options } from '../core/options'
 export function loadConfig(name: string, src: string): Options {
   // attempt to load
   const cosmic: Options = cosmiconfig(name).searchSync(src)
-
   // use what we found or fallback to an empty object
   const config = (cosmic && cosmic.config) || {}
   return config

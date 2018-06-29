@@ -81,7 +81,7 @@ function subdirectories(
  * @returns `true` if the path is a local path, otherwise `false`.
  */
 function isLocalPath(path: string) {
-  return /^[./]|(^[a-zA-Z]:)/.test(path);
+  return /^[./]|(^[a-zA-Z]:)/.test(path)
 }
 
 /**
@@ -90,10 +90,8 @@ function isLocalPath(path: string) {
  * @param templatePath The path to check.
  * @returns `true` if the path is a local path, otherwise `false`.
  */
-function getAbsolutePath (templatePath) {
-  return path.isAbsolute(templatePath)
-    ? templatePath
-    : path.normalize(path.join(process.cwd(), templatePath));
+function getAbsolutePath(templatePath) {
+  return path.isAbsolute(templatePath) ? templatePath : path.normalize(path.join(process.cwd(), templatePath))
 }
 
 const fs: IFilesystem = Object.assign(
@@ -107,7 +105,7 @@ const fs: IFilesystem = Object.assign(
     isDirectory,
     isNotDirectory,
     isLocalPath,
-    getAbsolutePath
+    getAbsolutePath,
   },
   jetpack, // jetpack utilities
 )

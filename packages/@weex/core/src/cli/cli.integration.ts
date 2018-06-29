@@ -73,16 +73,6 @@ test('can create a new boilerplate TypeScript cli', async () => {
   const genCommand = await toolbox.system.run(`${tmp}/foo-ts/bin/foo-ts g model test`)
   expect(stripANSI(genCommand)).toMatchSnapshot()
 
-  // Add a command that exercises a lot of I features
-  // Incidentally, it verifies that the template tool works
-  const generateResult = await toolbox.template.generate({
-    template: `test/kitchen-sink-command.js.ejs`,
-    target: `${tmp}/foo-ts/commands/kitchen.js`,
-  })
-
-  // Verify the result of the generated command
-  expect(generateResult.includes('module.exports = {')).toBe(true)
-
   // Run that command and check the result
   const kitchenCommand = await toolbox.system.run(`${tmp}/foo-ts/bin/foo-ts kitchen`)
   console.log(kitchenCommand)

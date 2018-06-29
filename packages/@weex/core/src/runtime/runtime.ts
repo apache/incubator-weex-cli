@@ -60,7 +60,7 @@ export class Runtime {
       'http',
       'template',
       'patching',
-      'open'
+      'open',
     ]
     coreExtensions.filter(ex => !exclude.includes(ex)).forEach(ex => {
       this.addExtension(ex, require(`../extensions/${ex}-extension`))
@@ -190,7 +190,7 @@ export class Runtime {
 
     // find matching fs.subdirectories
     const subdirs = fs.subdirectories(directory, false, options.matching, true)
-    
+
     // load each one using `this.plugin`
     return subdirs.map(dir => this.addPlugin(dir, dissoc('matching', options)))
   }

@@ -46,7 +46,7 @@ const SEVERITY = {
   warn: 3000,
   info: 3000,
   error: 5000,
-  success: 10000
+  success: 10000,
 }
 
 const LOGLEVEL = {
@@ -55,9 +55,8 @@ const LOGLEVEL = {
   WARN: 'warn',
   INFO: 'info',
   ERROR: 'error',
-  SUCCESS: 'success'
-};
-
+  SUCCESS: 'success',
+}
 
 let DEFAULT_LOGLEVEL = LOGLEVEL.LOG
 
@@ -148,9 +147,9 @@ function table(data: string[][], options: any = {}): void {
  *
  * @param message The message to write.
  */
-function setLevel(logLevel: string): void{
-  DEFAULT_LOGLEVEL = logLevel;
-};
+function setLevel(logLevel: string): void {
+  DEFAULT_LOGLEVEL = logLevel
+}
 
 /**
  * Prints text without theming.
@@ -244,7 +243,7 @@ function spin(config?: string | object): any {
 }
 
 function progress(stream?: any, options?: any) {
-  return new Gauge(stream, options);
+  return new Gauge(stream, options)
 }
 /**
  * Prints the list of commands.
@@ -292,4 +291,4 @@ const logger: ILOGGER = {
   xmark,
 }
 
-export { logger, ILOGGER, LOGLEVEL}
+export { logger, ILOGGER, LOGLEVEL }

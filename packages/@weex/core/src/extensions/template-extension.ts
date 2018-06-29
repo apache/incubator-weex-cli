@@ -19,8 +19,8 @@ const parser = Consolidate.handlebars.render
 // Support types from prompt-for which was used before
 const promptMapping = {
   string: 'input',
-  boolean: 'confirm'
-};
+  boolean: 'confirm',
+}
 
 export interface ITemplate {
   generate(directory: string, template: string, options: Options, data?: any): Promise<string>
@@ -37,17 +37,13 @@ export interface IGenerateOptions {
  */
 export default function attach(toolbox: IToolbox): void {
   // register handlebars helper
-  Handlebars.registerHelper('if_eq', function (a, b, opts) {
-    return a === b
-      ? opts.fn(Handlebars)
-      : opts.inverse(Handlebars);
-  });
+  Handlebars.registerHelper('if_eq', function(a, b, opts) {
+    return a === b ? opts.fn(Handlebars) : opts.inverse(Handlebars)
+  })
 
-  Handlebars.registerHelper('unless_eq', function (a, b, opts) {
-    return a === b
-      ? opts.inverse(Handlebars)
-      : opts.fn(Handlebars);
-  });
+  Handlebars.registerHelper('unless_eq', function(a, b, opts) {
+    return a === b ? opts.inverse(Handlebars) : opts.fn(Handlebars)
+  })
 
   /**
    * Generates a file from a template.
@@ -60,104 +56,114 @@ export default function attach(toolbox: IToolbox): void {
    */
   async function generate(directory: string, template: string, options: Options, data?: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      const dirname = path.basename(directory);
+      const dirname = path.basename(directory)
       if (isLocalPath(template)) {
-        const templatePath = getAbsolutePath(template);
+        const templatePath = getAbsolutePath(template)
         if (fs.exists(templatePath)) {
-          render(dirname, templatePath, directory, (err: any) => {
-            if (err) {
-              reject(err)
-              logger.error(err)
-            }
-            else {
-              resolve(`Generated ${dirname}`)
-              logger.success(`Generated ${dirname}`);
-            }
-          }, data);
-        }
-        else {
-          logger.error(`Local template "${template}" not found.`);
-          reject(`Local template "${template}" not found.`);
+          return render(
+            dirname,
+            templatePath,
+            directory,
+            (err: any) => {
+              if (err) {
+                reject(err)
+                logger.error(err)
+              } else {
+                resolve(`Generated ${dirname}`)
+                logger.success(`Generated ${dirname}`)
+              }
+            },
+            data,
+          )
+        } else {
+          logger.error(`Local template "${template}" not found.`)
+          reject(`Local template "${template}" not found.`)
         }
       }
       // download template from git.
       else {
-        const tmp = path.join(fs.homedir(), '.weex-templates', template.replace(/\//g, '-'));
-        const spinner = logger.spin(`Downloading template from ${template} repo`);
-        spinner.start();
+        const tmp = path.join(fs.homedir(), '.weex-templates', template.replace(/\//g, '-'))
+        const spinner = logger.spin(`Downloading template from ${template} repo`)
+        spinner.start()
         // Remove if local template exists
-        if (fs.exists(tmp)){
-          fs.remove(tmp);
+        if (fs.exists(tmp)) {
+          fs.remove(tmp)
         }
         download(template, tmp, options, err => {
-          spinner.stop();
-          if (err) logger.error('Failed to download repo ' + template + ': ' + err.message.trim());
-          render(dirname, tmp, directory, err => {
-            if (err) {
-              reject(err);
-              logger.error(err);
-            }
-            resolve(`Generated ${dirname}`);
-            logger.success(`Generated ${dirname}`);
-          }, options && options.defaultProps);
-        });
+          spinner.stop()
+          if (err) logger.error('Failed to download repo ' + template + ': ' + err.message.trim())
+          return render(
+            dirname,
+            tmp,
+            directory,
+            err => {
+              if (err) {
+                reject(err)
+                logger.error(err)
+              }
+              resolve(`Generated ${dirname}`)
+              logger.success(`Generated ${dirname}`)
+            },
+            options && options.defaultProps,
+          )
+        })
       }
-    });
+    })
   }
 
   /**
    * Render files
    *
-   * @param name 
+   * @param name
    * @param source source path
    * @param target target path.
    * @param done callback function
    * @return data
    */
   async function render(name: string, source: string, target: string, done: any, options?: any) {
-    const opts = await getOptions(name, source, options);
-    const metalsmith = Metalsmith(path.join(source, 'template'));
+    const opts = await getOptions(name, source, options)
+    const metalsmith = Metalsmith(path.join(source, 'template'))
     const data = Object.assign(metalsmith.metadata(), {
       destDirName: name,
       isNotTest: true,
-      inPlace: target === process.cwd()
+      inPlace: target === process.cwd(),
     })
-    opts['helpers'] && Object.keys(opts['helpers']).map(key => {
-      Handlebars.registerHelper(key, opts['helpers'][key]);
-    })
+    opts['helpers'] &&
+      Object.keys(opts['helpers']).map(key => {
+        Handlebars.registerHelper(key, opts['helpers'][key])
+      })
 
     const helpers = { logger }
-    
+
     if (opts['metalsmith'] && typeof opts['metalsmith']['before'] === 'function') {
-      opts['metalsmith']['before'](metalsmith, opts, helpers);
+      opts['metalsmith']['before'](metalsmith, opts, helpers)
     }
     metalsmith
-    .use(askQuestions(opts['prompts']))
-    .use(filterFiles(opts['filters']))
-    .use(renderTemplateFiles(opts['skipInterpolation']));
-  
+      .use(askQuestions(opts['prompts']))
+      .use(filterFiles(opts['filters']))
+      .use(renderTemplateFiles(opts['skipInterpolation']))
+
     if (typeof opts['metalsmith'] === 'function') {
-      opts['metalsmith'](metalsmith, opts, helpers);
+      opts['metalsmith'](metalsmith, opts, helpers)
+    } else if (opts['metalsmith'] && typeof opts['metalsmith']['after'] === 'function') {
+      opts['metalsmith']['after'](metalsmith, opts, helpers)
     }
-    else if (opts['metalsmith'] && typeof opts['metalsmith']['after'] === 'function') {
-      opts['metalsmith']['after'](metalsmith, opts, helpers);
-    }
-  
-    metalsmith.clean(false)
+
+    metalsmith
+      .clean(false)
       .source('.') // start from template root instead of `./src` which is Metalsmith's default for `source`
       .destination(target)
       .build((err, files) => {
-        done(err);
+        done(err)
         if (typeof opts['complete'] === 'function') {
-          const helpers = { logger, files };
-          opts['complete'](data, helpers);
+          const helpers = { logger, files }
+          opts['complete'](data, helpers)
+        } else {
+          logMessage(opts['completeMessage'], data)
         }
-        else {
-          logMessage(opts['completeMessage'], data);
-        }
-      });
-  
-    return data;
+      })
+
+    return data
   }
 
   /**
@@ -166,16 +172,21 @@ export default function attach(toolbox: IToolbox): void {
    * @param message
    * @param data
    */
-  function logMessage (message, data) {
-    if (!message) return;
+  function logMessage(message, data) {
+    if (!message) return
     parser(message, data, (err, res) => {
       if (err) {
-        logger.error('\n   Error when rendering template complete message: ' + err.message.trim());
+        logger.error('\n   Error when rendering template complete message: ' + err.message.trim())
+      } else {
+        logger.log(
+          '\n' +
+            res
+              .split(/\r?\n/g)
+              .map(line => '   ' + line)
+              .join('\n'),
+        )
       }
-      else {
-        logger.log('\n' + res.split(/\r?\n/g).map(line => '   ' + line).join('\n'));
-      }
-    });
+    })
   }
 
   /**
@@ -184,10 +195,10 @@ export default function attach(toolbox: IToolbox): void {
    * @param prompts
    * @return
    */
-  function askQuestions (prompts) {
+  function askQuestions(prompts) {
     return (files, metalsmith, done) => {
-      ask(prompts, metalsmith.metadata(), done);
-    };
+      ask(prompts, metalsmith.metadata(), done)
+    }
   }
 
   /**
@@ -197,11 +208,15 @@ export default function attach(toolbox: IToolbox): void {
    * @param data
    * @param done
    */
-  function ask (prompts, data, done) {
-    Async.eachSeries(Object.keys(prompts), (key, next) => {
-      prompt(data, key, prompts[key], next);
-    }, done);
-  };
+  function ask(prompts, data, done) {
+    Async.eachSeries(
+      Object.keys(prompts),
+      (key, next) => {
+        prompt(data, key, prompts[key], next)
+      },
+      done,
+    )
+  }
 
   /**
    * Inquirer prompt wrapper.
@@ -211,41 +226,44 @@ export default function attach(toolbox: IToolbox): void {
    * @param prompt
    * @param done
    */
-  function prompt (data, key, prompt, done) {
+  function prompt(data, key, prompt, done) {
     // skip prompts whose when condition is not met
     if (prompt.when && !evaluate(prompt.when, data)) {
       return done()
     }
 
-    let promptDefault = prompt.default;
+    let promptDefault = prompt.default
     if (typeof prompt.default === 'function') {
-      promptDefault = function () {
-        return prompt.default(data);
-      };
+      promptDefault = function() {
+        return prompt.default(data)
+      }
     }
 
-    inquirer.prompt([{
-      type: promptMapping[prompt.type] || prompt.type,
-      name: key,
-      message: prompt.message || prompt.label || key,
-      default: promptDefault,
-      choices: prompt.choices || [],
-      validate: prompt.validate || (() => true)
-    }]).then(answers => {
-      if (Array.isArray(answers[key])) {
-        data[key] = {};
-        answers[key].forEach(multiChoiceAnswer => {
-          data[key][multiChoiceAnswer] = true;
-        });
-      }
-      else if (typeof answers[key] === 'string') {
-        data[key] = answers[key].replace(/"/g, '\\"');
-      }
-      else {
-        data[key] = answers[key];
-      }
-      done();
-    }).catch(done);
+    inquirer
+      .prompt([
+        {
+          type: promptMapping[prompt.type] || prompt.type,
+          name: key,
+          message: prompt.message || prompt.label || key,
+          default: promptDefault,
+          choices: prompt.choices || [],
+          validate: prompt.validate || (() => true),
+        },
+      ])
+      .then(answers => {
+        if (Array.isArray(answers[key])) {
+          data[key] = {}
+          answers[key].forEach(multiChoiceAnswer => {
+            data[key][multiChoiceAnswer] = true
+          })
+        } else if (typeof answers[key] === 'string') {
+          data[key] = answers[key].replace(/"/g, '\\"')
+        } else {
+          data[key] = answers[key]
+        }
+        done()
+      })
+      .catch(done)
   }
 
   /**
@@ -254,12 +272,11 @@ export default function attach(toolbox: IToolbox): void {
    * @param filters
    * @return
    */
-  function filterFiles (filters) {
+  function filterFiles(filters) {
     return (files, metalsmith, done) => {
-      filter(files, filters, metalsmith.metadata(), done);
-    };
+      filter(files, filters, metalsmith.metadata(), done)
+    }
   }
-
 
   /**
    * Filter the files which match the pattern.
@@ -270,38 +287,37 @@ export default function attach(toolbox: IToolbox): void {
    * @param done
    * @return
    */
-  function filter(files, filters, data, done){
+  function filter(files, filters, data, done) {
     if (!filters) {
-      return done();
+      return done()
     }
-    const fileNames = Object.keys(files);
+    const fileNames = Object.keys(files)
     Object.keys(filters).forEach(glob => {
       fileNames.forEach(file => {
         if (match(file, glob, { dot: true })) {
-          const condition = filters[glob];
+          const condition = filters[glob]
           if (!evaluate(condition, data)) {
-            delete files[file];
+            delete files[file]
           }
         }
-      });
-    });
-    return done();
+      })
+    })
+    return done()
   }
 
   /**
    * Evaluate an expression in meta.json in the context of
    * prompt answers data.
    */
-  function evaluate (exp, data) {
+  function evaluate(exp, data) {
     /* eslint-disable no-new-func */
-    const fn = new Function('data', 'with (data) { return ' + exp + '}');
+    const fn = new Function('data', 'with (data) { return ' + exp + '}')
     try {
-      return fn(data);
+      return fn(data)
+    } catch (e) {
+      logger.error('Error when evaluating filter condition: ' + exp)
     }
-    catch (e) {
-      logger.error('Error when evaluating filter condition: ' + exp);
-    }
-  };
+  }
 
   /**
    * Template in place plugin.
@@ -311,52 +327,54 @@ export default function attach(toolbox: IToolbox): void {
    * @param done
    */
 
-  function renderTemplateFiles (skipInterpolation) {
-    skipInterpolation = typeof skipInterpolation === 'string'
-      ? [skipInterpolation]
-      : skipInterpolation;
+  function renderTemplateFiles(skipInterpolation) {
+    skipInterpolation = typeof skipInterpolation === 'string' ? [skipInterpolation] : skipInterpolation
     return (files, metalsmith, done) => {
-      const keys = Object.keys(files);
-      const metalsmithMetadata = metalsmith.metadata();
-      Async.each(keys, (file, next) => {
-        // skipping files with skipInterpolation option
-        if (skipInterpolation && multimatch([file], skipInterpolation, { dot: true }).length) {
-          return next();
-        }
-        const rawFileName = file;
-        const rawBuffer = files[file];
-        const contents = rawBuffer.contents.toString();
-        // do not attempt to render files that do not have mustaches
-        if (!/{{([^{}]+)}}/g.test(contents) && !/{{([^{}]+)}}/g.test(file)) {
-          return next();
-        }
-
-        // first replace filename
-        parser(file, metalsmithMetadata, (err, res) => {
-          if (err) {
-            err.message = `[${file}] ${err.message}`;
-            return next(err);
+      const keys = Object.keys(files)
+      const metalsmithMetadata = metalsmith.metadata()
+      Async.each(
+        keys,
+        (file, next) => {
+          // skipping files with skipInterpolation option
+          if (skipInterpolation && multimatch([file], skipInterpolation, { dot: true }).length) {
+            return next()
           }
-          file = res;
-          // second replace file contents
-          parser(contents, metalsmithMetadata, (err, res) => {
-            if (err) {
-              err.message = `[${file}] ${err.message}`;
-              return next(err);
-            }
-            files[file] = rawBuffer;
-            files[file].contents = new Buffer(res);
+          const rawFileName = file
+          const rawBuffer = files[file]
+          const contents = rawBuffer.contents.toString()
+          // do not attempt to render files that do not have mustaches
+          if (!/{{([^{}]+)}}/g.test(contents) && !/{{([^{}]+)}}/g.test(file)) {
+            return next()
+          }
 
-            // delete old buffer
-            if (rawFileName !== file) {
-              files[rawFileName] = null;
-              delete files[rawFileName];
+          // first replace filename
+          parser(file, metalsmithMetadata, (err, res) => {
+            if (err) {
+              err.message = `[${file}] ${err.message}`
+              return next(err)
             }
-            next();
-          });
-        });
-      }, done);
-    };
+            file = res
+            // second replace file contents
+            parser(contents, metalsmithMetadata, (err, res) => {
+              if (err) {
+                err.message = `[${file}] ${err.message}`
+                return next(err)
+              }
+              files[file] = rawBuffer
+              files[file].contents = new Buffer(res)
+
+              // delete old buffer
+              if (rawFileName !== file) {
+                files[rawFileName] = null
+                delete files[rawFileName]
+              }
+              next()
+            })
+          })
+        },
+        done,
+      )
+    }
   }
 
   /**
@@ -367,18 +385,18 @@ export default function attach(toolbox: IToolbox): void {
    * @param opt
    * @return {Object}
    */
-  async function getOptions (name: string, dir: string, opt: any){
-    const opts = await getMetadata(dir);
-  
-    setDefault(opts, 'name', name);
-    setValidateName(opts);
-  
+  async function getOptions(name: string, dir: string, opt: any) {
+    const opts = await getMetadata(dir)
+
+    setDefault(opts, 'name', name)
+    setValidateName(opts)
+
     for (const key in opt) {
-      setDefault(opts, key, opt[key]);
+      setDefault(opts, key, opt[key])
     }
-  
-    return opts;
-  };
+
+    return opts
+  }
 
   /**
    * Gets the metadata from either a meta.json or meta.js file.
@@ -386,24 +404,22 @@ export default function attach(toolbox: IToolbox): void {
    * @param  dir
    * @return {Object}
    */
-  async function getMetadata (dir: string) {
-    const json = path.join(dir, 'meta.json');
-    const js = path.join(dir, 'meta.js');
-    let opts = {};
+  async function getMetadata(dir: string) {
+    const json = path.join(dir, 'meta.json')
+    const js = path.join(dir, 'meta.js')
+    let opts = {}
 
     if (fs.exists(json)) {
-      opts = await fs.readAsync(json);
-    }
-    else if (fs.exists(js)) {
-      const req = require(path.resolve(js));
+      opts = await fs.readAsync(json)
+    } else if (fs.exists(js)) {
+      const req = require(path.resolve(js))
       if (req !== Object(req)) {
-        throw new Error('meta.js needs to expose an object');
+        throw new Error('meta.js needs to expose an object')
       }
-      opts = req;
+      opts = req
     }
-    return opts;
+    return opts
   }
-
 
   /**
    * Set the default value for a prompt question
@@ -412,23 +428,22 @@ export default function attach(toolbox: IToolbox): void {
    * @param key
    * @param val
    */
-  function setDefault (opts, key, val) {
+  function setDefault(opts, key, val) {
     if (typeof opts === 'string') {
       opts = JSON.parse(opts)
     }
     if (opts.schema) {
-      opts.prompts = opts.schema;
-      delete opts.schema;
+      opts.prompts = opts.schema
+      delete opts.schema
     }
-    const prompts = opts.prompts || (opts.prompts = {});
+    const prompts = opts.prompts || (opts.prompts = {})
     if (!prompts[key] || typeof prompts[key] !== 'object') {
       prompts[key] = {
-        'type': 'string',
-        'default': val
-      };
-    }
-    else {
-      prompts[key]['default'] = val;
+        type: 'string',
+        default: val,
+      }
+    } else {
+      prompts[key]['default'] = val
     }
   }
 
@@ -437,18 +452,18 @@ export default function attach(toolbox: IToolbox): void {
    *
    * @param opts
    */
-  function setValidateName (opts) {
-    const name = opts.prompts['name'] || '';
-    const customValidate = name.validate;
+  function setValidateName(opts) {
+    const name = opts.prompts['name'] || ''
+    const customValidate = name.validate
     name.validate = name => {
-      const its = validateName(name);
+      const its = validateName(name)
       if (!its.validForNewPackages) {
-        const errors = (its.errors || []).concat(its.warnings || []);
-        return 'Sorry, ' + errors.join(' and ') + '.';
+        const errors = (its.errors || []).concat(its.warnings || [])
+        return 'Sorry, ' + errors.join(' and ') + '.'
       }
-      if (typeof customValidate === 'function') return customValidate(name);
-      return true;
-    };
+      if (typeof customValidate === 'function') return customValidate(name)
+      return true
+    }
   }
 
   toolbox.template = { generate }
