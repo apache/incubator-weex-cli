@@ -18,4 +18,3 @@ test('generates a simple file', async () => {
 
   await fs.removeAsync(toolbox.result)
 })
-

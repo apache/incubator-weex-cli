@@ -29,7 +29,6 @@ test('info', () => {
   expect(spyLogger).toMatchSnapshot()
 })
 
-
 test('setLevel', () => {
   logger.setLevel('error')
   logger.info('info')
@@ -70,5 +69,3 @@ test('colors', () => {
   expect(typeof logger.colors.line).toBe('function')
   expect(typeof logger.colors.muted).toBe('function')
 })
-
-

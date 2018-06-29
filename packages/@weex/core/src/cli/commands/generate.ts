@@ -11,7 +11,7 @@ export default {
       fs,
       logger,
       prompt,
-      strings
+      strings,
     } = toolbox
     const { kebabCase } = strings
     const name = parameters.first
@@ -34,12 +34,11 @@ export default {
         spinner.start()
         fs.remove(path.join(process.cwd(), name))
         spinner.stop()
-      }
-      else {
-        return 
+      } else {
+        return undefined
       }
     }
-    
+
     await generate(path.join(process.cwd(), name), path.join(process.cwd(), './templates/weex-toolkit-plugin'), {})
-  }
+  },
 }

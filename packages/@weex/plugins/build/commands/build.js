@@ -2,6 +2,7 @@ const path = require("path");
 
 module.exports = {
   name: "build",
+  description: 'Compile weex bundle',
   alias: "b",
   run: async context => {
     const options = context.parameters.options;

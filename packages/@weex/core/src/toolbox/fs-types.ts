@@ -227,7 +227,7 @@ export interface IFilesystem {
    * Is this not a local path?
    */
   isLocalPath(path: string): boolean
-  
+
   /**
    * Get the absolute path
    */

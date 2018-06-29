@@ -61,4 +61,3 @@ test('name must pass regex', async () => {
   expect(error.getCall(0).args).toEqual([`${name} is not a valid name. Use lower-case and dashes only.`])
   expect(error.getCall(1).args).toEqual([`Suggested: weex g ${strings.kebabCase(name)}.`])
 })
-
