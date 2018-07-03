@@ -1,5 +1,5 @@
 {
-  "name": "@weex/build",
+  "name": "@weex-cli/build",
   "version": "1.0.0",
   "description": "Plugin for compile weex file.",
   "main": "index.js",
