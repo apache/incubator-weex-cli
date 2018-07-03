@@ -1,12 +1,11 @@
 {
-  "name": "@weex/core",
-  "version": "1.0.0",
+  "name": "@weex-cli/core",
+  "version": "1.0.0-beta.0",
   "description": "Core for weex-toolkit",
   "main": "index.js",
   "scripts": {
-    "build": "yarn format && yarn clean && yarn compile && yarn copy-templates",
+    "build": "yarn format && yarn clean && yarn compile",
     "clean": "rm -rf ./lib",
-    "copy-templates": "cp -a ./src/cli/templates ./lib/cli/",
     "compile": "tsc -p ./",
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
@@ -18,8 +17,8 @@
     "test:watch": "jest --watch",
     "watch": "tsc -watch -p ./"
   },
-  "author": "Erha19<faterrole@gmail.com>",
-  "license": "ISC",
+  "author": "Erha19 <faterrole@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "apisauce": "^0.15.1",
     "app-module-path": "^2.2.0",
@@ -31,6 +30,7 @@
     "cross-spawn": "^6.0.5",
     "download-git-repo": "^1.0.2",
     "enquirer": "^1.0.3",
+    "execa": "^0.10.0",
     "fs-jetpack": "^1.3.0",
     "handlebars": "^4.0.11",
     "inquirer": "^6.0.0",
@@ -126,5 +126,12 @@
       "prettier --write",
       "git add"
     ]
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weexteam/weex-toolkit/issues"
+  },
+  "keywords": [
+    "core"
+  ]
 }

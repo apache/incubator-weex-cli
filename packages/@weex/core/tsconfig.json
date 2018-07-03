@@ -6,7 +6,8 @@
     "outDir": "lib",
     "lib": ["es2016", "es2016.array.include", "scripthost"],
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "plugins": [{
       "name": "typescript-plugin-add-type"
