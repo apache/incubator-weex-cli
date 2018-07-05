@@ -7,7 +7,26 @@
 
 ## Introduction
 
-This develop branch for `weex-toolkit@2.0`.
+This is the branch that develops weex-toolkit2.0.
+
+## Goals
+
+We hope to get the following goals:
+
+- Flawless installation and upgrade experience.
+- Better unit & functional testing support.
+- Reasonable Node-side command line solution that can be used by all Node-side programs.
+- Some feartures and optimization for the submodules, such as `weex-debugger`, `weexpack` and so on.
+
+More detail you can see the [milestone](https://github.com/weexteam/weex-toolkit/milestone).
+
+## Basic architecture diagram
+
+![Basic architecture diagram](https://img.alicdn.com/tfs/TB10GYeCAyWBuNjy0FpXXassXXa-743-585.png)
+
+## Lifecycle
+
+![Life-cycle](https://img.alicdn.com/tfs/TB1MHroCrSYBuNjSspiXXXNzpXa-678-1018.png)
 
 ## Issue & Feedback
 
