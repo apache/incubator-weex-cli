@@ -9,16 +9,16 @@ export async function run(
     help?: any
     defaultCommand?: any
     version?: any
-    plugin: {
+    plugin?: {
       value?: string
       options?: any
     }
-    plugins: {
+    plugins?: {
       value?: string
       options?: any
     }
     exclude?: string[]
-  } = { plugin: {}, plugins: {} },
+  } = {},
 ): Promise<IToolbox> {
   // create a CLI runtime
   const cli = build('weex')
@@ -26,8 +26,8 @@ export async function run(
     .help(options.help)
     .version(options.version)
     .exclude(options.exclude)
-    .plugin(options.plugin.value, options.plugin.options)
-    .plugins(options.plugins.value, options.plugins.options)
+    .plugin(options.plugin && options.plugin.value || '', options.plugin && options.plugin.options || '')
+    .plugins(options.plugins && options.plugins.value || '', options.plugins && options.plugins.options || '')
     .defaultCommand(options.defaultCommand)
     .create()
   // and run it
