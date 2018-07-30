@@ -50,7 +50,7 @@ export class Builder {
   /**
    * Excludes core libraries if they're not needed, for performance reasons.
    */
-  public exclude(excludes: string[]) {
+  public exclude(excludes: string[] = []) {
     this.data.excludes = excludes
     return this
   }
@@ -87,7 +87,9 @@ export class Builder {
    * @return self.
    */
   public plugins(value: string, options: ILoadOptions & IMultiLoadOptions = {}): Builder {
-    this.data.multiPlugins.push({ value, options })
+    if (value) {
+      this.data.multiPlugins.push({ value, options })
+    }
     return this
   }
 
