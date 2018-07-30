@@ -5,15 +5,29 @@ import { build, IToolbox } from '../index'
  */
 export async function run(
   argv?: string[] | string,
-  options?: { help?: any; defaultCommand?: any; command?: any; plugin?: string; plugins?: string; exclude?: string[] },
+  options: {
+    help?: any
+    defaultCommand?: any
+    version?: any
+    plugin: {
+      value?: string
+      options?: any
+    }
+    plugins: {
+      value?: string
+      options?: any
+    }
+    exclude?: string[]
+  } = { plugin: {}, plugins: {} },
 ): Promise<IToolbox> {
   // create a CLI runtime
   const cli = build('weex')
     .src(__dirname)
     .help(options.help)
-    .version(options.command)
+    .version(options.version)
     .exclude(options.exclude)
-    .plugins(options.plugins)
+    .plugin(options.plugin.value, options.plugin.options)
+    .plugins(options.plugins.value, options.plugins.options)
     .defaultCommand(options.defaultCommand)
     .create()
   // and run it
