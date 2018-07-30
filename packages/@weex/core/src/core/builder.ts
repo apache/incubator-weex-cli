@@ -75,7 +75,9 @@ export class Builder {
    * @return self.
    */
   public plugin(value: string, options: ILoadOptions = {}): Builder {
-    this.data.plugins.push({ value, options })
+    if (value) {
+      this.data.plugins.push({ value, options })
+    }
     return this
   }
 
