@@ -381,11 +381,12 @@ ${androidMockApi}
     environment += `importScripts('${env.jsframework}');\n`;
     // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
-  if (env.importScripts && env.importScripts.length > 0) {
-    env.importScripts.forEach(script => {
-      environment += `importScripts('${script}');\n`;
-    });
-  }
+  // environment += `importScripts('/lib/runtime/jsservice.js');\n`
+  // if (env.importScripts && env.importScripts.length > 0) {
+  //   env.importScripts.forEach(script => {
+  //     environment += `importScripts('${script}');\n`;
+  //   });
+  // }
   return `${environment}
 ${worker}
   `;

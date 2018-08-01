@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start Debugger Entry</title>
+    <link rel="stylesheet" href="assets/styles/entry.css">
+    <script src="vendor/qrcode.js"></script>
+    <script src="lib/utils/toast.js"></script>
+    <script src="lib/i18n/locale.js"></script>
+    <script src="lib/i18n/i18n.js"></script>
+</head>
+<body>
+<div class="ctn">
+    <div class="logo">
+        <img src="assets/images/logo.svg" alt="">
+    </div>
+    <div class="qrcode-wrap loading-state">
+        <div class="qrcode-ctn">
+            <div id="qrcode"></div>
+
+        </div>
+        <div class="loading-ctn">
+            <div class="loading">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <div class="description i18n">
+        <b>${SCAN}</b> ${OR} <b>${CLICK}</b> ${TIPS}
+
+        <div class="scan-tips"> ${SCAN_TIPS}</div>
+    </div>
+    <div class="version i18n">${VERSION}
+        <div class="click-tips" >${CLICK_TIPS}</div>
+    </div>
+
+</div>
+<div class="mask"></div>
+<div class="help">
+    <span class="iconfont icon-bangzhu"></span>
+</div>
+</body>
+<script src="lib/common.js"></script>
+<script src="lib/app.js"></script>
+</html>

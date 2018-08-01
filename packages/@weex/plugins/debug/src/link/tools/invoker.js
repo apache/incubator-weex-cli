@@ -1,4 +1,5 @@
 const invok = require("invok");
+const Promise = require("ipromise");
 class Filter {
   constructor(handler) {
     this.handler = handler;

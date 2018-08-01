@@ -1,3 +1,4 @@
+const Promise = require("ipromise");
 class Handler {
   constructor(handler, router) {
     this.handler = handler;

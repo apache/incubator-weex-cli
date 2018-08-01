@@ -27,13 +27,17 @@
     "debug": "^3.1.0",
     "fs-extra": "^6.0.1",
     "got": "^8.3.1",
+    "koa": "^2.5.2",
+    "koa-static": "^5.0.0",
     "npminstall": "^3.8.0",
     "on-exit": "^1.0.1",
+    "puppeteer": "^1.6.1",
     "root-check": "^1.0.0",
     "semver": "^5.5.0",
     "source-map": "^0.7.3",
     "tabtab": "^2.2.2",
     "userhome": "^1.0.0",
+    "ws": "^6.0.0",
     "yargs-parser": "^10.1.0"
   },
   "devDependencies": {

@@ -22,7 +22,7 @@ class RuntimeManager {
             const urlObj = URL.parse(target.url);
             if (
               urlObj.pathname === "/runtime.html" &&
-              urlObj.port === config.port + ""
+              urlObj.port === config.SERVER_PORT + ""
             ) {
               found = target;
               break;
@@ -32,7 +32,7 @@ class RuntimeManager {
           }
           if (found) {
             if (found.webSocketDebuggerUrl) {
-              logger.verbose(
+              logger.debug(
                 `Have found the webSocketDebuggerUrl: ${
                   found.webSocketDebuggerUrl
                 }`
@@ -47,13 +47,13 @@ class RuntimeManager {
               }
               resolve(terminal);
             } else {
-              logger.verbose(
+              logger.debug(
                 `Not found the webSocketDebuggerUrl from the ${found}`
               );
               reject("TOAST_DO_NOT_OPEN_CHROME_DEVTOOL");
             }
           } else {
-            logger.verbose(`Not found the remote debug json`);
+            logger.debug(`Not found the remote debug json`);
             reject("TOAST_CAN_NOT_FIND_RUNTIME");
           }
         })
