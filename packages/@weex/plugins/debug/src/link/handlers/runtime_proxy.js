@@ -5,7 +5,8 @@ debuggerRouter
   .registerHandler(function(message) {
     if (
       message.payload.method === "Debugger.scriptParsed" ||
-      (message.payload.result && message.payload.result.frameTree)
+      (message.payload.result && message.payload.result.frameTree) ||
+      /\/syncApi/.test(message.payload.params.message)
     ) {
       message.discard();
     }

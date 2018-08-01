@@ -6,19 +6,22 @@ const bodyParser = require("koa-bodyparser");
 const WsRouter = require("./router/websocket");
 const HttpRouter = require("./router/http");
 const app = Websockify(new Koa());
-const rootPath = path.join(__dirname, "../../frontend/");
 const { setup } = require("../link/setup");
 const { logger } = require("../util");
+const config = require('../config');
 
 exports.start = (port, cb) => {
   setup();
   app.use(bodyParser());
   app.ws.use(WsRouter.routes()).use(WsRouter.allowedMethods());
   app.use(HttpRouter.routes());
-  app.use(serve(rootPath));
 
+  if (config.STATIC_SOURCE) {
+    app.use(serve(config.STATIC_SOURCE));
+  }
+  
   app.on("error", (err, ctx) => {
-    logger.verbose(err);
+    logger.debug(err);
   });
 
   app.listen(port, cb);

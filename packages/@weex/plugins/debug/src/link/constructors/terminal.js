@@ -1,5 +1,6 @@
 const EventEmitter = require("events").EventEmitter;
 const uuid = require("uuid");
+const Promise = require("ipromise");
 class SyncTerminal extends EventEmitter {
   constructor() {
     super();

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>weex-debugger-</title>
+    <link rel="stylesheet" href="assets/styles/debugger.css">
+    <link rel="stylesheet" href="assets/styles/prophet.css">
+    <script src="vendor/qrcode.js"></script>
+    <script src="vendor/g2.js"></script>
+    <script src="vendor/resizable.js"></script>
+    <script src="vendor/rmodal.js"></script>
+    <script src="vendor/formSeralize.js"></script>
+    <script src="vendor/doT.js"></script>
+</head>
+
+<body>
+    <!-- debugger page -->
+    <div id="debugger-page">
+        <div class="header">
+            <a class="logo" href="/" title="Back to QR code."><img src="assets/images/logo.svg" alt=""></a>
+            <div class="info-ctn">
+                <div class="column app-info-panel">
+                    <div class="line"><span>App Info</span><b id="app_info"></b></div>
+                    <div class="line"><span>SDK Version</span><b id="sdk_version"></b></div>
+                </div>
+                <div id="operate-menu">
+                    <div id="debugger-menu">
+                        <div class="column">
+                            <div class="line short"><span title="Start JS Debug (Debug JS code in chrome)">JS Debug</span><b>
+                                    <div class="switch switch-remoteDebug">
+                                        <input type="checkbox" id="remote_debug" name="remoteDebug_switch" class="switch-checkbox">
+                                        <label class="switch-label" for="remote_debug">
+                                            <div class="switch-inner">
+                                                <div class="switch-active">ON</div>
+                                                <div class="switch-inactive">OFF</div>
+                                            </div>
+                                            <div class="switch-switch"></div>
+                                        </label>
+                                    </div>
+                                </b></div>
+                            <div class="line short"><span title="Start network monitor">Network</span><b>
+                                    <div class="switch switch-remoteDebug">
+                                        <input type="checkbox" id="network" name="remoteDebug_switch" class="switch-checkbox">
+                                        <label class="switch-label" for="network">
+                                            <div class="switch-inner">
+                                                <div class="switch-active">ON</div>
+                                                <div class="switch-inactive">OFF</div>
+                                            </div>
+                                            <div class="switch-switch"></div>
+                                        </label>
+                                    </div>
+                                </b></div>
+                        </div>
+                        <div class="column">
+                            <div class="line middle">
+                                <span title="Set level of log">LogLevel</span><b><select id="log_level" class="selector log-level">
+                                    <option value="debug">debug</option>
+                                    <option value="log">log</option>
+                                    <option value="info">info</option>
+                                    <option value="warn">warn</option>
+                                    <option value="error">error</option>
+                                </select></b>
+                            </div>
+                            <div class="line middle">
+                                <span title="Switch elements tree view">ElementMode</span><b><select id="element_mode" class="selector log-level">
+                                    <option value="vdom">vdom</option>
+                                    <option value="native">native</option>
+                                </select></b>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div id="qrcode_btn">
+                                <span class="iconfont icon-qrcode-scan"></span>
+                                <div class="bundle_tip i18n">
+                                    ${QRCODE_BUNDLE_TIP}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="help">
+                            <span class="iconfont icon-bangzhu"></span>
+                        </div>
+                    </div>
+                    <div id="prophet-menu" class="i18n">
+                        <div id="refresh-btn" class="menu-btn refresh-btn"><span class="iconfont icon-28"></span> Refresh</div>
+                        <div id="save-data-btn" class="menu-btn save-data-btn"><span class="iconfont icon-download"></span> Download</div>
+                        <div id="load-data-btn" class="menu-btn load-data-btn"><span class="iconfont icon-custom-add"></span> Load</div>
+                        <input id="fileInput" type="file" style="display:none;" />
+                    </div>
+                </div>
+            </div>
+            <a class="page-switch-btn">Prophet >></a>
+        </div>
+
+        <!-- iframe for chrome devtool -->
+        <iframe id="inspector" src="" frameborder="0"></iframe>
+    </div>
+
+    <!-- prophet page -->
+    <div id="prophet-page">
+        <div class="timeline-component">
+            <div id="timeline-panel">
+                <canvas id="timeline"></canvas>
+            </div>
+            <div id="timeline-detail"></div>
+            <div id="timeline-scrollbar"></div>
+            <div id="timeline-tip" class="i18n">
+                <p>${TIMELINE_TIPS_DESC}</p>
+                <p>${TIMELINE_TIPS_NOTICE}</p>
+            </div>
+        </div>
+        <div class="data-analyse-panel">
+            <div class="data-analyse-tabnav">
+                <div class="data-analyse-tab-item data-analyse-tab-item-active">Summary</div>
+                <!-- <div class="data-analyse-tab-item">Tool</div> -->
+                <div class="data-analyse-tab-item">Help</div>
+            </div>
+            <div class="data-analyse-content">
+                <div class="data-analyse-summary">
+                    <div class="summary-content">
+                        <div id="summary-pie-chart" class="summary-col"></div>
+                        <div id="summary-global-info" class="summary-col">No data</div>
+                        <div id="summary-warning-info" class="summary-col"></div>
+                    </div>
+                </div>
+                <!-- <div class="data-analyse-tool">
+                    <div class="tool-content">
+                        <div class="tool-report-content hidden">
+                        </div>
+                        <div class="tool-description">
+                            <p>Performance test help you identify and fix common problems that affect your weex page performance and user experience. <a>learn more</a></p>
+                            <a class="start-testing-button">Perform an page...</a>
+                        </div>
+                    </div>
+
+                </div> -->
+                <div class="data-analyse-help i18n">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>${THREAD_NAME}</th>
+                                <th>${START_POINT}</th>
+                                <th>${END_POINT}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="thread-block js-block"></span>${THREAD_NAME_JS}</td>
+                                <td>${START_POINT_JS}</td>
+                                <td>${END_POINT_JS}</td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td><span class="thread-block dom-block"></span>${THREAD_NAME_DOM}</td>
+                                <td>${START_POINT_DOM}</td>
+                                <td>${END_POINT_DOM}</td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td><span class="thread-block ui-block"></span>${THREAD_NAME_UI}</td>
+                                <td>${START_POINT_UI}</td>
+                                <td>${END_POINT_UI}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>${THREAD_NOTICE}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- bundle-qrcode-template -->
+    <div class="bundle-qrcode mask">
+        <div class="qrcode-ctn i18n">
+            <div id="qrcode_bundle">
+
+            </div>
+            <p>${QRCODE_BUNDLE_TIP}</p>
+        </div>
+    </div>
+
+    <!-- modal-template -->
+    <div id="modal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="optional-modal">
+                    <div class="modal-header">
+                        <strong>Performace test</strong>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul>
+                            <li>
+                                <input class="styled-checkbox" id="layout" type="checkbox" name="layout" value="on" checked>
+                                <label for="layout">
+                                Progressive layout views
+                            </label>
+                                <div class="small">If the view has more than 15 views, it will be drawn in red.</div>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox" id="image" type="checkbox" name="image" value="on" checked>
+                                <label for="image">
+                                Progressive image views
+                            </label>
+                                <div class="small">If the bitmap size of the imageView more than twice the width and height of the imageView, it will be drawn in red.</div>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox" id="ram" type="checkbox" name="ram" value="on" checked>
+                                <label for="ram">
+                                Progressive RAM
+                            </label>
+                                <div class="small">Collect application memory growth.</div>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox" id="reload" type="checkbox" name="reload" value="on" checked>
+                                <label for="reload">
+                                Reload page
+                            </label>
+                                <div class="small">Reload the view to collect data when the app is first opened.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn  btn-primary start-btn">Start tracing</a>
+                        <a class="btn" onclick="modal.close();">Cancel</a>
+                    </div>
+                </form>
+                <form class="process-modal hidden">
+                    <div class="modal-body">
+                        <div class="loadding">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        <p class="process-description"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn  btn-primary stop-btn">Stop tracing</a>
+                        <button class="btn" type="button" onclick="modal.close();">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- usertips mask -->
+    <div class="widget-anchor-mask tips-mask"></div>
+
+    <!-- bugreport button -->
+    <a class="bug_report" title="Bug Report" target="_blank" href="https://github.com/weexteam/weex-debugger/issues">
+        <i class="iconfont icon-bug"></i>
+    </a>
+
+    <!-- loading background -->
+    <div class="loading-ctn">
+        <div class="loading">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</body>
+
+<script src="lib/common.js"></script>
+<script src="lib/constructors/EventEmitter.js"></script>
+<script src="lib/constructors/WebsocketClient.js"></script>
+<script src="lib/utils/anchor_tips.js"></script>
+<script src="lib/utils/toast.js"></script>
+<script src="lib/i18n/locale.js"></script>
+<script src="lib/i18n/i18n.js"></script>
+<script src="lib/debug/debugger.js"></script>
+<script src="lib/prophet/template/report.js"></script>
+<script src="lib/prophet/preprocessTracingData.js"></script>
+<script src="lib/prophet/timeline.js"></script>
+<script src="lib/prophet/index.js"></script>
+<script src="lib/prophet/performance.js"></script>
+
+</html>

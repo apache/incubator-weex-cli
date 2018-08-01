@@ -77,7 +77,7 @@ class Hub {
     terminal.on("message", message => {
       this.send(new Message(message, this.id, terminal.id, terminal.channelId));
     });
-
+    
     this.router._event({
       type: Router.Event.TERMINAL_JOINED,
       terminalId: terminal.id,

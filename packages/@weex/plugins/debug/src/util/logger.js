@@ -116,6 +116,7 @@ module.exports = {
   setLevel,
   subscribe,
   verbose: log("verbose"),
+  debug: log("verbose"),
   log: log("log"),
   info: log("info"),
   warn: log("warn"),
