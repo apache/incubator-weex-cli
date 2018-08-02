@@ -5,16 +5,6 @@ var cacheWeexEnv;
 var cacheJsbundleImportMessage;
 var cacheRegisterLoop = [];
 var activeWorkerId;
-var EntrySocket = new WebsocketClient('ws://' + location.host + '/page/entry');
-
-EntrySocket.on('WxDebug.startDebugger', function (message) {
-  if (!RuntimeSocket) {
-    location.href = `http://${location.host}/runtime.html?channelId=${message.params}`
-  }
-  else if(RuntimeSocket && BrowserChannelId!==message.params){
-    location.href = `http://${location.host}/runtime.html?channelId=${message.params}`
-  }
-})
 
 BrowserChannelId = new URLSearchParams(location.search).get('channelId');
 
