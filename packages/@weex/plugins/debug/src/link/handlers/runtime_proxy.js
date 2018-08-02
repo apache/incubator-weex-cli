@@ -6,7 +6,7 @@ debuggerRouter
     if (
       message.payload.method === "Debugger.scriptParsed" ||
       (message.payload.result && message.payload.result.frameTree) ||
-      /\/syncApi/.test(message.payload.params.message)
+      message.payload.params && /\/syncApi/.test(message.payload.params.message)
     ) {
       message.discard();
     }

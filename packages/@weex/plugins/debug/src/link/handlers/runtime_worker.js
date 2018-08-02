@@ -6,6 +6,7 @@ const debuggerRouter = Router.get("debugger");
 const DeviceManager = require("../managers/device_manager");
 const RuntimeManager = require("../managers/runtime_manager");
 const runtimeProxyHub = Hub.get("runtime.proxy");
+const { logger } = require("../../util");
 
 debuggerRouter
   .registerHandler(function(message) {
@@ -35,10 +36,6 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, "runtime.worker", function(
             }
           );
         }
-      } else {
-        Logger.error(
-          "device with channelId[" + signal.channelId + "] is not found"
-        );
       }
     },
     errorText => {
