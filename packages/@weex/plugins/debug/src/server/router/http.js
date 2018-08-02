@@ -18,7 +18,7 @@ const syncHub = mlink.Hub.get("sync");
 
 const rSourceMapDetector = /\.map$/;
 
-const getRemote = (url) => {
+const getRemote = url => {
   return new Promise(function(resolve, reject) {
     const urlObj = URL.parse(url);
     (protocols[urlObj.protocol] || protocols["http:"])
@@ -47,7 +47,7 @@ const getRemote = (url) => {
         reject(e);
       });
   });
-}
+};
 
 httpRouter.get("/source/*", async (ctx, next) => {
   const path = ctx.params[0];

@@ -1,8 +1,6 @@
 const mlink = require("../index");
 const Router = mlink.Router;
 const DeviceManager = require("../managers/device_manager");
-const config = require("../../config");
-const { util } = require("../../util");
 const debuggerRouter = Router.get("debugger");
 
 debuggerRouter.on(Router.Event.TERMINAL_LEAVED, "proxy.native", function(
@@ -42,7 +40,7 @@ debuggerRouter
       message.payload = {
         method: "WxDebug.pushDebuggerInfo",
         params: {
-          device        
+          device
         }
       };
       message.to("page.debugger");

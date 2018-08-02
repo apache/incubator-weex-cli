@@ -18,7 +18,7 @@ const getConnectUrl = channelId => {
 
 const setConnectUrl = url => {
   connectUrl = url;
-}
+};
 
 module.exports = {
   normalize,
