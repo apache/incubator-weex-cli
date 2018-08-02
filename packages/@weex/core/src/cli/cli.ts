@@ -26,8 +26,8 @@ export async function run(
     .help(options.help)
     .version(options.version)
     .exclude(options.exclude)
-    .plugin(options.plugin && options.plugin.value || '', options.plugin && options.plugin.options || '')
-    .plugins(options.plugins && options.plugins.value || '', options.plugins && options.plugins.options || '')
+    .plugin((options.plugin && options.plugin.value) || '', (options.plugin && options.plugin.options) || '')
+    .plugins((options.plugins && options.plugins.value) || '', (options.plugins && options.plugins.options) || '')
     .defaultCommand(options.defaultCommand)
     .create()
   // and run it
