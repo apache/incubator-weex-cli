@@ -1,4 +1,4 @@
-const devtool = require('../src/index');
+const devtool = require('../index');
 const ip = require('ip').address();
 const exit = require('exit');
 const path = require('path');
@@ -10,55 +10,95 @@ module.exports = {
   run: async context => {
     // tools
     const logger = context.logger;
-    const ws = context.ws;
-    const staic = context.staic;
+    const WebSocket = context.ws;
+    const static = context.static;
+    const opn = context.opn;
     // params
     const options = context.parameters.options;
     const source = context.parameters.first;
     const target = context.parameters.second;
-   
-    const remoteDebugPort = 9225;
-    const port = 8098;
+    // TODO: detact port
+    const remoteDebugPort = 9228;
+    const port = 8099;
+    const mockServerPort = 8888;
 
-    const wss = new ws.Server({
-      port: 8080,
-      perMessageDeflate: {
-        zlibDeflateOptions: { // See zlib defaults.
-          chunkSize: 1024,
-          memLevel: 7,
-          level: 3,
-        },
-        zlibInflateOptions: {
-          chunkSize: 10 * 1024
-        },
-        // Other options settable:
-        clientNoContextTakeover: true, // Defaults to negotiated value.
-        serverNoContextTakeover: true, // Defaults to negotiated value.
-        clientMaxWindowBits: 10,       // Defaults to negotiated value.
-        serverMaxWindowBits: 10,       // Defaults to negotiated value.
-        // Below options specified as default values.
-        concurrencyLimit: 10,          // Limits zlib concurrency for perf.
-        threshold: 1024,               // Size (in bytes) below which messages
-                                       // should not be compressed.
-      }
-    });
-
-    wss.on('connection', function connection(ws) {
-      ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-      });
-      ws.send('something');
-    });
 
     const devtoolOptions = {
       ip: ip,
       port: port,
       remoteDebugPort: remoteDebugPort,
-      staticSource: staic.getSourceLocation()
+      // need to put the runtime.html into the same http server
+      staticSource: static.getSourceLocation()
     };
 
-    devtool.start(devtoolOptions, async () => {
-      await context.headless.launchHeadless(`${ip}:${port}`, remoteDebugPort);
-    })
+    const entry = await devtool.start(devtoolOptions)
+    
+    // socket to control debugger status.
+    // should be use after device has been connected.
+    const debuggerProxyUrl = entry.debuggerProxyUrl;
+    // socket to control native
+    const nativeProxyUrl = entry.nativeProxyUrl;
+    // socket to control inspector 
+    // remove ws:// cause of the inspector require.
+    const inspectorProxyUrl = entry.inspectorProxyUrl.replace('ws://', '');
+    // socket id
+    const channelId = entry.channelId;
+   
+
+    await context.headless.launchHeadless(`${ip}:${port}`, remoteDebugPort, {channelId: channelId});
+
+    // mock socket for control native connections.
+    const wss = new WebSocket.Server({
+      port: mockServerPort
+    });
+
+    wss.on('connection', function connection(mockWs) {
+      const agreeToLink = true;
+      const nativeWs = new WebSocket(nativeProxyUrl);
+
+      nativeWs.on('message', (message) => {
+        // console.log('Native Received: %s', message);
+        // Here you can judge to link real native socket or not
+        if (agreeToLink) {
+          mockWs.send(message);
+        }
+      })
+
+      mockWs.on('message', (message) => {
+        // console.log('Mock Received: %s', message);
+        // Here you can judge to link real native socket or not
+        if (agreeToLink) {
+          nativeWs.send(message);
+          const msg = JSON.parse(message);
+          if (msg.method === 'WxDebug.registerDevice') {
+            const debuggerWs = new WebSocket(debuggerProxyUrl);
+            debuggerWs.on('open', () => {
+              // debuggerWs.send(JSON.stringify({
+              //   method: 'Page.stopScreencast'
+              // }))
+              debuggerWs.send(JSON.stringify({
+                method: 'WxDebug.enable'
+              }))
+              debuggerWs.send(JSON.stringify({
+                method: 'WxDebug.network',
+                params: {
+                  enable: true
+                }
+              }));
+              console.log('Inspector Connection Url: %s', `http://${ip}:${port}/${static.getInspectorReleactivePath()}?ws=${inspectorProxyUrl}`);
+              opn(`http://${ip}:${port}/${static.getInspectorReleactivePath()}?ws=${inspectorProxyUrl}`);
+            })
+          }
+        }
+      });
+
+      process.on('SIGINT', err => {
+        headless.closeHeadless();
+        exit(0);
+      })
+
+    });
+
+    logger.log(`Connecting Url: http://${ip}:${port}/fake.html?_wx_devtool=ws://${ip}:${mockServerPort}`)
   }
 };

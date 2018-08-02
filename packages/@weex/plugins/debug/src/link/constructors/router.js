@@ -46,8 +46,8 @@ class Router extends Emitter {
   reply(message, payload) {
     this.pushMessage(message._from.hubId, message._from.terminalId, payload);
   }
-  newChannel(mode) {
-    const channel = new Channel(mode);
+  newChannel(id, mode) {
+    const channel = new Channel(id, mode);
     this.channelMap[channel.id] = channel;
     return channel.id;
   }

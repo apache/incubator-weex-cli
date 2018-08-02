@@ -27,9 +27,7 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, "page.debugger", function(
   debuggerRouter.pushMessageByChannelId("page.debugger", signal.channelId, {
     method: "WxDebug.pushDebuggerInfo",
     params: {
-      device,
-      bundles: config.BUNDLE_URLS || [],
-      connectUrl: util.getConnectUrl(signal.channelId)
+      device
     }
   });
 });
@@ -44,25 +42,10 @@ debuggerRouter
       message.payload = {
         method: "WxDebug.pushDebuggerInfo",
         params: {
-          device,
-          bundles: config.BUNDLE_URLS || [],
-          connectUrl: util.getConnectUrl(message.channelId)
+          device        
         }
       };
-      debuggerRouter.pushMessage("page.entry", {
-        method: "WxDebug.startDebugger",
-        params: message.channelId
-      });
       message.to("page.debugger");
-      // iOS platform need reload signal to reload runtime context.
-      // if (device.platform === 'iOS') {
-      //   setTimeout(() => {
-      //     debuggerRouter.pushMessageByChannelId('page.debugger', message.channelId, {
-      //       method: 'WxDebug.reloadInspector',
-      //       params: device
-      //     });
-      //   }, 3000);
-      // }
     }
     return false;
   })
