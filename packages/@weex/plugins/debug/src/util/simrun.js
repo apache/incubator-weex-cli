@@ -57,7 +57,12 @@ function openIosSimulator(udid) {
         } else if (new Date().getTime() - timestamp < 30000) {
           setTimeout(checker, 500);
         } else {
-          reject(new Error({type: "simulator", message: "simulator start timeout!"}));
+          reject(
+            new Error({
+              type: "simulator",
+              message: "simulator start timeout!"
+            })
+          );
         }
       });
     }

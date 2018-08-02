@@ -1,4 +1,3 @@
-const path = require("path");
 const Koa = require("koa");
 const serve = require("koa-static");
 const Websockify = require("koa-websocket");
@@ -8,7 +7,7 @@ const HttpRouter = require("./router/http");
 const app = Websockify(new Koa());
 const { setup } = require("../link/setup");
 const { logger } = require("../util");
-const config = require('../config');
+const config = require("../config");
 
 exports.start = (port, cb) => {
   setup();
@@ -19,7 +18,7 @@ exports.start = (port, cb) => {
   if (config.STATIC_SOURCE) {
     app.use(serve(config.STATIC_SOURCE));
   }
-  
+
   app.on("error", (err, ctx) => {
     logger.debug(err);
   });
