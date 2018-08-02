@@ -1,6 +1,5 @@
 const path = require("path");
 const chalk = require("chalk");
-const boxen = require("boxen");
 
 const config = require("./config");
 const debugServer = require("./server");
