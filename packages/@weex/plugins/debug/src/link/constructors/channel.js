@@ -2,10 +2,10 @@ const uuid = require("uuid");
 const CHANNEL_MODE = require("./enum").CHANNEL_MODE;
 const tools = require("../tools");
 class Channel {
-  constructor(id, mode, enableMulticast) {
+  constructor(mode, enableMulticast) {
     this.hubMap = {};
     this.mode = mode;
-    this.id = id || uuid();
+    this.id = uuid();
     this.cache = [];
     this.enableMulticast = enableMulticast;
   }

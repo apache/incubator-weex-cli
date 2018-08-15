@@ -46,8 +46,8 @@ class Router extends Emitter {
   reply(message, payload) {
     this.pushMessage(message._from.hubId, message._from.terminalId, payload);
   }
-  newChannel(id, mode) {
-    const channel = new Channel(id, mode);
+  newChannel(mode) {
+    const channel = new Channel(mode);
     this.channelMap[channel.id] = channel;
     return channel.id;
   }
@@ -150,20 +150,13 @@ class Router extends Emitter {
               }`
             );
             channel.join(signal.hubId, signal.terminalId, signal.forced);
-          } else {
-            logger.warn(
-              "There should be a connection that is not closed properly, the channel [" +
-                signal.channelId +
-                "] of terminal [" +
-                signal.terminalId +
-                "] is not found!"
+
+            const cacheMessages = channel.getCache(
+              signal.hubId,
+              signal.terminalId
             );
+            cacheMessages.forEach(m => this._dispatchMessage(m));
           }
-          const cacheMessages = channel.getCache(
-            signal.hubId,
-            signal.terminalId
-          );
-          cacheMessages.forEach(m => this._dispatchMessage(m));
         }
         this.emit(
           Router.Event.TERMINAL_JOINED,

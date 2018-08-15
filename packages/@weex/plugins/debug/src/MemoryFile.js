@@ -17,7 +17,8 @@ class MemoryFile {
       if (query["_wx_tpl"]) {
         this.url = util.normalize(query["_wx_tpl"]);
         this.name = this.url.replace(rHttpHeader, "");
-      } else {
+      } 
+      else {
         this.url = util.normalize(fileName);
         this.name = this.url.replace(rHttpHeader, "");
       }
@@ -30,7 +31,7 @@ class MemoryFile {
     if (this.name.charAt(this.name.length - 1) === "?") {
       this.name = this.name.substring(0, this.name.length - 1);
     }
-    const md5Str = crypto.md5(content);
+    const md5Str = crypto.md5(content + fileName);
     const key = this.name.split("?")[0] + "|" + md5Str;
     if (_memoryFileMap[this.name]) {
       _memoryFileMap[this.name].content = content;

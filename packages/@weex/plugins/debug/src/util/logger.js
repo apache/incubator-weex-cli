@@ -44,7 +44,7 @@ const formatError = (error, isVerbose) => {
     }
   } else {
     // Plain text error message
-    message = error;
+    message = error.stack;
   }
   if (
     typeof message === "string" &&
@@ -116,7 +116,6 @@ module.exports = {
   setLevel,
   subscribe,
   verbose: log("verbose"),
-  debug: log("verbose"),
   log: log("log"),
   info: log("info"),
   warn: log("warn"),

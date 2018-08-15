@@ -12,9 +12,11 @@ const { logger, bundleWrapper } = require("../../util");
 
 const httpRouter = new Router();
 
-let syncApiIndex = 0;
+let syncCallNativeIndex = 0;
+let syncCallJSIndex = 0;
 const SyncTerminal = mlink.Terminal.SyncTerminal;
-const syncHub = mlink.Hub.get("sync");
+const syncNativeHub = mlink.Hub.get("sync.native");
+const syncV8Hub = mlink.Hub.get("sync.v8");
 
 const rSourceMapDetector = /\.map$/;
 
@@ -53,7 +55,13 @@ httpRouter.get("/source/*", async (ctx, next) => {
   const path = ctx.params[0];
   if (rSourceMapDetector.test(path)) {
     logger.verbose(`Fetch sourcemap ${path}`);
-    const content = await getRemote("http://" + path);
+    let content;
+    try {
+      content = await getRemote("http://" + path);
+    }
+    catch(e) {
+      logger.verbose(`Failed to fetch, reason: ${e.stack}`)
+    }
     if (!content) {
       ctx.response.status = 404;
     } else {
@@ -90,14 +98,15 @@ httpRouter.get("/source/*", async (ctx, next) => {
   await next();
 });
 
-httpRouter.post("/syncApi", async (ctx, next) => {
-  const idx = syncApiIndex++;
+httpRouter.post("/syncCallNative/*", async (ctx, next) => {
+  const idx = syncCallNativeIndex++;
   const payload = ctx.request.body;
-  const device = DeviceManager.getDevice(payload.channelId);
+  const channelId = ctx.params[0];
+  const device = DeviceManager.getDevice(channelId);
   if (device) {
     const terminal = new SyncTerminal();
-    terminal.channelId = payload.channelId;
-    syncHub.join(terminal, true);
+    terminal.channelId = channelId;
+    syncNativeHub.join(terminal, true);
     payload.params.syncId = 100000 + idx;
     payload.id = 100000 + idx;
     const data = await terminal.send(payload);
@@ -106,7 +115,33 @@ httpRouter.post("/syncApi", async (ctx, next) => {
     ctx.response.body = JSON.stringify(data);
   } else {
     ctx.response.status = 500;
-    // this.response.body = JSON.stringify({ error: 'device not found!' });
+  }
+  await next();
+});
+
+httpRouter.post("/syncCallJS/*", async (ctx, next) => {
+  const idx = syncCallJSIndex++;
+  const channelId = ctx.params[0];
+  const payload = ctx.request.body;
+  const device = DeviceManager.getDevice(channelId);
+  const instanceId = payload.params.args[0];
+  if (device) {
+    const terminal = new SyncTerminal();
+    let data;
+    terminal.channelId = channelId;
+    syncV8Hub.join(terminal, true);
+    payload.params.syncId = 100000 + idx;
+    payload.id = 100000 + idx;
+    if (config.ACTIVE_INSTANCEID !== instanceId) {
+      data = [{}];
+    } else {
+      data = await terminal.send(payload);
+    }
+    ctx.response.status = 200;
+    ctx.type = "application/json";
+    ctx.response.body = JSON.stringify(data);
+  } else {
+    ctx.response.status = 500;
   }
   await next();
 });

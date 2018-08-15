@@ -1,5 +1,5 @@
 const config = require("../config");
-const { hook, simrun } = require("../util");
+const { simrun } = require("../util");
 
 const connect = function(channelId) {
   let params = "";
@@ -9,10 +9,6 @@ const connect = function(channelId) {
   params += `_wx_devtool=ws://${config.ip}:${
     config.port
   }/debugProxy/native/${channelId}`;
-  hook.record("/weex_tool.weex_debugger.scenes", {
-    feature: "simrun",
-    status: "start"
-  });
   return simrun.ios(
     "weex-devtool",
     "iPhone 6",

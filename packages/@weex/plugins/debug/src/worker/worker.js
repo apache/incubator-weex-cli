@@ -1,67 +1,3 @@
-function __EventEmitter__() {
-  this._handlers = {};
-}
-
-__EventEmitter__.prototype = {
-  constructor: __EventEmitter__,
-  off: function(method, handler) {
-    if (handler) {
-      for (var i = 0; i < this._handlers[method].length; i++) {
-        if (this._handlers[method][i] === handler) {
-          this._handlers[method].splice(i, 1);
-          i--;
-        }
-      }
-    } else {
-      this._handlers[method] = [];
-    }
-  },
-  once: function(method, handler) {
-    var self = this;
-    var fired = false;
-
-    function g() {
-      self.off(method, g);
-      if (!fired) {
-        fired = true;
-        handler.apply(self, Array.prototype.slice.call(arguments));
-      }
-    }
-
-    this.on(method, g);
-  },
-  on: function(method, handler) {
-    if (this._handlers[method]) {
-      this._handlers[method].push(handler);
-    } else {
-      this._handlers[method] = [handler];
-    }
-  },
-
-  _emit: function(method, args, context) {
-    var handlers = this._handlers[method];
-    if (handlers && handlers.length > 0) {
-      handlers.forEach(function(handler) {
-        handler.apply(context, args);
-      });
-      return true;
-    } else {
-      return false;
-    }
-  },
-
-  emit: function(method) {
-    var context = {};
-    var args = Array.prototype.slice.call(arguments, 1);
-    if (!this._emit(method, args, context)) {
-      this._emit("*", args, context);
-    }
-    this._emit("$finally", args, context);
-    return context;
-  }
-};
-
-// mock environment
 var __channelId__;
 var ___shouldReturnResult__ = false;
 var __requestId__;
@@ -83,120 +19,12 @@ var __postData__ = function(payload) {
     return;
   }
   try {
-    // self.console.debug(`CallNative with some json data:`, payload);
     postMessage(payload);
   } catch (e) {
     self.console.warn(`CallNative with some non-json data:`, payload);
     payload = JSON.parse(JSON.stringify(payload));
     postMessage(payload);
   }
-};
-
-var __syncRequest__ = function(data) {
-  var request = new XMLHttpRequest();
-  request.open("POST", "/syncApi", false); // `false` makes the request synchronous
-  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  request.send(JSON.stringify(data));
-  if (request.status === 200) {
-    return JSON.parse(request.responseText);
-  } else {
-    return {
-      error: request.responseText
-    };
-  }
-};
-
-self.__WEEX_DEVTOOL__ = true;
-
-self.callNativeModule = function() {
-  var message = {
-    method: "WxDebug.syncCall",
-    params: {
-      method: "callNativeModule",
-      args: __protectedAragument__(arguments)
-    },
-    channelId: __channelId__
-  };
-  var result = __syncRequest__(message);
-  if (___shouldReturnResult__ && __requestId__) {
-    __postData__({
-      id: __requestId__,
-      result: null,
-      error: {
-        errorCode: 0
-      }
-    });
-  }
-  if (result && result.error) {
-    self.console.error(result.error);
-    // throw new Error(result.error);
-  } else return result && result.ret;
-};
-
-self.callNativeComponent = function() {
-  var args = Array.prototype.slice.call(arguments);
-  for (var i = 0; i < args.length; i++) {
-    if (!args[i]) {
-      args[i] = "";
-    }
-  }
-  var message = {
-    method: "WxDebug.syncCall",
-    params: {
-      method: "callNativeComponent",
-      args: args
-    },
-    channelId: __channelId__
-  };
-  var result = __syncRequest__(message);
-  if (result.error) {
-    self.console.error(result.error);
-    // throw new Error(result.error);
-  } else return result.ret;
-};
-
-self.callNative = function(instance, tasks, callback) {
-  for (var i = 0; i < tasks.length; i++) {
-    var task = tasks[i];
-    if (task.method == "addElement") {
-      for (var key in task.args[1].style) {
-        if (Number.isNaN(task.args[1].style[key])) {
-          self.console.error(
-            "invalid value [NaN] for style [" + key + "]",
-            task
-          );
-        }
-      }
-    }
-  }
-  var payload = {
-    method: "WxDebug.callNative",
-    params: {
-      instance: instance,
-      tasks: tasks,
-      callback: callback
-    }
-  };
-  __postData__(payload);
-};
-
-self.callAddElement = function(instance, ref, dom, index, callback) {
-  var payload = {
-    method: "WxDebug.callAddElement",
-    params: {
-      instance: instance,
-      ref: ref,
-      dom: dom,
-      index: index,
-      callback: callback
-    }
-  };
-  __postData__(payload);
-};
-
-self.nativeLog = function(args) {
-  __rewriteLog__(self.WXEnvironment.logLevel);
-  self.console.log(args);
 };
 
 self.onmessage = function(message) {
@@ -307,6 +135,11 @@ __eventEmitter__.on("WxDebug.initWorker", function(message) {
     if (message.params.env.hasOwnProperty(key)) {
       self[key] = message.params.env[key];
     }
+  }
+  if (message.params.importScripts) {
+    message.params.importScripts.forEach(function(script) {
+      importScripts(script);
+    });
   }
   __rewriteLog__(message.params.env.WXEnvironment.logLevel);
   self.createInstance(
