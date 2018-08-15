@@ -1,5 +1,6 @@
 const mlink = require("../index");
 const Router = mlink.Router;
+const Logger = mlink.Logger;
 const Hub = mlink.Hub;
 const debuggerRouter = Router.get("debugger");
 const DeviceManager = require("../managers/device_manager");
@@ -10,10 +11,23 @@ debuggerRouter
   .registerHandler(function(message) {
     message.to("proxy.native");
   })
-  .at("sync");
+  .at("sync.native");
+
 debuggerRouter
   .registerHandler(function(message) {
-    message.to("proxy.native");
+    message.to("runtime.worker");
+  })
+  .at("sync.v8");
+
+debuggerRouter
+  .registerHandler(function(message) {
+    const payload = message.payload;
+    if (payload.method === "syncReturn") {
+      message.payload = payload.params;
+      message.to("sync.v8");
+    } else {
+      message.to("proxy.native");
+    }
   })
   .at("runtime.worker");
 
@@ -34,6 +48,10 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, "runtime.worker", function(
             }
           );
         }
+      } else {
+        Logger.error(
+          "device with channelId[" + signal.channelId + "] is not found"
+        );
       }
     },
     errorText => {

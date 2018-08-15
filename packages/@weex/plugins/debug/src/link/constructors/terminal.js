@@ -5,17 +5,22 @@ class SyncTerminal extends EventEmitter {
   constructor() {
     super();
     this.id = uuid();
+    this.promise = new Promise();
   }
 
   send(data) {
-    this.promise = new Promise();
     this.emit("message", data);
     return this.promise;
   }
 
   read(message) {
-    this.emit("destroy");
+    if (Array.isArray(message) && !message[0]) {
+      message = [{}];
+    }
     this.promise.resolve(message);
+    // never destory
+    // cause the terminal will be destory before the socket send message
+    // this.emit('destroy')
   }
 }
 class WebsocketTerminal extends EventEmitter {

@@ -2,8 +2,7 @@ const mlink = require("../index");
 const WebsocketTerminal = mlink.Terminal.WebsocketTerminal;
 const URL = require("url");
 const WebSocket = require("ws");
-const os = require("os");
-const { hook, request } = require("../../util");
+const { request } = require("../../util");
 const config = require("../../config");
 const { logger } = require("../../util");
 
@@ -22,7 +21,7 @@ class RuntimeManager {
             const urlObj = URL.parse(target.url);
             if (
               urlObj.pathname === "/runtime.html" &&
-              urlObj.port === config.SERVER_PORT + ""
+              urlObj.port === config.port + ""
             ) {
               found = target;
               break;
@@ -32,7 +31,7 @@ class RuntimeManager {
           }
           if (found) {
             if (found.webSocketDebuggerUrl) {
-              logger.debug(
+              logger.verbose(
                 `Have found the webSocketDebuggerUrl: ${
                   found.webSocketDebuggerUrl
                 }`
@@ -47,13 +46,13 @@ class RuntimeManager {
               }
               resolve(terminal);
             } else {
-              logger.debug(
+              logger.verbose(
                 `Not found the webSocketDebuggerUrl from the ${found}`
               );
               reject("TOAST_DO_NOT_OPEN_CHROME_DEVTOOL");
             }
           } else {
-            logger.debug(`Not found the remote debug json`);
+            logger.verbose(`Not found the remote debug json`);
             reject("TOAST_CAN_NOT_FIND_RUNTIME");
           }
         })
@@ -68,16 +67,6 @@ class RuntimeManager {
       const popTerminal = terminals.pop();
       popTerminal.websocket.close();
     } else {
-      const params = Object.assign(
-        {
-          stack: "ERROR: Try to remove a non-exist runtime",
-          os: os.platform(),
-          node: config.nodeVersion,
-          npm: config.npmVersion
-        },
-        config.weexVersion
-      );
-      hook.record("/weex_tool.weex_debugger.app_crash", params);
       logger.error("Try to remove a non-exist runtime");
     }
   }

@@ -7,7 +7,7 @@ debuggerRouter
       message.payload.method === "Debugger.scriptParsed" ||
       (message.payload.result && message.payload.result.frameTree) ||
       (message.payload.params &&
-        /\/syncApi/.test(message.payload.params.message))
+        /\/syncCallNative/.test(message.payload.params.message))
     ) {
       message.discard();
     }
