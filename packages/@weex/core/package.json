@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/core",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.11",
   "description": "Core for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -89,7 +89,7 @@
     "sinon": "^5.1.0",
     "temp-write": "^3.4.0",
     "ts-jest": "^22.4.6",
-    "tslint": "^5.8.0",
+    "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.13.0",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^3.0.1",
