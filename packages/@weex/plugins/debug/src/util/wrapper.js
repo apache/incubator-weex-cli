@@ -328,8 +328,9 @@ const generateSandboxWorkerEntry = env => {
   const worker = fse.readFileSync(
     path.join(__dirname, "../worker/sandbox_worker.js")
   );
-  const androidMockApi = env.isLayoutAndSandbox
-    ? `self.callCreateBody = function (instance, domStr) {
+  const androidMockApi =
+    env && env.isLayoutAndSandbox
+      ? `self.callCreateBody = function (instance, domStr) {
   if (!domStr) return;
   var payload = {
     method: 'WxDebug.callCreateBody',
@@ -446,7 +447,7 @@ self.callRemoveEvent = function (instance, ref, event) {
   };
   __postData__(payload);
 }`
-    : "";
+      : "";
   let environment = `${eventConstructor}
 
 ${mockBrowserApi}
@@ -455,9 +456,8 @@ ${mockContextApi}
 
 ${androidMockApi}
 `;
-  if (env.jsframework) {
+  if (env && env.jsframework) {
     environment += `importScripts('${env.jsframework}');\n`;
-    // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
   return `${environment}
 ${worker}
@@ -474,16 +474,16 @@ ${mockContextApi}
 
 self.$$frameworkFlag = {};
 `;
-  if (env.jsframework) {
+  if (env && env.jsframework) {
     environment += `importScripts('${env.jsframework}');\n`;
     // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
-  if (env.importScripts && env.importScripts.length > 0) {
+  if (env && env.importScripts && env.importScripts.length > 0) {
     env.importScripts.forEach(script => {
       environment += `importScripts('${script}');\n`;
     });
   }
-  if (env.sourceUrl) {
+  if (env && env.sourceUrl) {
     environment += `importScripts('${env.sourceUrl}');\n`;
   }
   return `

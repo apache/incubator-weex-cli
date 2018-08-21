@@ -17,8 +17,7 @@ class MemoryFile {
       if (query["_wx_tpl"]) {
         this.url = util.normalize(query["_wx_tpl"]);
         this.name = this.url.replace(rHttpHeader, "");
-      } 
-      else {
+      } else {
         this.url = util.normalize(fileName);
         this.name = this.url.replace(rHttpHeader, "");
       }

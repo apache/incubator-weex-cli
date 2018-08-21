@@ -44,6 +44,8 @@ module.exports = {
       channelId: channelId
     });
 
+    const debuggerWs = new WebSocket(debuggerProxyUrl);
+
     // mock socket for control native connections.
     const wss = new WebSocket.Server({
       port: mockServerPort
@@ -68,24 +70,24 @@ module.exports = {
           nativeWs.send(message);
           const msg = JSON.parse(message);
           if (msg.method === "WxDebug.registerDevice") {
-            const debuggerWs = new WebSocket(debuggerProxyUrl);
-            debuggerWs.on("open", () => {
-              // debuggerWs.send(JSON.stringify({
-              //   method: 'Page.stopScreencast'
-              // }))
-              debuggerWs.send(
-                JSON.stringify({
-                  method: "WxDebug.enable"
-                })
-              );
-              debuggerWs.send(
-                JSON.stringify({
-                  method: "WxDebug.network",
-                  params: {
-                    enable: true
-                  }
-                })
-              );
+            if (msg.params.platform.toLowerCase() === "ios") {
+              if (!msg.params.network) {
+                debuggerWs.send(
+                  JSON.stringify({
+                    method: "WxDebug.network",
+                    params: {
+                      enable: true
+                    }
+                  })
+                );
+              }
+              if (!msg.params.remoteDebug) {
+                debuggerWs.send(
+                  JSON.stringify({
+                    method: "WxDebug.enable"
+                  })
+                );
+              }
               console.log(
                 "Inspector Connection Url: %s",
                 `http://${ip}:${port}/${staticService.getInspectorReleactivePath()}?ws=${inspectorProxyUrl}`
@@ -93,7 +95,36 @@ module.exports = {
               opn(
                 `http://${ip}:${port}/${staticService.getInspectorReleactivePath()}?ws=${inspectorProxyUrl}`
               );
-            });
+            } else if (
+              msg.params.platform.toLowerCase() === "android" &&
+              (!msg.params.remoteDebug || !msg.params.network)
+            ) {
+              if (!msg.params.network) {
+                debuggerWs.send(
+                  JSON.stringify({
+                    method: "WxDebug.network",
+                    params: {
+                      enable: true
+                    }
+                  })
+                );
+              }
+              if (!msg.params.remoteDebug) {
+                debuggerWs.send(
+                  JSON.stringify({
+                    method: "WxDebug.enable"
+                  })
+                );
+              }
+            } else {
+              console.log(
+                "Inspector Connection Url: %s",
+                `http://${ip}:${port}/${staticService.getInspectorReleactivePath()}?ws=${inspectorProxyUrl}`
+              );
+              opn(
+                `http://${ip}:${port}/${staticService.getInspectorReleactivePath()}?ws=${inspectorProxyUrl}`
+              );
+            }
           }
         }
       });

@@ -86,7 +86,6 @@ $('#qrcode').onclick = function () {
         if(navigator.platform=='MacIntel') {
             loadingSimulator=true
             addClassName($('.qrcode-wrap'), 'loading-state')
-            send({method: 'WxDebug.simrun', params: channelId})
         }
         else{
             toast(translateI18n('ONLY_SUPPORT_IOS'),5000)
