@@ -15,6 +15,7 @@ export { http, IHttp } from './toolbox/http-tools'
 export { patching, IPatching, IPatchingPatchOptions } from './toolbox/patching-tools'
 export { prompt, IPrompt } from './toolbox/prompt-tools'
 export { open } from './toolbox/open-tools'
+export { install, InstallerOption } from './toolbox/installer-tools'
 
 // TODO: can't export these tools directly as they require context to run
 // need ideas on how to handle this
