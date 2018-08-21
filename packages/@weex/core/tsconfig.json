@@ -20,10 +20,10 @@
     "strict": false, /* disable all strict type-checking options */
     /* Additional Checks */
     "experimentalDecorators": true,
-    "noUnusedLocals": true /* Report errors on unused locals. */
+    "noUnusedLocals": false, /* Report errors on unused locals. */
     // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
     // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    // "noUnusedParameters": true  /* Report errors on unused parameters. */
+    "noUnusedParameters": false  /* Report errors on unused parameters. */
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/fixtures", "src/**/*.test.ts"]
