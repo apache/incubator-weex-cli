@@ -58,9 +58,8 @@ httpRouter.get("/source/*", async (ctx, next) => {
     let content;
     try {
       content = await getRemote("http://" + path);
-    }
-    catch(e) {
-      logger.verbose(`Failed to fetch, reason: ${e.stack}`)
+    } catch (e) {
+      logger.verbose(`Failed to fetch, reason: ${e.stack}`);
     }
     if (!content) {
       ctx.response.status = 404;

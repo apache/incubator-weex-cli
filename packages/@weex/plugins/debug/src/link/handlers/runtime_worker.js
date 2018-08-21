@@ -1,6 +1,5 @@
 const mlink = require("../index");
 const Router = mlink.Router;
-const Logger = mlink.Logger;
 const Hub = mlink.Hub;
 const debuggerRouter = Router.get("debugger");
 const DeviceManager = require("../managers/device_manager");
@@ -48,10 +47,6 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, "runtime.worker", function(
             }
           );
         }
-      } else {
-        Logger.error(
-          "device with channelId[" + signal.channelId + "] is not found"
-        );
       }
     },
     errorText => {

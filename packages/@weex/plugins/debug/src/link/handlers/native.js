@@ -22,11 +22,10 @@ debuggerRouter
       if (!env[message.channelId]) {
         env[message.channelId] = {};
       }
-      // env[message.channelId]["jsframework"] = new MemoryFile(
-      //   "js-framework.js",
-      //   payload.params.source
-      // ).getUrl();
-      env[message.channelId]["jsframework"] = '/lib/temp/js-framework.js'
+      env[message.channelId]["jsframework"] = new MemoryFile(
+        "js-framework.js",
+        payload.params.source
+      ).getUrl();
       if (device && device.logLevel) {
         payload.params.env.WXEnvironment.logLevel = device.logLevel;
       }
@@ -48,7 +47,7 @@ debuggerRouter
         `[Runtime]-${path.basename(bundleUrl)}`,
         generateWorkerEntry(env[message.channelId])
       ).getUrl();
-      if (env[message.channelId]["importScripts"]) {
+      if (env[message.channelId] && env[message.channelId]["importScripts"]) {
         payload.params.importScripts = env[message.channelId]["importScripts"];
       }
       debuggerRouter.pushMessageByChannelId(
@@ -79,7 +78,7 @@ debuggerRouter
           dependenceCode
         ).getUrl();
       }
-      if (env[message.channelId]["importScripts"]) {
+      if (env[message.channelId] && env[message.channelId]["importScripts"]) {
         payload.params.importScripts = env[message.channelId]["importScripts"];
       }
       payload.params.workerjs = new MemoryFile(

@@ -21,7 +21,7 @@ class RuntimeManager {
             const urlObj = URL.parse(target.url);
             if (
               urlObj.pathname === "/runtime.html" &&
-              urlObj.port === config.port + ""
+              urlObj.port === config.SERVER_PORT + ""
             ) {
               found = target;
               break;

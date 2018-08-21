@@ -1,1 +1,1 @@
-Extension for puppeteer.
+Extension for debug.

@@ -38,7 +38,12 @@ __eventEmitter__.on("WxDebug.callJS", function(data) {
   } else if (method === "destroyInstance") {
     // close worker
     self.destroyInstance(data.params.args[0]);
-  } else if ((method === "__WEEX_CALL_JAVASCRIPT__" || method === "callJS") && data.params.args[1] && data.params.args[1][0] && data.params.args[1][0].method === 'componentHook') {
+  } else if (
+    (method === "__WEEX_CALL_JAVASCRIPT__" || method === "callJS") &&
+    data.params.args[1] &&
+    data.params.args[1][0] &&
+    data.params.args[1][0].method === "componentHook"
+  ) {
     if (__instanceId__ !== data.params.args[0]) {
       return;
     }
@@ -47,13 +52,7 @@ __eventEmitter__.on("WxDebug.callJS", function(data) {
       method: "syncReturn",
       params: payload
     });
-  } else if ((method === "__WEEX_CALL_JAVASCRIPT__" || method === "callJS") && data.params.args[1] && data.params.args[1][0] && data.params.args[1][0].method === 'callback') {
-    if (__instanceId__ !== data.params.args[0]) {
-      return;
-    }
-    var payload = self[method].apply(null, data.params.args);
   } else if (self[method]) {
-    console.log('MESSAGE_>>>>>>  ', data)
     self[method].apply(null, data.params.args);
   } else {
     self.console.warn(

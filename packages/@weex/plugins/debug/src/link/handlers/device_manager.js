@@ -2,7 +2,6 @@ const mlink = require("../index");
 const Router = mlink.Router;
 const DeviceManager = require("../managers/device_manager");
 const config = require("../../config");
-const { util } = require("../../util");
 const debuggerRouter = Router.get("debugger");
 
 debuggerRouter.on(Router.Event.TERMINAL_LEAVED, "proxy.native", function(
@@ -28,8 +27,7 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, "page.debugger", function(
     method: "WxDebug.pushDebuggerInfo",
     params: {
       device,
-      bundles: config.BUNDLE_URLS || [],
-      connectUrl: util.getConnectUrl(signal.channelId)
+      bundles: config.BUNDLE_URLS || []
     }
   });
 });
@@ -44,15 +42,13 @@ debuggerRouter
       message.payload = {
         method: "WxDebug.pushDebuggerInfo",
         params: {
-          device,
-          bundles: config.BUNDLE_URLS || [],
-          connectUrl: util.getConnectUrl(message.channelId)
+          device
         }
       };
-      debuggerRouter.pushMessage("page.entry", {
-        method: "WxDebug.startDebugger",
-        params: message.channelId
-      });
+      // debuggerRouter.pushMessage("page.entry", {
+      //   method: "WxDebug.startDebugger",
+      //   params: message.channelId
+      // });
       message.to("page.debugger");
       // iOS platform need reload signal to reload runtime context.
       // if (device.platform === 'iOS') {
