@@ -1,6 +1,12 @@
 ## Changelog
 
-### 1.3.7
+### 1.3.10
+- Upgrade `xtoolkit` to `v1.1.0`.
+
+### 1.3.9
+- [issue 435](https://github.com/weexteam/weex-toolkit/issues/435)
+
+### 1.3.8
 - Upgrade `xtoolkit` to `v1.0.9`.
 
 ### 1.3.7
