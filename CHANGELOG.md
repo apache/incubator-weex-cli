@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.3.11
+- Upgrade `xtoolkit` to `v1.1.1`.
+
 ### 1.3.10
 - Upgrade `xtoolkit` to `v1.1.0`.
 
