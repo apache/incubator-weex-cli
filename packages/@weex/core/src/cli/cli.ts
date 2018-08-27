@@ -1,4 +1,4 @@
-import { build, fs, IParameters, http, install, logger, strings } from '../index'
+import { build, fs, IParameters, http, install, logger, strings, semver } from '../index'
 import { parseParams } from '../toolbox/parameter-tools'
 import * as path from 'path'
 
@@ -23,18 +23,19 @@ export interface ModItem {
   is_next?: boolean
   changelog?: string
   local: string
-  commands: string[]
+  commands?: string[]
 }
 export interface PluginItem {
-  value: string
-  options: any
-  commands: {
+  value?: string
+  options?: any
+  commands?: {
     name: string
     alias: string
     description: string
     showed: boolean
   }[]
-  name: string
+  name?: string
+  version?: string
 }
 
 export interface CliOptions {
@@ -88,7 +89,10 @@ export class Cli {
     if (options.plugins && options.plugins.value) {
       this.cli = this.cli.plugins(options.plugins.value, options.plugins.options)
     }
-
+    if (!this.cliOptions.modules.mods) {
+      this.cliOptions.modules['mods'] = {};
+      this.cliOptions.modules['last_update_time'] = new Date().getTime();
+    }
     if (options.plugin) {
       if (Array.isArray(options.plugin)) {
         options.plugin.forEach(p => {
@@ -113,20 +117,45 @@ export class Cli {
       let repairName;
       let repairVersion;
       if (repairModule) {
-        const args = repairModule.split('@')
-        if (repairModule.slice(0,1) === '@') {
-          
+        // check if it is a command or alias
+        const plugin = this.searchPlugin(repairModule, this.plugins)
+        if (plugin && plugin.name) {
+          repairName = plugin.name;
+          repairVersion = 'latest';
         }
         else {
-
+          const first = repairModule.slice(0,1);
+          // check for origin npm package
+          if (first === '@') {
+            const arg = repairModule.split('@');
+            if (arg.length > 2) {
+              repairVersion = arg.pop();
+              repairName = arg.join('@');
+            }
+            else {
+              repairName = arg.join('@');
+              repairVersion = 'latest';
+            }
+          }
+          else {
+            const arg = repairModule.split('@');
+            if (arg.length > 1) {
+              repairVersion = arg.pop();
+              repairName = arg.join('@');
+            }
+            else {
+              repairName = arg[0];
+              repairVersion = 'latest';
+            }
+          }
         }
         try {
-          await this.repairPackage(repairModule);
-          debug(`repair ${repairModule} successed!`);
-          logger.success(`\nRepair ${repairModule} successed!`)
+          await this.repairPackage(repairName, repairVersion);
+          debug(`repair ${repairName} successed!`);
+          logger.success(`\nRepair ${repairName} successed!`)
         }
         catch(e) {
-          this.analyzer('repair', e.stack, {module: repairModule})
+          this.analyzer('repair', e.stack, {name: repairName, version: repairVersion})
         }
       }
       else {
@@ -138,7 +167,7 @@ export class Cli {
       const plugin = this.searchPlugin(command, this.plugins)
       let commands = []
       let type = ModType.EXTENSION
-      if (!plugin) {
+      if (!plugin.name) {
         const res: { error?: string; [key: string]: any } = await this.suggestPackage(command, this.cliOptions.registry)
         if (!res.error) {
           const packages: any = await this.installPackage(`@weex-cli/${command}`, 'latest', {
@@ -181,6 +210,16 @@ export class Cli {
                 name: packages[i].package.name,
               })
             }
+            else {
+              this.cliOptions.modules.mods[packages[i].package.name] = {
+                type: type,
+                version: packages[i].package.version,
+                next_version: '',
+                is_next: true,
+                changelog: packages[i].changelog || '',
+                local: packages[i].root
+              }
+            }
           }
           // update module file
           fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), { mods: this.cliOptions.modules.mods, last_update_time: new Date().getTime() })
@@ -199,42 +238,16 @@ export class Cli {
     return toolbox
   }
 
-  async repairPackage(mod: string) {
-    let modVersion;
-    let modName;
+  async repairPackage(name: string, version: string) {
     let commands = [];
     let type = ModType.EXTENSION;
-    const first = mod.slice(0,1);
-    // check for origin npm package
-    if (first === '@') {
-      const arg = mod.split('@');
-      if (arg.length > 2) {
-        modVersion = arg.pop();
-        modName = arg.join('@');
-      }
-      else {
-        modName = arg.join('@');
-        modVersion = 'latest';
-      }
-    }
-    else {
-      const arg = mod.split('@');
-      if (arg.length > 1) {
-        modVersion = arg.pop();
-        modName = arg.join('@');
-      }
-      else {
-        modName = arg[0];
-        modVersion = 'latest';
-      }
-    }
-    const packages: any = await this.installPackage(modName, modVersion, {
+    const packages: any = await this.installPackage(name, version, {
       root: this.cliOptions.moduleRoot,
       registry: this.cliOptions.registry,
     })
     for (let i = 0; i < packages.length; i++) {
-      const commandBasePath = path.join(packages[i].root, 'commands')
-      const commandFiles: string[] = fs.list(commandBasePath) || []
+      let commandBasePath = path.join(packages[i].root, 'commands')
+      let commandFiles: string[] = fs.list(commandBasePath) || []
       commandFiles.forEach(file => {
         let content
         try {
@@ -261,6 +274,17 @@ export class Cli {
           local: packages[i].root,
           commands: commands,
         }
+        commands = [];
+      }
+      else {
+        this.cliOptions.modules.mods[packages[i].package.name] = {
+          type: type,
+          version: packages[i].package.version,
+          next_version: '',
+          is_next: true,
+          changelog: packages[i].changelog || '',
+          local: packages[i].root
+        }
       }
     }
     debug(`save modjson: ${JSON.stringify(this.cliOptions.modules.mods)}`)
@@ -268,16 +292,19 @@ export class Cli {
     fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), { mods: this.cliOptions.modules.mods, last_update_time: new Date().getTime() })
   }
 
-  async installPackage(name: string, version: string, options: any, result:any = []) {
+  async installPackage(name: string, version: string, options: any, result: any = []) {
     const info: any = await install(name, version || 'latest', options)
-    if (Array.isArray(info.package.extensionDependencies)) {
-      let len = info.package.extensionDependencies.length
-      for (let i = 0; i < len; i++) {
-        let sub = await this.installPackage(info.package.extensionDependencies[i], '', options, [info])
-        return [info].concat(sub)
+    let res = result.concat(info)
+    if (info.package.requires) {
+      for (let name in info.package.requires) {
+        let plugin = this.searchPlugin(name, this.plugins);
+        if (semver.gt(info.package.requires[name], plugin.version)) {
+          let sub = await this.installPackage(name, info.package.requires[name], options, [info])
+          res = res.concat(sub)
+        }
       }
     }
-    return [info]
+    return res
   }
 
   async suggestPackage(command: string, registry: string) {
@@ -301,7 +328,7 @@ export class Cli {
         let tempScore;
         let suggestName;
         innerMods.forEach(mod => {
-          tempScore = strings.strSimilarity2Number(mod, options.module);
+          tempScore = strings.strSimilarity2Number(mod, options.name);
           if (!score) {
             score = tempScore;
             suggestName = mod;
@@ -332,24 +359,27 @@ export class Cli {
         options: {},
         commands: mod.commands,
         name: item,
+        version: mod.version
       })
     }
     return plugins
   }
 
-  searchPlugin(command: string, mods: PluginItem[]): PluginItem | boolean {
+  searchPlugin(command: string, mods: PluginItem[]): PluginItem {
     if (mods.length > 0) {
       let result
       mods.forEach((mod: PluginItem) => {
-        mod.commands.forEach(cmd => {
-          if (cmd.name === command || cmd.alias === command) {
-            result = mod
-          }
-        })
+        if (mod.commands && Array.isArray(mod.commands)) {
+          mod.commands.forEach(cmd => {
+            if (cmd.name === command || cmd.alias === command) {
+              result = mod
+            }
+          })
+        }
       })
       return result;
     } else {
-      return false
+      return {}
     }
     
   }
