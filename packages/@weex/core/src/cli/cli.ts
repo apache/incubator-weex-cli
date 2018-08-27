@@ -35,7 +35,6 @@ export interface PluginItem {
     showed: boolean
   }[]
   name?: string
-  version?: string
 }
 
 export interface CliOptions {
@@ -297,9 +296,9 @@ export class Cli {
     let res = result.concat(info)
     if (info.package.requires) {
       for (let name in info.package.requires) {
-        let plugin = this.searchPlugin(name, this.plugins);
-        if (semver.gt(info.package.requires[name], plugin.version)) {
-          let sub = await this.installPackage(name, info.package.requires[name], options, [info])
+        let plugin = this.cliOptions.modules.mods[name];
+        if (!plugin || semver.gt(info.package.requires[name], plugin.version)) {
+          let sub = await this.installPackage(name, info.package.requires[name], options, res)
           res = res.concat(sub)
         }
       }
@@ -358,8 +357,7 @@ export class Cli {
         value: mod.local,
         options: {},
         commands: mod.commands,
-        name: item,
-        version: mod.version
+        name: item
       })
     }
     return plugins
