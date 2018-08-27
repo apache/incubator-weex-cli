@@ -30,7 +30,7 @@ function connect(channelId) {
   });
 
   RuntimeSocket.on('WxDebug.deviceDisconnect', function () {
-    location.href = `http://${location.host}/runtime.html`
+    location.href = 'http://' + window.location.host + '/runtime';
   })
 
   RuntimeSocket.on('WxDebug.refresh', function () {

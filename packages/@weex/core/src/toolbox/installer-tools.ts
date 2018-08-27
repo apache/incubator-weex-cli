@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as importedColors from 'colors/safe'
 import { InstallerOption } from './installer-types'
 
-const debug = require('debug')('weex:core')
+const debug = require('debug')('weex:core:toolbox')
 const execSync = require('child_process').execSync
 const npmii = require('npminstall')
 const co = require('co')
@@ -58,6 +58,7 @@ const installer = async opts => {
   }
 
   // set mirror env.
+  debug(`set mirror env`)
   const binaryMirros = await utils.getBinaryMirrors(opts.registry)
   for (let key in binaryMirros.ENVS) {
     env[key] = binaryMirros.ENVS[key]
@@ -65,7 +66,6 @@ const installer = async opts => {
 
   // no proxy
   process.env.NO_PROXY = '*'
-
   // using a pure npm installer
   return co(function*() {
     try {
@@ -123,7 +123,6 @@ function getMsvsVersion() {
 
 const _install = async (name, version, opts) => {
   let t = Date.now()
-  console.log(name)
   await installer({
     registry: opts.registry || 'https://registry.npmjs.org/',
     root: opts.root,
@@ -134,12 +133,11 @@ const _install = async (name, version, opts) => {
 
 const install = async (name: string, version: string, opts: InstallerOption) => {
   const start = Date.now()
-
   const pkgFile = path.join(opts.root, 'node_modules', name, 'package.json')
-
   // check lock
   const lockFile = path.join(opts.root, '.lock')
   const exists = fs.exists(lockFile)
+  debug(`start install package ${name}@${version}`)
   if (exists && !opts.force) {
     let err: any = new Error('module is locked')
     err.type = '_lock'
@@ -169,12 +167,9 @@ const install = async (name: string, version: string, opts: InstallerOption) => 
   }
 
   // lock
-  await fs.file(lockFile, {
-    jsonIndent: 2,
-    mode: 777,
-    content: `${name}_lock`,
-  })
+  await fs.write(lockFile, {})
   require('on-exit')(clear)
+  debug(`lock installing progress...`)
 
   try {
     await _install(name, version, opts)

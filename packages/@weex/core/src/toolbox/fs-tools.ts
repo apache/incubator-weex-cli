@@ -105,7 +105,7 @@ const fs: IFilesystem = Object.assign(
     isDirectory,
     isNotDirectory,
     isLocalPath,
-    getAbsolutePath,
+    getAbsolutePath
   },
   jetpack, // jetpack utilities
 )
