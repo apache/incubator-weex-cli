@@ -61,6 +61,66 @@ function pascalCase(value: string): string {
   )(value) as string
 }
 
+/**
+ * Compare similarity from two string
+ * 
+ * @param s origin string
+ * @param t compare string
+ * @returns number
+ */
+function strSimilarity2Number(s: string, t: string): number{
+  let n = s.length
+  let m = t.length
+  let d=[];
+  let i; 
+  let j
+  let sTmp
+  let tTmp
+  let cost;
+	if (n === 0) return m;
+	if (m === 0) return n;
+	for (i = 0; i <= n; i++) {
+		d[i]=[];
+		d[i][0] = i;
+	}
+	for(j = 0; j <= m; j++) {
+		d[0][j] = j;
+	}
+	for (i = 1; i <= n; i++) {
+		sTmp = s.charAt (i - 1);
+		for (j = 1; j <= m; j++) {
+			tTmp = t.charAt (j - 1);
+			if (sTmp === tTmp) {
+				cost = 0;
+			}else{
+				cost = 1;
+			}
+		d[i][j] = minimum (d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + cost);
+		}
+	}
+	return d[n][m];
+}
+
+/**
+ * Transform number to percent
+ * 
+ * @param s origin string
+ * @param t compare string
+ * @returns number
+ */
+function strSimilarity2Percent(s: string, t: string): number|string{
+	let l = s.length > t.length ? s.length : t.length;
+	let d = strSimilarity2Number(s, t);
+	return (1-d/l).toFixed(4);
+}
+
+/**
+ * Return to minimum
+ */
+function minimum(a,b,c){
+	return a<b?(a<c?a:c):(b<c?b:c);
+}
+
 export { IStrings }
 
 export const strings: IStrings = {
@@ -92,4 +152,6 @@ export const strings: IStrings = {
   addUncountableRule: pluralize.addUncountableRule,
   isPlural: pluralize.isPlural,
   isSingular: pluralize.isSingular,
+  strSimilarity2Percent,
+  strSimilarity2Number
 }

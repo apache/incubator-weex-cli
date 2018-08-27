@@ -1,70 +1,77 @@
-const Promise = require("ipromise");
+const Promise = require('ipromise')
 class Handler {
-  constructor(handler, router) {
-    this.handler = handler;
-    this.router = router;
+  constructor (handler, router) {
+    this.handler = handler
+    this.router = router
   }
 
-  at(fromString) {
-    this.fromString = fromString;
-    return this;
+  at (fromString) {
+    this.fromString = fromString
+    return this
   }
 
-  when(condition) {
-    if (typeof condition === "string") {
+  when (condition) {
+    if (typeof condition === 'string') {
       this.condition = new Function(
-        "message",
-        "with(message) {return " + condition + ";}"
-      );
-    } else if (typeof condition === "function") {
-      this.condition = condition;
+        'message',
+        'with(message) {return ' + condition + ';}'
+      )
     }
-    return this;
+    else if (typeof condition === 'function') {
+      this.condition = condition
+    }
+    return this
   }
 
-  test(message) {
+  test (message) {
     return (
       message.match(this.fromString) &&
       (!this.condition || this.condition(message))
-    );
+    )
   }
 
-  run(message) {
+  run (message) {
     if (this.test(message)) {
-      return this.handler.call(this.router, message);
+      return this.handler.call(this.router, message)
     }
   }
 }
-function _run(handlerList, message, i = 0) {
-  const promise = new Promise();
-  const handler = handlerList[i];
+function _run (handlerList, message, i = 0) {
+  const promise = new Promise()
+  const handler = handlerList[i]
   if (handler) {
-    const ret = handler.run(message);
-    if (ret && typeof ret.then === "function") {
+    const ret = handler.run(message)
+    if (ret && typeof ret.then === 'function') {
       if (i + 1 < handlerList.length) {
-        ret.then(function(data) {
+        ret.then(function (data) {
           if (data === false) {
-            promise.resolve(false);
-          } else {
-            promise.resolve(_run(handlerList, data || message, i + 1));
+            promise.resolve(false)
           }
-        });
-      } else {
-        return ret;
+          else {
+            promise.resolve(_run(handlerList, data || message, i + 1))
+          }
+        })
       }
-    } else if (ret === false) {
-      promise.resolve(ret);
-    } else {
-      if (i + 1 < handlerList.length) {
-        promise.resolve(_run(handlerList, ret || message, i + 1));
-      } else {
-        promise.resolve(ret);
+      else {
+        return ret
       }
     }
-  } else {
-    promise.resolve();
+    else if (ret === false) {
+      promise.resolve(ret)
+    }
+    else {
+      if (i + 1 < handlerList.length) {
+        promise.resolve(_run(handlerList, ret || message, i + 1))
+      }
+      else {
+        promise.resolve(ret)
+      }
+    }
   }
-  return promise;
+  else {
+    promise.resolve()
+  }
+  return promise
 }
-Handler.run = _run;
-module.exports = Handler;
+Handler.run = _run
+module.exports = Handler

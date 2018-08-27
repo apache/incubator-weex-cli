@@ -1,92 +1,94 @@
-const queryParser = require("querystring");
-const URL = require("url");
-const path = require("path");
-const fse = require("fs-extra");
-const util = require("./util");
+const queryParser = require('querystring')
+const URL = require('url')
+const path = require('path')
+const fse = require('fs-extra')
+const util = require('./util')
 
 const bundleWrapper = (code, sourceUrl) => {
   const injectedGlobals = [
     // ES
-    "Promise",
+    'Promise',
     // W3C
-    "window",
-    "weex",
-    "service",
-    "Rax",
-    "services",
-    "global",
-    "screen",
-    "document",
-    "navigator",
-    "location",
-    "fetch",
-    "Headers",
-    "Response",
-    "Request",
-    "URL",
-    "URLSearchParams",
-    "setTimeout",
-    "clearTimeout",
-    "setInterval",
-    "clearInterval",
-    "requestAnimationFrame",
-    "cancelAnimationFrame",
-    "alert",
+    'window',
+    'weex',
+    'service',
+    'Rax',
+    'services',
+    'global',
+    'screen',
+    'document',
+    'navigator',
+    'location',
+    'fetch',
+    'Headers',
+    'Response',
+    'Request',
+    'URL',
+    'URLSearchParams',
+    'setTimeout',
+    'clearTimeout',
+    'setInterval',
+    'clearInterval',
+    'requestAnimationFrame',
+    'cancelAnimationFrame',
+    'alert',
     // ModuleJS
-    "define",
-    "require",
+    'define',
+    'require',
     // Weex
-    "bootstrap",
-    "register",
-    "render",
-    "__d",
-    "__r",
-    "__DEV__",
-    "__weex_define__",
-    "__weex_require__",
-    "__weex_viewmodel__",
-    "__weex_document__",
-    "__weex_bootstrap__",
-    "__weex_options__",
-    "__weex_data__",
-    "__weex_downgrade__",
-    "__weex_require_module__",
-    "Vue"
-  ];
+    'bootstrap',
+    'register',
+    'render',
+    '__d',
+    '__r',
+    '__DEV__',
+    '__weex_define__',
+    '__weex_require__',
+    '__weex_viewmodel__',
+    '__weex_document__',
+    '__weex_bootstrap__',
+    '__weex_options__',
+    '__weex_data__',
+    '__weex_downgrade__',
+    '__weex_require_module__',
+    'Vue'
+  ]
   const bundlewrapper =
-    "function __weex_bundle_entry__(" + injectedGlobals.join(",") + "){";
-  const rearRegexp = /\/\/#\s*sourceMappingURL(?!.*?\s+.)|$/;
-  const match = /^\/\/\s?{\s?"framework"\s?:\s?"(\w+)"\s?}/.exec(code);
-  let anno = "";
+    'function __weex_bundle_entry__(' + injectedGlobals.join(',') + '){'
+  const rearRegexp = /\/\/#\s*sourceMappingURL(?!.*?\s+.)|$/
+  const match = /^\/\/\s?{\s?"framework"\s?:\s?"(\w+)"\s?}/.exec(code)
+  let anno = ''
   if (match) {
-    anno = '$$frameworkFlag["' + (sourceUrl || "@") + '"]="' + match[1] + '"\n';
+    anno = '$$frameworkFlag["' + (sourceUrl || '@') + '"]="' + match[1] + '"\n'
   }
-  return anno + bundlewrapper + code.replace(rearRegexp, "}\n$&");
-};
+  return anno + bundlewrapper + code.replace(rearRegexp, '}\n$&')
+}
 const transformUrlToLocalUrl = sourceURl => {
-  const rHttpHeader = /^(https?|taobao|qap):\/\/(?!.*your_current_ip)/i;
-  let bundleUrl;
+  const rHttpHeader = /^(https?|taobao|qap):\/\/(?!.*your_current_ip)/i
+  let bundleUrl
   if (rHttpHeader.test(sourceURl)) {
-    const query = queryParser.parse(URL.parse(sourceURl).query);
-    if (query["_wx_tpl"]) {
-      bundleUrl = util.normalize(query["_wx_tpl"]).replace(rHttpHeader, "");
-    } else {
-      bundleUrl = util.normalize(sourceURl).replace(rHttpHeader, "");
+    const query = queryParser.parse(URL.parse(sourceURl).query)
+    if (query['_wx_tpl']) {
+      bundleUrl = util.normalize(query['_wx_tpl']).replace(rHttpHeader, '')
     }
-  } else {
+    else {
+      bundleUrl = util.normalize(sourceURl).replace(rHttpHeader, '')
+    }
+  }
+  else {
     bundleUrl = sourceURl.replace(
       /^(https?|taobao|qap):\/\/(.*your_current_ip):(\d+)\//i,
-      "file://"
-    );
+      'file://'
+    )
   }
-  if (bundleUrl.charAt(bundleUrl.length - 1) === "?") {
-    bundleUrl = bundleUrl.substring(0, bundleUrl.length - 1);
+  if (bundleUrl.charAt(bundleUrl.length - 1) === '?') {
+    bundleUrl = bundleUrl.substring(0, bundleUrl.length - 1)
   }
-  if (bundleUrl.charAt(bundleUrl.length - 1) === "?") {
-    bundleUrl = bundleUrl.substring(0, bundleUrl.length - 1);
+  if (bundleUrl.charAt(bundleUrl.length - 1) === '?') {
+    bundleUrl = bundleUrl.substring(0, bundleUrl.length - 1)
   }
-  return "/source/" + bundleUrl;
-};
+  return '/source/' + bundleUrl
+}
 
 const eventConstructor = `// event constructor
 function __EventEmitter__() {
@@ -149,7 +151,7 @@ __EventEmitter__.prototype = {
     this._emit('$finally', args, context);
     return context;
   }
-};`;
+};`
 
 const mockBrowserApi = `// Redefine navigator 
 Object.defineProperty(navigator, 'appCodeName', {
@@ -222,7 +224,7 @@ Object.defineProperty(this, 'clearInterval', {
     return __cachedClearInterval__;
   },
   set: function () {}
-});`;
+});`
 
 const mockContextApi = `// Redefine the JSFramework API
 var __syncRequest__ = function(data, channelId) {
@@ -322,12 +324,12 @@ self.callAddElement = function (instance, ref, dom, index, callback) {
 
 self.nativeLog = function (args) {
   self.console.log(args)
-};`;
+};`
 
 const generateSandboxWorkerEntry = env => {
   const worker = fse.readFileSync(
-    path.join(__dirname, "../worker/sandbox_worker.js")
-  );
+    path.join(__dirname, '../worker/sandbox_worker.js')
+  )
   const androidMockApi =
     env && env.isLayoutAndSandbox
       ? `self.callCreateBody = function (instance, domStr) {
@@ -447,7 +449,7 @@ self.callRemoveEvent = function (instance, ref, event) {
   };
   __postData__(payload);
 }`
-      : "";
+      : ''
   let environment = `${eventConstructor}
 
 ${mockBrowserApi}
@@ -455,17 +457,17 @@ ${mockBrowserApi}
 ${mockContextApi}
 
 ${androidMockApi}
-`;
+`
   if (env && env.jsframework) {
-    environment += `importScripts('${env.jsframework}');\n`;
+    environment += `importScripts('${env.jsframework}');\n`
   }
   return `${environment}
 ${worker}
-  `;
-};
+  `
+}
 
 const generateWorkerEntry = env => {
-  const worker = fse.readFileSync(path.join(__dirname, "../worker/worker.js"));
+  const worker = fse.readFileSync(path.join(__dirname, '../worker/worker.js'))
   let environment = `${eventConstructor}
 
 ${mockBrowserApi}
@@ -473,33 +475,33 @@ ${mockBrowserApi}
 ${mockContextApi}
 
 self.$$frameworkFlag = {};
-`;
+`
   if (env && env.jsframework) {
-    environment += `importScripts('${env.jsframework}');\n`;
+    environment += `importScripts('${env.jsframework}');\n`
     // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
   if (env && env.importScripts && env.importScripts.length > 0) {
     env.importScripts.forEach(script => {
-      environment += `importScripts('${script}');\n`;
-    });
+      environment += `importScripts('${script}');\n`
+    })
   }
   if (env && env.sourceUrl) {
-    environment += `importScripts('${env.sourceUrl}');\n`;
+    environment += `importScripts('${env.sourceUrl}');\n`
   }
   return `
 ${environment}
 ${worker}
-  `;
-};
+  `
+}
 
 const pickDomain = str => {
   if (/file:\/\/\//.test(str)) {
-    return "local";
+    return 'local'
   }
   if (/http(s)?/.test(str)) {
-    return URL.parse(str).hostname;
+    return URL.parse(str).hostname
   }
-};
+}
 
 module.exports = {
   bundleWrapper,
@@ -507,4 +509,4 @@ module.exports = {
   generateSandboxWorkerEntry,
   generateWorkerEntry,
   pickDomain
-};
+}
