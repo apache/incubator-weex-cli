@@ -10,7 +10,7 @@ import {
   ISemver,
   IHttp,
   IPatching,
-  IPrompt,
+  IInquirer,
   ITemplate,
   IMeta,
   IParameters,
@@ -58,7 +58,7 @@ export interface IToolbox {
   meta?: IMeta
   patching?: IPatching
   logger?: ILOGGER
-  prompt?: IPrompt
+  inquirer?: IInquirer
   semver?: ISemver
   strings?: IStrings
   system?: ISystem

@@ -1,5 +1,5 @@
 import { IToolbox } from '../core/toolbox'
-import { prompt } from '../toolbox/prompt-tools'
+import { inquirer } from '../toolbox/inquirer-tools'
 
 /**
  * Provides user input prompts via enquirer.js.
@@ -7,5 +7,5 @@ import { prompt } from '../toolbox/prompt-tools'
  * @param toolbox The running toolbox.
  */
 export default function attach(toolbox: IToolbox): void {
-  toolbox.prompt = prompt
+  toolbox.inquirer = inquirer
 }

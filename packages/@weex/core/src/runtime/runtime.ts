@@ -56,7 +56,7 @@ export class Runtime {
       'fs',
       'semver',
       'system',
-      'prompt',
+      'inquirer',
       'http',
       'template',
       'patching',
