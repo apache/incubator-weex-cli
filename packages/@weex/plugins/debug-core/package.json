@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/debug-core",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.1-beta.1",
   "description": "Sub dependence for @weex-cli/debug",
   "main": "index.js",
   "scripts": {
