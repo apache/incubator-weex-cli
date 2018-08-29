@@ -13,7 +13,7 @@ export { system, ISystem } from './toolbox/system-tools'
 export { semver, ISemver } from './toolbox/semver-tools'
 export { http, IHttp } from './toolbox/http-tools'
 export { patching, IPatching, IPatchingPatchOptions } from './toolbox/patching-tools'
-export { prompt, IPrompt } from './toolbox/prompt-tools'
+export { inquirer, IInquirer } from './toolbox/inquirer-tools'
 export { open } from './toolbox/open-tools'
 export { install, InstallerOption } from './toolbox/installer-tools'
 
