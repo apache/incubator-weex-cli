@@ -11,7 +11,7 @@ enum ModType {
 
 enum ErrorType {
   PACKAGE_VERSION_NOT_FOUND = 101,
-  PACKAGE_NOT_FOUND
+  PACKAGE_NOT_FOUND,
 }
 export interface ModData {
   mods: {
@@ -93,8 +93,8 @@ export class Cli {
       this.cli = this.cli.plugins(options.plugins.value, options.plugins.options)
     }
     if (!this.cliOptions.modules.mods) {
-      this.cliOptions.modules['mods'] = {};
-      this.cliOptions.modules['last_update_time'] = new Date().getTime();
+      this.cliOptions.modules['mods'] = {}
+      this.cliOptions.modules['last_update_time'] = new Date().getTime()
     }
     if (options.plugin) {
       if (Array.isArray(options.plugin)) {
@@ -112,72 +112,74 @@ export class Cli {
     if (this.cliOptions.modules) {
       this.plugins = this.pickPlugins(this.cliOptions.modules)
     } else {
-      fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), { mods: {}, last_update_time: new Date().getTime() })
+      fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), {
+        mods: {},
+        last_update_time: new Date().getTime(),
+      })
     }
     if (command === 'repair') {
-      debug(`Do repair`);
-      const repairModule = this.argv.array[1];
-      let repairName;
-      let repairVersion;
+      debug(`Do repair`)
+      const repairModule = this.argv.array[1]
+      let repairName
+      let repairVersion
       if (repairModule) {
         // check if it is a command or alias
         const plugin = this.searchPlugin(repairModule, this.plugins)
         if (plugin && plugin.name) {
-          repairName = plugin.name;
-          repairVersion = 'latest';
-        }
-        else {
-          const first = repairModule.slice(0,1);
+          repairName = plugin.name
+          repairVersion = 'latest'
+        } else {
+          const first = repairModule.slice(0, 1)
           // check for origin npm package
           if (first === '@') {
-            const arg = repairModule.split('@');
+            const arg = repairModule.split('@')
             if (arg.length > 2) {
-              repairVersion = arg.pop();
-              repairName = arg.join('@');
+              repairVersion = arg.pop()
+              repairName = arg.join('@')
+            } else {
+              repairName = arg.join('@')
+              repairVersion = 'latest'
             }
-            else {
-              repairName = arg.join('@');
-              repairVersion = 'latest';
-            }
-          }
-          else {
-            const arg = repairModule.split('@');
+          } else {
+            const arg = repairModule.split('@')
             if (arg.length > 1) {
-              repairVersion = arg.pop();
-              repairName = arg.join('@');
-            }
-            else {
-              repairName = arg[0];
-              repairVersion = 'latest';
+              repairVersion = arg.pop()
+              repairName = arg.join('@')
+            } else {
+              repairName = arg[0]
+              repairVersion = 'latest'
             }
           }
         }
-        const res: { error?: string; [key: string]: any } = await this.checkNpmPackageExist(repairName, repairVersion, this.cliOptions.registry)
+        const res: { error?: string; [key: string]: any } = await this.checkNpmPackageExist(
+          repairName,
+          repairVersion,
+          this.cliOptions.registry,
+        )
         if (!res.error) {
           try {
-            await this.repairPackage(repairName, repairVersion);
-            debug(`repair ${repairName} successed!`);
+            await this.repairPackage(repairName, repairVersion)
+            debug(`repair ${repairName} successed!`)
             logger.success(`\nRepair ${repairName} successed!`)
+          } catch (e) {
+            await this.analyzer('repair', e.stack, { name: repairName, version: repairVersion })
           }
-          catch(e) {
-            await this.analyzer('repair', e.stack, {name: repairName, version: repairVersion})
-          }
-        }
-        else {
+        } else {
           if (res.versions) {
-            await this.analyzer('repair', res.error, {name: repairName, version: repairVersion, versions: res.versions})
-          }
-          else {
-            await this.analyzer('repair', res.error, {name: repairName, version: repairVersion})
+            await this.analyzer('repair', res.error, {
+              name: repairName,
+              version: repairVersion,
+              versions: res.versions,
+            })
+          } else {
+            await this.analyzer('repair', res.error, { name: repairName, version: repairVersion })
           }
         }
-      }
-      else {
+      } else {
         logger.error('Need to specify the repaired module')
       }
-      return ;
-    }
-    else if (command) {
+      return false
+    } else if (command) {
       const plugin = this.searchPlugin(command, this.plugins)
       let commands = []
       let type = ModType.EXTENSION
@@ -224,36 +226,37 @@ export class Cli {
                 commands: commands,
                 name: packages[i].package.name,
               })
-            }
-            else {
+            } else {
               this.cliOptions.modules.mods[packages[i].package.name] = {
                 type: type,
                 version: packages[i].package.version,
                 next_version: '',
                 is_next: true,
                 changelog: packages[i].changelog || '',
-                local: packages[i].root
+                local: packages[i].root,
               }
             }
           }
           // update module file
-          fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), { mods: this.cliOptions.modules.mods, last_update_time: new Date().getTime() })
+          fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), {
+            mods: this.cliOptions.modules.mods,
+            last_update_time: new Date().getTime(),
+          })
         }
-      }
-      else {
+      } else {
         // check if there has some module need to be upgraded
         // check last_update_time
-        const info: any = await this.updateNpmPackageInfo(this.cliOptions.modules, this.cliOptions.registry);
+        const info: any = await this.updateNpmPackageInfo(this.cliOptions.modules, this.cliOptions.registry)
         if (info) {
-          let upgradeList = {};
-          for(let mod in info.mods) {
-            if(!info.mods[mod].is_next) {
-              upgradeList[mod] = info.mods[mod];
+          let upgradeList = {}
+          for (let mod in info.mods) {
+            if (!info.mods[mod].is_next) {
+              upgradeList[mod] = info.mods[mod]
             }
           }
-          let lists = Object.keys(upgradeList);
-          let yes = 'Yes, update all';
-          let no = 'No, next time';
+          let lists = Object.keys(upgradeList)
+          let yes = 'Yes, update all'
+          let no = 'No, next time'
           let choices = [yes, no, new inquirer.Separator('Or choose update package')].concat(Object.keys(upgradeList))
           if (lists.length > 0) {
             let res = await inquirer.prompt({
@@ -261,21 +264,28 @@ export class Cli {
               type: 'list',
               choices: choices,
               default: yes,
-              message: 'New update detected, update now?'
-            });
+              message: 'New update detected, update now?',
+            })
             if (yes === res.choose) {
               for (let item in upgradeList) {
-                await this.repairPackage(item, upgradeList[item].next_version);
-                logger.success(`[${logger.checkmark}] Upgrade ${item} ${upgradeList[item].version} -> ${upgradeList[item].next_version} success`)
+                await this.repairPackage(item, upgradeList[item].next_version)
+                logger.success(
+                  `[${logger.checkmark}] Upgrade ${item} ${upgradeList[item].version} -> ${
+                    upgradeList[item].next_version
+                  } success`,
+                )
               }
-              logger.success(`All task completed.`);
-            }
-            else if (no !== res.choose){
-              await this.repairPackage(res.choose, upgradeList[res.choose].next_version);
-              logger.success(`[${logger.checkmark}] Upgrade ${res.choose} ${upgradeList[res.choose].version} -> ${upgradeList[res.updatelist].next_version} success`)
+              logger.success(`All task completed.`)
+            } else if (no !== res.choose) {
+              await this.repairPackage(res.choose, upgradeList[res.choose].next_version)
+              logger.success(
+                `[${logger.checkmark}] Upgrade ${res.choose} ${upgradeList[res.choose].version} -> ${
+                  upgradeList[res.updatelist].next_version
+                } success`,
+              )
             }
           }
-          fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), info);
+          fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), info)
         }
       }
       if (this.plugins.length > 0) {
@@ -292,13 +302,13 @@ export class Cli {
 
   /**
    * Repair npm package
-   * 
+   *
    * @param name npm package name
    * @param version npm package version
    */
   async repairPackage(name: string, version: string) {
-    let commands = [];
-    let type = ModType.EXTENSION;
+    let commands = []
+    let type = ModType.EXTENSION
     const packages: any = await this.installPackage(name, version, {
       root: this.cliOptions.moduleRoot,
       registry: this.cliOptions.registry,
@@ -332,27 +342,29 @@ export class Cli {
           local: packages[i].root,
           commands: commands,
         }
-        commands = [];
-      }
-      else {
+        commands = []
+      } else {
         this.cliOptions.modules.mods[packages[i].package.name] = {
           type: type,
           version: packages[i].package.version,
           next_version: '',
           is_next: true,
           changelog: packages[i].changelog || '',
-          local: packages[i].root
+          local: packages[i].root,
         }
       }
     }
     debug(`save modjson: ${JSON.stringify(this.cliOptions.modules.mods)}`)
     // update module file
-    fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), { mods: this.cliOptions.modules.mods, last_update_time: new Date().getTime() })
+    fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), {
+      mods: this.cliOptions.modules.mods,
+      last_update_time: new Date().getTime(),
+    })
   }
 
   /**
    * Install packages
-   * 
+   *
    * @param name package name
    * @param version package version
    * @param options install options
@@ -363,7 +375,7 @@ export class Cli {
     let res = result.concat(info)
     if (info.package.pluginDependencies) {
       for (let name in info.package.pluginDependencies) {
-        let plugin = this.cliOptions.modules.mods[name];
+        let plugin = this.cliOptions.modules.mods[name]
         if (!plugin || semver.gt(info.package.pluginDependencies[name], plugin.version)) {
           let sub = await this.installPackage(name, info.package.pluginDependencies[name], options, res)
           res = res.concat(sub)
@@ -375,7 +387,7 @@ export class Cli {
 
   /**
    * Suggest if there has a official module for the command.
-   * 
+   *
    * @param command command name
    * @param registry npm registry
    */
@@ -389,7 +401,7 @@ export class Cli {
 
   /**
    * Checking if there has the package on the specified registry with specified version
-   * 
+   *
    * @param name package name
    * @param version package version
    * @param registry npm registry
@@ -398,16 +410,15 @@ export class Cli {
     const npmApi = http.create({
       baseURL: `${registry}`,
     })
-    const res:any = await npmApi.get(`${name}`)
+    const res: any = await npmApi.get(`${name}`)
     if (res.data.error) {
       if (/not_found/.test(res.data.error)) {
-        res.data.error = ErrorType.PACKAGE_NOT_FOUND;
+        res.data.error = ErrorType.PACKAGE_NOT_FOUND
       }
-    }
-    else if (version && version !== 'latest') {
+    } else if (version && version !== 'latest') {
       if (!res.data.versions[version]) {
-        res.data.error = ErrorType.PACKAGE_VERSION_NOT_FOUND;
-        res.data.versions = Object.keys(res.data.versions);
+        res.data.error = ErrorType.PACKAGE_VERSION_NOT_FOUND
+        res.data.versions = Object.keys(res.data.versions)
       }
     }
     return res.data
@@ -415,49 +426,46 @@ export class Cli {
 
   /**
    * Check if there has some modules need to be upgraded.
-   * 
+   *
    * @param modules module item
    * @param registry npm registry
    * @param time update checking times, day
    */
-  async updateNpmPackageInfo(modules: ModData, registry:string, time: number = 1) {
+  async updateNpmPackageInfo(modules: ModData, registry: string, time: number = 1) {
     const modData = Object.assign({}, modules)
-    const date = new Date();
-    if((date.getTime() - modData.last_update_time) <= 24 * 3600 * 1000 * time) {
-      return;
+    const date = new Date()
+    if (date.getTime() - modData.last_update_time <= 24 * 3600 * 1000 * time) {
+      return false
     }
-    logger.info(`Time: ${this.formateTime(date)}, verify if there is an update`);
-    const spinner = logger.spin('Checking ... please wait');
-    for(let mod in modData.mods) {
-      spinner.text = `Checking ${mod} ...`;
+    logger.info(`Time: ${this.formateTime(date)}, verify if there is an update`)
+    const spinner = logger.spin('Checking ... please wait')
+    for (let mod in modData.mods) {
+      spinner.text = `Checking ${mod} ...`
       let res = await this.getNpmPackageLatestVersion(mod, registry)
       if (!res.error) {
         spinner.succeed(`Finished checking [${mod}]`)
         if (semver.gt(res.latest, modData.mods[mod].version)) {
-          modData.mods[mod].is_next = false;
-          modData.mods[mod].next_version = res.latest;
+          modData.mods[mod].is_next = false
+          modData.mods[mod].next_version = res.latest
+        } else {
+          modData.mods[mod].is_next = true
+          modData.mods[mod].next_version = res.latest
         }
-        else {
-          modData.mods[mod].is_next = true;
-          modData.mods[mod].next_version = res.latest;
-        }
-      }
-      else {
+      } else {
         if (res.error === ErrorType.PACKAGE_NOT_FOUND) {
           spinner.fail(`Package [${mod}] not found on registry ${registry}`)
-        }
-        else {
+        } else {
           spinner.fail(`Unkonw error with checking [${mod}], ${res.error}`)
         }
       }
     }
-    modData.last_update_time = date.getTime();
-    return modData;
+    modData.last_update_time = date.getTime()
+    return modData
   }
 
   /**
    * Get the latest version of a package.
-   * 
+   *
    * @param name package name
    * @param registry npm registry
    * @returns {error?:string, latest?:string}
@@ -466,30 +474,28 @@ export class Cli {
     const npmApi = http.create({
       baseURL: `${registry}`,
     })
-    const res:any = await npmApi.get(`${name}`)
-    let error ;
+    const res: any = await npmApi.get(`${name}`)
+    let error
     if (res.data.error) {
       if (/not_found/.test(res.data.error)) {
-        error = ErrorType.PACKAGE_NOT_FOUND;
+        error = ErrorType.PACKAGE_NOT_FOUND
       }
-    }
-    else if (res.data['dist-tags']['latest']) {
-      const latest = res.data['dist-tags']['latest'];
+    } else if (res.data['dist-tags']['latest']) {
+      const latest = res.data['dist-tags']['latest']
       return {
-        latest: latest
+        latest: latest,
       }
-    }
-    else {
+    } else {
       error = `can't found ${name} latest version`
     }
     return {
-      error: error
+      error: error,
     }
   }
 
   /**
    * Analyzer error stack and give some solution.
-   * 
+   *
    * @param type command type
    * @param stack error stack
    * @param options data from error stack
@@ -497,47 +503,38 @@ export class Cli {
   async analyzer(type: string, stack: string | number, options?: any) {
     if (type === 'repair') {
       if (ErrorType.PACKAGE_NOT_FOUND === stack) {
-        const innerMods = [
-          '@weex-cli/debug',
-          '@weex-cli/generator',
-          '@weex-cli/build',
-          '@weex-cli/preview'
-        ]
-        let score;
-        let tempScore;
-        let suggestName;
+        const innerMods = ['@weex-cli/debug', '@weex-cli/generator', '@weex-cli/build', '@weex-cli/preview']
+        let score
+        let tempScore
+        let suggestName
         innerMods.forEach(mod => {
-          tempScore = strings.strSimilarity2Number(mod, options.name);
+          tempScore = strings.strSimilarity2Number(mod, options.name)
           if (!score) {
-            score = tempScore;
-            suggestName = mod;
-          }
-          else if (tempScore < score) {
-            score = tempScore;
-            suggestName = mod;
+            score = tempScore
+            suggestName = mod
+          } else if (tempScore < score) {
+            score = tempScore
+            suggestName = mod
           }
         })
         logger.warn(`Module "${options.name}" not found, do you mean "${suggestName}"?`)
-      }
-      else if (ErrorType.PACKAGE_VERSION_NOT_FOUND === stack) {
-        logger.warn(`Module "${options.name}@${options.version}" not found`);
+      } else if (ErrorType.PACKAGE_VERSION_NOT_FOUND === stack) {
+        logger.warn(`Module "${options.name}@${options.version}" not found`)
         if (Array.isArray(options.versions) && options.versions.length > 0) {
-          logger.info("Chose one of the versions:");
+          logger.info('Chose one of the versions:')
           options.versions.forEach(version => {
             logger.info(`- ${version}`)
           })
         }
-      }
-      else {
+      } else {
         const logPath = path.join(process.cwd(), '.weex-error.log')
-        fs.write(logPath, stack);
+        fs.write(logPath, stack)
         logger.warn(`Unkown issue, see error stack on logPath.`)
         logger.warn(`To fix this, you can create a issue on https://github.com/weexteam/weex-toolkit/issues.`)
       }
-    }
-    else {
+    } else {
       const logPath = path.join(process.cwd(), '.weex-error.log')
-      fs.write(logPath, stack);
+      fs.write(logPath, stack)
       logger.warn(`Unkown issue, see error stack on logPath.`)
       logger.warn(`To fix this, you can create a issue on https://github.com/weexteam/weex-toolkit/issues.`)
     }
@@ -552,7 +549,7 @@ export class Cli {
 
   /**
    * Pick plugin items for cli toolbox.
-   * 
+   *
    * @param modules data from module.json
    */
   pickPlugins(modules: ModData): PluginItem[] {
@@ -564,7 +561,7 @@ export class Cli {
         value: mod.local,
         options: {},
         commands: mod.commands,
-        name: item
+        name: item,
       })
     }
     return plugins
@@ -572,9 +569,9 @@ export class Cli {
 
   /**
    * Map command to a package module.
-   * 
-   * @param command 
-   * @param mods 
+   *
+   * @param command
+   * @param mods
    */
   searchPlugin(command: string, mods: PluginItem[]): PluginItem {
     if (mods.length > 0) {
@@ -588,11 +585,10 @@ export class Cli {
           })
         }
       })
-      return result;
+      return result
     } else {
       return {}
     }
-    
   }
 }
 
