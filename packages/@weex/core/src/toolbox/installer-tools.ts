@@ -167,7 +167,7 @@ const install = async (name: string, version: string, opts: InstallerOption) => 
   }
 
   // lock
-  await fs.write(lockFile, {})
+  fs.write(lockFile, {})
   require('on-exit')(clear)
   debug(`lock installing progress...`)
 
