@@ -136,7 +136,6 @@ export class Runtime {
    */
   public addDefaultPlugin(directory: string, options: ILoadOptions = {}): Runtime {
     this.defaultPlugin = this.addPlugin(directory, { required: true, name: this.brand, ...options })
-
     // load config and set defaults
     const config = loadConfig(this.brand, directory) || {}
     this.defaults = config.defaults

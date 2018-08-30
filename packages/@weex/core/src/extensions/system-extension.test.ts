@@ -61,3 +61,8 @@ test('start timer returns the number of milliseconds', async () => {
   // due to rounding this can be before the timeout.
   expect(duration >= WAIT - 1).toBe(true)
 })
+
+test('get userpath', async () => {
+  const userpath = system.userhome() // get path
+  expect(typeof userpath).toBe('string')
+})

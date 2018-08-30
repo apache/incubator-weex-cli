@@ -2,7 +2,7 @@ import { fs } from './fs-tools'
 import * as path from 'path'
 import * as importedColors from 'colors/safe'
 import { InstallerOption } from './installer-types'
-
+import * as ora from 'ora'
 const debug = require('debug')('weex:core:toolbox')
 const execSync = require('child_process').execSync
 const npmii = require('npminstall')
@@ -78,7 +78,7 @@ const installer = async opts => {
         strictSSL: getStrictSSL(),
         ignoreScripts: false,
         root: opts.root,
-        pkgs: opts.pkgs,
+        pkgs: opts.pkgs
       })
     } catch (e) {
       e.type = '_install_core'
