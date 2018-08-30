@@ -41,16 +41,20 @@ export interface PluginItem {
   name?: string
 }
 
-export interface CliOptions {
+export interface CliConfiguration {
   corePath: string
   coreName: string
   moduleRoot: string
-  moduleName: string
+  moduleConfigFileName: string
   home: string
   registry: string
   argv: string
   trash: string
-  modules: ModData
+  modules: ModData,
+  globalConfigFileName: string
+  configs?: {
+    [key: string]: any
+  }
 }
 
 export interface CoreOptions {
@@ -74,13 +78,15 @@ export class Cli {
   private rawArgv: string[] | string
   private argv: IParameters
   private plugins: PluginItem[] = []
-  private cliOptions: CliOptions
-  constructor(data: CliOptions, options: CoreOptions = {}) {
+  private cliConfiguration: CliConfiguration
+  constructor(data: CliConfiguration, options: CoreOptions = {}) {
+    debug('Init Cli instance on <%s>', __filename)
+
     this.rawArgv = data.argv
 
     this.argv = parseParams(data.argv)
 
-    this.cliOptions = data
+    this.cliConfiguration = data
     // create a CLI runtime
     this.cli = build(options.brand || 'weex')
       .src(__dirname)
@@ -92,10 +98,12 @@ export class Cli {
     if (options.plugins && options.plugins.value) {
       this.cli = this.cli.plugins(options.plugins.value, options.plugins.options)
     }
-    if (!this.cliOptions.modules.mods) {
-      this.cliOptions.modules['mods'] = {}
-      this.cliOptions.modules['last_update_time'] = new Date().getTime()
+
+    if (!this.cliConfiguration.modules.mods) {
+      this.cliConfiguration.modules['mods'] = {}
+      this.cliConfiguration.modules['last_update_time'] = new Date().getTime()
     }
+
     if (options.plugin) {
       if (Array.isArray(options.plugin)) {
         options.plugin.forEach(p => {
@@ -105,14 +113,17 @@ export class Cli {
         this.cli = this.cli.plugin(options.plugin.value, options.plugin.options)
       }
     }
+
   }
 
   async start() {
     const command = this.argv.array[0]
-    if (this.cliOptions.modules) {
-      this.plugins = this.pickPlugins(this.cliOptions.modules)
-    } else {
-      fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), {
+    const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
+    if (this.cliConfiguration.modules) {
+      this.plugins = this.pickPlugins(this.cliConfiguration.modules)
+    }
+    else {
+      fs.write(moduleConfigFilePath, {
         mods: {},
         last_update_time: new Date().getTime(),
       })
@@ -154,7 +165,7 @@ export class Cli {
         const res: { error?: string; [key: string]: any } = await this.checkNpmPackageExist(
           repairName,
           repairVersion,
-          this.cliOptions.registry,
+          this.cliConfiguration.configs.registry || this.cliConfiguration.registry,
         )
         if (!res.error) {
           try {
@@ -179,17 +190,21 @@ export class Cli {
         logger.error('Need to specify the repaired module')
       }
       return false
+    } else if (command === 'config') {
+      debug('Do config')
+    } else if (command === 'install') {
+      debug('Do install')
     } else if (command) {
       const plugin = this.searchPlugin(command, this.plugins)
       let commands = []
       let type = ModType.EXTENSION
       // If the module has been instll, skip
-      if (!plugin.name) {
-        const res: { error?: string; [key: string]: any } = await this.suggestPackage(command, this.cliOptions.registry)
+      if (!plugin || !plugin.name) {
+        const res: { error?: string; [key: string]: any } = await this.suggestPackage(command, this.cliConfiguration.registry)
         if (!res.error) {
           const packages: any = await this.installPackage(`@weex-cli/${command}`, 'latest', {
-            root: this.cliOptions.moduleRoot,
-            registry: this.cliOptions.registry,
+            root: this.cliConfiguration.moduleRoot,
+            registry: this.cliConfiguration.registry,
           })
           for (let i = 0; i < packages.length; i++) {
             const commandBasePath = path.join(packages[i].root, 'commands')
@@ -211,7 +226,7 @@ export class Cli {
               type = ModType.PLUGIN
             })
             if (commands.length > 0) {
-              this.cliOptions.modules.mods[packages[i].package.name] = {
+              this.cliConfiguration.modules.mods[packages[i].package.name] = {
                 type: type,
                 version: packages[i].package.version,
                 next_version: '',
@@ -227,7 +242,7 @@ export class Cli {
                 name: packages[i].package.name,
               })
             } else {
-              this.cliOptions.modules.mods[packages[i].package.name] = {
+              this.cliConfiguration.modules.mods[packages[i].package.name] = {
                 type: type,
                 version: packages[i].package.version,
                 next_version: '',
@@ -238,15 +253,15 @@ export class Cli {
             }
           }
           // update module file
-          fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), {
-            mods: this.cliOptions.modules.mods,
+          fs.write(moduleConfigFilePath, {
+            mods: this.cliConfiguration.modules.mods,
             last_update_time: new Date().getTime(),
           })
         }
       } else {
         // check if there has some module need to be upgraded
         // check last_update_time
-        const info: any = await this.updateNpmPackageInfo(this.cliOptions.modules, this.cliOptions.registry)
+        const info: any = await this.updateNpmPackageInfo(this.cliConfiguration.modules, this.cliConfiguration.registry)
         if (info) {
           let upgradeList = {}
           for (let mod in info.mods) {
@@ -285,7 +300,7 @@ export class Cli {
               )
             }
           }
-          fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), info)
+          fs.write(moduleConfigFilePath, info)
         }
       }
       if (this.plugins.length > 0) {
@@ -300,6 +315,27 @@ export class Cli {
     return toolbox
   }
 
+  async initGlobalConfig () {
+    const taobao = `http://registry.npm.taobao.org`;
+    const npm = `http://registry.npmjs.org`;
+
+    const questions:any = [{
+      name: 'telemetry',
+      type: 'confirm',
+      message: 'May weex-toolkit anonymously report usage statistics to improve the tool over time?'
+    }, {
+      name: 'registry',
+      type: 'list',
+      choices: [{ name: 'use npm', value: npm, short: 'npm' }, { name: 'use taobao (for Chinese)', value: taobao, short: 'taobao' }],
+      message: 'Which npm registry you perfer to use?'
+    }];
+    const answer = await inquirer.prompt(questions);
+    return {
+      telemetry: answer.telemetry,
+      registry: answer.registry
+    }
+  }
+
   /**
    * Repair npm package
    *
@@ -309,9 +345,10 @@ export class Cli {
   async repairPackage(name: string, version: string) {
     let commands = []
     let type = ModType.EXTENSION
+    const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
     const packages: any = await this.installPackage(name, version, {
-      root: this.cliOptions.moduleRoot,
-      registry: this.cliOptions.registry,
+      root: this.cliConfiguration.moduleRoot,
+      registry: this.cliConfiguration.registry,
     })
     for (let i = 0; i < packages.length; i++) {
       let commandBasePath = path.join(packages[i].root, 'commands')
@@ -333,7 +370,7 @@ export class Cli {
         type = ModType.PLUGIN
       })
       if (commands.length > 0) {
-        this.cliOptions.modules.mods[packages[i].package.name] = {
+        this.cliConfiguration.modules.mods[packages[i].package.name] = {
           type: type,
           version: packages[i].package.version,
           next_version: '',
@@ -344,7 +381,7 @@ export class Cli {
         }
         commands = []
       } else {
-        this.cliOptions.modules.mods[packages[i].package.name] = {
+        this.cliConfiguration.modules.mods[packages[i].package.name] = {
           type: type,
           version: packages[i].package.version,
           next_version: '',
@@ -354,10 +391,10 @@ export class Cli {
         }
       }
     }
-    debug(`save modjson: ${JSON.stringify(this.cliOptions.modules.mods)}`)
+    debug(`save modjson: ${JSON.stringify(this.cliConfiguration.modules.mods)}`)
     // update module file
-    fs.write(path.join(this.cliOptions.moduleRoot, this.cliOptions.moduleName), {
-      mods: this.cliOptions.modules.mods,
+    fs.write(moduleConfigFilePath, {
+      mods: this.cliConfiguration.modules.mods,
       last_update_time: new Date().getTime(),
     })
   }
@@ -375,7 +412,7 @@ export class Cli {
     let res = result.concat(info)
     if (info.package.pluginDependencies) {
       for (let name in info.package.pluginDependencies) {
-        let plugin = this.cliOptions.modules.mods[name]
+        let plugin = this.cliConfiguration.modules.mods[name]
         if (!plugin || semver.gt(info.package.pluginDependencies[name], plugin.version)) {
           let sub = await this.installPackage(name, info.package.pluginDependencies[name], options, res)
           res = res.concat(sub)

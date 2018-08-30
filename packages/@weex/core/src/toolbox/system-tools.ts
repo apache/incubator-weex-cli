@@ -5,6 +5,7 @@ import { dissoc, head, identity, isNil, split, tail, trim } from 'ramda'
 import * as nodeWhich from 'which'
 import { Options } from '../core/options'
 import { ISystem } from './system-types'
+import * as userHome from 'userhome';
 
 /**
  * Executes a commandline program asynchronously.
@@ -100,6 +101,9 @@ function startTimer(): () => number {
   return () => Math.floor((process.uptime() - started) * 1000) // uptime gives us seconds
 }
 
-const system: ISystem = { exec, run, spawn, which, startTimer }
+function userhome(...args: string[]): string {
+  return userHome.apply(null, args)
+}
+const system: ISystem = { exec, run, spawn, which, startTimer, userhome}
 
 export { system, ISystem }
