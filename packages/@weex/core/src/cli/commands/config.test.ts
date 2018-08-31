@@ -2,62 +2,115 @@ import * as expect from 'expect'
 import * as sinon from 'sinon'
 import { Toolbox } from '../../core/toolbox'
 import { strings } from '../../toolbox/string-tools'
-import command from './generate'
+import command from './config'
 
-sinon.stub(console, 'log')
+// sinon.stub(console, 'log')
 
 function createFakeToolbox(): Toolbox {
   const fakeContext = new Toolbox()
   fakeContext.strings = strings
   fakeContext.fs = {
-    resolve: sinon.stub(),
-    dir: sinon.stub(),
-    chmodSync: sinon.stub(),
-    rename: sinon.stub(),
+    read: sinon.stub(),
+    write: sinon.stub()
   }
   fakeContext.system = {
-    spawn: sinon.stub(),
+    userhome: sinon.stub(),
   }
-  fakeContext.template = { generate: sinon.stub() }
   fakeContext.logger = {
+    table: sinon.stub(),
     info: sinon.stub(),
-    error: sinon.stub(),
+    success: sinon.stub(),
+    colors: {
+      green: sinon.stub()
+    },
   }
   fakeContext.parameters = { first: null, options: {} }
+  fakeContext.fs.read.onFirstCall().returns({})
   return fakeContext
 }
 
 test('has the right interface', () => {
-  expect(command.name).toBe('generate')
-  expect(command.description).toBe('Generate a new plugin')
+  expect(command.name).toBe('config')
+  expect(command.description).toBe('Configure Weex Toolkit settings')
   expect(command.hidden).toBe(false)
-  expect(command.alias).toEqual(['g'])
+  expect(command.alias).toEqual(['c'])
   expect(typeof command.run).toBe('function')
 })
 
-test('name is required', async () => {
+test('show helps while config with not args', async () => {
   const toolbox = createFakeToolbox()
   toolbox.parameters.first = null
   await command.run(toolbox)
-  const { error } = toolbox.logger
-  expect(error.getCall(0).args[0]).toBe('You must provide a valid Plugin name.')
+  const { success, info, table } = toolbox.logger
+  expect(success.callCount).toBe(2)
+  expect(info.callCount).toBe(2)
+  expect(table.callCount).toBe(2)
 })
 
-test('name cannot be blank', async () => {
+test('show helps while config with --help', async () => {
   const toolbox = createFakeToolbox()
-  toolbox.parameters.first = ''
+  toolbox.parameters.first = null
+  toolbox.parameters.options['help'] = true;
   await command.run(toolbox)
-  const { error } = toolbox.logger
-  expect(error.getCall(0).args).toEqual(['You must provide a valid Plugin name.'])
-  expect(error.getCall(1).args).toEqual(['Example: weex g foo.'])
+  const { success, info, table } = toolbox.logger
+  expect(success.callCount).toBe(2)
+  expect(info.callCount).toBe(2)
+  expect(table.callCount).toBe(2)
 })
 
-test('name must pass regex', async () => {
+test('show help while config with command', async () => {
   const toolbox = createFakeToolbox()
-  const name = 'O M G'
-  toolbox.parameters.first = name
+  toolbox.parameters.first = 'set'
   await command.run(toolbox)
-  const { error } = toolbox.logger
-  expect(error.getCall(0).args).toEqual([`${name} is not a valid name. Use lower-case and dashes only.`])
-  expect(error.getCall(1).args).toEqual([`Suggested: weex g ${strings.kebabCase(name)}.`])
+  const { table, info } = toolbox.logger
+  expect(table.callCount).toBe(1)
+  expect(info.callCount).toBe(1)
+})
+
+test('config set <key> <value>', async () => {
+  const toolbox = createFakeToolbox()
+  toolbox.parameters.first = 'set'
+  toolbox.parameters.second = 'key'
+  toolbox.parameters.third = 'value'
+  await command.run(toolbox)
+  const { read, write } = toolbox.fs
+  const { info } = toolbox.logger
+  expect(info.callCount).toBe(1)
+  expect(read.callCount).toBe(1)
+  expect(write.callCount).toBe(1)
+})
+
+test('config get <key> ', async () => {
+  const toolbox = createFakeToolbox()
+  toolbox.parameters.first = 'get'
+  toolbox.parameters.second = 'key'
+  await command.run(toolbox)
+  const { read } = toolbox.fs
+  const { info } = toolbox.logger
+  expect(info.callCount).toBe(1)
+  expect(read.callCount).toBe(1)
+})
+
+test('config list', async () => {
+  const toolbox = createFakeToolbox()
+  toolbox.parameters.first = 'list'
+  await command.run(toolbox)
+  const { read } = toolbox.fs
+  const { info, success } = toolbox.logger
+  expect(info.callCount).toBe(1)
+  expect(success.callCount).toBe(1)
+  expect(read.callCount).toBe(1)
+})
+
+test('config delete <key>', async () => {
+  const toolbox = createFakeToolbox()
+  toolbox.parameters.first = 'delete'
+  toolbox.parameters.second = 'key'
+  await command.run(toolbox)
+  const { read, write } = toolbox.fs
+  const { info, success } = toolbox.logger
+  expect(info.callCount).toBe(1)
+  expect(read.callCount).toBe(1)
+  expect(write.callCount).toBe(1)
+  expect(success.callCount).toBe(1)
 })

@@ -1,3 +1,6 @@
+import { CliConfiguration } from '../cli';
+import * as path from 'path';
+
 export default {
   name: 'config',
   alias: ['c'],
@@ -7,29 +10,28 @@ export default {
     const {
       parameters,
       fs,
-      system,
+      inquirer,
       logger
     } = toolbox;
-    let cache;
-    const configurationFilename = 'config.json';
-    const homePrefix = '.wx';
+    const globalConfiguration: CliConfiguration = parameters.options.__config;
     const first = parameters.first;
     const second = parameters.second;
-    let third = parameters.third;
     const options = parameters.options;
+    let cache;
+    let third = parameters.third;
     const showHelp = async (subcommand?: string) => {
       let usageTableData = [
-        [logger.colors.success('Synopsis'), logger.colors.success('Usage')],
+        [logger.colors.green('Synopsis'), logger.colors.green('Usage')],
         ['$ weex config', 'Configure Weex Toolkit settings']
       ]
       let des = {
-        set: ['config set <key> <value>', 'set key-value'],
-        get: ['config get <key>', 'get value by key'],
-        list: ['config list [--json]', 'list key-value as string or json'],
-        delete: ['config delete <key>', 'delete key-value by key']
+        set: ['config set <key> <value>', 'Set key-value.'],
+        get: ['config get <key>', 'Get value by key.'],
+        list: ['config list [--json]', 'List key-value as string or json.'],
+        delete: ['config delete <key>', 'Delete key-value by key.']
       }
       let relatedCommandData = [
-        [logger.colors.success('Command'), logger.colors.success('Description')],
+        [logger.colors.green('Command'), logger.colors.green('Description')],
         des.set,
         des.get,
         des.list,
@@ -38,7 +40,7 @@ export default {
       if (subcommand && des[subcommand]) {
         logger.info('\nYou need to using like this:\n');
         let relatedCommandData = [
-          [logger.colors.success('Command'), logger.colors.success('Description')],
+          [logger.colors.green('Command'), logger.colors.green('Description')],
           des[subcommand]
         ]
         logger.table(relatedCommandData, {format: 'markdown'})
@@ -52,7 +54,26 @@ export default {
         logger.info(`\nThis script has alias(c), you can run it like \`weex c [sub-command]\``)
       }
     }
-
+    const initGlobalConfig = async () => {
+      const taobao = `http://registry.npm.taobao.org`;
+      const npm = `http://registry.npmjs.org`;
+    
+      const questions: any = [{
+        name: 'telemetry',
+        type: 'confirm',
+        message: 'May weex-toolkit anonymously report usage statistics to improve the tool over time?'
+      }, {
+        name: 'registry',
+        type: 'list',
+        choices: [{ name: 'use npm', value: npm, short: 'npm' }, { name: 'use taobao (for Chinese)', value: taobao, short: 'taobao' }],
+        message: 'Which npm registry you perfer to use?'
+      }];
+      const answer = await inquirer.prompt(questions);
+      return {
+        telemetry: answer.telemetry,
+        registry: answer.registry
+      }
+    }
     if (first !== 'set' && first !== 'get' && first !== 'delete' && first !== 'list') {
       await showHelp();
       return ;
@@ -61,13 +82,19 @@ export default {
       await showHelp();
       return ;
     }
-    const configurationPath = system.userhome(homePrefix, configurationFilename);
+    const configurationPath = path.join(globalConfiguration.home, globalConfiguration.globalConfigFileName)
     const get = async (key?: string) => {
       if (cache) {
         return cache;
       }
       else {
-        cache = fs.read(configurationPath, 'json');
+        if (fs.exists(configurationPath)) {
+          cache = fs.read(configurationPath, 'json');
+        }
+        else {
+          cache = await initGlobalConfig();
+          fs.write(configurationPath, cache);
+        }
       }
       if (key) {
         return cache[key];

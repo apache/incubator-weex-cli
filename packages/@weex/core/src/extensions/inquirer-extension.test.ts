@@ -12,5 +12,5 @@ test('has the proper interface', () => {
   expect(typeof ext.createPromptModule).toBe('function')
   expect(typeof ext.registerPrompt).toBe('function')
   expect(typeof ext.restoreDefaultPrompts).toBe('function')
-  expect(typeof ext.ui).toBe('function')
+  expect(typeof ext.ui).toBe('object')
 })
