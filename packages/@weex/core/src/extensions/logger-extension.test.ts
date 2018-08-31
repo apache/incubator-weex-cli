@@ -23,10 +23,6 @@ test('error', () => {
   expect(typeof logger.error).toBe('function')
 })
 
-test('debug', () => {
-  expect(typeof logger.debug).toBe('function')
-})
-
 test('newline', () => {
   expect(typeof logger.newline).toBe('function')
 })

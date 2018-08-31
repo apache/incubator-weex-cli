@@ -165,7 +165,7 @@ test('isSingular', () => {
 })
 
 test('strSimilarity2Percent', () => {
-  expect(typeof strSimilarity2Percent('bug', 'bugs')).toBe('number')
+  expect(typeof strSimilarity2Percent('bug', 'bugs')).toBe('string')
 })
 
 test('strSimilarity2Number', () => {
