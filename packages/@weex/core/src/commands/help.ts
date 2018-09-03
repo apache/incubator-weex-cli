@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export default {
   name: 'help',
   alias: 'h',
@@ -6,7 +8,7 @@ export default {
     parameters, 
     runtime, 
     logger, 
-    strings, 
+    fs, 
     meta 
   }) => {
     const showHelp = async (subcommand?: string) => {
@@ -101,12 +103,35 @@ export default {
         helps['config-list'],
         helps['config-delete'],
       ]
+      let thirdPartData = [
+        [logger.colors.success('Command'), logger.colors.success('Description')],
+
+      ]
       let globalOptionData = [
         [logger.colors.success('Option'), logger.colors.success('Description')],
         [`--help, -h`, 'Prints help about the selected command in the console.'],
         [`--version`, 'Prints the client version.'],
         [`--verbose`, 'Prints a detailed diagnostic log for the execution of the current command.'],
       ]
+      const info = meta.getModulesInfo();
+      if (info && info.mods) {
+        for (let mod in info.mods) {
+          if (!/@weex-cli/.test(mod) && Array.isArray(info.mods[mod].commands)) {
+            info.mods[mod].commands.forEach(cmd => {
+              if (cmd.alias) {
+                thirdPartData.push(
+                  [`${cmd.name} (${cmd.alias})`, cmd.description]
+                )
+              }
+              else {
+                thirdPartData.push(
+                  [`${cmd.name}`, cmd.description]
+                )
+              }
+            });
+          }
+        }
+      }
       if (subcommand && helps[subcommand]) {
         logger.info('\nUsage:\n');
         let relatedCommandData = [
@@ -127,6 +152,7 @@ export default {
         logger.success('\n# Configuration Commands\n')
         logger.table(configurationData, {format: 'markdown'})
         logger.success('\n# Third Part Commands\n')
+        logger.table(thirdPartData, {format: 'markdown'})
         logger.success('\n# Global Options\n')
         logger.table(globalOptionData, {format: 'markdown'})
       }
