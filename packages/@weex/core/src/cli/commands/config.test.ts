@@ -1,17 +1,22 @@
 import * as expect from 'expect'
 import * as sinon from 'sinon'
+import * as path from 'path'
+import * as jetpack from 'fs-jetpack'
 import { Toolbox } from '../../core/toolbox'
 import { strings } from '../../toolbox/string-tools'
 import command from './config'
 
-// sinon.stub(console, 'log')
+const home = path.join(__dirname, '.test');
+const globalConfigFileName = 'config.json';
+const config = {test: 'Hello~'}
 
 function createFakeToolbox(): Toolbox {
   const fakeContext = new Toolbox()
   fakeContext.strings = strings
   fakeContext.fs = {
     read: sinon.stub(),
-    write: sinon.stub()
+    write: sinon.stub(),
+    exists: sinon.stub()
   }
   fakeContext.system = {
     userhome: sinon.stub(),
@@ -24,10 +29,27 @@ function createFakeToolbox(): Toolbox {
       green: sinon.stub()
     },
   }
-  fakeContext.parameters = { first: null, options: {} }
+  fakeContext.inquirer = {
+    prompt: sinon.stub()
+  }
+  fakeContext.parameters = { first: null, options: {
+    __config: {
+      home: home,
+      globalConfigFileName: globalConfigFileName
+    }
+  }}
+  fakeContext.inquirer.prompt.onFirstCall().returns(config)
   fakeContext.fs.read.onFirstCall().returns({})
   return fakeContext
 }
+
+beforeAll(() => {
+  jetpack.write(path.join(home, globalConfigFileName), config)
+});
+
+afterAll(() => {
+  jetpack.remove(home)
+});
 
 test('has the right interface', () => {
   expect(command.name).toBe('config')
@@ -76,8 +98,8 @@ test('config set <key> <value>', async () => {
   const { read, write } = toolbox.fs
   const { info } = toolbox.logger
   expect(info.callCount).toBe(1)
-  expect(read.callCount).toBe(1)
-  expect(write.callCount).toBe(1)
+  expect(read.callCount).toBe(0)
+  expect(write.callCount).toBe(2)
 })
 
 test('config get <key> ', async () => {
@@ -88,7 +110,7 @@ test('config get <key> ', async () => {
   const { read } = toolbox.fs
   const { info } = toolbox.logger
   expect(info.callCount).toBe(1)
-  expect(read.callCount).toBe(1)
+  expect(read.callCount).toBe(0)
 })
 
 test('config list', async () => {
@@ -99,7 +121,7 @@ test('config list', async () => {
   const { info, success } = toolbox.logger
   expect(info.callCount).toBe(1)
   expect(success.callCount).toBe(1)
-  expect(read.callCount).toBe(1)
+  expect(read.callCount).toBe(0)
 })
 
 test('config delete <key>', async () => {
@@ -110,7 +132,7 @@ test('config delete <key>', async () => {
   const { read, write } = toolbox.fs
   const { info, success } = toolbox.logger
   expect(info.callCount).toBe(1)
-  expect(read.callCount).toBe(1)
-  expect(write.callCount).toBe(1)
+  expect(read.callCount).toBe(0)
+  expect(write.callCount).toBe(2)
   expect(success.callCount).toBe(1)
 })
