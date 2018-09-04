@@ -14,7 +14,7 @@
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "DEBUG=device jest --watch",
     "watch": "tsc -watch -p ./"
   },
   "author": "Erha19 <faterrole@gmail.com>",
