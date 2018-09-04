@@ -13,6 +13,7 @@
     "publish": "yarn build && yarn lint && np --yolo --no-yarn",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
+    "integrate": "jest -c jest-integration.config.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "tsc -watch -p ./"
