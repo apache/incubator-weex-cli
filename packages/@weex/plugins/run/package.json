@@ -1,7 +1,7 @@
 {
-  "name": "@weex-cli/xxx",
+  "name": "@weex-cli/run",
   "version": "0.0.1",
-  "description": "xxx for weex-toolkit",
+  "description": "run for weex-toolkit",
   "main": "index.js",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
@@ -85,6 +85,7 @@
     "url": "https://github.com/weexteam/weex-toolkit/issues"
   },
   "keywords": [
-    "device"
+    "run",
+    "weex"
   ]
 }
