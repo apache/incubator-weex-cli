@@ -15,7 +15,7 @@
     "snapupdate": "jest --updateSnapshot",
     "integrate": "jest -c jest-integration.config.json",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "DEBUG=device jest --watch",
     "watch": "tsc -watch -p ./"
   },
   "author": "Erha19 <faterrole@gmail.com>",
