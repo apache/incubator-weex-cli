@@ -6,7 +6,7 @@ const debug = require('debug')('weex:core:install')
 export default {
   name: 'uninstall',
   alias: ['un'],
-  description: 'Install weex plugin for Weex Cli',
+  description: 'Uninstall weex plugin from Weex Cli',
   hidden: false,
   run: async toolbox => {
     const {
@@ -52,7 +52,6 @@ export default {
         }
       }
       mod = globalConfiguration.modules.mods[name];
-
       if (mod) {
         const spinner = logger.spin(`Uninstall ${name} ... please wait`)
         debug(`delete data from ${moduleConfigFilePath} ...`)
@@ -63,6 +62,7 @@ export default {
         debug(`delete files on ${local} ...`)
         spinner.text = `delete files on ${local} ...`
         fs.remove(local)
+        console.log(moduleConfigFilePath)
         spinner.text = `remove files success`;
         debug(`update ${moduleConfigFilePath}`)
         spinner.text = `update ${moduleConfigFilePath}`

@@ -1,12 +1,14 @@
+import 'jest'
 import * as expect from 'expect'
 import * as sinon from 'sinon'
 import * as path from 'path'
 import * as jetpack from 'fs-jetpack'
 import { Toolbox } from '../../core/toolbox'
 import { strings } from '../../toolbox/string-tools'
+import * as uniqueTempDir from 'unique-temp-dir'
 import command from './config'
 
-const home = path.join(__dirname, '.test');
+const home = '' + uniqueTempDir({create: true});
 const globalConfigFileName = 'config.json';
 const config = {test: 'Hello~'}
 

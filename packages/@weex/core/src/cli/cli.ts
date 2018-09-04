@@ -116,7 +116,6 @@ export default class Cli {
         this.cli = this.cli.plugin(options.plugin.value, options.plugin.options)
       }
     }
-
   }
 
   async start() {

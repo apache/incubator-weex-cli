@@ -5,9 +5,10 @@ import { Command } from '../core/command'
 import { Plugin } from '../core/plugin'
 import { Toolbox } from '../core/toolbox'
 import { Runtime } from '../runtime/runtime'
+import * as uniqueTempDir from 'unique-temp-dir'
 import { commandInfo, getModulesInfo } from './meta-tools'
 
-const root = path.join(__dirname, '.test');
+const root = '' + uniqueTempDir({create: true});
 const filename = 'config.json';
 const config = {test: 'Hello~'}
 

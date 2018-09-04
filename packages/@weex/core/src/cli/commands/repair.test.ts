@@ -1,34 +1,29 @@
 import * as expect from 'expect'
 import * as sinon from 'sinon'
 import * as path from 'path'
-import * as uniqueTempDir from 'unique-temp-dir'
 import * as jetpack from 'fs-jetpack'
+import * as uniqueTempDir from 'unique-temp-dir'
 import { Toolbox } from '../../core/toolbox'
 import { strings } from '../../toolbox/string-tools'
-import command from './install'
+import { fs } from '../../toolbox/fs-tools'
+import command from './repair'
 
 const globalConfig = {
-  moduleRoot: uniqueTempDir({create: true}),
+  moduleRoot: '' + uniqueTempDir({create: true}),
   moduleConfigFileName: 'config.json',
   registry: 'https://registry.npmjs.org/',
   modules: {
     mods: {}
   }
 }
-const config = {test: 'Hello~'}
+const packagename = 'debug'
+const config = {}
+const local = path.join(globalConfig.moduleRoot, 'node_modules_lock')
 
 function createFakeToolbox(): Toolbox {
   const fakeContext = new Toolbox()
   fakeContext.strings = strings
-  fakeContext.fs = {
-    read: sinon.stub(),
-    write: sinon.stub(),
-    list: sinon.stub(),
-    exists: sinon.stub()
-  }
-  fakeContext.system = {
-    userhome: sinon.stub(),
-  }
+  fakeContext.fs = fs
   fakeContext.logger = {
     table: sinon.stub(),
     info: sinon.stub(),
@@ -38,26 +33,21 @@ function createFakeToolbox(): Toolbox {
       yellow: sinon.stub()
     },
   }
-  fakeContext.inquirer = {
-    prompt: sinon.stub()
-  }
   fakeContext.parameters = { first: null, options: {
     __config: globalConfig
   }}
-  fakeContext.inquirer.prompt.onFirstCall().returns(config)
-  fakeContext.fs.read.onFirstCall().returns({})
   return fakeContext
 }
 
-afterAll(() => {
+afterEach(() => {
   jetpack.remove(globalConfig.moduleRoot)
-});
+})
 
 test('has the right interface', () => {
-  expect(command.name).toBe('install')
-  expect(command.description).toBe('Install weex plugin for Weex Cli')
+  expect(command.name).toBe('repair')
+  expect(command.description).toBe('Repair weex package or command')
   expect(command.hidden).toBe(false)
-  expect(command.alias).toEqual(['i'])
+  expect(command.alias).toEqual(['r'])
   expect(typeof command.run).toBe('function')
 })
 
@@ -65,18 +55,17 @@ test('show helps while config with not args', async () => {
   const toolbox = createFakeToolbox()
   toolbox.parameters.first = null
   await command.run(toolbox)
-  const { success, info, table } = toolbox.logger
-  expect(info.callCount).toBe(1)
+  const {info, table, success } = toolbox.logger
+  expect(info.callCount).toBe(2)
   expect(table.callCount).toBe(1)
+  expect(success.callCount).toBe(1)
 })
 
-test('install package with version', async () => {
+test('repair package with version', async () => {
   const toolbox = createFakeToolbox()
-  toolbox.parameters.first = 'debug@1.0.0'
+  toolbox.parameters.first = `${packagename}@1.0.0`
   await command.run(toolbox)
-  const { write, list } = toolbox.fs
   const { success } = toolbox.logger
   expect(success.callCount).toBe(1)
-  expect(write.callCount).toBe(1)
-  expect(list.callCount).toBe(1)
+  expect(fs.exists(path.join(globalConfig.moduleRoot, globalConfig.moduleConfigFileName))).toBe('file')
 })
