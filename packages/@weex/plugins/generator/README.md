@@ -1,1 +1,0 @@
-Plugin for generate templates.
