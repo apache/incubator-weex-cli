@@ -1,6 +1,6 @@
+import 'jest'
 import IosBuilder from './iosBuilder'
 import { PLATFORM_TYPES } from '../common/const'
-
 
 describe('Test IOS', () => {
   const projectPath = process.env.IOS_PROJECT_PATH
@@ -42,4 +42,4 @@ describe('Test IOS', () => {
 
     expect(!!(reuslt && typeof reuslt.appPath === 'string' && reuslt.appPath)).toBe(true)
   })
-}
+})

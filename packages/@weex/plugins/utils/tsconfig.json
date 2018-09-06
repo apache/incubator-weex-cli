@@ -7,7 +7,7 @@
     "lib": ["es2016", "es2016.array.include", "scripthost"],
     "types": [
       "node",
-      "jest",
+      "jest"
     ],
     "plugins": [{
       "name": "typescript-plugin-add-type"

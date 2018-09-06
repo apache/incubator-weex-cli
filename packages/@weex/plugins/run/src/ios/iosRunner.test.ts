@@ -11,7 +11,7 @@ describe('Test IOS', () => {
   }
 
   const iosRunner = new IosRunner({
-    projectPath,
+    path: ,
     type: PLATFORM_TYPES.ios
   })
 
