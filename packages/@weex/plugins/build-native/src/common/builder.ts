@@ -7,6 +7,11 @@ export interface BuilderConfig {
    * Ios or Android project path
    */
   projectPath: string
+
+  /**
+   * Before Build some cmd, just like `['pod update']`
+   */
+  preCmds?: Array<string>
 }
 
 export interface IosBuilderConfig extends BuilderConfig {

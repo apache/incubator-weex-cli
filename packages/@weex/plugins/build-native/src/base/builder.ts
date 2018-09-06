@@ -2,6 +2,7 @@ const path = require('path')
 
 import { BuilderConfig } from '../common/builder'
 import { PLATFORM_TYPES } from '../common/const'
+import { exec } from '../utils/process'
 
 export default class Builder {
   public type: PLATFORM_TYPES
@@ -12,7 +13,7 @@ export default class Builder {
   }
 
   private init(options: BuilderConfig) {
-    const { projectPath, type } = options
+    const { type } = options
     this.type = type
     this.config = Object.assign(
       {
@@ -24,6 +25,18 @@ export default class Builder {
 
   protected buildNative() {
     console.error('Not define `buildNative`')
+  }
+
+  protected async doPreCmds() {
+    const { preCmds } = this.config
+
+    if (!preCmds || preCmds.length < 1) {
+      return
+    }
+
+    for (let i = 0; i < preCmds.length; i++) {
+      await exec(preCmds[i])
+    }
   }
 
   public async run(): Promise<{ appPath: string }> {

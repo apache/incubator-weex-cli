@@ -1,13 +1,13 @@
 const fs = require('fs')
 const path = require('path')
 
-import Runner from '../base/builder'
+import Builder from '../base/builder'
 import { IosBuilderConfig } from '../common/builder'
 import { createCmdString, exec, runAndGetOutput } from '../utils/process'
 import { IOS_DERIVE_DATA_PATH } from '../common/const'
 import { IOS_CODE_SIGNING_ERROR } from '../common/errorList'
 
-export default class IosRunner extends Runner {
+export default class IosBuilder extends Builder {
 
   protected config: IosBuilderConfig
 
@@ -16,6 +16,7 @@ export default class IosRunner extends Runner {
   }
 
   buildNative() {
+    this.doPreCmds()
     if (this.config.isRealDevice) {
       return this.buildForRealDevice()
     } else {

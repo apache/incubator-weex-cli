@@ -62,12 +62,7 @@ export default class IosRunner extends Runner {
     isWorkspace: boolean
     name: string
   } {
-    let projectInfoText
-    try {
-      projectInfoText = execSync('xcodebuild -list', { cwd: dir })
-    } catch (e) {
-      throw new Error('Not find xcode project!')
-    }
+    const projectInfoText = execSync('xcodebuild -list', { cwd: dir })
     const splits = projectInfoText.toString().split(/Targets:|Build Configurations:|Schemes:/)
     const projectInfo: any = {}
     projectInfo.scheme = splits[0].match(/Information about project "([^"]+?)"/)[1]
