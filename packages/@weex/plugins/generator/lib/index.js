@@ -27,7 +27,7 @@ function clone(templateUrl, target = defautlTarget, option) {
             done();
         }
         function done() {
-            download(templateUrl, target, { clone: true }, (err) => {
+            download(templateUrl, target, { clone: true }, err => {
                 // download('direct:https://github.com/balloonzzq/webpack.git#temp', target, { clone: true }, (err) => {
                 if (err) {
                     reject(err);

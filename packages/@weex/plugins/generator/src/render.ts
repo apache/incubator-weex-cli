@@ -1,11 +1,9 @@
+const Metalsmith = require('metalsmith')
+const render = require('consolidate').handlebars.render
+const async = require('async')
+const Handlebars = require('handlebars')
 
-
-const Metalsmith = require('metalsmith');
-const render = require('consolidate').handlebars.render;
-const async = require('async');
-const Handlebars = require('handlebars');
-
-import { filter } from './utils/filter';
+import { filter } from './utils/filter'
 
 const filters = {
   '.eslintrc.js': 'lint',
@@ -13,37 +11,34 @@ const filters = {
   'configs/webpack.test.conf.js': 'unit',
   'build/webpack.test.conf.js': "unit && runner === 'karma'",
   'test/**/*': 'unit',
-  'src/router.js': 'router'
-};
-
-import { TEMPLATE_NAME } from './utils';
+  'src/router.js': 'router',
+}
 
 // register handlebars helper
-Handlebars.registerHelper('if_eq', function (a, b, opts) {
-  return a === b ? opts.fn(this) : opts.inverse(this);
-});
+Handlebars.registerHelper('if_eq', function(a, b, opts) {
+  return a === b ? opts.fn(this) : opts.inverse(this)
+})
 
-Handlebars.registerHelper('unless_eq', function (a, b, opts) {
-  return a === b ? opts.inverse(this) : opts.fn(this);
-});
+Handlebars.registerHelper('unless_eq', function(a, b, opts) {
+  return a === b ? opts.inverse(this) : opts.fn(this)
+})
 
 interface Metadate {
-  [propName: string]: any;
+  [propName: string]: any
 }
 
 export default function(source: string, dest = './build', metadata: Metadate) {
-
   Metalsmith(process.cwd())
-  .source(source)
-  .destination(dest)
-  .clean(true)
-  .metadata(metadata)
-  .use(filterFiles(filters))
-  .use(template)
-  .build(function(err){
-    if (err) throw err;
-  });
-};
+    .source(source)
+    .destination(dest)
+    .clean(true)
+    .metadata(metadata)
+    .use(filterFiles(filters))
+    .use(template)
+    .build(function(err) {
+      if (err) throw err
+    })
+}
 
 /**
  * Template in place plugin.
@@ -53,44 +48,47 @@ export default function(source: string, dest = './build', metadata: Metadate) {
  * @param {Function} done
  */
 
-function template(files, metalsmith, done){
-  const keys = Object.keys(files);
-    const metalsmithMetadata = metalsmith.metadata();
-    async.each(keys, (file, next) => {
-
-      const rawFileName = file;
-      const rawBuffer = files[file];
-      const contents = rawBuffer.contents.toString();
+function template(files, metalsmith, done) {
+  const keys = Object.keys(files)
+  const metalsmithMetadata = metalsmith.metadata()
+  async.each(
+    keys,
+    (file, next) => {
+      const rawFileName = file
+      const rawBuffer = files[file]
+      const contents = rawBuffer.contents.toString()
       // do not attempt to render files that do not have mustaches
       if (!/{{([^{}]+)}}/g.test(contents) && !/{{([^{}]+)}}/g.test(file)) {
-        return next();
+        return next()
       }
 
       // first replace filename
       render(file, metalsmithMetadata, (err, res) => {
         if (err) {
-          err.message = `[${file}] ${err.message}`;
-          return next(err);
+          err.message = `[${file}] ${err.message}`
+          return next(err)
         }
-        file = res;
+        file = res
         // second replace file contents
         render(contents, metalsmithMetadata, (err, res) => {
           if (err) {
-            err.message = `[${file}] ${err.message}`;
-            return next(err);
+            err.message = `[${file}] ${err.message}`
+            return next(err)
           }
-          files[file] = rawBuffer;
-          files[file].contents = new Buffer(res);
+          files[file] = rawBuffer
+          files[file].contents = Buffer.from(res)
 
           // delete old buffer
           if (rawFileName !== file) {
-            files[rawFileName] = null;
-            delete files[rawFileName];
+            files[rawFileName] = null
+            delete files[rawFileName]
           }
-          next();
-        });
-      });
-    }, done);
+          next()
+        })
+      })
+    },
+    done,
+  )
 }
 
 /**
@@ -100,8 +98,8 @@ function template(files, metalsmith, done){
  * @return {Function}
  */
 
-function filterFiles (filters) {
+function filterFiles(filters) {
   return (files, metalsmith, done) => {
-    filter(files, filters, metalsmith.metadata(), done);
-  };
+    filter(files, filters, metalsmith.metadata(), done)
+  }
 }

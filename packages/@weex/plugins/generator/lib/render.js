@@ -11,7 +11,7 @@ const filters = {
     'configs/webpack.test.conf.js': 'unit',
     'build/webpack.test.conf.js': "unit && runner === 'karma'",
     'test/**/*': 'unit',
-    'src/router.js': 'router'
+    'src/router.js': 'router',
 };
 // register handlebars helper
 Handlebars.registerHelper('if_eq', function (a, b, opts) {
@@ -34,7 +34,6 @@ function default_1(source, dest = './build', metadata) {
     });
 }
 exports.default = default_1;
-;
 /**
  * Template in place plugin.
  *
@@ -67,7 +66,7 @@ function template(files, metalsmith, done) {
                     return next(err);
                 }
                 files[file] = rawBuffer;
-                files[file].contents = new Buffer(res);
+                files[file].contents = Buffer.from(res);
                 // delete old buffer
                 if (rawFileName !== file) {
                     files[rawFileName] = null;
