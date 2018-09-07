@@ -36,7 +36,6 @@ describe('Test IOS', () => {
 
     try {
       result = await iosBuilder.run()
-      console.log('result', result)
     } catch (e) {
       console.log('Error', e.message)
     }

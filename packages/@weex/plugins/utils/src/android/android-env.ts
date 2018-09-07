@@ -18,9 +18,9 @@ interface AndroidSdkOptions {
 const kAndroidHome = 'ANDROID_HOME'
 
 class AndroidEnv {
-  public ANDROID_SDK_PATH: string | null
-  public ANDROID_ADB_PATH: string | null
-  public ANDROID_EMULATOR_PATH: string | null
+  public ANDROID_SDK_PATH: string | null = null
+  public ANDROID_ADB_PATH: string | null = null
+  public ANDROID_EMULATOR_PATH: string | null = null
   private options: AndroidSdkOptions
 
   constructor(options: AndroidSdkOptions = {}) {
@@ -50,7 +50,7 @@ class AndroidEnv {
       }
     }
 
-    if (fs.existsSync(path.join(this.ANDROID_SDK_PATH, 'platform-tools'))) {
+    if (fs.existsSync(path.join(sdkPath, 'platform-tools'))) {
       return sdkPath
     }
 
@@ -61,6 +61,8 @@ class AndroidEnv {
   }
 
   public getAdbPath(isThrowError: boolean = true): string | null {
+    this.ANDROID_SDK_PATH = this.ANDROID_SDK_PATH || this.getSdkPath()
+
     const defaultAdbPath = path.join(this.ANDROID_SDK_PATH, 'platform-tools', 'adb')
     if (this.ANDROID_ADB_PATH &&
        (fs.existsSync(defaultAdbPath) || fs.existsSync(`${defaultAdbPath}.exe`))) {
@@ -91,6 +93,7 @@ class AndroidEnv {
   }
 
   public getEmulatorPath(sdkPath?: string, isThrowError: boolean = true): string {
+    this.ANDROID_SDK_PATH = this.ANDROID_SDK_PATH || this.getSdkPath()
     const emulatorPath = path.join(this.ANDROID_SDK_PATH || sdkPath, 'emulator/emulator')
 
     if (fs.existsSync(emulatorPath)) {
@@ -107,6 +110,7 @@ class AndroidEnv {
    */
   public getNdkPath(sdkPath?: string, isThrowError: boolean = true): string {
     console.warn('Ndk is not necessary, please make sure you need it')
+    this.ANDROID_SDK_PATH = this.ANDROID_SDK_PATH || this.getSdkPath()
     const ndkPath = path.join(this.ANDROID_SDK_PATH || sdkPath, 'ndk-bundle')
 
     if (fs.existsSync(ndkPath)) {

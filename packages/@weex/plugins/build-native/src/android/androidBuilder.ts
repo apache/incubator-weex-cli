@@ -24,10 +24,8 @@ export default class AndroidBuilder extends Builder {
     if (fs.existsSync(filePath)) {
       return
     }
-
     const androidEnv = new AndroidEnv()
-    const sdkPath = androidEnv.getAdbPath()
-
+    const sdkPath = androidEnv.getSdkPath()
     fs.writeFileSync(filePath, `sdk.dir=${sdkPath}`)
   }
 
