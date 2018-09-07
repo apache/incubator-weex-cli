@@ -19,7 +19,7 @@
   },
   "author": "",
   "files": [
-    "lib/"
+    "src/"
   ],
   "license": "MIT",
   "dependencies": {},

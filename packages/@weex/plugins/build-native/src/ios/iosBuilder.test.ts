@@ -11,35 +11,36 @@ describe('Test IOS', () => {
   }
 
   test('Ios build for simulator ', async() => {
-    const iosRunner = new IosBuilder({
+    const iosBuilder = new IosBuilder({
       projectPath,
       type: PLATFORM_TYPES.ios
     })
-    let reuslt
+    let result
 
     try {
-      reuslt = await iosRunner.run()
+      result = await iosBuilder.run()
     } catch (e) {
       console.log('Error', e.message)
     }
 
-    expect(!!(reuslt && typeof reuslt.appPath === 'string' && reuslt.appPath)).toBe(true)
-  })
+    expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+  }, 20000)
 
   test('Ios build for build for real device ', async() => {
-    const iosRunner = new IosBuilder({
+    const iosBuilder = new IosBuilder({
       projectPath,
       type: PLATFORM_TYPES.ios,
       isRealDevice: true
     })
-    let reuslt
+    let result
 
     try {
-      reuslt = await iosRunner.run()
+      result = await iosBuilder.run()
+      console.log('result', result)
     } catch (e) {
       console.log('Error', e.message)
     }
 
-    expect(!!(reuslt && typeof reuslt.appPath === 'string' && reuslt.appPath)).toBe(true)
-  })
+    expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+  }, 20000)
 })
