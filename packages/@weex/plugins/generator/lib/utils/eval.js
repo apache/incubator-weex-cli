@@ -15,5 +15,4 @@ function evaluate(exp, data) {
     }
 }
 exports.default = evaluate;
-;
 //# sourceMappingURL=eval.js.map
