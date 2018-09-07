@@ -1,0 +1,2 @@
+### @weex-cli/generator
+

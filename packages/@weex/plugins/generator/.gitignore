@@ -4,3 +4,4 @@ node_modules
 *.vsix
 package-lock.json
 yarn-error.log
+.weex-templates
