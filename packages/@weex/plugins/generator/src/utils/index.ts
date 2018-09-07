@@ -1,1 +1,1 @@
-export const TEMPLATE_NAME = '.weex-templates';
+export const TEMPLATE_NAME = '.weex-templates'
