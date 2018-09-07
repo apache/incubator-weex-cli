@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/generator",
-  "version": "1.0.0-beta.11",
+  "version": "1.0.0-beta.2",
   "description": "Generator for weex-toolkit",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -11,14 +11,13 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint && np --yolo --no-yarn",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "tsc -watch -p ./"
   },
-  "author": "Erha19 <faterrole@gmail.com>",
+  "author": "balloonzzq <zqzhuang888@qq.com>",
   "license": "MIT",
   "dependencies": {
     "@types/rimraf": "^2.0.2",
