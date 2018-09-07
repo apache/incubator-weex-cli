@@ -1,9 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 
+import { createCmdString, exec, runAndGetOutput } from '@weex-cli/utils/src/process/process'
 import Builder from '../base/builder'
-import { IosBuilderConfig } from '../common/builder'
-import { createCmdString, exec, runAndGetOutput } from '../utils/process'
+import { IosBuilderConfig, RunOptions } from '../common/builder'
 import { IOS_DERIVE_DATA_PATH } from '../common/const'
 import { IOS_CODE_SIGNING_ERROR } from '../common/errorList'
 
@@ -15,16 +15,7 @@ export default class IosBuilder extends Builder {
     super(options)
   }
 
-  buildNative() {
-    this.doPreCmds()
-    if (this.config.isRealDevice) {
-      return this.buildForRealDevice()
-    } else {
-      return this.buildForSimulator()
-    }
-  }
-
-  private async buildForSimulator() {
+  private async buildForSimulator(options?: RunOptions): Promise<string> {
     const { projectPath } = this.config
     const projectInfo = this.getIOSProjectInfo(projectPath)
     const cmdParams = {
@@ -45,11 +36,11 @@ export default class IosBuilder extends Builder {
         workspace: projectInfo.name || projectInfo.scheme,
       })
     }
-    await exec(createCmdString('xcodebuild', cmdParams), {}, { cwd: projectPath })
+    await exec(createCmdString('xcodebuild', cmdParams), options, { cwd: projectPath })
     return path.join(projectPath, `${IOS_DERIVE_DATA_PATH}/Build/Products/Debug-iphonesimulator/${projectInfo.name || projectInfo.scheme}.app`)
   }
 
-  private async buildForRealDevice() {
+  private async buildForRealDevice(options?: RunOptions): Promise<string> {
     const { projectPath } = this.config
     const projectInfo = this.getIOSProjectInfo(projectPath)
     const cmdParams = {
@@ -70,13 +61,14 @@ export default class IosBuilder extends Builder {
       })
     }
     let isCodeSigningError = false
-    await exec(createCmdString('xcodebuild', cmdParams), {
+    await exec(createCmdString('xcodebuild', cmdParams),
+      Object.assign(options || {}, {
       onOutCallback(bufStr) {
         if (bufStr.indexOf(`Code Signing Error`) !== -1) {
           isCodeSigningError = true
         }
       }
-    }, { cwd: projectPath})
+    }), { cwd: projectPath})
     if (isCodeSigningError) {
       throw IOS_CODE_SIGNING_ERROR
     }
@@ -143,5 +135,18 @@ export default class IosBuilder extends Builder {
     }
 
     return {}
+  }
+
+  async run(options?: RunOptions): Promise<{ appPath: string }> {
+    let apkPath
+
+    this.doPreCmds()
+    if (this.config.isRealDevice) {
+      apkPath = await this.buildForRealDevice(options)
+    } else {
+      apkPath = await this.buildForSimulator(options)
+    }
+
+    return { appPath: apkPath }
   }
 }

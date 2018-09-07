@@ -1,8 +1,9 @@
 const path = require('path')
 
-import { BuilderConfig } from '../common/builder'
+import { BuilderConfig, RunOptions } from '../common/builder'
 import { PLATFORM_TYPES } from '../common/const'
-import { exec } from '../utils/process'
+import { exec } from '@weex-cli/utils/src/process/process'
+
 
 export default class Builder {
   public type: PLATFORM_TYPES
@@ -23,10 +24,6 @@ export default class Builder {
     )
   }
 
-  protected buildNative() {
-    console.error('Not define `buildNative`')
-  }
-
   protected async doPreCmds() {
     const { preCmds } = this.config
 
@@ -39,16 +36,8 @@ export default class Builder {
     }
   }
 
-  public async run(): Promise<{ appPath: string }> {
-    let appPath
-    try {
-      // All method catch in here
-      appPath = await this.buildNative()
-    } catch (error) {
-      throw error
-    }
-    return {
-      appPath
-    }
+  public async run(options: RunOptions): Promise<{ appPath: string }> {
+    console.error('Not define `buildNative`')
+    return null
   }
 }

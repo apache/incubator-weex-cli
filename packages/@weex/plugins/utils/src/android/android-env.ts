@@ -71,7 +71,7 @@ class AndroidEnv {
       const output = PROCESS.runAndGetOutput(`where adb`)
 
       if (output.indexOf('adb.exe') !== -1) {
-        return output.replace('adb.exe', 'adb').replace(/\n/g, '')
+        return path.join(output.replace('adb.exe', 'adb').replace(/\n/g, ''))
       }
     }
 
@@ -79,7 +79,7 @@ class AndroidEnv {
       const output = PROCESS.runAndGetOutput(`which adb`)
 
       if (output.indexOf('not found') === -1) {
-        return output.replace(/\n/g, '')
+        return path.join(output.replace(/\n/g, ''))
       }
     }
 

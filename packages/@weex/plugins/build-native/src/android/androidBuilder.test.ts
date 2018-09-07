@@ -9,20 +9,19 @@ describe('Test android', () => {
     return
   }
 
-  test('Ios build for simulator ', async() => {
-    const androidRunner = new AndroidBuilder({
+  test('Android build', async() => {
+    const androidBuilder = new AndroidBuilder({
       projectPath,
       type: PLATFORM_TYPES.ios
     })
-    let reuslt
+    let result
+    try {
+      result = await androidBuilder.run()
+    } catch (e) {
+      console.log('Error', e.message)
+    }
 
-    // try {
-    //   reuslt = await androidRunner.run()
-    // } catch (e) {
-    //   console.log('Error', e.message)
-    // }
-
-    expect(!!(reuslt && typeof reuslt.appPath === 'string' && reuslt.appPath)).toBe(true)
-  })
+    expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+  }, 40000)
 })
 
