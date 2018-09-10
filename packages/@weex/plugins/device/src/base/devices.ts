@@ -8,10 +8,9 @@ export class Devices {
 
   constructor(options: { type: MOBILE_TYPES }) {
     this.type = options.type
-    this.updateList()
   }
 
-  updateList() {
+  public updateList() {
     console.error('Not define `updateList`')
   }
 

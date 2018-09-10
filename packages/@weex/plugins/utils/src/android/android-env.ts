@@ -29,9 +29,9 @@ class AndroidEnv {
 
   public init() {
     const options = this.options
-    this.ANDROID_SDK_PATH = options.sdkPath || this.getSdkPath(false)
-    this.ANDROID_ADB_PATH = options.adbPath || this.getAdbPath(false)
-    this.ANDROID_EMULATOR_PATH = this.getEmulatorPath('', false)
+    this.ANDROID_SDK_PATH = options.sdkPath || this.getSdkPath()
+    this.ANDROID_ADB_PATH = options.adbPath || this.getAdbPath()
+    this.ANDROID_EMULATOR_PATH = this.getEmulatorPath()
   }
 
   public getSdkPath(isThrowError: boolean = true): string | null {

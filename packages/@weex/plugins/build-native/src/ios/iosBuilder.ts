@@ -19,10 +19,10 @@ export default class IosBuilder extends Builder {
     const { projectPath } = this.config
     const projectInfo = this.getIOSProjectInfo(projectPath)
     const cmdParams = {
-      scheme: projectInfo.scheme,
-      configuration: 'Debug',
-      sdk: 'iphonesimulator',
-      derivedDataPath: IOS_DERIVE_DATA_PATH
+      '-scheme': projectInfo.scheme,
+      '-configuration': 'Debug',
+      '-sdk': 'iphonesimulator',
+      '-derivedDataPath': IOS_DERIVE_DATA_PATH
     }
 
     // Default `workspace`
@@ -44,9 +44,9 @@ export default class IosBuilder extends Builder {
     const { projectPath } = this.config
     const projectInfo = this.getIOSProjectInfo(projectPath)
     const cmdParams = {
-      scheme: projectInfo.scheme,
-      configuration: 'Debug',
-      derivedDataPath: IOS_DERIVE_DATA_PATH
+      '-scheme': projectInfo.scheme,
+      '-configuration': 'Debug',
+      '-derivedDataPath': IOS_DERIVE_DATA_PATH
     }
 
     // Default `workspace`

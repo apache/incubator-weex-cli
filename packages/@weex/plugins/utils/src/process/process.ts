@@ -2,7 +2,6 @@
  * Help manage process
  */
 const childProcess = require('child_process')
-import { ChildProcess } from 'child_process'
 
 export function runAndGetOutput(cmdString: string, options = {}) {
   try {
@@ -15,13 +14,18 @@ export function runAndGetOutput(cmdString: string, options = {}) {
   }
 }
 
+/**
+ * Convert a object to cmd string for `exec` use
+ * @param cmdName
+ * @param params
+ */
 export function createCmdString(cmdName: string, params: object) {
   let cmdString = `${cmdName} `
 
   const keys = Object.keys(params)
 
   keys.forEach(key => {
-    cmdString = `${cmdString} -${key} ${params[key]}`
+    cmdString = `${cmdString} ${key} ${params[key]}`
   })
 
   return cmdString

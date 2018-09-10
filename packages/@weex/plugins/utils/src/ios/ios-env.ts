@@ -3,10 +3,10 @@ import { IOS_XCODE_NOT_INSTALLED } from '../error/errorList'
 
 export default class IosEnv {
   isInstalledXcode(isThrowError: boolean = true) {
-    const reulst = runAndGetOutput(`/usr/bin/xcode-select --print-path`)
+    const result = runAndGetOutput(`/usr/bin/xcode-select --print-path`)
 
-    if (reulst) {
-      return !!reulst
+    if (result) {
+      return !!result
     }
 
     if (isThrowError) {
@@ -16,8 +16,8 @@ export default class IosEnv {
   }
 
   getXcodeVersion():string | null {
-    const reulst = runAndGetOutput(`xcodebuild -version`)
-    const lines = reulst.split('\n')
+    const result = runAndGetOutput(`xcodebuild -version`)
+    const lines = result.split('\n')
     let version = null
 
     lines.some(line => {
