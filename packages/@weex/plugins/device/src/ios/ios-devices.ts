@@ -1,25 +1,28 @@
-const childprocess = require('child_process')
 const path = require('path')
 
-import processManage from '../utils/process'
+import { exec, runAndGetOutput } from '@weex-cli/utils/src/process/process'
+import IosEnv from '@weex-cli/utils/src/ios/ios-env'
 import { Devices } from '../base/devices'
 import { DeviceInfo, RunDeviceOptions } from '../common/device'
 
-const { execSync } = childprocess
-
+jest.setTimeout(30000)
 export default class IosDevices extends Devices {
+  private iosEnv: IosEnv = new IosEnv()
+
   constructor() {
     super({ type: Devices.TYPES.ios })
+    this.iosEnv.isInstalledXcode()
+    this.updateList()
   }
 
-  updateList() {
+  public updateList() {
     this.list = []
     this.concat(this.getIosDevicesList())
   }
 
   private getIosDevicesList(): Array<DeviceInfo> {
     // Doctor TODO `xcrun`
-    const text = processManage.runAndGetOutput('xcrun instruments -s devices')
+    const text = runAndGetOutput('xcrun instruments -s devices')
     const devices = []
     const REG_DEVICE = /(.*?) \((.*?)\) \[(.*?)]/
 
@@ -43,7 +46,7 @@ export default class IosDevices extends Devices {
 
   async launchById(id: DeviceInfo['id']): Promise<String> {
     try {
-      childprocess.execSync(`xcrun instruments -w ${id}`, { encoding: 'utf8' })
+      await exec(`xcrun instruments -w ${id}`)
     } catch (error) {
       if (error) {
         if (error.toString().indexOf('Instruments Usage Error') !== -1) {
@@ -70,13 +73,13 @@ export default class IosDevices extends Devices {
 
     if (deviceInfo.isSimulator) {
       try {
-        execSync(`xcrun simctl install ${options.id} ${options.appPath}`)
+        await exec(`xcrun simctl install ${options.id} ${options.appPath}`)
       } catch (e) {
         throw new Error(`Instll app fail`)
       }
       if (options.applicationId) {
         try {
-          execSync(`xcrun simctl launch ${options.id} ${options.applicationId}`)
+          await exec(`xcrun simctl launch ${options.id} ${options.applicationId}`)
         } catch (e) {
           throw new Error(`launch app fail`)
         }
@@ -85,7 +88,7 @@ export default class IosDevices extends Devices {
       // Build to iphone the xxx.app must signed
       const iosDeployPath = path.join(__dirname, '../../node_modules/ios-deploy/build/Release/ios-deploy')
       try {
-        execSync(`${iosDeployPath} --justlaunch --debug --id ${options.id} --bundle ${options.appPath}`)
+        await exec(`${iosDeployPath} --justlaunch --debug --id ${options.id} --bundle ${options.appPath}`)
       } catch (e) {
         throw e
       }

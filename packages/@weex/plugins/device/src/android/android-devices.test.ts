@@ -1,5 +1,8 @@
-const debug = require('debug')('device')
+// const debug = require('debug')('device')
 const path = require('path')
+import 'jest'
+
+jest.setTimeout(30000)
 
 import AndroidDevice from './android-devices'
 
@@ -7,6 +10,7 @@ describe('Test android', () => {
   const androidDevice = new AndroidDevice()
   const deviceList = androidDevice.getList()
 
+  // TODO mock
   test('Run android simulator', async () => {
     let firstDevice
     deviceList.some(info => {

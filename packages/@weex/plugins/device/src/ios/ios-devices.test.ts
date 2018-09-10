@@ -1,7 +1,9 @@
 const debug = require('debug')('device')
 const path = require('path')
+
+import 'jest'
 import IosDevice from './ios-devices'
-import platform from '../utils/platform'
+import * as platform from '@weex-cli/utils/src/platform/platform'
 
 describe('Test IOS', () => {
   if (!platform.isMacOS) {
