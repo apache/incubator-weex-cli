@@ -1,9 +1,6 @@
-const path = require('path')
-
 import { BuilderConfig, RunOptions } from '../common/builder'
 import { PLATFORM_TYPES } from '../common/const'
 import { exec } from '@weex-cli/utils/src/process/process'
-
 
 export default class Builder {
   public type: PLATFORM_TYPES
@@ -32,7 +29,7 @@ export default class Builder {
     }
 
     for (let i = 0; i < preCmds.length; i++) {
-      await exec(preCmds[i])
+      await exec(preCmds[i], {}, { cwd: this.config.projectPath })
     }
   }
 

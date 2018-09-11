@@ -22,7 +22,12 @@
     "lib/"
   ],
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "koa": "^2.5.2",
+    "koa-static": "^5.0.0",
+    "recursive-copy": "^2.0.9",
+    "ws": "^6.0.0"
+  },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
     "@types/colors": "^1.2.1",

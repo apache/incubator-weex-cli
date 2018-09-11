@@ -5,7 +5,6 @@ import IosEnv from '@weex-cli/utils/src/ios/ios-env'
 import { Devices } from '../base/devices'
 import { DeviceInfo, RunDeviceOptions } from '../common/device'
 
-jest.setTimeout(30000)
 export default class IosDevices extends Devices {
   private iosEnv: IosEnv = new IosEnv()
 
@@ -75,12 +74,14 @@ export default class IosDevices extends Devices {
       try {
         await exec(`xcrun simctl install ${options.id} ${options.appPath}`)
       } catch (e) {
+        console.error(e)
         throw new Error(`Instll app fail`)
       }
       if (options.applicationId) {
         try {
           await exec(`xcrun simctl launch ${options.id} ${options.applicationId}`)
         } catch (e) {
+          console.log(e)
           throw new Error(`launch app fail`)
         }
       }

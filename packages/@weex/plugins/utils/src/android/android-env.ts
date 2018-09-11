@@ -8,7 +8,7 @@ import {
   ANDROID_ADB_NOT_FIND,
   ANDROID_EMULATOR_NOT_FIND,
   ANDROID_NDK_NOT_FIND
-} from '../error/errorList'
+} from '../error/error-list'
 
 interface AndroidSdkOptions {
   sdkPath?: string

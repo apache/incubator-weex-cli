@@ -62,6 +62,7 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
           }
         }
       )
+      console.log('pid: ', child.pid)
       if (handleChildProcess) {
         handleChildProcess(child)
       }
@@ -69,6 +70,7 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
         child.stdout.on('data', data => {
           const buf = Buffer.from(data)
           const bufStr = buf.toString().trim()
+
           onOutCallback(bufStr)
         })
       }

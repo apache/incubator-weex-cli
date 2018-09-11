@@ -1,5 +1,5 @@
 import { runAndGetOutput } from '../process/process'
-import { IOS_XCODE_NOT_INSTALLED } from '../error/errorList'
+import { IOS_XCODE_NOT_INSTALLED } from '../error/error-list'
 
 export default class IosEnv {
   isInstalledXcode(isThrowError: boolean = true) {
@@ -30,4 +30,6 @@ export default class IosEnv {
 
     return version
   }
+
+  // TODO sudo xcodebuild -license
 }

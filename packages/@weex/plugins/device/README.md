@@ -60,7 +60,7 @@ Returns a list of connected Android real machines and installed Android simulato
 
 @return `Array<DeviceInfo>`
 
-### runAndroid
+### installAndLaunchAndroidApp
 
 To start and install an application on an Android device, you only need to provide `RunDeviceOptions`, which works on both the simulator and the real machine. This action is error-prone and catch errors are recommended and handled accordingly.
 
@@ -72,7 +72,7 @@ To start and install an application on an Android device, you only need to provi
 
 Same as above Android
 
-### runIos
+### installAndLaunchIosApp
 
 Same as above Android，Note the difference in `RunDeviceOptions`
 

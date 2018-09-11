@@ -5,12 +5,16 @@ import 'jest'
 import IosDevice from './ios-devices'
 import * as platform from '@weex-cli/utils/src/platform/platform'
 
+jest.setTimeout(30000)
+
 describe('Test IOS', () => {
   if (!platform.isMacOS) {
     return
   }
   const iosDevices = new IosDevice()
   const iosDeviceList = iosDevices.getList()
+
+  console.log('iosDeviceList', iosDeviceList)
 
   test('Run ios simulator', async () => {
     let firstSimulator = null
