@@ -95,7 +95,7 @@ class AndroidDevice extends Devices {
       exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
         handleChildProcess(childProcess) {
           cmd = childProcess
-        }
+        },
       })
       setTimeout(() => {
         resolve(cmd.pid)
@@ -150,7 +150,7 @@ class AndroidDevice extends Devices {
       await exec(
         `${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} shell am start -n ${
           options.applicationId
-        } ${androidShellCmdString || ''}`,
+        }/.SplashActivity ${androidShellCmdString || ''}`,
       )
     } catch (e) {
       throw e

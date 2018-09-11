@@ -10,6 +10,7 @@ describe('Test android', () => {
   const androidDevice = new AndroidDevice()
   const deviceList = androidDevice.getList()
 
+  console.log('deviceList', deviceList)
   // TODO mock
   test('Run android simulator', async () => {
     let firstDevice
@@ -23,7 +24,7 @@ describe('Test android', () => {
 
     await androidDevice.run({
       id: firstDevice.id,
-      applicationId: `com.weex.app/com.weex.app.SplashActivity`,
+      applicationId: `com.weex.app`,
       appPath: path.join(__dirname, '../../test/android-mock/weex-app.apk'),
       androidShellCmdString: '',
     })

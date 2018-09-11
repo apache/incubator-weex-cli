@@ -1,7 +1,5 @@
 import { PLATFORM_TYPES } from './const'
-import { ChildProcess } from 'child_process'
 import { ExecOptions } from '@weex-cli/utils/src/process/process'
-
 
 export interface BuilderConfig {
   type: PLATFORM_TYPES
@@ -25,7 +23,6 @@ export interface IosBuilderConfig extends BuilderConfig {
 }
 
 export interface AndroidBuilderConfig extends BuilderConfig {
-
   /**
    * The build android apk location, set in gradle config
    * If not set apkPth will try find  `app/build/outputs/apk/*.apk`
@@ -33,5 +30,4 @@ export interface AndroidBuilderConfig extends BuilderConfig {
   apkPath?: string
 }
 
-export interface RunOptions extends ExecOptions{}
-
+export interface RunOptions extends ExecOptions {}

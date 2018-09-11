@@ -1,10 +1,13 @@
 const path = require('path')
-const { exec, execSync } = require('child_process')
+const copy = require('recursive-copy')
+const fs = require('fs')
 
 import { RunnerConfig } from '../common/runner'
 import { PLATFORM_TYPES } from '../common/const'
 
+
 export default class Runner {
+  private filesWatcher
   public type: PLATFORM_TYPES
   protected config: RunnerConfig
 
@@ -13,49 +16,79 @@ export default class Runner {
   }
 
   private init(options: RunnerConfig) {
-    const { projectPath, type } = options
+    const { type } = options
     this.type = type
     this.config = Object.assign(
       {
-        nativePath:
-          this.type === PLATFORM_TYPES.ios
-            ? path.join(projectPath, 'platforms/ios')
-            : path.join(projectPath, 'platforms/android'),
-        buildJsCmd: `npm run build`,
+        // Some default options
       },
       options,
     )
   }
 
-  protected buildJs() {
-    // execSync(this.config.buildJsCmd)
+  protected setNativeConfig() {
+    // TODO
+    return true
+  }
+
+  protected async copyJsBundle() {
+    const options = {
+      filter: [
+        '**/*.js',
+        '!**/*.web.js'
+      ],
+      overwrite: true
+    }
+    const { jsBundleFolderPath, projectPath } = this.config
+    await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'bundlejs/'), options)
   }
 
   protected watchFileChange() {
-    // TODO
+    const config = this.config
+
+    if (this.filesWatcher) {
+      this.filesWatcher.close()
+    }
+    this.filesWatcher = fs.watch(
+      this.config.jsBundleFolderPath,
+      {
+        recursive: true
+      },
+      (type, name) => {
+        if (/\w*\.web\.js$/.test(name)) {
+          return
+        }
+        if (name === config.jsBundleEntryPath) {
+          const wsServer = config.wsServer
+          const serverInfo = wsServer.getServerInfo()
+          wsServer.getWsServer().send(JSON.stringify({
+            method: 'WXReloadBundle',
+            params: `http://${serverInfo.hostname}:${serverInfo.port}/${config.jsBundleEntryPath}`
+          }))
+        }
+      }
+    )
   }
 
   protected buildNative() {
     console.error('Not define `updateList`')
   }
 
-  protected installApp() {
-    // TODO
+  protected installAndLaunchApp(appPath: string) {
+    console.error('Not define `installAndLaunchApp`')
   }
 
-  public async run(): Promise<{ appPath: string }> {
+  public async run() {
     let appPath
     try {
       // All method catch in here
-      await this.buildJs()
+      // await this.setNativeConfig()
+      // await this.copyJsBundle()
+      // this.watchFileChange()
       appPath = await this.buildNative()
-      await this.watchFileChange()
-      await this.installApp()
+      await this.installAndLaunchApp(appPath)
     } catch (error) {
       throw error
-    }
-    return {
-      appPath
     }
   }
 }
