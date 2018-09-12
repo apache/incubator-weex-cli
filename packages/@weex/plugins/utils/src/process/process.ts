@@ -38,7 +38,7 @@ export interface ExecOptions {
   handleChildProcess?: Function
 }
 
-export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions?): Promise<string> {
+export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions?): Promise<any> {
   const {
     onOutCallback,
     onErrorCallback,
@@ -62,7 +62,6 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
           }
         }
       )
-      console.log('pid: ', child.pid)
       if (handleChildProcess) {
         handleChildProcess(child)
       }
