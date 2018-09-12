@@ -4,12 +4,15 @@ const fs = require('fs')
 
 import { RunnerConfig } from '../common/runner'
 import { PLATFORM_TYPES } from '../common/const'
-
+import WsServer from '../server/ws'
+import { FSWatcher } from 'fs'
 
 export default class Runner {
-  private filesWatcher
   public type: PLATFORM_TYPES
   protected config: RunnerConfig
+  protected filesWatcher: FSWatcher
+  protected wsServer: WsServer
+
 
   constructor(options: RunnerConfig) {
     this.init(options)
@@ -26,9 +29,20 @@ export default class Runner {
     )
   }
 
+  private async startServer() {
+    if (this.wsServer) {
+      return this.wsServer
+    }
+    const config = this.config
+    this.wsServer = new WsServer({
+      staticFolder: config.jsBundleFolderPath
+    })
+    await this.wsServer.init()
+  }
+
+
   protected setNativeConfig() {
-    // TODO
-    return true
+    console.error('Not define `setNativeConfig`')
   }
 
   protected async copyJsBundle() {
@@ -40,11 +54,17 @@ export default class Runner {
       overwrite: true
     }
     const { jsBundleFolderPath, projectPath } = this.config
-    await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'bundlejs/'), options)
+    if (PLATFORM_TYPES.ios) {
+      await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'bundlejs/'), options)
+    }
+    if (PLATFORM_TYPES.android) {
+      await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'app/src/main/assets/'), options)
+    }
   }
 
   protected watchFileChange() {
     const config = this.config
+    const entryFileName = path.basename(config.jsBundleEntryPath)
 
     if (this.filesWatcher) {
       this.filesWatcher.close()
@@ -58,16 +78,21 @@ export default class Runner {
         if (/\w*\.web\.js$/.test(name)) {
           return
         }
-        if (name === config.jsBundleEntryPath) {
-          const wsServer = config.wsServer
+        if (name === entryFileName) {
+          const wsServer = this.wsServer
           const serverInfo = wsServer.getServerInfo()
-          wsServer.getWsServer().send(JSON.stringify({
+          const ws = wsServer.getWs()
+          if (!ws) {
+            return
+          }
+          ws.send(JSON.stringify({
             method: 'WXReloadBundle',
-            params: `http://${serverInfo.hostname}:${serverInfo.port}/${config.jsBundleEntryPath}`
+            params: `http://${serverInfo.hostname}:${serverInfo.port}/${entryFileName}`
           }))
         }
       }
     )
+    return true
   }
 
   protected buildNative() {
@@ -78,17 +103,23 @@ export default class Runner {
     console.error('Not define `installAndLaunchApp`')
   }
 
-  public async run() {
+  public async run(): Promise<any> {
     let appPath
     try {
       // All method catch in here
-      // await this.setNativeConfig()
-      // await this.copyJsBundle()
-      // this.watchFileChange()
+      await this.startServer()
+      await this.setNativeConfig()
+      await this.copyJsBundle()
+      await this.watchFileChange()
       appPath = await this.buildNative()
       await this.installAndLaunchApp(appPath)
     } catch (error) {
       throw error
     }
+  }
+
+  public dispose () {
+    this.filesWatcher.close()
+    this.wsServer.dispose()
   }
 }

@@ -1,14 +1,8 @@
 import { PLATFORM_TYPES } from './const'
-import WsServer from '../server/ws'
 
-export interface UnifyRunnerConfig {
-  /**
-   * Will watch this folder *.js change
-   */
-  jsBundleFolderPath: string
-}
+export interface RunnerConfig {
+  type: PLATFORM_TYPES,
 
-export interface BaseRunnerConfig {
   /**
    * Will watch this folder *.js change
    */
@@ -34,11 +28,10 @@ export interface BaseRunnerConfig {
    * Ios or Android application id
    */
   applicationId: string
-}
 
-export interface RunnerConfig extends BaseRunnerConfig {
-  type: PLATFORM_TYPES
-
-  wsServer?: WsServer
+  /**
+   *  The content of `ios.config.json` or 'android.config.json'
+   */
+  nativeConfig?: any
 }
 
