@@ -1,6 +1,7 @@
 const path = require('path')
-import { PLATFORM_TYPES } from '../common/const'
+const debug = require('debug')('run')
 
+import { PLATFORM_TYPES } from '../common/const'
 import 'jest'
 import { IosRunner } from '../index'
 import TestHelp from '@weex-cli/utils/src/test/test-help'
@@ -14,7 +15,7 @@ async function testIos() {
     projectPath: testHelp.getTestConfigByKey('ios.projectPath'),
     deviceId: testHelp.getTestConfigByKey('ios.deviceId'),
     applicationId: testHelp.getTestConfigByKey('ios.applicationId'),
-    jsBundleFolderPath: testHelp.getTestConfigByKey('jsBundleFolderPath')
+    jsBundleFolderPath: testHelp.getTestConfigByKey('jsBundleFolderPath'),
   })
 
   await iosRunner.run()
@@ -25,4 +26,6 @@ async function testIos() {
   }, 10000)
 }
 
-testIos()
+testIos().catch(e => {
+  debug('Test run ios ERROR: ', e)
+})

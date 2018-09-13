@@ -48,7 +48,7 @@ export default class IosBuilder extends Builder {
     const cmdParams = {
       '-scheme': projectInfo.scheme,
       '-configuration': 'Debug',
-      '-derivedDataPath': IOS_DERIVE_DATA_PATH
+      '-derivedDataPath': IOS_DERIVE_DATA_PATH,
     }
 
     // Default `workspace`

@@ -5,7 +5,6 @@ import { installAndLaunchIosApp } from '@weex-cli/device'
 import CONFIG from '../common/config'
 
 export default class IosRunner extends Runner {
-
   protected config: RunnerConfig
 
   constructor(options: RunnerConfig) {
@@ -16,11 +15,17 @@ export default class IosRunner extends Runner {
     const config = this.config
     const wsServer = this.wsServer
     const serverInfo = wsServer.getServerInfo()
-    CONFIG[this.type].resolve(Object.assign({
-      Ws: `ws://${serverInfo.hostname}:${serverInfo.port}`,
-      port: serverInfo.port,
-      ip: serverInfo.hostname
-    }, config.nativeConfig), config.projectPath)
+    CONFIG[this.type].resolve(
+      Object.assign(
+        {
+          Ws: `ws://${serverInfo.hostname}:${serverInfo.port}`,
+          port: serverInfo.port,
+          ip: serverInfo.hostname,
+        },
+        config.nativeConfig,
+      ),
+      config.projectPath,
+    )
   }
 
   async buildNative() {
@@ -29,15 +34,15 @@ export default class IosRunner extends Runner {
     const iosBuilder = new IosBuilder({
       type: config.type,
       projectPath: config.projectPath,
-      preCmds: ['pod update']
+      preCmds: ['pod update'],
     })
     const { appPath } = await iosBuilder.run({
-      onOutCallback: (outString) => {
+      onOutCallback: outString => {
         console.log('BUILD OUTPUT:', outString)
       },
-      onErrorCallback: (outString) => {
+      onErrorCallback: outString => {
         console.error('BUILD ERROR:', outString)
-      }
+      },
     })
     return appPath
   }
@@ -47,7 +52,7 @@ export default class IosRunner extends Runner {
     await installAndLaunchIosApp({
       id: config.deviceId,
       applicationId: config.applicationId,
-      appPath
+      appPath,
     })
   }
 }

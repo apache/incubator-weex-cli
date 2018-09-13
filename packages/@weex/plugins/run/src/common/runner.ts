@@ -1,7 +1,7 @@
 import { PLATFORM_TYPES } from './const'
 
 export interface RunnerConfig {
-  type: PLATFORM_TYPES,
+  type: PLATFORM_TYPES
 
   /**
    * Will watch this folder *.js change
@@ -34,4 +34,3 @@ export interface RunnerConfig {
    */
   nativeConfig?: any
 }
-

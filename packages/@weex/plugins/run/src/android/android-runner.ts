@@ -5,7 +5,6 @@ import { installAndLaunchAndroidApp } from '@weex-cli/device'
 import CONFIG from '../common/config'
 
 export default class IosRunner extends Runner {
-
   protected config: RunnerConfig
 
   constructor(options: RunnerConfig) {
@@ -15,24 +14,30 @@ export default class IosRunner extends Runner {
   async setNativeConfig() {
     const config = this.config
 
-    CONFIG[this.type].resolve(Object.assign({
-      // Some special config
-    }, config.nativeConfig), config.projectPath)
+    CONFIG[this.type].resolve(
+      Object.assign(
+        {
+          // Some special config
+        },
+        config.nativeConfig,
+      ),
+      config.projectPath,
+    )
   }
 
   async buildNative() {
     const config = this.config
     const androidBuilder = new AndroidBuilder({
       type: config.type,
-      projectPath: config.projectPath
+      projectPath: config.projectPath,
     })
     const { appPath } = await androidBuilder.run({
-      onOutCallback: (outString) => {
+      onOutCallback: outString => {
         console.log('BUILD OUTPUT:', outString)
       },
-      onErrorCallback: (outString) => {
+      onErrorCallback: outString => {
         console.error('BUILD ERROR:', outString)
-      }
+      },
     })
     return appPath
   }
@@ -46,12 +51,12 @@ export default class IosRunner extends Runner {
       id: config.deviceId,
       applicationId: config.applicationId,
       appPath,
-      androidShellCmdString: `-d ${this.stringifyConfigs({ Ws: `ws://${serverInfo.hostname}:${serverInfo.port}`})}`
+      androidShellCmdString: `-d ${this.stringifyConfigs({ Ws: `ws://${serverInfo.hostname}:${serverInfo.port}` })}`,
     })
   }
 
-  private  stringifyConfigs (configs) {
-    let str = '\'{'
+  private stringifyConfigs(configs) {
+    let str = "'{"
     for (const key in configs) {
       if (configs.hasOwnProperty(key)) {
         str += '\\"'
@@ -63,7 +68,7 @@ export default class IosRunner extends Runner {
       }
     }
     str = str.slice(0, -1)
-    str += '}\''
+    str += "}'"
     return str
   }
 }

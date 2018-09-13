@@ -91,15 +91,15 @@ class AndroidDevice extends Devices {
         // Launched
         return resolve(null)
       }
+      setTimeout(() => {
+        resolve(cmd.pid)
+      }, 5000)
       // Don't know whether succeed or fail
-      exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
+      await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
         handleChildProcess(childProcess) {
           cmd = childProcess
         },
       })
-      setTimeout(() => {
-        resolve(cmd.pid)
-      }, 5000)
     })
   }
 
