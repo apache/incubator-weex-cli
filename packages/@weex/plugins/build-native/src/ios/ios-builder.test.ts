@@ -10,42 +10,36 @@ jest.setTimeout(30000)
 describe('Test IOS', () => {
   const testHelp = new TestHelp(path.join(__dirname, '../../'))
 
-  test(
-    'Ios build for simulator ',
-    async () => {
-      const iosBuilder = new IosBuilder({
-        projectPath: testHelp.getTestConfigByKey('ios.projectPath'),
-        type: PLATFORM_TYPES.ios,
-      })
-      let result
+  test('Ios build for simulator ', async () => {
+    const iosBuilder = new IosBuilder({
+      projectPath: testHelp.getTestConfigByKey('ios.projectPath'),
+      type: PLATFORM_TYPES.ios,
+    })
+    let result
 
-      try {
-        result = await iosBuilder.run()
-      } catch (e) {
-        console.log('Error', e.message)
-      }
-
-      expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+    try {
+      result = await iosBuilder.run()
+    } catch (e) {
+      console.log('Error', e.message)
     }
-)
 
-  test(
-    'Ios build for build for real device ',
-    async () => {
-      const iosBuilder = new IosBuilder({
-        projectPath: testHelp.getTestConfigByKey('ios.projectPath'),
-        type: PLATFORM_TYPES.ios,
-        isRealDevice: true,
-      })
-      let result
+    expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+  })
 
-      try {
-        result = await iosBuilder.run()
-      } catch (e) {
-        console.log('Error', e.message)
-      }
+  test('Ios build for build for real device ', async () => {
+    const iosBuilder = new IosBuilder({
+      projectPath: testHelp.getTestConfigByKey('ios.projectPath'),
+      type: PLATFORM_TYPES.ios,
+      isRealDevice: true,
+    })
+    let result
 
-      expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+    try {
+      result = await iosBuilder.run()
+    } catch (e) {
+      console.log('Error', e.message)
     }
-  )
+
+    expect(!!(result && typeof result.appPath === 'string' && result.appPath)).toBe(true)
+  })
 })

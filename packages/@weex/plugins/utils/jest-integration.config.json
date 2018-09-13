@@ -4,5 +4,8 @@
     "^.+\\.ts$": "ts-jest"
   },
   "testRegex": "(\\.|/)integration\\.ts$",
-  "moduleFileExtensions": ["ts", "js", "json", "node"]
+  "moduleFileExtensions": ["ts", "js", "json", "node"],
+  "transformIgnorePatterns": [
+    "node_modules/(?!(@weex-cli|my-project|react-native-button)/)"
+  ]
 }

@@ -16,7 +16,7 @@ async function android() {
     projectPath: testHelp.getTestConfigByKey('android.projectPath'),
     deviceId: testHelp.getTestConfigByKey('android.deviceId'),
     applicationId: testHelp.getTestConfigByKey('android.applicationId'),
-    jsBundleFolderPath: testHelp.getTestConfigByKey('jsBundleFolderPath')
+    jsBundleFolderPath: testHelp.getTestConfigByKey('jsBundleFolderPath'),
   })
 
   await androidRunner.run()

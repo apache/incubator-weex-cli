@@ -13,7 +13,6 @@ export default class Runner {
   protected filesWatcher: FSWatcher
   protected wsServer: WsServer
 
-
   constructor(options: RunnerConfig) {
     this.init(options)
   }
@@ -35,23 +34,19 @@ export default class Runner {
     }
     const config = this.config
     this.wsServer = new WsServer({
-      staticFolder: config.jsBundleFolderPath
+      staticFolder: config.jsBundleFolderPath,
     })
     await this.wsServer.init()
   }
 
-
-  protected setNativeConfig() {
+  protected async setNativeConfig() {
     console.error('Not define `setNativeConfig`')
   }
 
   protected async copyJsBundle() {
     const options = {
-      filter: [
-        '**/*.js',
-        '!**/*.web.js'
-      ],
-      overwrite: true
+      filter: ['**/*.js', '!**/*.web.js'],
+      overwrite: true,
     }
     const { jsBundleFolderPath, projectPath } = this.config
     if (PLATFORM_TYPES.ios) {
@@ -72,7 +67,7 @@ export default class Runner {
     this.filesWatcher = fs.watch(
       this.config.jsBundleFolderPath,
       {
-        recursive: true
+        recursive: true,
       },
       (type, name) => {
         if (/\w*\.web\.js$/.test(name)) {
@@ -85,21 +80,23 @@ export default class Runner {
           if (!ws) {
             return
           }
-          ws.send(JSON.stringify({
-            method: 'WXReloadBundle',
-            params: `http://${serverInfo.hostname}:${serverInfo.port}/${entryFileName}`
-          }))
+          ws.send(
+            JSON.stringify({
+              method: 'WXReloadBundle',
+              params: `http://${serverInfo.hostname}:${serverInfo.port}/${entryFileName}`,
+            }),
+          )
         }
-      }
+      },
     )
     return true
   }
 
-  protected buildNative() {
+  protected async buildNative() {
     console.error('Not define `updateList`')
   }
 
-  protected installAndLaunchApp(appPath: string) {
+  protected async installAndLaunchApp(appPath: string) {
     console.error('Not define `installAndLaunchApp`')
   }
 
@@ -110,7 +107,7 @@ export default class Runner {
       await this.startServer()
       await this.setNativeConfig()
       await this.copyJsBundle()
-      await this.watchFileChange()
+      this.watchFileChange()
       appPath = await this.buildNative()
       await this.installAndLaunchApp(appPath)
     } catch (error) {
@@ -118,7 +115,7 @@ export default class Runner {
     }
   }
 
-  public dispose () {
+  public dispose() {
     this.filesWatcher.close()
     this.wsServer.dispose()
   }
