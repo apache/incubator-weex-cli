@@ -7,7 +7,7 @@ import {
   ANDROID_SDK_NOT_FIND,
   ANDROID_ADB_NOT_FIND,
   ANDROID_EMULATOR_NOT_FIND,
-  ANDROID_NDK_NOT_FIND
+  ANDROID_NDK_NOT_FIND,
 } from '../error/error-list'
 
 interface AndroidSdkOptions {
@@ -64,8 +64,7 @@ class AndroidEnv {
     this.ANDROID_SDK_PATH = this.ANDROID_SDK_PATH || this.getSdkPath()
 
     const defaultAdbPath = path.join(this.ANDROID_SDK_PATH, 'platform-tools', 'adb')
-    if (this.ANDROID_ADB_PATH &&
-       (fs.existsSync(defaultAdbPath) || fs.existsSync(`${defaultAdbPath}.exe`))) {
+    if (this.ANDROID_ADB_PATH && (fs.existsSync(defaultAdbPath) || fs.existsSync(`${defaultAdbPath}.exe`))) {
       return defaultAdbPath
     }
 

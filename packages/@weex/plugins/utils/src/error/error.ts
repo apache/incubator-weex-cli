@@ -8,10 +8,17 @@
 
 const label = 'ErrorMemory'
 
-export function createError(options: { message: string, type: string }) {
-  return new Error(JSON.stringify(Object.assign({
-    [label]: 'ErrorMemory'
-  }, options)))
+export function createError(options: { message: string; type: string }) {
+  return new Error(
+    JSON.stringify(
+      Object.assign(
+        {
+          [label]: 'ErrorMemory',
+        },
+        options,
+      ),
+    ),
+  )
 }
 
 export function paraError(error: Error) {

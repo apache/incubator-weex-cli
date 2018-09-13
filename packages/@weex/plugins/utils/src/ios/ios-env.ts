@@ -15,7 +15,7 @@ export default class IosEnv {
     return false
   }
 
-  getXcodeVersion():string | null {
+  getXcodeVersion(): string | null {
     const result = runAndGetOutput(`xcodebuild -version`)
     const lines = result.split('\n')
     let version = null

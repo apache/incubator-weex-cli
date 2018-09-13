@@ -1,4 +1,4 @@
-const fs =  require('fs')
+const fs = require('fs')
 const path = require('path')
 
 /**
@@ -50,5 +50,4 @@ export default class TestHelp {
 
     return config[key]
   }
-
 }
