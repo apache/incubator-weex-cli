@@ -5,10 +5,7 @@ const childProcess = require('child_process')
 
 export function runAndGetOutput(cmdString: string, options = {}) {
   try {
-    return childProcess.execSync(cmdString, Object.assign(
-      { encoding: 'utf8' },
-      options
-    )).toString()
+    return childProcess.execSync(cmdString, Object.assign({ encoding: 'utf8' }, options)).toString()
   } catch (e) {
     return ''
   }
@@ -39,28 +36,26 @@ export interface ExecOptions {
 }
 
 export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions?): Promise<any> {
-  const {
-    onOutCallback,
-    onErrorCallback,
-    onCloseCallback,
-    handleChildProcess
-  } = (options || {}) as ExecOptions
+  const { onOutCallback, onErrorCallback, onCloseCallback, handleChildProcess } = (options || {} as ExecOptions)
   return new Promise((resolve, reject) => {
     try {
       const child = childProcess.exec(
         cmdString,
-        Object.assign({
-          encoding: 'utf8',
-          maxBuffer: 102400 * 1024,
-          wraning: false
-        }, nativeExecOptions),
-        (error) => {
+        Object.assign(
+          {
+            encoding: 'utf8',
+            maxBuffer: 102400 * 1024,
+            wraning: false,
+          },
+          nativeExecOptions,
+        ),
+        error => {
           if (error) {
             reject(error)
           } else {
             resolve()
           }
-        }
+        },
       )
       if (handleChildProcess) {
         handleChildProcess(child)

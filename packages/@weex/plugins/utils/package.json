@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "utils for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint && np --yolo --no-yarn ----access=public",
+    "publish": "yarn lint && np --yolo --no-yarn ----access=public",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
@@ -19,7 +19,8 @@
   },
   "author": "",
   "files": [
-    "src/"
+    "src/",
+     "!*.test.ts"
   ],
   "license": "MIT",
   "dependencies": {},
