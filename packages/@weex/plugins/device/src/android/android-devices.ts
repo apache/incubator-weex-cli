@@ -1,28 +1,27 @@
-const childprocess = require('child_process')
 const find = require('find-process')
 
-const { exec, execSync } = childprocess
-
-import processManage from '../utils/process'
+import { exec, runAndGetOutput } from '@weex-cli/utils/src/process/process'
+import AndroidSdk from '@weex-cli/utils/src/android/android-env'
 import { Devices } from '../base/devices'
-import AndroidSdk from './android-sdk'
 import { DeviceInfo, RunDeviceOptions } from '../common/device'
 
-const androidSdk = new AndroidSdk()
-
 class AndroidDevice extends Devices {
+  private androidSdk: AndroidSdk = new AndroidSdk()
+
   constructor() {
     super({ type: Devices.TYPES.android })
+    this.androidSdk.init()
+    this.updateList()
   }
 
-  updateList() {
+  public updateList() {
     this.list = []
     this.concat(this.getAndroidDeviceSimulatorList())
     this.concat(this.getAndroidDevicesList())
   }
 
   private getAndroidDevicesList(onlyEmulator: boolean = false): Array<DeviceInfo> {
-    const text = processManage.runAndGetOutput(`${androidSdk.ANDROID_ADB_PATH} devices -l`)
+    const text = runAndGetOutput(`${this.androidSdk.ANDROID_ADB_PATH} devices -l`)
     const devices: Array<DeviceInfo> = []
     const lines = text.split('\n')
 
@@ -51,7 +50,7 @@ class AndroidDevice extends Devices {
   }
 
   private getAndroidDeviceSimulatorList(): Array<DeviceInfo> {
-    const text = processManage.runAndGetOutput(`${androidSdk.getEmulatorPath()} -list-avds`)
+    const text = runAndGetOutput(`${this.androidSdk.getEmulatorPath()} -list-avds`)
     const lines = text.split('\n')
     const devices = []
 
@@ -70,7 +69,7 @@ class AndroidDevice extends Devices {
 
   /**
    * the child process of Android simulator will kill run long time
-   * so will resole after 3000ms but the process still run
+   * so will resole after 5000ms but the process still run
    * return the process pid can use kill it
    *
    * @param id
@@ -78,6 +77,7 @@ class AndroidDevice extends Devices {
    */
   launchById(id: DeviceInfo['id']): Promise<string | null> {
     return new Promise(async (resolve, reject) => {
+      let cmd
       const deviceInfo = this.getDeviceById(id)
 
       if (!deviceInfo) {
@@ -91,14 +91,15 @@ class AndroidDevice extends Devices {
         // Launched
         return resolve(null)
       }
-      const cmd = exec(`${androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, error => {
-        if (error) {
-          reject(error)
-        }
-      })
       setTimeout(() => {
         resolve(cmd.pid)
-      }, 3000)
+      }, 5000)
+      // Don't know whether succeed or fail
+      await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
+        handleChildProcess(childProcess) {
+          cmd = childProcess
+        },
+      })
     })
   }
 
@@ -145,11 +146,11 @@ class AndroidDevice extends Devices {
     }
 
     try {
-      execSync(`${androidSdk.ANDROID_ADB_PATH} -s ${adbId} install -r ${options.appPath}`)
-      execSync(
-        `${androidSdk.ANDROID_ADB_PATH} -s ${adbId} shell am start -n ${
+      await exec(`${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} install -r ${options.appPath}`)
+      await exec(
+        `${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} shell am start -n ${
           options.applicationId
-        } ${androidShellCmdString || ''}`,
+        }/.SplashActivity ${androidShellCmdString || ''}`,
       )
     } catch (e) {
       throw e

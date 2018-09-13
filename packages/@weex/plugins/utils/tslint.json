@@ -1,0 +1,7 @@
+{
+  "extends": ["tslint-config-standard", "tslint-config-prettier"],
+  "rules": {
+    "strict-type-predicates": false,
+    "semicolon": [true, "never"]
+  }
+}

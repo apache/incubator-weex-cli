@@ -1,7 +1,11 @@
 const debug = require('debug')('device')
 const path = require('path')
+
+import 'jest'
 import IosDevice from './ios-devices'
-import platform from '../utils/platform'
+import * as platform from '@weex-cli/utils/src/platform/platform'
+
+jest.setTimeout(30000)
 
 describe('Test IOS', () => {
   if (!platform.isMacOS) {
@@ -9,6 +13,8 @@ describe('Test IOS', () => {
   }
   const iosDevices = new IosDevice()
   const iosDeviceList = iosDevices.getList()
+
+  console.log('iosDeviceList', iosDeviceList)
 
   test('Run ios simulator', async () => {
     let firstSimulator = null

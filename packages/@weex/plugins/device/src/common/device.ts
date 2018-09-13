@@ -18,9 +18,9 @@ export interface RunDeviceOptions {
   appPath: string
 
   /**
+   * The id used to launch the application
    * For ios is `BundleIdentifier` ex: com.alibaba.weex
-   * For android is `com.package.name/com.package.name.ActivityName`
-   * ex: com.weex.app/com.weex.app.SplashActivity
+   * For android is `packageName` ex: com.weex.app
    */
   applicationId: string
 
