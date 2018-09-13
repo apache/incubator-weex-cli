@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint && np --yolo --no-yarn",
+    "publish": "yarn build && yarn lint && np --yolo --no-yarn ----access=public",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
@@ -18,6 +18,9 @@
     "watch": "tsc -watch -p ./"
   },
   "author": "",
+  "files": [
+    "lib/"
+  ],
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
