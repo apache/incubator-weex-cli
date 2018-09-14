@@ -40,8 +40,8 @@ class AndroidDevice extends Devices {
         }
       }
       devices.push({
-        name: result[2],
-        id: result[1],
+        name: result[2].trim(),
+        id: result[1].trim(),
         isSimulator: onlyEmulator,
       })
     })
@@ -58,6 +58,7 @@ class AndroidDevice extends Devices {
       if (!line || !line.replace(/\s+/, '')) {
         return
       }
+      line = line.trim()
       devices.push({
         name: line,
         id: line,
@@ -95,11 +96,15 @@ class AndroidDevice extends Devices {
         resolve(cmd.pid)
       }, 5000)
       // Don't know whether succeed or fail
-      await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
-        handleChildProcess(childProcess) {
-          cmd = childProcess
-        },
-      })
+      try {
+        await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
+          handleChildProcess(childProcess) {
+            cmd = childProcess
+          },
+        })
+      } catch (e) {
+        reject(e)
+      }
     })
   }
 
