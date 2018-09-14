@@ -1,6 +1,10 @@
 {
-  "jsBundleFolderPath": "",
-  "jsBundleEntryPath": "",
-  "projectPath": "",
-  "deviceId": ""
+  "jsBundleFolderPath": "/Users/jiaoweimin/code/test/weex-project-weex-tool/dist",
+  "jsBundleEntry": "/Users/jiaoweimin/code/test/weex-project-weex-tool/dist/index.js",
+  "ios.projectPath": "/Users/jiaoweimin/code/test/weex-project-weex-tool/platforms/ios",
+  "ios.deviceId": "0C4808C3-4A2D-4F07-8722-4B01A001E197",
+  "ios.applicationId": "com.alibaba.weex",
+  "android.projectPath": "/Users/jiaoweimin/code/test/weex-project-weex-tool/platforms/android",
+  "android.deviceId": "Pixel_2_XL_API_P",
+  "android.applicationId": "com.weex.app"
 }
