@@ -1,1 +1,2 @@
-Plugin for diganose developing enviroment.
+### @weex-cli/doctor
+
