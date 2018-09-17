@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/utils",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "utils for weex-toolkit",
   "main": "index.js",
   "scripts": {

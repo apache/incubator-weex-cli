@@ -85,8 +85,8 @@ class AndroidDevice extends Devices {
       let timer
       const deviceInfo = this.getDeviceById(id)
       const startSimulatorDeviceList = this.getAndroidDevicesList(true)
-      
-      const checkIsLanchFinished  = () => {
+
+      const checkIsLanchFinished = () => {
         timer = setTimeout(() => {
           if (tryTimes >= maxTryTimes) {
             clearTimeout(timer)
@@ -94,7 +94,7 @@ class AndroidDevice extends Devices {
           }
           clearTimeout(timer)
           const adbSimulatorDeviceList = this.getAndroidDevicesList(true)
-          
+
           if (adbSimulatorDeviceList.length > startSimulatorDeviceList.length) {
             // This time think simulator lanch succed
             clearTimeout(timer)
@@ -102,7 +102,7 @@ class AndroidDevice extends Devices {
           } else {
             checkIsLanchFinished()
           }
-          tryTimes ++
+          tryTimes++
         }, timeInterval)
       }
 
