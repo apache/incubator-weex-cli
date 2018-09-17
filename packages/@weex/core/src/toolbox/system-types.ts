@@ -16,6 +16,10 @@ export interface ISystem {
    */
   which(command: string): string | void
   /**
+   * Uses userhome tu return userpath
+   */
+  userhome(...args: string[]): string
+  /**
    * Returns a timer function that starts from this moment. Calling
    * this function will return the number of milliseconds from when
    * it was started.

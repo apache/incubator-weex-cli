@@ -3,7 +3,16 @@ export default {
   alias: 'v',
   description: 'Output the version number',
   dashed: true,
-  run: context => {
-    context.logger.info(context.meta.version())
+  run: ({
+    meta,
+    logger
+  }) => {
+    const info = meta.getModulesInfo();
+    logger.warn(meta.version())
+    if (info && info.mods) {
+      for (let mod in info.mods) {
+        logger.info(`- ${mod} : v${info.mods[mod].version}`);
+      }
+    }
   },
 }
