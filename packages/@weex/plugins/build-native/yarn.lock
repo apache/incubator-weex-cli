@@ -134,9 +134,9 @@
   version "0.25.37"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.37.tgz#99d91c0a8d7fde279c7438b4dc54354b73385973"
 
-"@weex-cli/utils@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@weex-cli/utils/-/utils-0.0.3.tgz#cda5256e00d078b1b9bc480e3d787475058e089f"
+"@weex-cli/utils@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@weex-cli/utils/-/utils-0.0.5.tgz#115712f690edeb19f624bb9d3d812a051d85bbaf"
 
 abab@^2.0.0:
   version "2.0.0"
