@@ -1,8 +1,9 @@
 {
-  "extends": ["eslint-config-standard", "eslint-config-prettier"],
+  "extends": ["eslint-config-standard"],
   "rules": {
     "prefer-promise-reject-errors": "off",
     "no-new-func": "off",
-    "standard/no-callback-literal": "off"
+    "standard/no-callback-literal": "off",
+    "brace-style": ["error", "stroustrup"]
   }
 }

@@ -118,4 +118,14 @@ export interface IStrings {
    * Test if provided word is singular.
    */
   isSingular(word: string): boolean
+
+  /**
+   * Compare from two string
+   */
+  strSimilarity2Percent(origin: string, target: string): number | string
+
+  /**
+   * Compare from two string
+   */
+  strSimilarity2Number(origin: string, target: string): number
 }

@@ -8,8 +8,6 @@ export interface ILOGGER {
   checkmark: string
   /* A red X marks the spot. */
   xmark: string
-  /* Set logLevel for debug/log/info/warn/error */
-  setLevel: (level: any) => void
   /* Prints a message to stdout. */
   info: (message: any) => void
   /* Prints a warning-colored message. */
@@ -18,12 +16,8 @@ export interface ILOGGER {
   success: (message: any) => void
   /* Prints an error-colored message. */
   error: (message: any) => void
-  /* Prints debug information about any data, with an optional title. */
-  debug: (value: any, title?: string) => void
   /* DEPRECATED: prints a normal line of text. */
   log: (value: string) => void
-  /* Prints a divider. */
-  divider: () => void
   /* Finds the column widths for a table */
   findWidths: (cliTable: CLITable) => number[]
   /* Returns column header dividers for a table */

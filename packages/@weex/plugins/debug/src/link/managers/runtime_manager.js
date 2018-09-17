@@ -1,32 +1,30 @@
-const mlink = require("../index");
-const WebsocketTerminal = mlink.Terminal.WebsocketTerminal;
-const URL = require("url");
-const WebSocket = require("ws");
-const { request } = require("../../util");
-const config = require("../../config");
-const { logger } = require("../../util");
+const mlink = require('../index')
+const WebsocketTerminal = mlink.Terminal.WebsocketTerminal
+const URL = require('url')
+const WebSocket = require('ws')
+const { request } = require('../../util')
+const config = require('../../config')
+const { logger } = require('../../util')
 
 class RuntimeManager {
-  constructor() {
-    this.runtimeTerminalMap = {};
+  constructor () {
+    this.runtimeTerminalMap = {}
   }
-  connect(channelId) {
+  connect (channelId) {
     return new Promise((resolve, reject) => {
       request
         .getRemote(`http://127.0.0.1:${config.REMOTE_DEBUG_PORT || 9222}/json`)
         .then(data => {
-          const list = JSON.parse(data);
-          let found = false;
+          const list = JSON.parse(data)
+          let found = false
           for (const target of list) {
-            const urlObj = URL.parse(target.url);
+            const urlObj = URL.parse(target.url)
             if (
-              urlObj.pathname === "/runtime.html" &&
-              urlObj.port === config.SERVER_PORT + ""
+              urlObj.pathname === '/runtime' &&
+              urlObj.port === config.SERVER_PORT + ''
             ) {
-              found = target;
-              break;
-            } else if (urlObj.pathname === "/debug.html") {
-              found = target;
+              found = target
+              break
             }
           }
           if (found) {
@@ -35,44 +33,48 @@ class RuntimeManager {
                 `Have found the webSocketDebuggerUrl: ${
                   found.webSocketDebuggerUrl
                 }`
-              );
-              const ws = new WebSocket(found.webSocketDebuggerUrl);
-              const terminal = new WebsocketTerminal(ws, channelId);
-              const _runtimeTerminalMaps = this.runtimeTerminalMap[channelId];
+              )
+              const ws = new WebSocket(found.webSocketDebuggerUrl)
+              const terminal = new WebsocketTerminal(ws, channelId)
+              const _runtimeTerminalMaps = this.runtimeTerminalMap[channelId]
               if (_runtimeTerminalMaps && _runtimeTerminalMaps.length > 0) {
-                _runtimeTerminalMaps.unshift(terminal);
-              } else {
-                this.runtimeTerminalMap[channelId] = [terminal];
+                _runtimeTerminalMaps.unshift(terminal)
               }
-              resolve(terminal);
-            } else {
+              else {
+                this.runtimeTerminalMap[channelId] = [terminal]
+              }
+              resolve(terminal)
+            }
+            else {
               logger.verbose(
                 `Not found the webSocketDebuggerUrl from the ${found}`
-              );
-              reject("TOAST_DO_NOT_OPEN_CHROME_DEVTOOL");
+              )
+              reject('TOAST_DO_NOT_OPEN_CHROME_DEVTOOL')
             }
-          } else {
-            logger.verbose(`Not found the remote debug json`);
-            reject("TOAST_CAN_NOT_FIND_RUNTIME");
+          }
+          else {
+            logger.verbose(`Not found the remote debug json`)
+            reject('TOAST_CAN_NOT_FIND_RUNTIME')
           }
         })
         .catch(e => {
-          reject("TOAST_JS_RUNTIME_INIT_FAIL");
-        });
-    });
+          reject('TOAST_JS_RUNTIME_INIT_FAIL')
+        })
+    })
   }
-  remove(channelId) {
-    const terminals = this.runtimeTerminalMap[channelId];
+  remove (channelId) {
+    const terminals = this.runtimeTerminalMap[channelId]
     if (terminals && terminals.length > 0) {
-      const popTerminal = terminals.pop();
-      popTerminal.websocket.close();
-    } else {
-      logger.error("Try to remove a non-exist runtime");
+      const popTerminal = terminals.pop()
+      popTerminal.websocket.close()
+    }
+    else {
+      logger.error('Try to remove a non-exist runtime')
     }
   }
-  has(channelId) {
-    const terminals = this.runtimeTerminalMap[channelId];
-    return terminals && terminals.length > 0;
+  has (channelId) {
+    const terminals = this.runtimeTerminalMap[channelId]
+    return terminals && terminals.length > 0
   }
 }
-module.exports = new RuntimeManager();
+module.exports = new RuntimeManager()

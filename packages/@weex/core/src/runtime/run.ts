@@ -18,7 +18,6 @@ export async function run(this: Runtime, rawCommand?: string | string[], extraOp
 
   // prepare the run toolbox
   const toolbox = new Toolbox()
-
   // attach the runtime
   toolbox.runtime = this
   // parse the parameters initially

@@ -41,7 +41,6 @@ const CLI_TABLE_MARKDOWN = {
 }
 
 const SEVERITY = {
-  debug: 1000,
   log: 2000,
   warn: 3000,
   info: 3000,
@@ -50,7 +49,6 @@ const SEVERITY = {
 }
 
 const LOGLEVEL = {
-  DEBUG: 'debug',
   LOG: 'log',
   WARN: 'warn',
   INFO: 'info',
@@ -78,13 +76,6 @@ colors.setTheme({
  */
 function newline() {
   console.log('')
-}
-
-/**
- * Prints a divider line
- */
-function divider() {
-  console.log(colors.line('---------------------------------------------------------------'))
 }
 
 /**
@@ -141,17 +132,6 @@ function table(data: string[][], options: any = {}): void {
 }
 
 /**
- * Set log level for logger.
- *
- * Use this when you want to set the loglevel.
- *
- * @param message The message to write.
- */
-function setLevel(logLevel: string): void {
-  DEFAULT_LOGLEVEL = logLevel
-}
-
-/**
  * Prints text without theming.
  *
  * Use this when you're writing stuff outside the toolbox of our
@@ -201,23 +181,6 @@ function error(message: string): void {
 function warn(message: string): void {
   if (SEVERITY[LOGLEVEL.WARN] >= SEVERITY[DEFAULT_LOGLEVEL]) {
     console.log(colors.warning(message))
-  }
-}
-
-/**
- * Writes a debug message.
- *
- * This is for devs only.
- *
- * @param message The message to show.
- */
-function debug(message: string, title: string = 'DEBUG'): void {
-  const topLine = `vvv -----[ ${title} ]----- vvv`
-  const botLine = `^^^ -----[ ${title} ]----- ^^^`
-  if (SEVERITY[LOGLEVEL.DEBUG] >= SEVERITY[DEFAULT_LOGLEVEL]) {
-    console.log(colors.rainbow(topLine))
-    console.log(message)
-    console.log(colors.rainbow(botLine))
   }
 }
 
@@ -272,16 +235,13 @@ const xmark = colors.error('ⅹ')
 const logger: ILOGGER = {
   colors,
   newline,
-  divider,
   findWidths,
   columnHeaderDivider,
   table,
-  setLevel,
   log,
   info,
   error,
   warn,
-  debug,
   success,
   spin,
   progress,
