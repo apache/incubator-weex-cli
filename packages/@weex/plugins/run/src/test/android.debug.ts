@@ -1,3 +1,5 @@
+// export TS_NODE_IGNORE="/node_modules/?@weexcli/"
+// ts-node android.debug.ts
 const path = require('path')
 const debug = require('debug')('run')
 import { PLATFORM_TYPES } from '../common/const'
@@ -12,7 +14,7 @@ async function android() {
 
   const androidRunner = new AndroidRunner({
     type: PLATFORM_TYPES.android,
-    jsBundleEntryPath: testHelp.getTestConfigByKey('jsBundleEntryPath'),
+    jsBundleEntry: testHelp.getTestConfigByKey('jsBundleEntry'),
     projectPath: testHelp.getTestConfigByKey('android.projectPath'),
     deviceId: testHelp.getTestConfigByKey('android.deviceId'),
     applicationId: testHelp.getTestConfigByKey('android.applicationId'),

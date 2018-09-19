@@ -59,7 +59,7 @@ export default class Runner {
 
   protected watchFileChange() {
     const config = this.config
-    const entryFileName = path.basename(config.jsBundleEntryPath)
+    const entryFileName = config.jsBundleEntry
 
     if (this.filesWatcher) {
       this.filesWatcher.close()

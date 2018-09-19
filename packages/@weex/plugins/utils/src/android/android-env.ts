@@ -64,7 +64,7 @@ class AndroidEnv {
     this.ANDROID_SDK_PATH = this.ANDROID_SDK_PATH || this.getSdkPath()
 
     const defaultAdbPath = path.join(this.ANDROID_SDK_PATH, 'platform-tools', 'adb')
-    if (this.ANDROID_ADB_PATH && (fs.existsSync(defaultAdbPath) || fs.existsSync(`${defaultAdbPath}.exe`))) {
+    if (this.ANDROID_SDK_PATH && (fs.existsSync(defaultAdbPath) || fs.existsSync(`${defaultAdbPath}.exe`))) {
       return defaultAdbPath
     }
 
@@ -93,8 +93,9 @@ class AndroidEnv {
 
   public getEmulatorPath(sdkPath?: string, isThrowError: boolean = true): string {
     this.ANDROID_SDK_PATH = this.ANDROID_SDK_PATH || this.getSdkPath()
-    const emulatorPath = path.join(this.ANDROID_SDK_PATH || sdkPath, 'emulator/emulator')
-
+    const emulatorPath = path.join(this.ANDROID_SDK_PATH || sdkPath, 'emulator',
+      PLATFORM.isWindows ? 'emulator.exe' : 'emulator')
+      
     if (fs.existsSync(emulatorPath)) {
       return emulatorPath
     }

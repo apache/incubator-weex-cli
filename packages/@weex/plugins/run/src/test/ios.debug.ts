@@ -11,7 +11,7 @@ async function testIos() {
 
   const iosRunner = new IosRunner({
     type: PLATFORM_TYPES.ios,
-    jsBundleEntryPath: testHelp.getTestConfigByKey('jsBundleEntryPath'),
+    jsBundleEntry: testHelp.getTestConfigByKey('jsBundleEntry'),
     projectPath: testHelp.getTestConfigByKey('ios.projectPath'),
     deviceId: testHelp.getTestConfigByKey('ios.deviceId'),
     applicationId: testHelp.getTestConfigByKey('ios.applicationId'),
