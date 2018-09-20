@@ -40,8 +40,8 @@ class AndroidDevice extends Devices {
         }
       }
       devices.push({
-        name: result[2],
-        id: result[1],
+        name: result[2].trim(),
+        id: result[1].trim(),
         isSimulator: onlyEmulator,
       })
     })
@@ -58,6 +58,7 @@ class AndroidDevice extends Devices {
       if (!line || !line.replace(/\s+/, '')) {
         return
       }
+      line = line.trim()
       devices.push({
         name: line,
         id: line,
@@ -78,7 +79,32 @@ class AndroidDevice extends Devices {
   launchById(id: DeviceInfo['id']): Promise<string | null> {
     return new Promise(async (resolve, reject) => {
       let cmd
+      let tryTimes = 0
+      let maxTryTimes = 5
+      let timeInterval = 5000
+      let timer
       const deviceInfo = this.getDeviceById(id)
+      const startSimulatorDeviceList = this.getAndroidDevicesList(true)
+
+      const checkIsLanchFinished = () => {
+        timer = setTimeout(() => {
+          if (tryTimes >= maxTryTimes) {
+            clearTimeout(timer)
+            return
+          }
+          clearTimeout(timer)
+          const adbSimulatorDeviceList = this.getAndroidDevicesList(true)
+
+          if (adbSimulatorDeviceList.length > startSimulatorDeviceList.length) {
+            // This time think simulator lanch succed
+            clearTimeout(timer)
+            resolve(cmd.pid)
+          } else {
+            checkIsLanchFinished()
+          }
+          tryTimes++
+        }, timeInterval)
+      }
 
       if (!deviceInfo) {
         reject(Error(`Not find device ${id}`))
@@ -91,15 +117,17 @@ class AndroidDevice extends Devices {
         // Launched
         return resolve(null)
       }
-      setTimeout(() => {
-        resolve(cmd.pid)
-      }, 5000)
+      checkIsLanchFinished()
       // Don't know whether succeed or fail
-      await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
-        handleChildProcess(childProcess) {
-          cmd = childProcess
-        },
-      })
+      try {
+        await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
+          handleChildProcess(childProcess) {
+            cmd = childProcess
+          },
+        })
+      } catch (e) {
+        reject(e)
+      }
     })
   }
 
@@ -116,7 +144,7 @@ class AndroidDevice extends Devices {
       const deviceCmdList = await find('name', deviceInfo.id)
       const adbSimulatorDeviceList = this.getAndroidDevicesList(true)
 
-      if (!deviceCmdList.length) {
+      if (!deviceCmdList || !deviceCmdList.length) {
         throw new Error(`The device not launch ${deviceInfo.id}`)
       }
 
@@ -127,15 +155,18 @@ class AndroidDevice extends Devices {
         }
         const portMatch = simulator.id.match(/-(\w+)/)
         if (!portMatch || !portMatch[1]) {
-          break
+          continue
         }
         const portCmdList = await find('port', portMatch[1])
-        if (!portCmdList.length) {
-          break
+        if (!portCmdList || !portCmdList.length) {
+          continue
         }
-        if (portCmdList[0].pid === deviceCmdList[0].pid) {
-          adbId = simulator.id
-        }
+
+        deviceCmdList.forEach(cmd => {
+          if (portCmdList[0].pid === cmd.pid) {
+            adbId = simulator.id
+          }
+        })
       }
     } else {
       adbId = options.id

@@ -24,7 +24,7 @@ export default class AndroidBuilder extends Builder {
     }
     const androidEnv = new AndroidEnv()
     const sdkPath = androidEnv.getSdkPath()
-    fs.writeFileSync(filePath, `sdk.dir=${sdkPath}`)
+    fs.writeFileSync(filePath, `sdk.dir=${sdkPath.replace(/\\/g, '\\\\')}`)
   }
 
   private getFolderFirstApk(folderPath) {

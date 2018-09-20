@@ -9,10 +9,10 @@ export interface RunnerConfig {
   jsBundleFolderPath: string
 
   /**
-   * Which file change trigger hot reload
+   * Which file change trigger hot reload (path relative `jsBundleFolderPath`)
    * Now only support one js bundle hot reload
    */
-  jsBundleEntryPath: string
+  jsBundleEntry: string
 
   /**
    * Weex Ios or Android project path
