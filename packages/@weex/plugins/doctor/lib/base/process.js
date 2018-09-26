@@ -74,7 +74,7 @@ function commandExistsSync(commandName) {
     }
 }
 exports.commandExistsSync = commandExistsSync;
-function which(execName, args) {
+function which(execName, args = []) {
     const spawnArgs = [execName, ...args];
     const result = child_process_1.spawnSync('which', spawnArgs);
     if (result.status !== 0) {

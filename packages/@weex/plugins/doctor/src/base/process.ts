@@ -75,7 +75,7 @@ export function commandExistsSync(commandName): boolean {
 }
 
 
-export function which(execName, args?: []): string[] {
+export function which(execName, args = []): string[] {
   const spawnArgs = [execName, ...args];
   const result = spawnSync('which', spawnArgs);
   if (result.status !== 0) {

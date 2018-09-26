@@ -28,15 +28,14 @@ class AndroidValidator {
             // No Android SDK found.
             if (process.env[`${android_sdk_1.kAndroidHome}`]) {
                 const androidHomeDir = process.env[`${android_sdk_1.kAndroidHome}`];
-                this.messages.push(new doctor_1.ValidationMessage(`${android_sdk_1.kAndroidHome} = ${androidHomeDir}\n
+                this.messages.push(new doctor_1.ValidationMessage(`${android_sdk_1.kAndroidHome} = ${androidHomeDir}
             but Android SDK not found at this location.`, true /* isError */));
             }
             else {
-                this.messages.push(new doctor_1.ValidationMessage(`Unable to locate Android SDK.\n
-            Install Android Studio from: https://developer.android.com/studio/index.html\n
-            On first launch it will assist you in installing the Android SDK components.\n
-            (or visit https://flutter.io/setup/#android-setup for detailed instructions).\n
-            If Android SDK has been installed to a custom location, set \$ ${android_sdk_1.kAndroidHome} to that location.`, true /* isError */));
+                this.messages.push(new doctor_1.ValidationMessage(`Unable to locate Android SDK.
+            Install Android Studio from: https://developer.android.com/studio/index.html
+            On first launch it will assist you in installing the Android SDK components.
+            If Android SDK has been installed to a custom location, set ${android_sdk_1.kAndroidHome} to that location.`, true /* isError */));
             }
             return new doctor_1.ValidationResult(0 /* missing */, this.messages);
         }
@@ -56,7 +55,7 @@ class AndroidValidator {
             validationResult.forEach(message => {
                 this.messages.push(new doctor_1.ValidationMessage(message, true /* isError */));
             });
-            this.messages.push(new doctor_1.ValidationMessage(`Try re-installing or updating your Android SDK,\n
+            this.messages.push(new doctor_1.ValidationMessage(`Try re-installing or updating your Android SDK,
           visit https://flutter.io/setup/#android-setup for detailed instructions.`));
             return new doctor_1.ValidationResult(1 /* partial */, this.messages, sdkVersionText);
         }

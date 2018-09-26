@@ -159,7 +159,7 @@ export class AndroidSdk {
 
   public validSdkDirectory(dir) {
     const dirPath = path.join(dir,'platform-tools');
-    if (dirPath) {
+    if (fs.existsSync(dirPath)) {
       return fs.statSync(dirPath).isDirectory();
     }
     return false;
