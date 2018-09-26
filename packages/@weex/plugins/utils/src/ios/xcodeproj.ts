@@ -1,4 +1,4 @@
-import { isMacOS } from '../base/platform'
+import { isMacOS } from '../platform/platform'
 import { existsSync } from 'fs'
 import { spawnSync } from 'child_process'
 
@@ -11,22 +11,25 @@ export class XcodeProjectInterpreter {
   public minorVersion: number
 
   constructor() {
-    this.updateVersion();
+    this.updateVersion()
   }
 
   public updateVersion() {
     if (!isMacOS || !existsSync(this.executable)) {
-      return;
+      return
     }
     try {
-      const result = spawnSync(this.executable, ['-version']);
-      this.versionText = result.stdout.toString().trim().replace('\n', ', ');
-      const match = this.versionText.match(this.versionRegex);
+      const result = spawnSync(this.executable, ['-version'])
+      this.versionText = result.stdout
+        .toString()
+        .trim()
+        .replace('\n', ', ')
+      const match = this.versionText.match(this.versionRegex)
       if (match === null) {
-        return;
+        return
       }
-      const version = match[1];
-      const components = version.split('.');
+      const version = match[1]
+      const components = version.split('.')
       this.majorVersion = Number(components[0])
       this.minorVersion = components.length === 1 ? 0 : Number(components[1])
     } catch (e) {

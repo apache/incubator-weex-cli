@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const android_workflow_1 = require("./android/android-workflow");
 const ios_workflow_1 = require("./ios/ios-workflow");
 class Doctor {
     constructor() {
@@ -7,6 +8,9 @@ class Doctor {
         this.getValidators();
     }
     getValidators() {
+        if (android_workflow_1.androidWorkflow.appliesToHostPlatform) {
+            this.validators.push(android_workflow_1.androidValidator);
+        }
         if (ios_workflow_1.iosWorkflow.appliesToHostPlatform) {
             this.validators.push(ios_workflow_1.iosValidator);
         }
@@ -18,6 +22,9 @@ class Doctor {
         }
         return tasks;
     }
+    /**
+     * diagnose
+     */
     diagnose() {
         const taskList = this.startValidatorTasks();
         for (let validatorTask of taskList) {
@@ -26,18 +33,17 @@ class Doctor {
             let result;
             results.push(validatorTask.result);
             result = this.mergeValidationResults(results);
+            console.log(`${result.leadingBox} ${validator.title} is`);
             for (let message of result.messages) {
-                if (message.isError || message.isWaring) {
-                    const text = message.message.replace('\n', '\n      ');
-                    if (message.isError) {
-                        console.log(`    ✗  ${text}`);
-                    }
-                    else if (message.isWaring) {
-                        console.log(`    !  ${text}`);
-                    }
-                    else {
-                        console.log(`    •  ${text}`);
-                    }
+                const text = message.message.replace('\n', '\n      ');
+                if (message.isError) {
+                    console.log(`    ✗  ${text}`);
+                }
+                else if (message.isWaring) {
+                    console.log(`    !  ${text}`);
+                }
+                else {
+                    console.log(`    •  ${text}`);
                 }
             }
         }

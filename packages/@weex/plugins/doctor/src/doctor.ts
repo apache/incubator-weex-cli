@@ -1,3 +1,4 @@
+import { androidWorkflow, androidValidator } from './android/android-workflow';
 import { iosWorkflow, iosValidator } from './ios/ios-workflow'
 
 export class Doctor {
@@ -8,6 +9,9 @@ export class Doctor {
   }
 
   public getValidators() {
+    if (androidWorkflow.appliesToHostPlatform) {
+      this.validators.push(androidValidator)
+    }
     if (iosWorkflow.appliesToHostPlatform) {
       this.validators.push(iosValidator)
     }
@@ -21,26 +25,28 @@ export class Doctor {
     return tasks;
   }
 
+  /**
+   * diagnose 
+   */
   public diagnose() {
     const taskList:ValidatorTask[] = this.startValidatorTasks();
-    
+
     for (let validatorTask of taskList) {
       const validator:DoctorValidator = validatorTask.validator;
       const results:ValidationResult[] = [];
       let result:ValidationResult;
       results.push(validatorTask.result);
-
       result = this.mergeValidationResults(results);
+
+      console.log(`${result.leadingBox} ${validator.title} is`)
       for (let message of result.messages) {
-        if (message.isError || message.isWaring) {
-          const text = message.message.replace('\n', '\n      ');
-          if (message.isError) {
-            console.log(`    ✗  ${text}`);
-          } else if (message.isWaring) {
-            console.log(`    !  ${text}`);
-          } else {
-            console.log(`    •  ${text}`);
-          }
+        const text = message.message.replace('\n', '\n      ');
+        if (message.isError) {
+          console.log(`    ✗  ${text}`);
+        } else if (message.isWaring) {
+          console.log(`    !  ${text}`);
+        } else {
+          console.log(`    •  ${text}`);
         }
       }
     }
@@ -78,7 +84,7 @@ export class Doctor {
 export class ValidationResult {
   /// [ValidationResult.type] should only equal [ValidationResult.installed]
   /// if no [messages] are hints or errors.
-  constructor(public type: ValidationType, public messages: ValidationMessage[], public statusInfo: string){
+  constructor(public type: ValidationType, public messages: ValidationMessage[], public statusInfo?: string){
     this.type = type;
     this.messages = messages;
   }
@@ -125,6 +131,7 @@ export abstract class Workflow {
 }
 
 export abstract class DoctorValidator {
+  public title: string;
   abstract validate()
 }
 

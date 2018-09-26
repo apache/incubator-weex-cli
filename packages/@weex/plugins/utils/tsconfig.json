@@ -23,7 +23,8 @@
     "noUnusedLocals": false, /* Report errors on unused locals. */
     // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
     // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    "noUnusedParameters": false  /* Report errors on unused parameters. */
+    "noUnusedParameters": false,  /* Report errors on unused parameters. */
+    "declaration": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/fixtures", "src/**/*.test.ts"]

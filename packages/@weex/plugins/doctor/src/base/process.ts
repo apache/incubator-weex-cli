@@ -1,8 +1,8 @@
-import { isWindows } from './platform'
-import { spawnSync, execSync } from 'child_process'
+import { isWindows } from '@weex-cli/utils/lib/platform/platform'
+import { ChildProcess, spawnSync, execSync } from 'child_process';
 import * as fs from 'fs'
 
-export function runAsync(command: string, args: string[]): Promise<any> {
+export function runAsync(command: string, args: string[] = []): Promise<any> {
   return new Promise((resolve, reject) => {
     let result
     try {
@@ -83,4 +83,27 @@ export function which(execName, args?: []): string[] {
   }
   const lines = result.stdout.toString().trim().split('\n');
   return lines;
+}
+
+export function runSync(commandName, args: string[] = []) {
+  let result
+    try {
+      result = spawnSync(commandName, args);
+      return result;
+    } catch (e) {
+      return null;
+    }
+}
+
+export function canRunSync(commandName, args: string[] = []): boolean {
+  let result
+    try {
+      result = spawnSync(commandName, args);
+      if (result.status === 0) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
 }
