@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const platform_1 = require("./platform");
+const platform_1 = require("@weex-cli/utils/lib/platform/platform");
 const child_process_1 = require("child_process");
 const fs = require("fs");
-function runAsync(command, args) {
+function runAsync(command, args = []) {
     return new Promise((resolve, reject) => {
         let result;
         try {
@@ -84,4 +84,29 @@ function which(execName, args) {
     return lines;
 }
 exports.which = which;
+function runSync(commandName, args = []) {
+    let result;
+    try {
+        result = child_process_1.spawnSync(commandName, args);
+        return result;
+    }
+    catch (e) {
+        return null;
+    }
+}
+exports.runSync = runSync;
+function canRunSync(commandName, args = []) {
+    let result;
+    try {
+        result = child_process_1.spawnSync(commandName, args);
+        if (result.status === 0) {
+            return true;
+        }
+        return false;
+    }
+    catch (e) {
+        return false;
+    }
+}
+exports.canRunSync = canRunSync;
 //# sourceMappingURL=process.js.map

@@ -1,19 +1,26 @@
 import { Workflow, ValidationType, ValidationMessage, ValidationResult, DoctorValidator } from '../doctor'
-import { xcode, XcodeRequiredVersionMajor, XcodeRequiredVersionMinor, iMobileDevice } from './mac'
+import { xcode, XcodeRequiredVersionMajor, XcodeRequiredVersionMinor, iMobileDevice } from '@weex-cli/utils/lib/ios/mac'
 import {
   cocoaPods,
   CocoaPodsStatus,
   noCocoaPodsConsequence,
   cocoaPodsInstallInstructions,
   cocoaPodsUpgradeInstructions,
-} from './cocoapods'
-import { commandExistsSync } from '../base/process'
+} from '@weex-cli/utils/lib/ios/cocoapods'
+import { which } from '@weex-cli/utils/lib/process/process'
 import { spawnSync } from 'child_process'
-import { versionParse, compareVersion } from '../base/version'
+import { versionParse, compareVersion } from '@weex-cli/utils/lib/base/version';
+import * as plist from '@weex-cli/utils/lib/ios/plist-utils';
+
+import IosEnv from '@weex-cli/utils/lib/ios/ios-env'
 
 export class IOSWorkflow implements Workflow {
   get appliesToHostPlatform(): boolean {
     return process.platform === 'darwin'
+  }
+
+  public getPlistValueFromFile(path: string, key: string): string {
+    return plist.getValueFromFile(path, key);
   }
 }
 
@@ -24,9 +31,15 @@ export class IOSValidator implements DoctorValidator {
   public xcodeStatus = ValidationType.missing
   public brewStatus = ValidationType.missing
   public xcodeVersionInfo: string
+  public title: string
+
+  private iosEnv: IosEnv = new IosEnv()
+  constructor() {
+    this.title = 'iOS toolchain - develop for iOS devices'
+  }
 
   get hasHomebrew(): boolean {
-    return commandExistsSync('brew')
+    return !!which('brew').length
   }
 
   get hasIDeviceInstaller(): boolean {

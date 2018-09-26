@@ -19,7 +19,7 @@
   },
   "author": "",
   "files": [
-    "src/",
+    "lib/",
      "!*.test.ts"
   ],
   "license": "MIT",

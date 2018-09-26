@@ -1,8 +1,8 @@
-import { runAsync } from '../base/process'
+import { runAsync } from '../process/process'
 import * as path from 'path'
 import * as fs from 'fs'
 import { versionParse, VersionOption, compareVersion } from '../base/version'
-import { homeDirPath } from '../base/platform'
+import { homedir } from '../platform/platform'
 
 export const noCocoaPodsConsequence: string = `
   CocoaPods is used to retrieve the iOS platform side's plugin code.
@@ -65,7 +65,7 @@ export class CocoaPods {
 
   // where the costly pods' specs are cloned.
   get isCocoaPodsInitialized(): boolean {
-    const cocoaPath = path.join(homeDirPath, '.cocoapods', 'repos', 'master')
+    const cocoaPath = path.join(homedir, '.cocoapods', 'repos', 'master')
     if (fs.existsSync(cocoaPath)) {
       return fs.statSync(cocoaPath).isDirectory()
     }

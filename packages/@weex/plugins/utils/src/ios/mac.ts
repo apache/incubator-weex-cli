@@ -24,7 +24,9 @@ export class Xcode {
 
   public getXcodeSelectPath() {
     try {
-      this.xcodeSelectPath = spawnSync('/usr/bin/xcode-select', ['--print-path']).stdout.toString().trim();
+      this.xcodeSelectPath = spawnSync('/usr/bin/xcode-select', ['--print-path'])
+        .stdout.toString()
+        .trim()
     } catch (e) {
       throw e
     }
@@ -32,9 +34,9 @@ export class Xcode {
 
   get isInstalled() {
     if (!this.xcodeSelectPath) {
-      return false;
+      return false
     }
-    return true;
+    return true
   }
 
   get versionText() {
@@ -67,17 +69,17 @@ export class Xcode {
   // Has the EULA been signed?
   get eulaSigned(): boolean {
     try {
-      const result = spawnSync('/usr/bin/xcrun', ['clang', '-v']);
+      const result = spawnSync('/usr/bin/xcrun', ['clang', '-v'])
       if (result.stdout && result.stdout.includes('license')) {
-        return false;
+        return false
       } else if (result.stderr && result.stderr.includes('license')) {
-        return false;
+        return false
       } else {
-        return true;
+        return true
       }
     } catch (e) {
-      console.error(e);
-      return false;
+      console.error(e)
+      return false
     }
   }
 
@@ -86,11 +88,11 @@ export class Xcode {
    */
   get isSimctlInstalled(): boolean {
     try {
-      const result = spawnSync('/usr/bin/xcrun', ['simctl', 'list']);
-      return !result.stderr.toString().trim() || result.stderr.toString().trim() === '';
+      const result = spawnSync('/usr/bin/xcrun', ['simctl', 'list'])
+      return !result.stderr.toString().trim() || result.stderr.toString().trim() === ''
     } catch (e) {
       console.error(e)
-      return false;
+      return false
     }
   }
 }
