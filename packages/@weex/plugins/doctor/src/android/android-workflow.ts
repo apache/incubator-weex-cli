@@ -33,7 +33,7 @@ export class AndroidValidator implements DoctorValidator {
         const androidHomeDir:string = process.env[`${kAndroidHome}`];
         this.messages.push(
           new ValidationMessage(
-            `${kAndroidHome} = ${androidHomeDir}\n
+            `${kAndroidHome} = ${androidHomeDir}
             but Android SDK not found at this location.`,
             true /* isError */,
           ),
@@ -41,11 +41,10 @@ export class AndroidValidator implements DoctorValidator {
       } else {
         this.messages.push(
           new ValidationMessage(
-            `Unable to locate Android SDK.\n
-            Install Android Studio from: https://developer.android.com/studio/index.html\n
-            On first launch it will assist you in installing the Android SDK components.\n
-            (or visit https://flutter.io/setup/#android-setup for detailed instructions).\n
-            If Android SDK has been installed to a custom location, set \$ ${kAndroidHome} to that location.`,
+            `Unable to locate Android SDK.
+            Install Android Studio from: https://developer.android.com/studio/index.html
+            On first launch it will assist you in installing the Android SDK components.
+            If Android SDK has been installed to a custom location, set ${kAndroidHome} to that location.`,
             true /* isError */,
           ),
         )
@@ -92,7 +91,7 @@ export class AndroidValidator implements DoctorValidator {
       });
       this.messages.push(
         new ValidationMessage(
-          `Try re-installing or updating your Android SDK,\n
+          `Try re-installing or updating your Android SDK,
           visit https://flutter.io/setup/#android-setup for detailed instructions.`
         ),
       );
