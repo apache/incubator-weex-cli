@@ -1,5 +1,5 @@
 import { Workflow, ValidationType, ValidationMessage, ValidationResult, DoctorValidator } from '../doctor';
-import { kAndroidHome, androidSdk } from './android-sdk';
+import { kAndroidHome, AndroidSdk } from './android-sdk';
 
 const licenseAccepted = new RegExp('All SDK package licenses accepted.');
 
@@ -16,18 +16,17 @@ export class AndroidWorkflow implements Workflow {
   }
 }
 
-export const androidWorkflow = new AndroidWorkflow();
-
 export class AndroidValidator implements DoctorValidator {
   public title: string;
   public messages: ValidationMessage[] = [];
+  public androidSdk: AndroidSdk = new AndroidSdk();
   constructor() {
     this.title = 'Android toolchain - develop for Android devices';
   }
 
   public validate () {
     // android-sdk
-    if (!androidSdk.directory) {
+    if (!this.androidSdk.directory) {
       // No Android SDK found.
       if (process.env[`${kAndroidHome}`]) {
         const androidHomeDir:string = process.env[`${kAndroidHome}`];
@@ -54,16 +53,16 @@ export class AndroidValidator implements DoctorValidator {
 
     this.messages.push(
       new ValidationMessage(
-        `Android SDK at ${androidSdk.directory}`,
+        `Android SDK at ${this.androidSdk.directory}`,
       ),
     );
 
     let sdkVersionText: string;
-    if (androidSdk.latestVersion) {
-      sdkVersionText = `Android SDK ${androidSdk.latestVersion.buildToolsVersionName}`;
+    if (this.androidSdk.latestVersion) {
+      sdkVersionText = `Android SDK ${this.androidSdk.latestVersion.buildToolsVersionName}`;
       this.messages.push(
         new ValidationMessage(
-          `Platform ${androidSdk.latestVersion.platformName}, build-tools ${androidSdk.latestVersion.buildToolsVersionName}`
+          `Platform ${this.androidSdk.latestVersion.platformName}, build-tools ${this.androidSdk.latestVersion.buildToolsVersionName}`
         ),
       )
     }
@@ -77,7 +76,7 @@ export class AndroidValidator implements DoctorValidator {
       )
     }
 
-    const validationResult = androidSdk.validateSdkWellFormed();
+    const validationResult = this.androidSdk.validateSdkWellFormed();
 
     if (validationResult.length) {
       // Android SDK is not functional.
@@ -114,5 +113,3 @@ export class AndroidValidator implements DoctorValidator {
   }
 
 }
-
-export const androidValidator = new AndroidValidator();

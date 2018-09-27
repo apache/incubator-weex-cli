@@ -16,6 +16,7 @@ const process_1 = require("../base/process");
 const _dotHomeStudioVersionMatcher = new RegExp('^\.AndroidStudio([^\d]*)([\d.]+)');
 class AndroidStudio {
     constructor() {
+        this.iosWorkflow = new ios_workflow_1.IOSWorkflow();
         this.latestValid();
     }
     // Locates the newest, valid version of Android Studio.
@@ -57,7 +58,7 @@ class AndroidStudio {
     fromMacOSBundle(bundlePath) {
         const studioPath = path.join(bundlePath, 'Contents');
         const plistFile = path.join(studioPath, 'Info.plist');
-        const versionString = ios_workflow_1.iosWorkflow.getPlistValueFromFile(plistFile, plist_utils_1.kCFBundleShortVersionStringKey);
+        const versionString = this.iosWorkflow.getPlistValueFromFile(plistFile, plist_utils_1.kCFBundleShortVersionStringKey);
         let version;
         if (versionString) {
             version = version_1.versionParse(versionString);
@@ -123,7 +124,6 @@ class AndroidStudio {
     }
 }
 exports.AndroidStudio = AndroidStudio;
-exports.androidStudio = new AndroidStudio();
 class AndroidStudioValid {
     constructor(directory, option) {
         this.directory = directory;

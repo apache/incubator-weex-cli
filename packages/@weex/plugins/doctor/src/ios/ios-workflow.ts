@@ -1,7 +1,7 @@
 import { Workflow, ValidationType, ValidationMessage, ValidationResult, DoctorValidator } from '../doctor'
-import { xcode, XcodeRequiredVersionMajor, XcodeRequiredVersionMinor, iMobileDevice } from '@weex-cli/utils/lib/ios/mac'
+import { xcode, XcodeRequiredVersionMajor, XcodeRequiredVersionMinor } from '@weex-cli/utils/lib/ios/mac'
 import {
-  cocoaPods,
+  CocoaPods,
   CocoaPodsStatus,
   noCocoaPodsConsequence,
   cocoaPodsInstallInstructions,
@@ -24,14 +24,13 @@ export class IOSWorkflow implements Workflow {
   }
 }
 
-export const iosWorkflow = new IOSWorkflow()
-
 export class IOSValidator implements DoctorValidator {
   public messages: ValidationMessage[] = []
   public xcodeStatus = ValidationType.missing
   public brewStatus = ValidationType.missing
   public xcodeVersionInfo: string
   public title: string
+  public cocoaPods: CocoaPods = new CocoaPods()
 
   private iosEnv: IosEnv = new IosEnv()
   constructor() {
@@ -219,11 +218,11 @@ export class IOSValidator implements DoctorValidator {
         
       // }
 
-      const cocoaPodsStatus = cocoaPods.evaluateCocoaPodsInstallation;
+      const cocoaPodsStatus = this.cocoaPods.evaluateCocoaPodsInstallation;
 
       if (cocoaPodsStatus === CocoaPodsStatus.recommended) {
-        if (cocoaPods.isCocoaPodsInitialized) {
-          this.messages.push(new ValidationMessage(`CocoaPods version ${cocoaPods.cocoaPodsVersionText}`))
+        if (this.cocoaPods.isCocoaPodsInitialized) {
+          this.messages.push(new ValidationMessage(`CocoaPods version ${this.cocoaPods.cocoaPodsVersionText}`))
         } else {
           this.brewStatus = ValidationType.partial
           this.messages.push(
@@ -252,7 +251,7 @@ export class IOSValidator implements DoctorValidator {
         } else {
           this.messages.push(
             new ValidationMessage(
-              `CocoaPods out of date (${cocoaPods.cocoaPodsRecommendedVersion} is recommended).\n
+              `CocoaPods out of date (${this.cocoaPods.cocoaPodsRecommendedVersion} is recommended).\n
             ${noCocoaPodsConsequence}\n
             To upgrade:\n
             ${cocoaPodsUpgradeInstructions}`,
@@ -282,5 +281,3 @@ export class IOSValidator implements DoctorValidator {
     return t1 === t2 ? t1 : ValidationType.partial;
   }
 }
-
-export const iosValidator = new IOSValidator()

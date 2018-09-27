@@ -1,5 +1,5 @@
 import { spawnSync } from 'child_process'
-import { xcodeProjectInterpreter } from './xcodeproj'
+import { XcodeProjectInterpreter } from './xcodeproj'
 
 export const XcodeRequiredVersionMajor = 9
 export const XcodeRequiredVersionMinor = 0
@@ -18,6 +18,8 @@ export function isXcodeInstalled() {
 
 export class Xcode {
   public xcodeSelectPath: string
+  public XcodeProjectInterpreter: XcodeProjectInterpreter = new XcodeProjectInterpreter()
+
   constructor() {
     this.getXcodeSelectPath()
   }
@@ -40,19 +42,19 @@ export class Xcode {
   }
 
   get versionText() {
-    return xcodeProjectInterpreter.versionText
+    return this.XcodeProjectInterpreter.versionText
   }
 
   get majorVersion() {
-    return xcodeProjectInterpreter.majorVersion
+    return this.XcodeProjectInterpreter.majorVersion
   }
 
   get minorVersion() {
-    return xcodeProjectInterpreter.minorVersion
+    return this.XcodeProjectInterpreter.minorVersion
   }
 
   get isVersionSatisfactory(): boolean {
-    if (!xcodeProjectInterpreter.isInstalled) {
+    if (!this.XcodeProjectInterpreter.isInstalled) {
       return false
     } else if (this.majorVersion > XcodeRequiredVersionMajor) {
       return true
@@ -132,5 +134,3 @@ export class IMobileDevice {
     }
   }
 }
-
-export const iMobileDevice = new IMobileDevice()

@@ -45,4 +45,4 @@ export class XcodeProjectInterpreter {
   }
 }
 
-export const xcodeProjectInterpreter = new XcodeProjectInterpreter()
+// export const xcodeProjectInterpreter = new XcodeProjectInterpreter()

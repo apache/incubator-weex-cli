@@ -17,12 +17,12 @@ class IOSWorkflow {
     }
 }
 exports.IOSWorkflow = IOSWorkflow;
-exports.iosWorkflow = new IOSWorkflow();
 class IOSValidator {
     constructor() {
         this.messages = [];
         this.xcodeStatus = 0 /* missing */;
         this.brewStatus = 0 /* missing */;
+        this.cocoaPods = new cocoapods_1.CocoaPods();
         this.iosEnv = new ios_env_1.default();
         this.title = 'iOS toolchain - develop for iOS devices';
     }
@@ -170,10 +170,10 @@ class IOSValidator {
             //     )
             //   }
             // }
-            const cocoaPodsStatus = cocoapods_1.cocoaPods.evaluateCocoaPodsInstallation;
+            const cocoaPodsStatus = this.cocoaPods.evaluateCocoaPodsInstallation;
             if (cocoaPodsStatus === cocoapods_1.CocoaPodsStatus.recommended) {
-                if (cocoapods_1.cocoaPods.isCocoaPodsInitialized) {
-                    this.messages.push(new doctor_1.ValidationMessage(`CocoaPods version ${cocoapods_1.cocoaPods.cocoaPodsVersionText}`));
+                if (this.cocoaPods.isCocoaPodsInitialized) {
+                    this.messages.push(new doctor_1.ValidationMessage(`CocoaPods version ${this.cocoaPods.cocoaPodsVersionText}`));
                 }
                 else {
                     this.brewStatus = 1 /* partial */;
@@ -193,7 +193,7 @@ class IOSValidator {
             ${cocoapods_1.cocoaPodsInstallInstructions}`, true /* isError */));
                 }
                 else {
-                    this.messages.push(new doctor_1.ValidationMessage(`CocoaPods out of date (${cocoapods_1.cocoaPods.cocoaPodsRecommendedVersion} is recommended).\n
+                    this.messages.push(new doctor_1.ValidationMessage(`CocoaPods out of date (${this.cocoaPods.cocoaPodsRecommendedVersion} is recommended).\n
             ${cocoapods_1.noCocoaPodsConsequence}\n
             To upgrade:\n
             ${cocoapods_1.cocoaPodsUpgradeInstructions}`, true /* isError */));
@@ -212,5 +212,4 @@ class IOSValidator {
     }
 }
 exports.IOSValidator = IOSValidator;
-exports.iosValidator = new IOSValidator();
 //# sourceMappingURL=ios-workflow.js.map

@@ -16,15 +16,15 @@ class AndroidWorkflow {
     }
 }
 exports.AndroidWorkflow = AndroidWorkflow;
-exports.androidWorkflow = new AndroidWorkflow();
 class AndroidValidator {
     constructor() {
         this.messages = [];
+        this.androidSdk = new android_sdk_1.AndroidSdk();
         this.title = 'Android toolchain - develop for Android devices';
     }
     validate() {
         // android-sdk
-        if (!android_sdk_1.androidSdk.directory) {
+        if (!this.androidSdk.directory) {
             // No Android SDK found.
             if (process.env[`${android_sdk_1.kAndroidHome}`]) {
                 const androidHomeDir = process.env[`${android_sdk_1.kAndroidHome}`];
@@ -39,17 +39,17 @@ class AndroidValidator {
             }
             return new doctor_1.ValidationResult(0 /* missing */, this.messages);
         }
-        this.messages.push(new doctor_1.ValidationMessage(`Android SDK at ${android_sdk_1.androidSdk.directory}`));
+        this.messages.push(new doctor_1.ValidationMessage(`Android SDK at ${this.androidSdk.directory}`));
         let sdkVersionText;
-        if (android_sdk_1.androidSdk.latestVersion) {
-            sdkVersionText = `Android SDK ${android_sdk_1.androidSdk.latestVersion.buildToolsVersionName}`;
-            this.messages.push(new doctor_1.ValidationMessage(`Platform ${android_sdk_1.androidSdk.latestVersion.platformName}, build-tools ${android_sdk_1.androidSdk.latestVersion.buildToolsVersionName}`));
+        if (this.androidSdk.latestVersion) {
+            sdkVersionText = `Android SDK ${this.androidSdk.latestVersion.buildToolsVersionName}`;
+            this.messages.push(new doctor_1.ValidationMessage(`Platform ${this.androidSdk.latestVersion.platformName}, build-tools ${this.androidSdk.latestVersion.buildToolsVersionName}`));
         }
         if (process.env[`${android_sdk_1.kAndroidHome}`]) {
             const androidHomeDir = process.env[`${android_sdk_1.kAndroidHome}`];
             this.messages.push(new doctor_1.ValidationMessage(`${android_sdk_1.kAndroidHome} = ${androidHomeDir}\n`));
         }
-        const validationResult = android_sdk_1.androidSdk.validateSdkWellFormed();
+        const validationResult = this.androidSdk.validateSdkWellFormed();
         if (validationResult.length) {
             // Android SDK is not functional.
             validationResult.forEach(message => {
@@ -71,5 +71,4 @@ class AndroidValidator {
     }
 }
 exports.AndroidValidator = AndroidValidator;
-exports.androidValidator = new AndroidValidator();
 //# sourceMappingURL=android-workflow.js.map

@@ -212,6 +212,3 @@ export class AndroidSdk {
   }
 
 }
-
-export const androidSdk = new AndroidSdk();
-
