@@ -99,7 +99,7 @@ export class Xcode {
   }
 }
 
-export const xcode = new Xcode()
+// export const xcode = new Xcode()
 
 export class IMobileDevice {
   get isInstalled(): boolean {

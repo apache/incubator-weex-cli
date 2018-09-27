@@ -1,5 +1,5 @@
 import { Workflow, ValidationType, ValidationMessage, ValidationResult, DoctorValidator } from '../doctor'
-import { xcode, XcodeRequiredVersionMajor, XcodeRequiredVersionMinor } from '@weex-cli/utils/lib/ios/mac'
+import { Xcode, XcodeRequiredVersionMajor, XcodeRequiredVersionMinor } from '@weex-cli/utils/lib/ios/mac'
 import {
   CocoaPods,
   CocoaPodsStatus,
@@ -31,6 +31,7 @@ export class IOSValidator implements DoctorValidator {
   public xcodeVersionInfo: string
   public title: string
   public cocoaPods: CocoaPods = new CocoaPods()
+  public xcode: Xcode = new Xcode()
 
   private iosEnv: IosEnv = new IosEnv()
   constructor() {
@@ -81,11 +82,11 @@ export class IOSValidator implements DoctorValidator {
   }
 
   public validate() {
-    if (xcode.isInstalled) {
+    if (this.xcode.isInstalled) {
       this.xcodeStatus = ValidationType.installed
 
-      this.messages.push(new ValidationMessage(`Xcode at ${xcode.xcodeSelectPath}`))
-      this.xcodeVersionInfo = xcode.versionText;
+      this.messages.push(new ValidationMessage(`Xcode at ${this.xcode.xcodeSelectPath}`))
+      this.xcodeVersionInfo = this.xcode.versionText;
       if (this.xcodeVersionInfo && this.xcodeVersionInfo.includes(',')) {
         this.xcodeVersionInfo = this.xcodeVersionInfo.substring(0, this.xcodeVersionInfo.indexOf(','));
         this.messages.push(new ValidationMessage(this.xcodeVersionInfo))
@@ -94,7 +95,7 @@ export class IOSValidator implements DoctorValidator {
       /**
        * installed and check xcode version
        */
-      if (!xcode.isInstalledAndMeetsVersionCheck) {
+      if (!this.xcode.isInstalledAndMeetsVersionCheck) {
         this.xcodeStatus = ValidationType.partial
         this.messages.push(
           new ValidationMessage(
@@ -108,7 +109,7 @@ export class IOSValidator implements DoctorValidator {
       /**
        * get admin
        */
-      if (!xcode.eulaSigned) {
+      if (!this.xcode.eulaSigned) {
         this.xcodeStatus = ValidationType.partial
         this.messages.push(
           new ValidationMessage(
@@ -118,7 +119,7 @@ export class IOSValidator implements DoctorValidator {
         )
       }
 
-      if (!xcode.isSimctlInstalled) {
+      if (!this.xcode.isSimctlInstalled) {
         this.xcodeStatus = ValidationType.partial
         this.messages.push(
           new ValidationMessage(
@@ -130,7 +131,7 @@ export class IOSValidator implements DoctorValidator {
       }
     } else {
       this.xcodeStatus = ValidationType.missing
-      if (!xcode.xcodeSelectPath) {
+      if (!this.xcode.xcodeSelectPath) {
         this.messages.push(
           new ValidationMessage(
             `Xcode not installed; this is necessary for iOS development.\n

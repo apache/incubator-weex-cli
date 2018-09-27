@@ -23,6 +23,7 @@ class IOSValidator {
         this.xcodeStatus = 0 /* missing */;
         this.brewStatus = 0 /* missing */;
         this.cocoaPods = new cocoapods_1.CocoaPods();
+        this.xcode = new mac_1.Xcode();
         this.iosEnv = new ios_env_1.default();
         this.title = 'iOS toolchain - develop for iOS devices';
     }
@@ -66,10 +67,10 @@ class IOSValidator {
         return version_1.compareVersion(version, version_1.versionParse(this.iosDeployMinimumVersion));
     }
     validate() {
-        if (mac_1.xcode.isInstalled) {
+        if (this.xcode.isInstalled) {
             this.xcodeStatus = 2 /* installed */;
-            this.messages.push(new doctor_1.ValidationMessage(`Xcode at ${mac_1.xcode.xcodeSelectPath}`));
-            this.xcodeVersionInfo = mac_1.xcode.versionText;
+            this.messages.push(new doctor_1.ValidationMessage(`Xcode at ${this.xcode.xcodeSelectPath}`));
+            this.xcodeVersionInfo = this.xcode.versionText;
             if (this.xcodeVersionInfo && this.xcodeVersionInfo.includes(',')) {
                 this.xcodeVersionInfo = this.xcodeVersionInfo.substring(0, this.xcodeVersionInfo.indexOf(','));
                 this.messages.push(new doctor_1.ValidationMessage(this.xcodeVersionInfo));
@@ -77,7 +78,7 @@ class IOSValidator {
             /**
              * installed and check xcode version
              */
-            if (!mac_1.xcode.isInstalledAndMeetsVersionCheck) {
+            if (!this.xcode.isInstalledAndMeetsVersionCheck) {
                 this.xcodeStatus = 1 /* partial */;
                 this.messages.push(new doctor_1.ValidationMessage(`Weex requires a minimum Xcode version of ${mac_1.XcodeRequiredVersionMajor}.${mac_1.XcodeRequiredVersionMinor}.0.\n
           Download the latest version or update via the Mac App Store.`, true /* isError */));
@@ -85,11 +86,11 @@ class IOSValidator {
             /**
              * get admin
              */
-            if (!mac_1.xcode.eulaSigned) {
+            if (!this.xcode.eulaSigned) {
                 this.xcodeStatus = 1 /* partial */;
                 this.messages.push(new doctor_1.ValidationMessage("Xcode end user license agreement not signed; open Xcode or run the command 'sudo xcodebuild -license'.", true /* isError */));
             }
-            if (!mac_1.xcode.isSimctlInstalled) {
+            if (!this.xcode.isSimctlInstalled) {
                 this.xcodeStatus = 1 /* partial */;
                 this.messages.push(new doctor_1.ValidationMessage(`Xcode requires additional components to be installed in order to run.\n'
           Launch Xcode and install additional required components when prompted.`, true /* isError */));
@@ -97,7 +98,7 @@ class IOSValidator {
         }
         else {
             this.xcodeStatus = 0 /* missing */;
-            if (!mac_1.xcode.xcodeSelectPath) {
+            if (!this.xcode.xcodeSelectPath) {
                 this.messages.push(new doctor_1.ValidationMessage(`Xcode not installed; this is necessary for iOS development.\n
           Download at https://developer.apple.com/xcode/download/.`, true /* isError */));
             }

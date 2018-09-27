@@ -20,7 +20,6 @@ export declare class Xcode {
      */
     readonly isSimctlInstalled: boolean;
 }
-export declare const xcode: Xcode;
 export declare class IMobileDevice {
     readonly isInstalled: boolean;
     readonly isWorking: boolean;

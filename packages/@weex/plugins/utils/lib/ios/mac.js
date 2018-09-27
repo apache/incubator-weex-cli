@@ -96,7 +96,7 @@ class Xcode {
     }
 }
 exports.Xcode = Xcode;
-exports.xcode = new Xcode();
+// export const xcode = new Xcode()
 class IMobileDevice {
     get isInstalled() {
         try {
