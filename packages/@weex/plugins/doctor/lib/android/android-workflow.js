@@ -55,8 +55,7 @@ class AndroidValidator {
             validationResult.forEach(message => {
                 this.messages.push(new doctor_1.ValidationMessage(message, true /* isError */));
             });
-            this.messages.push(new doctor_1.ValidationMessage(`Try re-installing or updating your Android SDK,
-          visit https://flutter.io/setup/#android-setup for detailed instructions.`));
+            this.messages.push(new doctor_1.ValidationMessage(`Try re-installing or updating your Android SDK.`));
             return new doctor_1.ValidationResult(1 /* partial */, this.messages, sdkVersionText);
         }
         // Now check for the JDK.

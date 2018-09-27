@@ -90,8 +90,7 @@ export class AndroidValidator implements DoctorValidator {
       });
       this.messages.push(
         new ValidationMessage(
-          `Try re-installing or updating your Android SDK,
-          visit https://flutter.io/setup/#android-setup for detailed instructions.`
+          `Try re-installing or updating your Android SDK.`
         ),
       );
       return new ValidationResult(ValidationType.partial, this.messages, sdkVersionText)
