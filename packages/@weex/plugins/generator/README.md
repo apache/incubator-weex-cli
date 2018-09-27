@@ -1,1 +1,2 @@
-Plugin for generate templates.
+### @weex-cli/generator
+

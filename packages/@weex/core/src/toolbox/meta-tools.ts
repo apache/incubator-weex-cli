@@ -1,6 +1,8 @@
 import * as jetpack from 'fs-jetpack'
 import { equals, map, pipe, propEq, reject, replace } from 'ramda'
 import { IToolbox } from '../core/toolbox'
+import * as path from 'path';
+
 /**
  * Finds the version for the currently running CLI.
  *
@@ -65,4 +67,14 @@ export function commandInfo(toolbox: IToolbox, commandRoot?: string[]): string[]
       ]
     }),
   )(toolbox.runtime.commands)
+}
+
+export function getModulesInfo(toolbox: IToolbox): any {
+  const config = toolbox.parameters.options.__config;
+  let info = {};
+  if (config) {
+    const moduleConfigFilePath = path.join(config.moduleRoot, config.moduleConfigFileName)
+    info = jetpack.read(moduleConfigFilePath, 'json');
+  }
+  return info;
 }

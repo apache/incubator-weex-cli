@@ -1,0 +1,7 @@
+out
+node_modules
+.vscode-test/
+*.vsix
+package-lock.json
+yarn-error.log
+.weex-templates

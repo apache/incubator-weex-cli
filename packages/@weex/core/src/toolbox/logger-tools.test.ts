@@ -17,11 +17,8 @@ test('info', () => {
   logger.warn('warn')
   logger.success('success')
   logger.error('error')
-  logger.debug('debug')
   const title = 'there'
-  logger.debug('hi', title)
   logger.log('any message')
-  logger.divider()
   logger.newline()
   logger.table([['liam', '5'], ['matthew', '2']])
   logger.table([['liam', '5'], ['matthew', '2']], { format: 'markdown' })
@@ -30,12 +27,10 @@ test('info', () => {
 })
 
 test('setLevel', () => {
-  logger.setLevel('error')
   logger.info('info')
   logger.warn('warn')
   logger.success('success')
   logger.error('error')
-  logger.debug('debug')
 
   expect(spyLogger).toMatchSnapshot()
 })
