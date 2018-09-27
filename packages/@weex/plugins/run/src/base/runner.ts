@@ -13,12 +13,11 @@ export default class Runner {
   protected filesWatcher: FSWatcher
   protected wsServer: WsServer
 
-  constructor(options: RunnerConfig) {
-    this.init(options)
+  constructor(options: RunnerConfig, type: PLATFORM_TYPES) {
+    this.init(options, type)
   }
 
-  private init(options: RunnerConfig) {
-    const { type } = options
+  private init(options: RunnerConfig, type: PLATFORM_TYPES) {
     this.type = type
     this.config = Object.assign(
       {

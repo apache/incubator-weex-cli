@@ -1,5 +1,5 @@
 import { PLATFORM_TYPES } from './const'
-import { ExecOptions } from '@weex-cli/utils/src/process/process'
+import { ExecOptions } from '@weex-cli/utils/lib/process/process.js'
 
 export interface BuilderConfig {
   type: PLATFORM_TYPES

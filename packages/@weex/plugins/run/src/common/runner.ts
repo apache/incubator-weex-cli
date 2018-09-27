@@ -1,8 +1,4 @@
-import { PLATFORM_TYPES } from './const'
-
 export interface RunnerConfig {
-  type: PLATFORM_TYPES
-
   /**
    * Will watch this folder *.js change
    */
