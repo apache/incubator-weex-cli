@@ -176,5 +176,4 @@ class AndroidSdk {
     }
 }
 exports.AndroidSdk = AndroidSdk;
-exports.androidSdk = new AndroidSdk();
 //# sourceMappingURL=android-sdk.js.map

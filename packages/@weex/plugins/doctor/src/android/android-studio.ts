@@ -1,7 +1,7 @@
 import { isMacOS, isLinux, homedir } from '@weex-cli/utils/lib/platform/platform';
 import * as path from 'path';
 import * as fs from 'fs';
-import { iosWorkflow } from '../ios/ios-workflow';
+import { IOSWorkflow } from '../ios/ios-workflow';
 import { kCFBundleShortVersionStringKey } from '@weex-cli/utils/lib/ios/plist-utils';
 import { versionParse, VersionOption, compareVersion } from '@weex-cli/utils/lib/base/version';
 import { canRunSync, runSync } from '../base/process';
@@ -19,6 +19,7 @@ const _dotHomeStudioVersionMatcher = new RegExp('^\.AndroidStudio([^\d]*)([\d.]+
 
 export class AndroidStudio {
   public javaPath: string;
+  public iosWorkflow = new IOSWorkflow();
 
   constructor() {
     this.latestValid();
@@ -67,7 +68,7 @@ export class AndroidStudio {
   public fromMacOSBundle(bundlePath: string) {
     const studioPath = path.join(bundlePath, 'Contents');
     const plistFile = path.join(studioPath, 'Info.plist');
-    const versionString = iosWorkflow.getPlistValueFromFile(
+    const versionString = this.iosWorkflow.getPlistValueFromFile(
       plistFile,
       kCFBundleShortVersionStringKey,
     );
@@ -144,8 +145,6 @@ export class AndroidStudio {
   }
 
 }
-
-export const androidStudio = new AndroidStudio();
 
 interface ValidOption {
   configured?: string;

@@ -2,17 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const android_workflow_1 = require("./android/android-workflow");
 const ios_workflow_1 = require("./ios/ios-workflow");
+const platform_1 = require("@weex-cli/utils/lib/platform/platform");
 class Doctor {
     constructor() {
         this.validators = [];
+        this.iosWorkflow = new ios_workflow_1.IOSWorkflow();
+        this.androidWorkflow = new android_workflow_1.AndroidWorkflow();
         this.getValidators();
     }
     getValidators() {
-        if (android_workflow_1.androidWorkflow.appliesToHostPlatform) {
-            this.validators.push(android_workflow_1.androidValidator);
+        if (this.androidWorkflow.appliesToHostPlatform) {
+            this.validators.push(new android_workflow_1.AndroidValidator());
         }
-        if (ios_workflow_1.iosWorkflow.appliesToHostPlatform) {
-            this.validators.push(ios_workflow_1.iosValidator);
+        if (!platform_1.isWindows && this.iosWorkflow.appliesToHostPlatform) {
+            this.validators.push(new ios_workflow_1.IOSValidator());
         }
     }
     startValidatorTasks() {

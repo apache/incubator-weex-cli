@@ -72,5 +72,3 @@ export class CocoaPods {
     return false
   }
 }
-
-export const cocoaPods = new CocoaPods()

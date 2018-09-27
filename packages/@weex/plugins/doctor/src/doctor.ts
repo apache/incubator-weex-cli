@@ -1,19 +1,22 @@
-import { androidWorkflow, androidValidator } from './android/android-workflow';
-import { iosWorkflow, iosValidator } from './ios/ios-workflow'
+import { AndroidWorkflow, AndroidValidator } from './android/android-workflow';
+import { IOSWorkflow, IOSValidator } from './ios/ios-workflow'
+import { isWindows } from '@weex-cli/utils/lib/platform/platform'
 
 export class Doctor {
   public validators: DoctorValidator[] = []
+  public iosWorkflow = new IOSWorkflow();
+  public androidWorkflow = new AndroidWorkflow();
 
   constructor() {
     this.getValidators();
   }
 
   public getValidators() {
-    if (androidWorkflow.appliesToHostPlatform) {
-      this.validators.push(androidValidator)
+    if (this.androidWorkflow.appliesToHostPlatform) {
+      this.validators.push(new AndroidValidator())
     }
-    if (iosWorkflow.appliesToHostPlatform) {
-      this.validators.push(iosValidator)
+    if (!isWindows && this.iosWorkflow.appliesToHostPlatform) {
+      this.validators.push(new IOSValidator())
     }
   }
 
