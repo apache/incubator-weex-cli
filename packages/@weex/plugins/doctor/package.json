@@ -1,8 +1,9 @@
 {
-  "name": "@weex-cli/utils",
-  "version": "0.0.5",
-  "description": "utils for weex-toolkit",
+  "name": "@weex-cli/doctor",
+  "version": "1.0.0",
+  "description": "Doctor for weex-toolkit",
   "main": "index.js",
+  "types": "./index.d.ts",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
     "clean": "rm -rf ./lib",
@@ -10,23 +11,16 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn lint",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "tsc -watch -p ./"
   },
-  "author": "",
-  "files": [
-    "lib/",
-     "!*.test.ts"
-  ],
+  "author": "balloonzzq <zqzhuang888@qq.com>",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@types/cli-table2": "^0.2.1",
-    "@types/colors": "^1.2.1",
     "@types/jest": "^22.2.3",
     "@types/node": "^10.0.4",
     "@types/pluralize": "^0.0.28",
@@ -86,6 +80,6 @@
     "url": "https://github.com/weexteam/weex-toolkit/issues"
   },
   "keywords": [
-    "utils"
+    "generator"
   ]
 }

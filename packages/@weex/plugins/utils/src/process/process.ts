@@ -36,7 +36,7 @@ export interface ExecOptions {
 }
 
 export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions?): Promise<any> {
-  const { onOutCallback, onErrorCallback, onCloseCallback, handleChildProcess } = (options || {} as ExecOptions)
+  const { onOutCallback, onErrorCallback, onCloseCallback, handleChildProcess } = options || ({} as ExecOptions)
   return new Promise((resolve, reject) => {
     try {
       const child = childProcess.exec(
@@ -83,4 +83,29 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
       reject(e)
     }
   })
+}
+
+export function runAsync(command: string, args: string[] = []): Promise<any> {
+  return new Promise((resolve, reject) => {
+    let result
+    try {
+      result = childProcess.spawnSync(command, args)
+      resolve(result)
+    } catch (e) {
+      reject(`Exit code ${result.status} from: ${command}:\n${result}`)
+    }
+  })
+}
+
+export function which(execName, args = []): string[] {
+  const spawnArgs = [execName, ...args]
+  const result = childProcess.spawnSync('which', spawnArgs)
+  if (result.status !== 0) {
+    return []
+  }
+  const lines = result.stdout
+    .toString()
+    .trim()
+    .split('\n')
+  return lines
 }

@@ -1,0 +1,1 @@
+export { Doctor } from './doctor'
