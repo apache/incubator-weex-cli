@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/build-native",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "build-native for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -19,11 +19,13 @@
   },
   "author": "",
   "files": [
-    "lib/"
+    "lib/",
+    "!*.map",
+    "!*.debug.js"
   ],
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/utils": "^0.0.5"
+    "@weex-cli/utils": "^0.0.6"
   },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
