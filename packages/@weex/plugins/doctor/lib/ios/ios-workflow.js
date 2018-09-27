@@ -189,9 +189,9 @@ class IOSValidator {
                 this.brewStatus = 1 /* partial */;
                 if (cocoaPodsStatus === cocoapods_1.CocoaPodsStatus.notInstalled) {
                     this.messages.push(new doctor_1.ValidationMessage(`CocoaPods not installed.\n
-            ${cocoapods_1.noCocoaPodsConsequence}\n
-            To install:\n
-            ${cocoapods_1.cocoaPodsInstallInstructions}`, true /* isError */));
+    ${cocoapods_1.noCocoaPodsConsequence}\n
+    To install:
+    ${cocoapods_1.cocoaPodsInstallInstructions}`, true /* isError */));
                 }
                 else {
                     this.messages.push(new doctor_1.ValidationMessage(`CocoaPods out of date (${this.cocoaPods.cocoaPodsRecommendedVersion} is recommended).\n
