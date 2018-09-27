@@ -1,18 +1,18 @@
 import { BuilderConfig, RunOptions } from '../common/builder'
 import { PLATFORM_TYPES } from '../common/const'
-import { exec } from '@weex-cli/utils/src/process/process'
+import { exec } from '@weex-cli/utils/lib/process/process.js'
 
 export default class Builder {
   public type: PLATFORM_TYPES
   protected config: BuilderConfig
 
-  constructor(options: BuilderConfig) {
+  constructor(options: BuilderConfig, type: PLATFORM_TYPES) {
     this.init(options)
+    this.type = type
   }
 
   private init(options: BuilderConfig) {
     const { type } = options
-    this.type = type
     this.config = Object.assign(
       {
         // Some default

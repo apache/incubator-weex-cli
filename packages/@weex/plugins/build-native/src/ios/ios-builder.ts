@@ -1,17 +1,17 @@
 const fs = require('fs')
 const path = require('path')
 
-import { createCmdString, exec, runAndGetOutput } from '@weex-cli/utils/src/process/process'
+import { createCmdString, exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
 import Builder from '../base/builder'
 import { IosBuilderConfig, RunOptions } from '../common/builder'
-import { IOS_DERIVE_DATA_PATH } from '../common/const'
+import { IOS_DERIVE_DATA_PATH, PLATFORM_TYPES } from '../common/const'
 import { IOS_CODE_SIGNING_ERROR } from '../common/error-list'
 
 export default class IosBuilder extends Builder {
   protected config: IosBuilderConfig
 
   constructor(options: IosBuilderConfig) {
-    super(options)
+    super(options, PLATFORM_TYPES.ios)
   }
 
   private async buildForSimulator(options?: RunOptions): Promise<string> {
