@@ -5,9 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const version_1 = require("../base/version");
 const platform_1 = require("../platform/platform");
-exports.noCocoaPodsConsequence = `
-  CocoaPods is used to retrieve the iOS platform side's plugin code.
-  Without resolving iOS dependencies with CocoaPods, plugins will not work on iOS.`;
+exports.noCocoaPodsConsequence = `CocoaPods is used to retrieve the iOS platform side's plugin code.\nWithout resolving iOS dependencies with CocoaPods, plugins will not work on iOS.`;
 exports.cocoaPodsInstallInstructions = `
   brew install cocoapods
   pod setup`;

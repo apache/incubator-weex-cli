@@ -242,10 +242,10 @@ export class IOSValidator implements DoctorValidator {
         if (cocoaPodsStatus === CocoaPodsStatus.notInstalled) {
           this.messages.push(
             new ValidationMessage(
-              `CocoaPods not installed.\n
-            ${noCocoaPodsConsequence}\n
-            To install:\n
-            ${cocoaPodsInstallInstructions}`,
+    `CocoaPods not installed.\n
+    ${noCocoaPodsConsequence}\n
+    To install:
+    ${cocoaPodsInstallInstructions}`,
               true /* isError */,
             ),
           )
