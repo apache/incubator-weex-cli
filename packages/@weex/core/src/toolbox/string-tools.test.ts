@@ -31,7 +31,7 @@ const {
   isPlural,
   isSingular,
   strSimilarity2Percent,
-  strSimilarity2Number
+  strSimilarity2Number,
 } = strings
 
 test('isBlank', () => {
@@ -165,9 +165,9 @@ test('isSingular', () => {
 })
 
 test('strSimilarity2Percent', () => {
-  expect(typeof(strSimilarity2Percent('bug', 'bugs'))).toBe('number')
+  expect(typeof strSimilarity2Percent('bug', 'bugs')).toBe('string')
 })
 
 test('strSimilarity2Number', () => {
-  expect(typeof(strSimilarity2Number('bug', 'bugs'))).toBe('number')
+  expect(typeof strSimilarity2Number('bug', 'bugs')).toBe('number')
 })

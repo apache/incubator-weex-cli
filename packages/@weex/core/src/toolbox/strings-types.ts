@@ -122,8 +122,8 @@ export interface IStrings {
   /**
    * Compare from two string
    */
-  strSimilarity2Percent(origin: string, target: string): number|string
- 
+  strSimilarity2Percent(origin: string, target: string): number | string
+
   /**
    * Compare from two string
    */
