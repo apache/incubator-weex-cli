@@ -1,7 +1,7 @@
 const find = require('find-process')
 
-import { exec, runAndGetOutput } from '@weex-cli/utils/src/process/process'
-import AndroidSdk from '@weex-cli/utils/src/android/android-env'
+import { exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
+import AndroidSdk from '@weex-cli/utils/lib/android/android-env.js'
 import { Devices } from '../base/devices'
 import { DeviceInfo, RunDeviceOptions } from '../common/device'
 
@@ -80,8 +80,8 @@ class AndroidDevice extends Devices {
     return new Promise(async (resolve, reject) => {
       let cmd
       let tryTimes = 0
-      let maxTryTimes = 5
-      let timeInterval = 5000
+      let maxTryTimes = 10
+      let timeInterval = 10000
       let timer
       const deviceInfo = this.getDeviceById(id)
       const startSimulatorDeviceList = this.getAndroidDevicesList(true)

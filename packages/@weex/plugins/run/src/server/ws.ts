@@ -4,8 +4,8 @@ const WebSocket = require('ws')
 const serve = require('koa-static')
 const kill = require('kill-port')
 const debug = require('debug')('run')
-
-import { detectPort, getIp } from '@weex-cli/utils/src/network/network'
+const address = require('address')
+const detect = require('detect-port')
 
 export default class WsServer {
   private port: number | null
@@ -28,11 +28,15 @@ export default class WsServer {
   }
 
   async getPort() {
-    this.port = await detectPort(this.port)
+    try {
+      this.port = await detect(this.port)
+    } catch(e) {
+      this.port = Number(this.port) + 1
+    }
   }
 
-  async getHost() {
-    this.hostname = await getIp()
+  getHost() {
+    this.hostname = address.ip()
   }
 
   public async init() {
@@ -46,7 +50,7 @@ export default class WsServer {
     })
     this.setStaticFolder(app)
     await this.getPort()
-    await this.getHost()
+    this.getHost()
     server.listen(
       {
         port: this.port,

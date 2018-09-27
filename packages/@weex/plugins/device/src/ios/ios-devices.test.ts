@@ -3,9 +3,9 @@ const path = require('path')
 
 import 'jest'
 import IosDevice from './ios-devices'
-import * as platform from '@weex-cli/utils/src/platform/platform'
+import * as platform from '@weex-cli/utils/lib/platform/platform.js'
 
-jest.setTimeout(30000)
+jest.setTimeout(60000)
 
 describe('Test IOS', () => {
   if (!platform.isMacOS) {
@@ -30,7 +30,7 @@ describe('Test IOS', () => {
     if (!firstSimulator) {
       return
     }
-
+    console.log('firstSimulator', firstSimulator)
     await iosDevices.run({
       id: firstSimulator.id,
       appPath: path.join(__dirname, '../../test/ios-mock/Debug-iphonesimulator/WeexDemo.app'),
