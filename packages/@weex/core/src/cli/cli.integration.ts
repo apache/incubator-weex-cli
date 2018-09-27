@@ -1,79 +1,50 @@
-// import { run as cli } from './cli'
+import Cli from './cli'
+import * as uniqueTempDir from 'unique-temp-dir'
+import * as sinon from 'sinon'
+import * as stripANSI from 'strip-ansi'
 
-// sinon.stub(console, 'log')
+sinon.stub(console, 'log')
 
-// const pwd = process.cwd()
+// set jest timeout to very long, because these take a while
+beforeAll(() => jest.setTimeout(90 * 1000))
+// reset back
+afterAll(() => jest.setTimeout(5 * 1000))
 
-// // set jest timeout to very long, because these take a while
-// beforeAll(() => jest.setTimeout(90 * 1000))
-// // reset back
-// afterAll(() => jest.setTimeout(5 * 1000))
-
-// test('can start the cli', async () => {
-//   const c = await cli()
-//   expect(c).toBeTruthy()
-// })
-
-// test('can create a new boilerplate cli', async () => {
-//   const tmp = uniqueTempDir({ create: true })
-//   process.chdir(tmp as string)
-
-//   const toolbox = await cli('new foo')
-//   expect(toolbox.command.name).toBe('new')
-
-//   const pkg = toolbox.fs.read(`${tmp}/foo/package.json`, 'json')
-
-//   expect(typeof pkg).toBe('object')
-//   expect(pkg.name).toBe('foo')
-//   expect(pkg.private).toBeTruthy()
-//   expect(Object.keys(pkg.dependencies).includes('gluegun')).toBeTruthy()
-
-//   // Install local version of gluegun to test
-//   await toolbox.system.run(`cd ${tmp}/foo && npm install ${pwd}`)
-
-//   // Try running the help command, see what it does
-//   const runCommand = await toolbox.system.run(`${tmp}/foo/bin/foo --help`)
-//   expect(stripANSI(runCommand)).toMatchSnapshot()
-
-//   // Try running the generate command, see what it does
-//   const genCommand = await toolbox.system.run(`${tmp}/foo/bin/foo g model test`)
-//   expect(stripANSI(genCommand)).toMatchSnapshot()
-
-//   // clean up
-//   process.chdir(pwd)
-//   toolbox.fs.remove(`${tmp}/foo`)
-// })
-
-// test('can create a new boilerplate TypeScript cli', async () => {
-//   const tmp = uniqueTempDir({ create: true })
-//   process.chdir(tmp as string)
-
-//   const toolbox = await cli('new foo-ts --typescript')
-//   expect(toolbox.command.name).toBe('new')
-
-//   const pkg = toolbox.fs.read(`${tmp}/foo-ts/package.json`, 'json')
-
-//   expect(typeof pkg).toBe('object')
-//   expect(pkg.name).toBe('foo-ts')
-//   expect(pkg.private).toBeTruthy()
-//   expect(Object.keys(pkg.dependencies).includes('gluegun')).toBeTruthy()
-
-//   // Install local version of gluegun to test
-//   await toolbox.system.run(`cd ${tmp}/foo-ts && npm install ${pwd}`)
-
-//   // Try running the help command, see what it does
-//   const runCommand = await toolbox.system.run(`${tmp}/foo-ts/bin/foo-ts --help`)
-//   expect(stripANSI(runCommand)).toMatchSnapshot()
-
-//   // Try running the generate command, see what it does
-//   const genCommand = await toolbox.system.run(`${tmp}/foo-ts/bin/foo-ts g model test`)
-//   expect(stripANSI(genCommand)).toMatchSnapshot()
-
-//   // Run that command and check the result
-//   const kitchenCommand = await toolbox.system.run(`${tmp}/foo-ts/bin/foo-ts kitchen`)
-//   console.log(kitchenCommand)
-
-//   // clean up
-//   process.chdir(pwd)
-//   toolbox.fs.remove(`${tmp}/foo-ts`)
-// })
+test('can start the cli', async () => {
+  const cliConfiguration = {
+    corePath: '',
+    coreName: '',
+    moduleRoot: '',
+    moduleConfigFileName: '',
+    home: '',
+    registry: '',
+    argv: '',
+    trash: '',
+    modules: {
+      mods: {},
+      last_update_time: new Date().getTime()
+    },
+  globalConfigFileName: ''
+  }
+  const options = {}
+  const cli = new Cli(cliConfiguration, options)
+  expect(typeof cli.start).toBe('function')
+  const toolbox = await cli.start();
+  console.log(toolbox)  
+  expect(toolbox.commandName).toBe('weex')
+  expect(Array.isArray(toolbox.plugin.commands)).toBeTruthy()
+  expect(Array.isArray(toolbox.plugin.extensions)).toBeTruthy()
+  expect(Array.isArray(toolbox.runtime.extensions)).toBeTruthy()
+  expect(Array.isArray(toolbox.runtime.commands)).toBeTruthy()
+  expect(Array.isArray(toolbox.runtime.plugins)).toBeTruthy()
+  expect(toolbox.pluginName).toBe('weex')
+  expect(typeof toolbox.fs === 'object' || typeof toolbox.fs === 'function').toBeTruthy()
+  expect(typeof toolbox.meta === 'object' || typeof toolbox.meta === 'function').toBeTruthy()
+  expect(typeof toolbox.strings === 'object' || typeof toolbox.strings === 'function').toBeTruthy()
+  expect(typeof toolbox.logger === 'object' || typeof toolbox.logger === 'function').toBeTruthy()
+  expect(typeof toolbox.semver === 'object' || typeof toolbox.semver === 'function').toBeTruthy()
+  expect(typeof toolbox.system === 'object' || typeof toolbox.system === 'function').toBeTruthy()
+  expect(typeof toolbox.inquirer === 'object' || typeof toolbox.inquirer === 'function').toBeTruthy()
+  expect(typeof toolbox.http === 'object' || typeof toolbox.http === 'function').toBeTruthy()
+  expect(typeof toolbox.patching === 'object' || typeof toolbox.http === 'function').toBeTruthy()
+})

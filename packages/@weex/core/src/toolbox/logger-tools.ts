@@ -132,17 +132,6 @@ function table(data: string[][], options: any = {}): void {
 }
 
 /**
- * Set log level for logger.
- *
- * Use this when you want to set the loglevel.
- *
- * @param message The message to write.
- */
-function setLevel(logLevel: string): void {
-  DEFAULT_LOGLEVEL = logLevel
-}
-
-/**
  * Prints text without theming.
  *
  * Use this when you're writing stuff outside the toolbox of our

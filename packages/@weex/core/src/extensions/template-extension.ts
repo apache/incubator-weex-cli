@@ -79,9 +79,7 @@ export default function attach(toolbox: IToolbox): void {
           logger.error(`Local template "${template}" not found.`)
           reject(`Local template "${template}" not found.`)
         }
-      }
-      // download template from git.
-      else {
+      } else {
         const tmp = path.join(fs.homedir(), '.weex-templates', template.replace(/\//g, '-'))
         const spinner = logger.spin(`Downloading template from ${template} repo`)
         spinner.start()
