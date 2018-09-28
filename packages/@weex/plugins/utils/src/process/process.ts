@@ -1,7 +1,15 @@
 /**
  * Help manage process
  */
+
+const debug = require('debug')('utils')
+import * as EventEmitter from 'events'
 const childProcess = require('child_process')
+
+export enum messageType {
+  outputLog = 'outputLog',
+  outputError = 'outputError'
+}
 
 export function runAndGetOutput(cmdString: string, options = {}) {
   try {
@@ -32,11 +40,12 @@ export interface ExecOptions {
   onOutCallback?: Function
   onErrorCallback?: Function
   onCloseCallback?: Function
-  handleChildProcess?: Function
+  handleChildProcess?: Function,
+  event?: EventEmitter
 }
 
 export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions?): Promise<any> {
-  const { onOutCallback, onErrorCallback, onCloseCallback, handleChildProcess } = options || ({} as ExecOptions)
+  const { onOutCallback, onErrorCallback, onCloseCallback, handleChildProcess, event } = options || ({} as ExecOptions)
   return new Promise((resolve, reject) => {
     try {
       const child = childProcess.exec(
@@ -60,18 +69,20 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
       if (handleChildProcess) {
         handleChildProcess(child)
       }
-      if (onOutCallback) {
+      if (onOutCallback || event) {
         child.stdout.on('data', data => {
-          const buf = Buffer.from(data)
-          const bufStr = buf.toString().trim()
-
-          onOutCallback(bufStr)
+          const bufStr = Buffer.from(data).toString().trim()
+          onOutCallback && onOutCallback(bufStr)
+          debug(`STDOUT: ${bufStr}`)
+          event && event.emit(messageType.outputLog, bufStr)
         })
       }
-      if (onErrorCallback) {
+      if (onErrorCallback || event) {
         child.stderr.on('data', data => {
-          const bufStr = Buffer.from(data).toString()
-          onErrorCallback(bufStr)
+          const bufStr = Buffer.from(data).toString().trim()
+          onErrorCallback && onErrorCallback(bufStr)
+          debug(`STDERR: ${bufStr}`)
+          event && event.emit(messageType.outputError, bufStr)
         })
       }
       if (onCloseCallback) {

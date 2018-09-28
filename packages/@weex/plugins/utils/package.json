@@ -20,11 +20,13 @@
   "author": "",
   "files": [
     "lib/",
-     "!*.test.ts",
-     "!*.map"
+    "!*.test.ts",
+    "!*.map"
   ],
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "debug": "^4.0.1"
+  },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
     "@types/colors": "^1.2.1",
