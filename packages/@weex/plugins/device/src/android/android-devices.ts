@@ -124,6 +124,7 @@ class AndroidDevice extends Devices {
           handleChildProcess(childProcess) {
             cmd = childProcess
           },
+          event: this
         })
       } catch (e) {
         reject(e)
@@ -177,11 +178,15 @@ class AndroidDevice extends Devices {
     }
 
     try {
-      await exec(`${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} install -r ${options.appPath}`)
+      await exec(`${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} install -r ${options.appPath}`, {
+        event: this
+      })
       await exec(
         `${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} shell am start -n ${
           options.applicationId
-        }/.SplashActivity ${androidShellCmdString || ''}`,
+        }/.SplashActivity ${androidShellCmdString || ''}`, {
+          event: this
+        }
       )
     } catch (e) {
       throw e

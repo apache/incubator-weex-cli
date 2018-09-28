@@ -1,6 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 
+import {
+  IOS_XCODE_NOT_INSTALLED,
+  IOS_EULA_NOT_SIGNED
+} from '@weex-cli/utils/lib/error/error-list.js'
 import { createCmdString, exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
 import Builder from '../base/builder'
 import { IosBuilderConfig, RunOptions } from '../common/builder'
@@ -35,7 +39,9 @@ export default class IosBuilder extends Builder {
         '-workspace': projectInfo.name || projectInfo.scheme,
       })
     }
-    await exec(createCmdString('xcodebuild', cmdParams), options, { cwd: projectPath })
+    await exec(createCmdString('xcodebuild', cmdParams), Object.assign(options, {
+      event: this
+    }), { cwd: projectPath })
     return path.join(
       projectPath,
       `${IOS_DERIVE_DATA_PATH}/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`,
@@ -69,17 +75,16 @@ export default class IosBuilder extends Builder {
         createCmdString('xcodebuild', cmdParams),
         Object.assign(options || {}, {
           onOutCallback(bufStr) {
-            console.log('bufStr', bufStr)
             if (bufStr.indexOf(`Code Signing Error`) !== -1) {
               isCodeSigningError = true
             }
           },
           onErrorCallback(bufStr) {
-            console.error('bufStr', bufStr)
             if (bufStr.indexOf(`Code Signing Error`) !== -1) {
               isCodeSigningError = true
             }
           },
+          event: this
         }),
         { cwd: projectPath },
       )
