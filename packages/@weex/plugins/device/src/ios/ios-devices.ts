@@ -1,16 +1,17 @@
 const path = require('path')
 
 import { exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
-import IosEnv from '@weex-cli/utils/lib/ios/ios-env.js'
+import { Xcode } from '@weex-cli/utils/lib/ios/mac.js'
+import {
+  IOS_XCODE_NOT_INSTALLED,
+  IOS_EULA_NOT_SIGNED
+} from '@weex-cli/utils/lib/error/error-list.js'
 import { Devices } from '../base/devices'
 import { DeviceInfo, RunDeviceOptions } from '../common/device'
 
 export default class IosDevices extends Devices {
-  private iosEnv: IosEnv = new IosEnv()
-
   constructor() {
     super({ type: Devices.TYPES.ios })
-    this.iosEnv.isInstalledXcode()
     this.updateList()
   }
 
@@ -45,7 +46,9 @@ export default class IosDevices extends Devices {
 
   async launchById(id: DeviceInfo['id']): Promise<String> {
     try {
-      await exec(`xcrun instruments -w ${id}`)
+      await exec(`xcrun instruments -w ${id}`, {
+        event: this
+      })
     } catch (error) {
       if (error) {
         if (
@@ -76,13 +79,17 @@ export default class IosDevices extends Devices {
 
     if (deviceInfo.isSimulator) {
       try {
-        await exec(`xcrun simctl install ${options.id} ${options.appPath}`)
+        await exec(`xcrun simctl install ${options.id} ${options.appPath}`, {
+          event: this
+        })
       } catch (e) {
         throw new Error(`Instll app fail : ${e.toString()}`)
       }
       if (options.applicationId) {
         try {
-          await exec(`xcrun simctl launch ${options.id} ${options.applicationId}`)
+          await exec(`xcrun simctl launch ${options.id} ${options.applicationId}`, {
+            event: this
+          })
         } catch (e) {
           throw new Error(`launch app fail : ${e.toString()}`)
         }
@@ -90,7 +97,9 @@ export default class IosDevices extends Devices {
     } else {
       // Build to iphone the xxx.app must signed
       const iosDeployPath = path.join(__dirname, '../../node_modules/ios-deploy/build/Release/ios-deploy')
-      await exec(`${iosDeployPath} --justlaunch --debug --id ${options.id} --bundle ${options.appPath}`)
+      await exec(`${iosDeployPath} --justlaunch --debug --id ${options.id} --bundle ${options.appPath}`, {
+        event: this
+      })
     }
   }
 }

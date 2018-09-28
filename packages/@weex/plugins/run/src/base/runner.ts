@@ -2,18 +2,26 @@ const path = require('path')
 const copy = require('recursive-copy')
 const fs = require('fs')
 
-import { RunnerConfig } from '../common/runner'
+import * as EventEmitter from 'events'
+import { formatError } from '@weex-cli/utils/lib/error/error'
+import { RunnerConfig, runnerState, messageType } from '../common/runner'
 import { PLATFORM_TYPES } from '../common/const'
 import WsServer from '../server/ws'
 import { FSWatcher } from 'fs'
 
-export default class Runner {
+export default class Runner extends EventEmitter {
   public type: PLATFORM_TYPES
   protected config: RunnerConfig
   protected filesWatcher: FSWatcher
   protected wsServer: WsServer
 
   constructor(options: RunnerConfig, type: PLATFORM_TYPES) {
+    super()
+    this.on('error', e => {
+      // To prevent the collapse
+      console.error(e)
+    })
+    this.checkEnv()
     this.init(options, type)
   }
 
@@ -36,6 +44,19 @@ export default class Runner {
       staticFolder: config.jsBundleFolderPath,
     })
     await this.wsServer.init()
+  }
+
+  protected checkEnv() {
+    // Do nothing
+  }
+
+  protected transmitEvent(outEvent) {
+    outEvent.on(messageType.outputError, message => {
+      this.emit(messageType.outputError, message)
+    })
+    outEvent.on(messageType.outputLog, message => {
+      this.emit(messageType.outputLog, message)
+    })
   }
 
   protected async setNativeConfig() {
@@ -103,12 +124,26 @@ export default class Runner {
     let appPath
     try {
       // All method catch in here
+      this.emit(messageType.state, runnerState.start)
       await this.startServer()
+      this.emit(messageType.state, runnerState.startServerDone)
+
       await this.setNativeConfig()
+      this.emit(messageType.state, runnerState.setNativeConfigDone)
+
       await this.copyJsBundle()
+      this.emit(messageType.state, runnerState.copyJsBundleDone)
+
       this.watchFileChange()
+      this.emit(messageType.state, runnerState.watchFileChangeDone)
+
       appPath = await this.buildNative()
+      this.emit(messageType.state, runnerState.buildNativeDone)
+
       await this.installAndLaunchApp(appPath)
+      this.emit(messageType.state, runnerState.installAndLaunchAppDone)
+
+      this.emit(messageType.state, runnerState.done)
     } catch (error) {
       throw error
     }
