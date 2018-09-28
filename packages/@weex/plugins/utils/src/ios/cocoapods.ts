@@ -4,9 +4,7 @@ import * as fs from 'fs'
 import { versionParse, VersionOption, compareVersion } from '../base/version'
 import { homedir } from '../platform/platform'
 
-export const noCocoaPodsConsequence: string = `
-  CocoaPods is used to retrieve the iOS platform side's plugin code.
-  Without resolving iOS dependencies with CocoaPods, plugins will not work on iOS.`
+export const noCocoaPodsConsequence: string = `CocoaPods is used to retrieve the iOS platform side's plugin code.\nWithout resolving iOS dependencies with CocoaPods, plugins will not work on iOS.`
 
 export const cocoaPodsInstallInstructions: string = `
   brew install cocoapods
