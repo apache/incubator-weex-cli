@@ -1,6 +1,8 @@
 // const debug = require('debug')('device')
 const path = require('path')
+const debug = require('debug')('device')
 import 'jest'
+import { messageType } from '@weex-cli/utils/lib/process/process.js'
 
 jest.setTimeout(30000)
 
@@ -20,6 +22,14 @@ describe('Test android', () => {
         return true
       }
       return false
+    })
+
+    androidDevice.on(messageType.outputError, (event) => {
+      debug('OUTPUT_ERROR:', event)
+    })
+
+    androidDevice.on(messageType.outputLog, (event) => {
+      debug('OUTPUT_LOG:', event)
     })
 
     await androidDevice.run({

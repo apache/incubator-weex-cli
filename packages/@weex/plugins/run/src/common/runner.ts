@@ -1,3 +1,20 @@
+export enum runnerState {
+  start,
+  startServerDone,
+  setNativeConfigDone,
+  copyJsBundleDone,
+  watchFileChangeDone,
+  buildNativeDone,
+  installAndLaunchAppDone,
+  done
+}
+
+export enum messageType {
+  state = 'state',
+  outputLog = 'outputLog',
+  outputError = 'outputError'
+}
+
 export interface RunnerConfig {
   /**
    * Will watch this folder *.js change
