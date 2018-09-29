@@ -29,7 +29,7 @@ export default class IosRunner extends Runner {
   async buildNative() {
     const config = this.config
     const androidBuilder = new AndroidBuilder({
-      projectPath: config.projectPath
+      projectPath: config.projectPath,
     })
     this.transmitEvent(androidBuilder)
     const { appPath } = await androidBuilder.run({

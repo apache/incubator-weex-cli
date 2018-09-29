@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/run",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "run for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -25,9 +25,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/build-native": "^0.0.3",
-    "@weex-cli/device": "0.0.8",
-    "@weex-cli/utils": "^0.0.6",
+    "@weex-cli/build-native": "^0.0.4",
+    "@weex-cli/device": "0.0.9",
+    "@weex-cli/utils": "^0.0.7",
     "address": "^1.0.3",
     "debug": "^4.0.1",
     "detect-port": "^1.2.3",

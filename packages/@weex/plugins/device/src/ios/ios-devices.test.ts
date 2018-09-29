@@ -30,11 +30,11 @@ describe('Test IOS', () => {
       return
     }
 
-    iosDevices.on(messageType.outputError, (event) => {
+    iosDevices.on(messageType.outputError, event => {
       debug('OUTPUT_ERROR:', event)
     })
 
-    iosDevices.on(messageType.outputLog, (event) => {
+    iosDevices.on(messageType.outputLog, event => {
       debug('OUTPUT_LOG:', event)
     })
 
