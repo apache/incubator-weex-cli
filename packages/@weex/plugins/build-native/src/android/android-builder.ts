@@ -70,11 +70,15 @@ export default class AndroidBuilder extends Builder {
   async run(options?: RunOptions): Promise<{ appPath: string }> {
     this.createLocalProperties()
     await this.doPreCmds()
-    await exec(isWindows ? `call gradlew.bat clean assembleDebug` : `./gradlew clean assembleDebug`, Object.assign(options, {
-      event: this
-    }), {
-      cwd: this.config.projectPath,
-    })
+    await exec(
+      isWindows ? `call gradlew.bat clean assembleDebug` : `./gradlew clean assembleDebug`,
+      Object.assign(options, {
+        event: this,
+      }),
+      {
+        cwd: this.config.projectPath,
+      },
+    )
     const apkPath = this.getApkPath()
 
     return { appPath: apkPath }

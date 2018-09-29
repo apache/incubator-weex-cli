@@ -30,7 +30,7 @@ export default class WsServer {
   async getPort() {
     try {
       this.port = await detect(this.port)
-    } catch(e) {
+    } catch (e) {
       this.port = Number(this.port) + 1
     }
   }

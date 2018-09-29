@@ -1,11 +1,6 @@
 const path = require('path')
 
 import { exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
-import { Xcode } from '@weex-cli/utils/lib/ios/mac.js'
-import {
-  IOS_XCODE_NOT_INSTALLED,
-  IOS_EULA_NOT_SIGNED
-} from '@weex-cli/utils/lib/error/error-list.js'
 import { Devices } from '../base/devices'
 import { DeviceInfo, RunDeviceOptions } from '../common/device'
 
@@ -47,7 +42,7 @@ export default class IosDevices extends Devices {
   async launchById(id: DeviceInfo['id']): Promise<String> {
     try {
       await exec(`xcrun instruments -w ${id}`, {
-        event: this
+        event: this,
       })
     } catch (error) {
       if (error) {
@@ -80,7 +75,7 @@ export default class IosDevices extends Devices {
     if (deviceInfo.isSimulator) {
       try {
         await exec(`xcrun simctl install ${options.id} ${options.appPath}`, {
-          event: this
+          event: this,
         })
       } catch (e) {
         throw new Error(`Instll app fail : ${e.toString()}`)
@@ -88,7 +83,7 @@ export default class IosDevices extends Devices {
       if (options.applicationId) {
         try {
           await exec(`xcrun simctl launch ${options.id} ${options.applicationId}`, {
-            event: this
+            event: this,
           })
         } catch (e) {
           throw new Error(`launch app fail : ${e.toString()}`)
@@ -98,7 +93,7 @@ export default class IosDevices extends Devices {
       // Build to iphone the xxx.app must signed
       const iosDeployPath = path.join(__dirname, '../../node_modules/ios-deploy/build/Release/ios-deploy')
       await exec(`${iosDeployPath} --justlaunch --debug --id ${options.id} --bundle ${options.appPath}`, {
-        event: this
+        event: this,
       })
     }
   }

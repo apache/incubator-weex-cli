@@ -3,7 +3,6 @@ const copy = require('recursive-copy')
 const fs = require('fs')
 
 import * as EventEmitter from 'events'
-import { formatError } from '@weex-cli/utils/lib/error/error'
 import { RunnerConfig, runnerState, messageType } from '../common/runner'
 import { PLATFORM_TYPES } from '../common/const'
 import WsServer from '../server/ws'
@@ -73,7 +72,7 @@ export default class Runner extends EventEmitter {
       await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'bundlejs/'), options)
     }
     if (PLATFORM_TYPES.android) {
-      await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'app/src/main/assets/'), options)
+      await copy(path.join(jsBundleFolderPath), path.join(projectPath, 'app/src/main/assets/dist'), options)
     }
   }
 
