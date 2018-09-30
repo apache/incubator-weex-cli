@@ -6,13 +6,13 @@ export enum runnerState {
   watchFileChangeDone,
   buildNativeDone,
   installAndLaunchAppDone,
-  done
+  done,
 }
 
 export enum messageType {
   state = 'state',
   outputLog = 'outputLog',
-  outputError = 'outputError'
+  outputError = 'outputError',
 }
 
 export interface RunnerConfig {

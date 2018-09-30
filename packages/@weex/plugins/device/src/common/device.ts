@@ -8,7 +8,7 @@ export interface DeviceInfo {
 export enum messageType {
   state = 'state',
   outputLog = 'outputLog',
-  outputError = 'outputError'
+  outputError = 'outputError',
 }
 
 export interface RunDeviceOptions {
