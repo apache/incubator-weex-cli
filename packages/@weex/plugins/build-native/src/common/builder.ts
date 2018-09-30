@@ -4,7 +4,7 @@ import { ExecOptions } from '@weex-cli/utils/lib/process/process.js'
 export enum messageType {
   state = 'state',
   outputLog = 'outputLog',
-  outputError = 'outputError'
+  outputError = 'outputError',
 }
 export interface BuilderConfig {
   type: PLATFORM_TYPES

@@ -24,11 +24,11 @@ describe('Test android', () => {
       return false
     })
 
-    androidDevice.on(messageType.outputError, (event) => {
+    androidDevice.on(messageType.outputError, event => {
       debug('OUTPUT_ERROR:', event)
     })
 
-    androidDevice.on(messageType.outputLog, (event) => {
+    androidDevice.on(messageType.outputLog, event => {
       debug('OUTPUT_LOG:', event)
     })
 
