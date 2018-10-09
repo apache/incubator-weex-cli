@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const doctor_1 = require("../doctor");
 const android_sdk_1 = require("./android-sdk");
+const process_1 = require("../base/process");
 const licenseAccepted = new RegExp('All SDK package licenses accepted.');
+const jdkDownload = 'https://www.oracle.com/technetwork/java/javase/downloads/';
 var LicensesAccepted;
 (function (LicensesAccepted) {
     LicensesAccepted[LicensesAccepted["none"] = 0] = "none";
@@ -59,11 +61,37 @@ class AndroidValidator {
             return new doctor_1.ValidationResult(1 /* partial */, this.messages, sdkVersionText);
         }
         // Now check for the JDK.
-        // const javaBinary = AndroidSdk.findJavaBinary();
+        const javaBinary = this.androidSdk.findJavaBinary();
+        if (!javaBinary) {
+            this.messages.push(new doctor_1.ValidationMessage(`No Java Development Kit (JDK) found; You must have the environment
+          variable JAVA_HOME set and the java binary in your PATH. 
+          You can download the JDK from ${jdkDownload}.`, true /* isError */));
+        }
         // Check JDK version.
+        if (!this.checkJavaVersion(javaBinary)) {
+            return new doctor_1.ValidationResult(1 /* partial */, this.messages, sdkVersionText);
+        }
         // Check for licenses.
         // Success.
         return new doctor_1.ValidationResult(2 /* installed */, this.messages, sdkVersionText);
+    }
+    checkJavaVersion(javaBinary) {
+        if (!process_1.canRunSync(javaBinary)) {
+            this.messages.push(new doctor_1.ValidationMessage(`Cannot execute ${javaBinary} to determine the version.`, true /* isError */));
+            return false;
+        }
+        let javaVersion;
+        const result = process_1.runSync(javaBinary, ['-version']);
+        if (result.status === 0) {
+            const versionLines = result.stderr.split('\n');
+            javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
+        }
+        if (!javaVersion) {
+            this.messages.push(new doctor_1.ValidationMessage(`Could not determine java version.`, true /* isError */));
+            return false;
+        }
+        this.messages.push(new doctor_1.ValidationMessage(`Java version ${javaVersion}.`));
+        return true;
     }
     licensesAccepted() {
         let status;

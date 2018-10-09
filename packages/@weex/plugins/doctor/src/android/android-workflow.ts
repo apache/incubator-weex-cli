@@ -1,7 +1,9 @@
 import { Workflow, ValidationType, ValidationMessage, ValidationResult, DoctorValidator } from '../doctor';
 import { kAndroidHome, AndroidSdk } from './android-sdk';
+import { canRunSync, runSync } from '../base/process';
 
 const licenseAccepted = new RegExp('All SDK package licenses accepted.');
+const jdkDownload: String = 'https://www.oracle.com/technetwork/java/javase/downloads/';
 
 enum LicensesAccepted {
   none,
@@ -97,14 +99,60 @@ export class AndroidValidator implements DoctorValidator {
     }
 
     // Now check for the JDK.
-    // const javaBinary = AndroidSdk.findJavaBinary();
+    const javaBinary = this.androidSdk.findJavaBinary();
+    if (!javaBinary) {
+      this.messages.push(
+        new ValidationMessage(
+          `No Java Development Kit (JDK) found; You must have the environment
+          variable JAVA_HOME set and the java binary in your PATH. 
+          You can download the JDK from ${jdkDownload}.`,
+          true /* isError */,
+        ),
+      )
+    }
 
     // Check JDK version.
+    if(!this.checkJavaVersion(javaBinary)) {
+      return new ValidationResult(ValidationType.partial, this.messages, sdkVersionText)
+    }
 
     // Check for licenses.
 
     // Success.
     return new ValidationResult(ValidationType.installed, this.messages, sdkVersionText);
+  }
+
+  public checkJavaVersion(javaBinary) {
+    if (!canRunSync(javaBinary)) {
+      this.messages.push(
+        new ValidationMessage(
+          `Cannot execute ${javaBinary} to determine the version.`,
+          true /* isError */,
+        ),
+      );
+      return false;
+    }
+    let javaVersion: string;
+    const result = runSync(javaBinary, ['-version']);
+    if (result.status === 0) {
+      const versionLines = result.stderr.split('\n');
+      javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
+    }
+    if (!javaVersion) {
+      this.messages.push(
+        new ValidationMessage(
+          `Could not determine java version.`,
+          true /* isError */,
+        ),
+      );
+      return false;
+    }
+    this.messages.push(
+      new ValidationMessage(
+        `Java version ${javaVersion}.`,
+      ),
+    );
+    return true;
   }
 
   public licensesAccepted() {
