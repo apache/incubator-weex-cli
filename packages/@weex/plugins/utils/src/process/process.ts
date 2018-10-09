@@ -120,3 +120,16 @@ export function which(execName, args = []): string[] {
     .split('\n')
   return lines
 }
+
+export function canRunSync(commandName, args: string[] = []): boolean {
+  let result
+    try {
+      result = childProcess.spawnSync(commandName, args);
+      if (result.status === 0) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+}

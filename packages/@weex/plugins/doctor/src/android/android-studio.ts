@@ -28,13 +28,19 @@ export class AndroidStudio {
   // Locates the newest, valid version of Android Studio.
   public latestValid() {
     const studios = this.allInstalled();
+    if (studios.length) {
+      this.javaPath = studios[studios.length - 1].javaPath;
+    }
+    // for (let i = 0; i < studios.length; i++) {
+
+    // }
   }
 
-  public allInstalled() {
-    isMacOS ? this.allMacOS(): this.allLinuxOrWindows();
+  public allInstalled(): AndroidStudioValid[] {
+    return isMacOS ? this.allMacOS(): this.allLinuxOrWindows();
   }
 
-  public allMacOS(): any[] {
+  public allMacOS(): AndroidStudioValid[] {
     let directories = [];
     this.checkForStudio('/Applications').forEach(name => {
       directories.push(`/Applications/${name}`);
@@ -65,7 +71,7 @@ export class AndroidStudio {
     return candidatePaths;
   }
 
-  public fromMacOSBundle(bundlePath: string) {
+  public fromMacOSBundle(bundlePath: string):AndroidStudioValid {
     const studioPath = path.join(bundlePath, 'Contents');
     const plistFile = path.join(studioPath, 'Info.plist');
     const versionString = this.iosWorkflow.getPlistValueFromFile(
@@ -176,10 +182,10 @@ export class AndroidStudioValid {
       return;
     }
 
-    this.javaPath = isMacOS
+    let javaPath = isMacOS
       ? path.join(this.directory, 'jre', 'jdk', 'Contents', 'Home')
       : path.join(this.directory, 'jre');
-    const javaExecutable = path.join(this.javaPath, 'bin', 'java');
+    const javaExecutable = path.join(javaPath, 'bin', 'java');
     if (!canRunSync(javaExecutable)) {
       this.validationMessages.push(`Unable to find bundled Java version.`);
     } else {
@@ -189,6 +195,7 @@ export class AndroidStudioValid {
         const javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
         this.validationMessages.push(`Java version ${javaVersion}`);
         this.isValid = true;
+        this.javaPath = javaPath;
       } else {
         this.validationMessages.push('Unable to determine bundled Java version.');
       }

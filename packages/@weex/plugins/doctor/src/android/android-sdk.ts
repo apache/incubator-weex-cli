@@ -17,10 +17,14 @@ import * as fs from 'fs';
 import { isLinux, isMacOS, isWindows, homedir } from '@weex-cli/utils/lib/platform/platform';
 import { which, canRunSync } from '../base/process';
 import { versionParse, VersionOption } from '@weex-cli/utils/lib/base/version';
+import { AndroidStudio } from './android-studio';
 
 export const kAndroidHome: String = 'ANDROID_HOME';
 const numberedAndroidPlatformRe: RegExp = new RegExp('^android-([0-9]+)$');
 const sdkVersionRe: RegExp = new RegExp('^ro.build.version.sdk=([0-9]+)$');
+const javaHomeEnvironmentVariable: String = 'JAVA_HOME';
+const javaExecutable: String = 'java';
+
 
 // The minimum Android SDK version we support.
 const minimumAndroidSdkVersion:number = 25;
@@ -83,6 +87,7 @@ export class AndroidSdk {
   public directory: string;
   public sdkVersions: AndroidSdkVersion[] = [];
   public latestVersion: AndroidSdkVersion;
+  public androidStudio: AndroidStudio =  new AndroidStudio();
 
   constructor () {
     this.init();
@@ -94,6 +99,18 @@ export class AndroidSdk {
 
   get sdkManagerPath() {
     return path.join(this.directory, 'tools', 'bin', 'sdkmanager');
+  }
+
+  public findJavaBinary() {
+    if (this.androidStudio.javaPath) {
+      return path.join(this.androidStudio.javaPath, 'bin', 'java');
+    }
+    const javaHomeEnv = process.env[`${javaHomeEnvironmentVariable}`];
+    if (javaHomeEnv) {
+      // Trust JAVA_HOME.
+      return path.join(javaHomeEnv, 'bin', 'java');
+    }
+    
   }
 
   public getPlatformToolsPath(binaryName: string) {

@@ -2,8 +2,8 @@
   "name": "@weex-cli/doctor",
   "version": "1.0.0",
   "description": "Doctor for weex-toolkit",
-  "main": "index.js",
-  "types": "./index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
     "clean": "rm -rf ./lib",

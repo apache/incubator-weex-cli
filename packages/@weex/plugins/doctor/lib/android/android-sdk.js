@@ -15,9 +15,12 @@ const fs = require("fs");
 const platform_1 = require("@weex-cli/utils/lib/platform/platform");
 const process_1 = require("../base/process");
 const version_1 = require("@weex-cli/utils/lib/base/version");
+const android_studio_1 = require("./android-studio");
 exports.kAndroidHome = 'ANDROID_HOME';
 const numberedAndroidPlatformRe = new RegExp('^android-([0-9]+)$');
 const sdkVersionRe = new RegExp('^ro.build.version.sdk=([0-9]+)$');
+const javaHomeEnvironmentVariable = 'JAVA_HOME';
+const javaExecutable = 'java';
 // The minimum Android SDK version we support.
 const minimumAndroidSdkVersion = 25;
 class AndroidSdkVersion {
@@ -72,6 +75,7 @@ exports.AndroidSdkVersion = AndroidSdkVersion;
 class AndroidSdk {
     constructor() {
         this.sdkVersions = [];
+        this.androidStudio = new android_studio_1.AndroidStudio();
         this.init();
     }
     get adbPath() {
@@ -79,6 +83,16 @@ class AndroidSdk {
     }
     get sdkManagerPath() {
         return path.join(this.directory, 'tools', 'bin', 'sdkmanager');
+    }
+    findJavaBinary() {
+        if (this.androidStudio.javaPath) {
+            return path.join(this.androidStudio.javaPath, 'bin', 'java');
+        }
+        const javaHomeEnv = process.env[`${javaHomeEnvironmentVariable}`];
+        if (javaHomeEnv) {
+            // Trust JAVA_HOME.
+            return path.join(javaHomeEnv, 'bin', 'java');
+        }
     }
     getPlatformToolsPath(binaryName) {
         return path.join(this.directory, 'platform-tools', binaryName);
