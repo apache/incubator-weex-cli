@@ -22,9 +22,14 @@ class AndroidStudio {
     // Locates the newest, valid version of Android Studio.
     latestValid() {
         const studios = this.allInstalled();
+        if (studios.length) {
+            this.javaPath = studios[studios.length - 1].javaPath;
+        }
+        // for (let i = 0; i < studios.length; i++) {
+        // }
     }
     allInstalled() {
-        platform_1.isMacOS ? this.allMacOS() : this.allLinuxOrWindows();
+        return platform_1.isMacOS ? this.allMacOS() : this.allLinuxOrWindows();
     }
     allMacOS() {
         let directories = [];
@@ -143,10 +148,10 @@ class AndroidStudioValid {
             this.validationMessages.push(`Android Studio not found at ${this.directory}`);
             return;
         }
-        this.javaPath = platform_1.isMacOS
+        let javaPath = platform_1.isMacOS
             ? path.join(this.directory, 'jre', 'jdk', 'Contents', 'Home')
             : path.join(this.directory, 'jre');
-        const javaExecutable = path.join(this.javaPath, 'bin', 'java');
+        const javaExecutable = path.join(javaPath, 'bin', 'java');
         if (!process_1.canRunSync(javaExecutable)) {
             this.validationMessages.push(`Unable to find bundled Java version.`);
         }
@@ -157,6 +162,7 @@ class AndroidStudioValid {
                 const javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
                 this.validationMessages.push(`Java version ${javaVersion}`);
                 this.isValid = true;
+                this.javaPath = javaPath;
             }
             else {
                 this.validationMessages.push('Unable to determine bundled Java version.');

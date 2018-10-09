@@ -31,8 +31,9 @@ export class Doctor {
   /**
    * diagnose 
    */
-  public diagnose() {
+  public diagnose(): string {
     const taskList:ValidatorTask[] = this.startValidatorTasks();
+    let messageResult:string = '';
 
     for (let validatorTask of taskList) {
       const validator:DoctorValidator = validatorTask.validator;
@@ -41,18 +42,24 @@ export class Doctor {
       results.push(validatorTask.result);
       result = this.mergeValidationResults(results);
 
-      console.log(`${result.leadingBox} ${validator.title} is`)
+      messageResult += `\n${result.leadingBox} ${validator.title} is \n`;
+      // console.log(`${result.leadingBox} ${validator.title} is`)
       for (let message of result.messages) {
         const text = message.message.replace('\n', '\n      ');
         if (message.isError) {
-          console.log(`    ✗  ${text}`);
+          messageResult += `    ✗  ${text}\n`;
+          // console.log(`    ✗  ${text}`);
         } else if (message.isWaring) {
-          console.log(`    !  ${text}`);
+          messageResult += `    !  ${text}\n`;
+          // console.log(`    !  ${text}`);
         } else {
-          console.log(`    •  ${text}`);
+          messageResult += `    •  ${text}\n`;
+          // console.log(`    •  ${text}`);
         }
       }
     }
+
+    return messageResult;
 
   }
 

@@ -30,26 +30,32 @@ class Doctor {
      */
     diagnose() {
         const taskList = this.startValidatorTasks();
+        let messageResult = '';
         for (let validatorTask of taskList) {
             const validator = validatorTask.validator;
             const results = [];
             let result;
             results.push(validatorTask.result);
             result = this.mergeValidationResults(results);
-            console.log(`${result.leadingBox} ${validator.title} is`);
+            messageResult += `\n${result.leadingBox} ${validator.title} is \n`;
+            // console.log(`${result.leadingBox} ${validator.title} is`)
             for (let message of result.messages) {
                 const text = message.message.replace('\n', '\n      ');
                 if (message.isError) {
-                    console.log(`    ✗  ${text}`);
+                    messageResult += `    ✗  ${text}\n`;
+                    // console.log(`    ✗  ${text}`);
                 }
                 else if (message.isWaring) {
-                    console.log(`    !  ${text}`);
+                    messageResult += `    !  ${text}\n`;
+                    // console.log(`    !  ${text}`);
                 }
                 else {
-                    console.log(`    •  ${text}`);
+                    messageResult += `    •  ${text}\n`;
+                    // console.log(`    •  ${text}`);
                 }
             }
         }
+        return messageResult;
     }
     mergeValidationResults(results) {
         let mergedType = results[0].type;
