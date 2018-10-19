@@ -9,10 +9,10 @@ import {
 } from '@weex-cli/utils/lib/ios/cocoapods'
 import { which } from '@weex-cli/utils/lib/process/process'
 import { spawnSync } from 'child_process'
-import { versionParse, compareVersion } from '@weex-cli/utils/lib/base/version';
-import * as plist from '@weex-cli/utils/lib/ios/plist-utils';
+import { versionParse, compareVersion } from '@weex-cli/utils/lib/base/version'
+import * as plist from '@weex-cli/utils/lib/ios/plist-utils'
 
-import IosEnv from '@weex-cli/utils/lib/ios/ios-env'
+// import IosEnv from '@weex-cli/utils/lib/ios/ios-env'
 
 export class IOSWorkflow implements Workflow {
   get appliesToHostPlatform(): boolean {
@@ -20,7 +20,7 @@ export class IOSWorkflow implements Workflow {
   }
 
   public getPlistValueFromFile(path: string, key: string): string {
-    return plist.getValueFromFile(path, key);
+    return plist.getValueFromFile(path, key)
   }
 }
 
@@ -33,7 +33,7 @@ export class IOSValidator implements DoctorValidator {
   public cocoaPods: CocoaPods = new CocoaPods()
   public xcode: Xcode = new Xcode()
 
-  private iosEnv: IosEnv = new IosEnv()
+  // private iosEnv: IosEnv = new IosEnv()
   constructor() {
     this.title = 'iOS toolchain - develop for iOS devices'
   }
@@ -86,9 +86,9 @@ export class IOSValidator implements DoctorValidator {
       this.xcodeStatus = ValidationType.installed
 
       this.messages.push(new ValidationMessage(`Xcode at ${this.xcode.xcodeSelectPath}`))
-      this.xcodeVersionInfo = this.xcode.versionText;
+      this.xcodeVersionInfo = this.xcode.versionText
       if (this.xcodeVersionInfo && this.xcodeVersionInfo.includes(',')) {
-        this.xcodeVersionInfo = this.xcodeVersionInfo.substring(0, this.xcodeVersionInfo.indexOf(','));
+        this.xcodeVersionInfo = this.xcodeVersionInfo.substring(0, this.xcodeVersionInfo.indexOf(','))
         this.messages.push(new ValidationMessage(this.xcodeVersionInfo))
       }
 
@@ -216,10 +216,10 @@ export class IOSValidator implements DoctorValidator {
       //       ),
       //     )
       //   }
-        
+
       // }
 
-      const cocoaPodsStatus = this.cocoaPods.evaluateCocoaPodsInstallation;
+      const cocoaPodsStatus = this.cocoaPods.evaluateCocoaPodsInstallation
 
       if (cocoaPodsStatus === CocoaPodsStatus.recommended) {
         if (this.cocoaPods.isCocoaPodsInitialized) {
@@ -242,7 +242,7 @@ export class IOSValidator implements DoctorValidator {
         if (cocoaPodsStatus === CocoaPodsStatus.notInstalled) {
           this.messages.push(
             new ValidationMessage(
-    `CocoaPods not installed.\n
+              `CocoaPods not installed.\n
     ${noCocoaPodsConsequence}\n
     To install:
     ${cocoaPodsInstallInstructions}`,
@@ -274,11 +274,11 @@ export class IOSValidator implements DoctorValidator {
     return new ValidationResult(
       [this.xcodeStatus, this.brewStatus].reduce(this.mergeValidationTypes),
       this.messages,
-      this.xcodeVersionInfo
-    );
+      this.xcodeVersionInfo,
+    )
   }
 
-  private mergeValidationTypes(t1: ValidationType, t2: ValidationType):ValidationType {
-    return t1 === t2 ? t1 : ValidationType.partial;
+  private mergeValidationTypes(t1: ValidationType, t2: ValidationType): ValidationType {
+    return t1 === t2 ? t1 : ValidationType.partial
   }
 }

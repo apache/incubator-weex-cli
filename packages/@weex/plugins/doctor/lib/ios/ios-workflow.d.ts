@@ -13,7 +13,6 @@ export declare class IOSValidator implements DoctorValidator {
     title: string;
     cocoaPods: CocoaPods;
     xcode: Xcode;
-    private iosEnv;
     constructor();
     readonly hasHomebrew: boolean;
     readonly hasIDeviceInstaller: boolean;
@@ -22,5 +21,5 @@ export declare class IOSValidator implements DoctorValidator {
     readonly iosDeployMinimumVersion: string;
     readonly iosDeployIsInstalledAndMeetsVersionCheck: boolean;
     validate(): ValidationResult;
-    private mergeValidationTypes(t1, t2);
+    private mergeValidationTypes;
 }

@@ -18,11 +18,11 @@ const version_1 = require("@weex-cli/utils/lib/base/version");
 const android_studio_1 = require("./android-studio");
 exports.kAndroidHome = 'ANDROID_HOME';
 const numberedAndroidPlatformRe = new RegExp('^android-([0-9]+)$');
-const sdkVersionRe = new RegExp('^ro.build.version.sdk=([0-9]+)$');
+// const sdkVersionRe: RegExp = new RegExp('^ro.build.version.sdk=([0-9]+)$')
 const javaHomeEnvironmentVariable = 'JAVA_HOME';
-const javaExecutable = 'java';
+// const javaExecutable: String = 'java'
 // The minimum Android SDK version we support.
-const minimumAndroidSdkVersion = 25;
+// const minimumAndroidSdkVersion: number = 25
 class AndroidSdkVersion {
     constructor(sdk, sdkLevel, platformName, buildToolsVersion) {
         this.sdk = sdk;
