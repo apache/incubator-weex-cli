@@ -3,15 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const doctor_1 = require("../doctor");
 const android_sdk_1 = require("./android-sdk");
 const process_1 = require("../base/process");
-const licenseAccepted = new RegExp('All SDK package licenses accepted.');
+// const licenseAccepted = new RegExp('All SDK package licenses accepted.')
 const jdkDownload = 'https://www.oracle.com/technetwork/java/javase/downloads/';
-var LicensesAccepted;
-(function (LicensesAccepted) {
-    LicensesAccepted[LicensesAccepted["none"] = 0] = "none";
-    LicensesAccepted[LicensesAccepted["some"] = 1] = "some";
-    LicensesAccepted[LicensesAccepted["all"] = 2] = "all";
-    LicensesAccepted[LicensesAccepted["unknown"] = 3] = "unknown";
-})(LicensesAccepted || (LicensesAccepted = {}));
+// enum LicensesAccepted {
+//   none,
+//   some,
+//   all,
+//   unknown,
+// }
 class AndroidWorkflow {
     get appliesToHostPlatform() {
         return true;
@@ -94,7 +93,7 @@ class AndroidValidator {
         return true;
     }
     licensesAccepted() {
-        let status;
+        // let status: LicensesAccepted
     }
 }
 exports.AndroidValidator = AndroidValidator;

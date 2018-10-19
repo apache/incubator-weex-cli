@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/doctor",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Doctor for weex-toolkit",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -11,6 +11,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
+    "publish": "yarn build && yarn lint && np --yolo --no-yarn ----access=public",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
@@ -19,7 +20,9 @@
   },
   "author": "balloonzzq <zqzhuang888@qq.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "@weex-cli/utils": "^0.0.7"
+  },
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/node": "^10.0.4",
@@ -80,6 +83,6 @@
     "url": "https://github.com/weexteam/weex-toolkit/issues"
   },
   "keywords": [
-    "generator"
+    "doctor"
   ]
 }
