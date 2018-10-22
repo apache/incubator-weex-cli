@@ -1,5 +1,17 @@
 import { AndroidWorkflow } from './android/android-workflow';
 import { IOSWorkflow } from './ios/ios-workflow';
+export declare const enum ValidationType {
+    missing = 0,
+    partial = 1,
+    installed = 2
+}
+export declare class ValidationResult {
+    type: ValidationType;
+    messages: ValidationMessage[];
+    statusInfo?: string;
+    constructor(type: ValidationType, messages: ValidationMessage[], statusInfo?: string);
+    readonly leadingBox: String;
+}
 export declare class Doctor {
     validators: DoctorValidator[];
     iosWorkflow: IOSWorkflow;
@@ -13,20 +25,8 @@ export declare class Doctor {
     diagnose(): string;
     mergeValidationResults(results: ValidationResult[]): ValidationResult;
 }
-export declare class ValidationResult {
-    type: ValidationType;
-    messages: ValidationMessage[];
-    statusInfo: string;
-    constructor(type: ValidationType, messages: ValidationMessage[], statusInfo?: string);
-    readonly leadingBox: String;
-}
-export declare const enum ValidationType {
-    missing = 0,
-    partial = 1,
-    installed = 2,
-}
 export declare abstract class Workflow {
-    readonly abstract appliesToHostPlatform: boolean;
+    abstract readonly appliesToHostPlatform: boolean;
 }
 export declare abstract class DoctorValidator {
     title: string;

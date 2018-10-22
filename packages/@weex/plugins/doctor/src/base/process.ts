@@ -1,5 +1,5 @@
 import { isWindows } from '@weex-cli/utils/lib/platform/platform'
-import { ChildProcess, spawnSync, execSync } from 'child_process';
+import { spawnSync, execSync } from 'child_process'
 import * as fs from 'fs'
 
 export function runAsync(command: string, args: string[] = []): Promise<any> {
@@ -74,36 +74,38 @@ export function commandExistsSync(commandName): boolean {
   }
 }
 
-
 export function which(execName, args = []): string[] {
-  const spawnArgs = [execName, ...args];
-  const result = spawnSync('which', spawnArgs);
+  const spawnArgs = [execName, ...args]
+  const result = spawnSync('which', spawnArgs)
   if (result.status !== 0) {
-    return [];
+    return []
   }
-  const lines = result.stdout.toString().trim().split('\n');
-  return lines;
+  const lines = result.stdout
+    .toString()
+    .trim()
+    .split('\n')
+  return lines
 }
 
 export function runSync(commandName, args: string[] = []) {
   let result
-    try {
-      result = spawnSync(commandName, args);
-      return result;
-    } catch (e) {
-      return null;
-    }
+  try {
+    result = spawnSync(commandName, args)
+    return result
+  } catch (e) {
+    return null
+  }
 }
 
 export function canRunSync(commandName, args: string[] = []): boolean {
   let result
-    try {
-      result = spawnSync(commandName, args);
-      if (result.status === 0) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
+  try {
+    result = spawnSync(commandName, args)
+    if (result.status === 0) {
+      return true
     }
+    return false
+  } catch (e) {
+    return false
+  }
 }

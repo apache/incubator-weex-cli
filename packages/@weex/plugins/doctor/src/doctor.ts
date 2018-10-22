@@ -1,14 +1,48 @@
-import { AndroidWorkflow, AndroidValidator } from './android/android-workflow';
+import { AndroidWorkflow, AndroidValidator } from './android/android-workflow'
 import { IOSWorkflow, IOSValidator } from './ios/ios-workflow'
 import { isWindows } from '@weex-cli/utils/lib/platform/platform'
 
+export const enum ValidationType {
+  missing,
+  partial,
+  installed,
+}
+
+class ValidatorTask {
+  constructor(public validator: DoctorValidator, public result: ValidationResult) {
+    this.validator = validator
+    this.result = result
+  }
+}
+
+export class ValidationResult {
+  /// [ValidationResult.type] should only equal [ValidationResult.installed]
+  /// if no [messages] are hints or errors.
+  constructor(public type: ValidationType, public messages: ValidationMessage[], public statusInfo?: string) {
+    this.type = type
+    this.messages = messages
+  }
+
+  get leadingBox(): String {
+    switch (this.type) {
+      case ValidationType.missing:
+        return '[✗]'
+      case ValidationType.installed:
+        return '[✓]'
+      case ValidationType.partial:
+        return '[!]'
+    }
+    return null
+  }
+}
+
 export class Doctor {
   public validators: DoctorValidator[] = []
-  public iosWorkflow = new IOSWorkflow();
-  public androidWorkflow = new AndroidWorkflow();
+  public iosWorkflow = new IOSWorkflow()
+  public androidWorkflow = new AndroidWorkflow()
 
   constructor() {
-    this.getValidators();
+    this.getValidators()
   }
 
   public getValidators() {
@@ -21,108 +55,73 @@ export class Doctor {
   }
 
   public startValidatorTasks() {
-    const tasks = [];
+    const tasks = []
     for (let validator of this.validators) {
-      tasks.push(new ValidatorTask(validator, validator.validate()));
+      tasks.push(new ValidatorTask(validator, validator.validate()))
     }
-    return tasks;
+    return tasks
   }
 
   /**
-   * diagnose 
+   * diagnose
    */
   public diagnose(): string {
-    const taskList:ValidatorTask[] = this.startValidatorTasks();
-    let messageResult:string = '';
+    const taskList: ValidatorTask[] = this.startValidatorTasks()
+    let messageResult: string = ''
 
     for (let validatorTask of taskList) {
-      const validator:DoctorValidator = validatorTask.validator;
-      const results:ValidationResult[] = [];
-      let result:ValidationResult;
-      results.push(validatorTask.result);
-      result = this.mergeValidationResults(results);
+      const validator: DoctorValidator = validatorTask.validator
+      const results: ValidationResult[] = []
+      let result: ValidationResult
+      results.push(validatorTask.result)
+      result = this.mergeValidationResults(results)
 
-      messageResult += `\n${result.leadingBox} ${validator.title} is \n`;
+      messageResult += `\n${result.leadingBox} ${validator.title} is \n`
       // console.log(`${result.leadingBox} ${validator.title} is`)
       for (let message of result.messages) {
-        const text = message.message.replace('\n', '\n      ');
+        const text = message.message.replace('\n', '\n      ')
         if (message.isError) {
-          messageResult += `    ✗  ${text}\n`;
+          messageResult += `    ✗  ${text}\n`
           // console.log(`    ✗  ${text}`);
         } else if (message.isWaring) {
-          messageResult += `    !  ${text}\n`;
+          messageResult += `    !  ${text}\n`
           // console.log(`    !  ${text}`);
         } else {
-          messageResult += `    •  ${text}\n`;
+          messageResult += `    •  ${text}\n`
           // console.log(`    •  ${text}`);
         }
       }
     }
 
-    return messageResult;
-
+    return messageResult
   }
 
   public mergeValidationResults(results: ValidationResult[]): ValidationResult {
-    let mergedType: ValidationType = results[0].type;
-    const mergedMessages: ValidationMessage[] = [];
+    let mergedType: ValidationType = results[0].type
+    const mergedMessages: ValidationMessage[] = []
 
-    for(let result of results) {
-      switch(result.type) {
+    for (let result of results) {
+      switch (result.type) {
         case ValidationType.installed:
           if (mergedType === ValidationType.missing) {
-            mergedType = ValidationType.partial;
+            mergedType = ValidationType.partial
           }
-          break;
+          break
         case ValidationType.partial:
-          mergedType = ValidationType.partial;
-          break;
+          mergedType = ValidationType.partial
+          break
         case ValidationType.missing:
           if (mergedType === ValidationType.installed) {
-            mergedType = ValidationType.partial;
+            mergedType = ValidationType.partial
           }
-          break;
+          break
         default:
-          break;
+          break
       }
-      mergedMessages.push(...result.messages);
+      mergedMessages.push(...result.messages)
     }
-    return new ValidationResult(mergedType, mergedMessages, results[0].statusInfo);
+    return new ValidationResult(mergedType, mergedMessages, results[0].statusInfo)
   }
-}
-
-export class ValidationResult {
-  /// [ValidationResult.type] should only equal [ValidationResult.installed]
-  /// if no [messages] are hints or errors.
-  constructor(public type: ValidationType, public messages: ValidationMessage[], public statusInfo?: string){
-    this.type = type;
-    this.messages = messages;
-  }
-
-  get leadingBox(): String {
-    switch (this.type) {
-      case ValidationType.missing:
-        return '[✗]';
-      case ValidationType.installed:
-        return '[✓]';
-      case ValidationType.partial:
-        return '[!]';
-    }
-    return null;
-  }
-}
-
-class ValidatorTask {
-  constructor(public validator: DoctorValidator, public result: ValidationResult) {
-    this.validator = validator;
-    this.result = result;
-  }
-}
-
-export const enum ValidationType {
-  missing,
-  partial,
-  installed,
 }
 
 // A series of tools and required install steps for a target platform (iOS or Android).
@@ -141,14 +140,14 @@ export abstract class Workflow {
 }
 
 export abstract class DoctorValidator {
-  public title: string;
+  public title: string
   abstract validate()
 }
 
 export class ValidationMessage {
   constructor(public message: string, public isError = false, public isWaring = false) {
-    this.message = message;
-    this.isError = isError;
-    this.isWaring = isWaring;
+    this.message = message
+    this.isError = isError
+    this.isWaring = isWaring
   }
 }
