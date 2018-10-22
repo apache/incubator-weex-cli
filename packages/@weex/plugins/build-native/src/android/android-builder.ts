@@ -1,18 +1,19 @@
 const fs = require('fs')
 const path = require('path')
 
-import { exec } from '@weex-cli/utils/src/process/process'
-import { isWindows } from '@weex-cli/utils/src/platform/platform'
-import AndroidEnv from '@weex-cli/utils/src/android/android-env'
+import { exec } from '@weex-cli/utils/lib/process/process.js'
+import { isWindows } from '@weex-cli/utils/lib/platform/platform.js'
+import AndroidEnv from '@weex-cli/utils/lib/android/android-env.js'
 import Builder from '../base/builder'
 import { AndroidBuilderConfig, RunOptions } from '../common/builder'
 import { ANDROID_NOT_FIND_APK_PATH } from '../common/error-list'
+import { PLATFORM_TYPES } from '../common/const'
 
 export default class AndroidBuilder extends Builder {
   protected config: AndroidBuilderConfig
 
   constructor(options: AndroidBuilderConfig) {
-    super(options)
+    super(options, PLATFORM_TYPES.android)
   }
 
   private createLocalProperties() {
@@ -69,9 +70,15 @@ export default class AndroidBuilder extends Builder {
   async run(options?: RunOptions): Promise<{ appPath: string }> {
     this.createLocalProperties()
     await this.doPreCmds()
-    await exec(isWindows ? `call gradlew.bat clean assembleDebug` : `./gradlew clean assembleDebug`, options, {
-      cwd: this.config.projectPath,
-    })
+    await exec(
+      isWindows ? `call gradlew.bat clean assembleDebug` : `./gradlew clean assembleDebug`,
+      Object.assign(options, {
+        event: this,
+      }),
+      {
+        cwd: this.config.projectPath,
+      },
+    )
     const apkPath = this.getApkPath()
 
     return { appPath: apkPath }

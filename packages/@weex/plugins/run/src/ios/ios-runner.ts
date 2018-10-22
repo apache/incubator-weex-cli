@@ -1,14 +1,15 @@
+import { IosBuilder } from '@weex-cli/build-native'
+import { IosDevices } from '@weex-cli/device'
 import Runner from '../base/runner'
 import { RunnerConfig } from '../common/runner'
-import { IosBuilder } from '@weex-cli/build-native'
-import { installAndLaunchIosApp } from '@weex-cli/device'
 import CONFIG from '../common/config'
+import { PLATFORM_TYPES } from '../common/const'
 
 export default class IosRunner extends Runner {
   protected config: RunnerConfig
 
   constructor(options: RunnerConfig) {
-    super(options)
+    super(options, PLATFORM_TYPES.ios)
   }
 
   async setNativeConfig() {
@@ -32,10 +33,10 @@ export default class IosRunner extends Runner {
     const config = this.config
 
     const iosBuilder = new IosBuilder({
-      type: config.type,
       projectPath: config.projectPath,
       preCmds: ['pod update'],
     })
+    this.transmitEvent(iosBuilder)
     const { appPath } = await iosBuilder.run({
       onOutCallback: outString => {
         console.log('BUILD OUTPUT:', outString)
@@ -49,7 +50,9 @@ export default class IosRunner extends Runner {
 
   async installAndLaunchApp(appPath) {
     const config = this.config
-    await installAndLaunchIosApp({
+    const iosDevice = new IosDevices()
+    this.transmitEvent(iosDevice)
+    await iosDevice.run({
       id: config.deviceId,
       applicationId: config.applicationId,
       appPath,

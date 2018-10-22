@@ -1,13 +1,24 @@
+import * as EventEmitter from 'events'
 import { MOBILE_TYPES } from '../common/const'
-import { DeviceInfo, RunDeviceOptions } from '../common/device'
+import { DeviceInfo, RunDeviceOptions, messageType } from '../common/device'
 
-export class Devices {
+export class Devices extends EventEmitter {
   static TYPES = MOBILE_TYPES
   public type: string
   public list: Array<DeviceInfo> = []
 
   constructor(options: { type: MOBILE_TYPES }) {
+    super()
     this.type = options.type
+    this.on('error', e => {
+      // To prevent the collapse
+      this.emit(messageType.outputError, e)
+    })
+    this.checkEnv()
+  }
+
+  protected checkEnv() {
+    // Do nothing
   }
 
   public updateList() {

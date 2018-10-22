@@ -1,19 +1,16 @@
-// export TS_NODE_IGNORE="/node_modules/?@weexcli/"
-// ts-node android.debug.ts
+// ts-node *.ts
 const path = require('path')
 const debug = require('debug')('run')
-import { PLATFORM_TYPES } from '../common/const'
 
 import 'jest'
 import { AndroidRunner } from '../index'
-import TestHelp from '@weex-cli/utils/src/test/test-help'
+import TestHelp from '@weex-cli/utils/lib/test/test-help.js'
 
 async function android() {
   debug('Test run android')
   const testHelp = new TestHelp(path.join(__dirname, '../../'))
 
   const androidRunner = new AndroidRunner({
-    type: PLATFORM_TYPES.android,
     jsBundleEntry: testHelp.getTestConfigByKey('jsBundleEntry'),
     projectPath: testHelp.getTestConfigByKey('android.projectPath'),
     deviceId: testHelp.getTestConfigByKey('android.deviceId'),
@@ -30,5 +27,5 @@ async function android() {
 }
 
 android().catch(e => {
-  debug('Test run android ERROR: ', e)
+  console.error('Test run android ERROR: ', e)
 })

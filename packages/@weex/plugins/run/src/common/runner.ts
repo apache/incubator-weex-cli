@@ -1,8 +1,21 @@
-import { PLATFORM_TYPES } from './const'
+export enum runnerState {
+  start,
+  startServerDone,
+  setNativeConfigDone,
+  copyJsBundleDone,
+  watchFileChangeDone,
+  buildNativeDone,
+  installAndLaunchAppDone,
+  done,
+}
+
+export enum messageType {
+  state = 'state',
+  outputLog = 'outputLog',
+  outputError = 'outputError',
+}
 
 export interface RunnerConfig {
-  type: PLATFORM_TYPES
-
   /**
    * Will watch this folder *.js change
    */

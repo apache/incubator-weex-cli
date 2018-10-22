@@ -5,6 +5,12 @@ export interface DeviceInfo {
   version?: string
 }
 
+export enum messageType {
+  state = 'state',
+  outputLog = 'outputLog',
+  outputError = 'outputError',
+}
+
 export interface RunDeviceOptions {
   /**
    * DeviceInfo.id
