@@ -1,17 +1,17 @@
 const fs = require('fs')
 const path = require('path')
 
-import { createCmdString, exec, runAndGetOutput } from '@weex-cli/utils/src/process/process'
+import { createCmdString, exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
 import Builder from '../base/builder'
 import { IosBuilderConfig, RunOptions } from '../common/builder'
-import { IOS_DERIVE_DATA_PATH } from '../common/const'
+import { IOS_DERIVE_DATA_PATH, PLATFORM_TYPES } from '../common/const'
 import { IOS_CODE_SIGNING_ERROR } from '../common/error-list'
 
 export default class IosBuilder extends Builder {
   protected config: IosBuilderConfig
 
   constructor(options: IosBuilderConfig) {
-    super(options)
+    super(options, PLATFORM_TYPES.ios)
   }
 
   private async buildForSimulator(options?: RunOptions): Promise<string> {
@@ -35,7 +35,13 @@ export default class IosBuilder extends Builder {
         '-workspace': projectInfo.name || projectInfo.scheme,
       })
     }
-    await exec(createCmdString('xcodebuild', cmdParams), options, { cwd: projectPath })
+    await exec(
+      createCmdString('xcodebuild', cmdParams),
+      Object.assign(options, {
+        event: this,
+      }),
+      { cwd: projectPath },
+    )
     return path.join(
       projectPath,
       `${IOS_DERIVE_DATA_PATH}/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`,
@@ -69,17 +75,16 @@ export default class IosBuilder extends Builder {
         createCmdString('xcodebuild', cmdParams),
         Object.assign(options || {}, {
           onOutCallback(bufStr) {
-            console.log('bufStr', bufStr)
             if (bufStr.indexOf(`Code Signing Error`) !== -1) {
               isCodeSigningError = true
             }
           },
           onErrorCallback(bufStr) {
-            console.error('bufStr', bufStr)
             if (bufStr.indexOf(`Code Signing Error`) !== -1) {
               isCodeSigningError = true
             }
           },
+          event: this,
         }),
         { cwd: projectPath },
       )

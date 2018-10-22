@@ -1,4 +1,4 @@
-import { createError } from '@weex-cli/utils/src/error/error'
+import { createError } from '@weex-cli/utils/lib/error/error.js'
 
 export enum ERROR_LIST {
   IOS_CODE_SIGNING_ERROR = 'IOS_CODE_SIGNING_ERROR',

@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/utils",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "utils for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -20,10 +20,13 @@
   "author": "",
   "files": [
     "lib/",
-     "!*.test.ts"
+    "!*.test.ts",
+    "!*.map"
   ],
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "debug": "^4.0.1"
+  },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
     "@types/colors": "^1.2.1",

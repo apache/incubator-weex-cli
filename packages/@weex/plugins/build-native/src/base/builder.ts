@@ -1,18 +1,28 @@
-import { BuilderConfig, RunOptions } from '../common/builder'
+import * as EventEmitter from 'events'
+import { BuilderConfig, RunOptions, messageType } from '../common/builder'
 import { PLATFORM_TYPES } from '../common/const'
-import { exec } from '@weex-cli/utils/src/process/process'
+import { exec } from '@weex-cli/utils/lib/process/process.js'
 
-export default class Builder {
+export default class Builder extends EventEmitter {
   public type: PLATFORM_TYPES
   protected config: BuilderConfig
 
-  constructor(options: BuilderConfig) {
+  constructor(options: BuilderConfig, type: PLATFORM_TYPES) {
+    super()
+    this.checkEnv()
     this.init(options)
+    this.on('error', e => {
+      // To prevent the collapse
+      this.emit(messageType.outputError, e)
+    })
+    this.type = type
+  }
+
+  protected checkEnv() {
+    // Do nothing
   }
 
   private init(options: BuilderConfig) {
-    const { type } = options
-    this.type = type
     this.config = Object.assign(
       {
         // Some default

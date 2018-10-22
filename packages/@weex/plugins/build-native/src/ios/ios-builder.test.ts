@@ -3,7 +3,7 @@ const path = require('path')
 import 'jest'
 import IosBuilder from './ios-builder'
 import { PLATFORM_TYPES } from '../common/const'
-import TestHelp from '@weex-cli/utils/src/test/test-help'
+import TestHelp from '@weex-cli/utils/lib/test/test-help.js'
 
 jest.setTimeout(30000)
 

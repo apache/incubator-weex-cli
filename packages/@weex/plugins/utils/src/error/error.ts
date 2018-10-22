@@ -21,7 +21,7 @@ export function createError(options: { message: string; type: string }) {
   )
 }
 
-export function paraError(error: Error) {
+export function formatError(error: Error) {
   let result = null
   try {
     result = JSON.parse(error.message)
