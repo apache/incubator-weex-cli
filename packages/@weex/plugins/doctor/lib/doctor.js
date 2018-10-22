@@ -3,6 +3,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const android_workflow_1 = require("./android/android-workflow");
 const ios_workflow_1 = require("./ios/ios-workflow");
 const platform_1 = require("@weex-cli/utils/lib/platform/platform");
+class ValidatorTask {
+    constructor(validator, result) {
+        this.validator = validator;
+        this.result = result;
+        this.validator = validator;
+        this.result = result;
+    }
+}
+class ValidationResult {
+    /// [ValidationResult.type] should only equal [ValidationResult.installed]
+    /// if no [messages] are hints or errors.
+    constructor(type, messages, statusInfo) {
+        this.type = type;
+        this.messages = messages;
+        this.statusInfo = statusInfo;
+        this.type = type;
+        this.messages = messages;
+    }
+    get leadingBox() {
+        switch (this.type) {
+            case 0 /* missing */:
+                return '[✗]';
+            case 2 /* installed */:
+                return '[✓]';
+            case 1 /* partial */:
+                return '[!]';
+        }
+        return null;
+    }
+}
+exports.ValidationResult = ValidationResult;
 class Doctor {
     constructor() {
         this.validators = [];
@@ -84,37 +115,6 @@ class Doctor {
     }
 }
 exports.Doctor = Doctor;
-class ValidationResult {
-    /// [ValidationResult.type] should only equal [ValidationResult.installed]
-    /// if no [messages] are hints or errors.
-    constructor(type, messages, statusInfo) {
-        this.type = type;
-        this.messages = messages;
-        this.statusInfo = statusInfo;
-        this.type = type;
-        this.messages = messages;
-    }
-    get leadingBox() {
-        switch (this.type) {
-            case 0 /* missing */:
-                return '[✗]';
-            case 2 /* installed */:
-                return '[✓]';
-            case 1 /* partial */:
-                return '[!]';
-        }
-        return null;
-    }
-}
-exports.ValidationResult = ValidationResult;
-class ValidatorTask {
-    constructor(validator, result) {
-        this.validator = validator;
-        this.result = result;
-        this.validator = validator;
-        this.result = result;
-    }
-}
 // A series of tools and required install steps for a target platform (iOS or Android).
 class Workflow {
 }
