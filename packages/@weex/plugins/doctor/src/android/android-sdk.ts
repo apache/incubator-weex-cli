@@ -20,7 +20,7 @@ import { versionParse, VersionOption } from '@weex-cli/utils/lib/base/version'
 import { AndroidStudio } from './android-studio'
 
 export const kAndroidHome: String = 'ANDROID_HOME'
-const numberedAndroidPlatformRe: RegExp = new RegExp('^android-([0-9]+)$')
+const numberedAndroidPlatformRe: RegExp = new RegExp('^android-([0-9P]+)$')
 // const sdkVersionRe: RegExp = new RegExp('^ro.build.version.sdk=([0-9]+)$')
 const javaHomeEnvironmentVariable: String = 'JAVA_HOME'
 // const javaExecutable: String = 'java'
@@ -41,7 +41,10 @@ export class AndroidSdkVersion {
     this.buildToolsVersion = buildToolsVersion
   }
 
-  get buildToolsVersionName() {
+  get buildToolsVersionName(): string {
+    if (!this.buildToolsVersion) {
+      return ''
+    }
     return `${this.buildToolsVersion.major}.${this.buildToolsVersion.minor}.${this.buildToolsVersion.patch}`
   }
 
@@ -58,6 +61,9 @@ export class AndroidSdkVersion {
   }
 
   public getBuildToolsPath(binaryName: string) {
+    if (!this.buildToolsVersionName) {
+      return ''
+    }
     return path.join(this.sdk.directory, 'build-tools', this.buildToolsVersionName, binaryName)
   }
 
@@ -204,12 +210,17 @@ export class AndroidSdk {
       buildTools = fs.readdirSync(buildToolsDir)
     }
 
-    this.sdkVersions = platforms.map(platformName => {
-      const platformVersion = Number(platformName.match(numberedAndroidPlatformRe)[1])
+    platforms.map(platformName => {
+      let matchVersion = platformName.match(numberedAndroidPlatformRe)[1]
+      if (matchVersion === 'P') {
+        matchVersion = '28'
+      }
+      const platformVersion = Number(matchVersion)
 
       let buildToolsVersion
       buildTools.forEach(version => {
-        if (versionParse(version).major === platformVersion) {
+        const versionOption = versionParse(version)
+        if (versionOption && versionOption.major === platformVersion) {
           buildToolsVersion = versionParse(version)
         }
       })
@@ -217,8 +228,7 @@ export class AndroidSdk {
       if (!buildTools) {
         return null
       }
-
-      return new AndroidSdkVersion(this, platformVersion, platformName, buildToolsVersion)
+      this.sdkVersions.push(new AndroidSdkVersion(this, platformVersion, platformName, buildToolsVersion))
     })
     if (this.sdkVersions.length) {
       this.latestVersion = this.sdkVersions[this.sdkVersions.length - 1]
