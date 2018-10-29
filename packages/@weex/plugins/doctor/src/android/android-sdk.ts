@@ -204,18 +204,11 @@ export class AndroidSdk {
       buildTools = fs.readdirSync(buildToolsDir)
     }
 
-    console.log('this.directory: ', this.directory)
-    console.log('platforms: ', platforms)
-    console.log('buildTools: ', buildTools)
-
     this.sdkVersions = platforms.map(platformName => {
-      console.log('platformName: ', platformName)
-      console.log('platformName.match(numberedAndroidPlatformRe): ', platformName.match(numberedAndroidPlatformRe))
       const platformVersion = Number(platformName.match(numberedAndroidPlatformRe)[1])
 
       let buildToolsVersion
       buildTools.forEach(version => {
-        console.log('buildTools--version: ', version)
         if (versionParse(version).major === platformVersion) {
           buildToolsVersion = versionParse(version)
         }
