@@ -35,6 +35,9 @@ class AndroidSdkVersion {
         this.buildToolsVersion = buildToolsVersion;
     }
     get buildToolsVersionName() {
+        if (!this.buildToolsVersion) {
+            return '';
+        }
         return `${this.buildToolsVersion.major}.${this.buildToolsVersion.minor}.${this.buildToolsVersion.patch}`;
     }
     get androidJarPath() {
@@ -47,6 +50,9 @@ class AndroidSdkVersion {
         return path.join(this.sdk.directory, 'platforms', this.platformName, itemName);
     }
     getBuildToolsPath(binaryName) {
+        if (!this.buildToolsVersionName) {
+            return '';
+        }
         return path.join(this.sdk.directory, 'build-tools', this.buildToolsVersionName, binaryName);
     }
     validateSdkWellFormed() {
@@ -179,7 +185,8 @@ class AndroidSdk {
             const platformVersion = Number(matchVersion);
             let buildToolsVersion;
             buildTools.forEach(version => {
-                if (version_1.versionParse(version).major === platformVersion) {
+                const versionOption = version_1.versionParse(version);
+                if (versionOption && versionOption.major === platformVersion) {
                     buildToolsVersion = version_1.versionParse(version);
                 }
             });

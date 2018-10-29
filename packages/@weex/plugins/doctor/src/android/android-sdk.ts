@@ -41,7 +41,10 @@ export class AndroidSdkVersion {
     this.buildToolsVersion = buildToolsVersion
   }
 
-  get buildToolsVersionName() {
+  get buildToolsVersionName(): string {
+    if (!this.buildToolsVersion) {
+      return ''
+    }
     return `${this.buildToolsVersion.major}.${this.buildToolsVersion.minor}.${this.buildToolsVersion.patch}`
   }
 
@@ -58,6 +61,9 @@ export class AndroidSdkVersion {
   }
 
   public getBuildToolsPath(binaryName: string) {
+    if (!this.buildToolsVersionName) {
+      return ''
+    }
     return path.join(this.sdk.directory, 'build-tools', this.buildToolsVersionName, binaryName)
   }
 
@@ -213,7 +219,8 @@ export class AndroidSdk {
 
       let buildToolsVersion
       buildTools.forEach(version => {
-        if (versionParse(version).major === platformVersion) {
+        const versionOption = versionParse(version)
+        if (versionOption && versionOption.major === platformVersion) {
           buildToolsVersion = versionParse(version)
         }
       })
