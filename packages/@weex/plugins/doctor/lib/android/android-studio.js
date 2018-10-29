@@ -85,7 +85,7 @@ class AndroidStudio {
     }
     checkForStudio(path) {
         if (!fs.existsSync(path)) {
-            return;
+            return [];
         }
         const candidatePaths = [];
         try {
