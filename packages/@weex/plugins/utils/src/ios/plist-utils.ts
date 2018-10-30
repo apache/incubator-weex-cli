@@ -4,7 +4,7 @@ import { spawnSync } from 'child_process'
 
 export const kCFBundleShortVersionStringKey = 'CFBundleShortVersionString'
 
-export function getValueFromFile(plistFilePath: string, key: string):string {
+export function getValueFromFile(plistFilePath: string, key: string): string {
   const executable = '/usr/bin/defaults'
   if (!fs.existsSync(executable)) {
     return null
@@ -18,7 +18,7 @@ export function getValueFromFile(plistFilePath: string, key: string):string {
   try {
     const results = spawnSync(executable, ['read', normalizedPlistPath, key])
     return results.stdout.toString().trim()
-  }catch(e) {
+  } catch (e) {
     return null
   }
 }
