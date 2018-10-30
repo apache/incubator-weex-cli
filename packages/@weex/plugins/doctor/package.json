@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/doctor",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "description": "Doctor for weex-toolkit",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -21,7 +21,7 @@
   "author": "balloonzzq <zqzhuang888@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/utils": "^0.0.7"
+    "@weex-cli/utils": "^0.0.8"
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",

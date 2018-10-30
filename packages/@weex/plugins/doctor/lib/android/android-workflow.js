@@ -40,6 +40,9 @@ class AndroidValidator {
             }
             return new doctor_1.ValidationResult(0 /* missing */, this.messages);
         }
+        if (!this.androidSdk.isMustAndroidSdkVersion) {
+            this.messages.push(new doctor_1.ValidationMessage(`There is no required version SDK plaform android-${android_sdk_1.mustAndroidSdkVersion}.`, true /* isError */));
+        }
         this.messages.push(new doctor_1.ValidationMessage(`Android SDK at ${this.androidSdk.directory}`));
         let sdkVersionText;
         if (this.androidSdk.latestVersion) {
@@ -53,9 +56,9 @@ class AndroidValidator {
         const validationResult = this.androidSdk.validateSdkWellFormed();
         if (validationResult.length) {
             // Android SDK is not functional.
-            validationResult.forEach(message => {
-                this.messages.push(new doctor_1.ValidationMessage(message, true /* isError */));
-            });
+            // validationResult.forEach(message => {
+            //   this.messages.push(new ValidationMessage(message, true /* isError */))
+            // })
             this.messages.push(new doctor_1.ValidationMessage(`Try re-installing or updating your Android SDK.`));
             return new doctor_1.ValidationResult(1 /* partial */, this.messages, sdkVersionText);
         }
