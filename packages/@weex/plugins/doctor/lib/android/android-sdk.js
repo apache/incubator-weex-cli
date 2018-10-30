@@ -22,7 +22,8 @@ const numberedAndroidPlatformRe = new RegExp('^android-([0-9P]+)$');
 const javaHomeEnvironmentVariable = 'JAVA_HOME';
 // const javaExecutable: String = 'java'
 // The minimum Android SDK version we support.
-// const minimumAndroidSdkVersion: number = 25
+// const minimumAndroidSdkVersion: number = 26
+exports.mustAndroidSdkVersion = 26;
 class AndroidSdkVersion {
     constructor(sdk, sdkLevel, platformName, buildToolsVersion) {
         this.sdk = sdk;
@@ -82,6 +83,7 @@ class AndroidSdk {
     constructor() {
         this.sdkVersions = [];
         this.androidStudio = new android_studio_1.AndroidStudio();
+        this.isMustAndroidSdkVersion = false;
         this.init();
     }
     get adbPath() {
@@ -183,6 +185,9 @@ class AndroidSdk {
                 matchVersion = '28';
             }
             const platformVersion = Number(matchVersion);
+            if (exports.mustAndroidSdkVersion === platformVersion) {
+                this.isMustAndroidSdkVersion = true;
+            }
             let buildToolsVersion;
             buildTools.forEach(version => {
                 const versionOption = version_1.versionParse(version);

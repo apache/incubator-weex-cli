@@ -26,7 +26,8 @@ const javaHomeEnvironmentVariable: String = 'JAVA_HOME'
 // const javaExecutable: String = 'java'
 
 // The minimum Android SDK version we support.
-// const minimumAndroidSdkVersion: number = 25
+// const minimumAndroidSdkVersion: number = 26
+export const mustAndroidSdkVersion: number = 26
 
 export class AndroidSdkVersion {
   constructor(
@@ -98,6 +99,7 @@ export class AndroidSdk {
   public sdkVersions: AndroidSdkVersion[] = []
   public latestVersion: AndroidSdkVersion
   public androidStudio: AndroidStudio = new AndroidStudio()
+  public isMustAndroidSdkVersion: boolean = false
 
   constructor() {
     this.init()
@@ -216,7 +218,9 @@ export class AndroidSdk {
         matchVersion = '28'
       }
       const platformVersion = Number(matchVersion)
-
+      if (mustAndroidSdkVersion === platformVersion) {
+        this.isMustAndroidSdkVersion = true
+      }
       let buildToolsVersion
       buildTools.forEach(version => {
         const versionOption = versionParse(version)
