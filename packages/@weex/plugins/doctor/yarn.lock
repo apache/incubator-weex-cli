@@ -52,10 +52,10 @@
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.36.tgz#1ddaf3211c7cd7046fcaefe68c713469ccfc9504"
   integrity sha512-LAeBECPU9IG+K0pRdGl2L9lxanb0CKgue0IGpdn9nmpmKefDrCglrYwkxFYoQxCtY0w/mTxpJaQ4VAChcSIN+A==
 
-"@weex-cli/utils@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@weex-cli/utils/-/utils-0.0.7.tgz#e72092792717b112a4bd8528152e737fa7e26d62"
-  integrity sha512-Zf5J+LgVpIkmbHNxXN9TpGKGN2wZfXkHu1Phzz9pfgcEYEbootmIMwIH58G2rO7EIxnlkjRxcuSqf05Q8KY78Q==
+"@weex-cli/utils@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@weex-cli/utils/-/utils-0.0.8.tgz#cff7b5a81d5d5ff9d47665fa6b283d814e9dc4d6"
+  integrity sha512-CzUsjryEE7/aULvm9X88/mE89i3bXoQ+JhcFxUeZYAhf5al2yXWzdXZPPXALnlo9J0bzDuwIyP01KxKkqxUnXw==
   dependencies:
     debug "^4.0.1"
 
