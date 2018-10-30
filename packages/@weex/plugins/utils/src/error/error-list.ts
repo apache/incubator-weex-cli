@@ -49,5 +49,5 @@ export const IOS_COCOAPODS_NOT_INSTALLED = createError({
 
 export const IOS_EULA_NOT_SIGNED = createError({
   type: ERROR_LIST.IOS_XCODE_NOT_SIGNED,
-  message: `Xcode not signed!`
+  message: `Xcode not signed!`,
 })

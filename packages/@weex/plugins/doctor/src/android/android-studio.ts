@@ -103,7 +103,7 @@ export class AndroidStudio {
 
   public checkForStudio(path: string): string[] {
     if (!fs.existsSync(path)) {
-      return
+      return []
     }
     const candidatePaths = []
 

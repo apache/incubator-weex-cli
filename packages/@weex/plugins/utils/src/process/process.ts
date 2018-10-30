@@ -8,7 +8,7 @@ const childProcess = require('child_process')
 
 export enum messageType {
   outputLog = 'outputLog',
-  outputError = 'outputError'
+  outputError = 'outputError',
 }
 
 export function runAndGetOutput(cmdString: string, options = {}) {
@@ -40,7 +40,7 @@ export interface ExecOptions {
   onOutCallback?: Function
   onErrorCallback?: Function
   onCloseCallback?: Function
-  handleChildProcess?: Function,
+  handleChildProcess?: Function
   event?: EventEmitter
 }
 
@@ -71,7 +71,9 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
       }
       if (onOutCallback || event) {
         child.stdout.on('data', data => {
-          const bufStr = Buffer.from(data).toString().trim()
+          const bufStr = Buffer.from(data)
+            .toString()
+            .trim()
           onOutCallback && onOutCallback(bufStr)
           debug(`STDOUT: ${bufStr}`)
           event && event.emit(messageType.outputLog, bufStr)
@@ -79,7 +81,9 @@ export function exec(cmdString: string, options?: ExecOptions, nativeExecOptions
       }
       if (onErrorCallback || event) {
         child.stderr.on('data', data => {
-          const bufStr = Buffer.from(data).toString().trim()
+          const bufStr = Buffer.from(data)
+            .toString()
+            .trim()
           onErrorCallback && onErrorCallback(bufStr)
           debug(`STDERR: ${bufStr}`)
           event && event.emit(messageType.outputError, bufStr)
@@ -108,6 +112,14 @@ export function runAsync(command: string, args: string[] = []): Promise<any> {
   })
 }
 
+export function runSync(command: string, args: string[] = []) {
+  try {
+    return childProcess.spawnSync(command, args)
+  } catch (e) {
+    return null
+  }
+}
+
 export function which(execName, args = []): string[] {
   const spawnArgs = [execName, ...args]
   const result = childProcess.spawnSync('which', spawnArgs)
@@ -123,13 +135,13 @@ export function which(execName, args = []): string[] {
 
 export function canRunSync(commandName, args: string[] = []): boolean {
   let result
-    try {
-      result = childProcess.spawnSync(commandName, args);
-      if (result.status === 0) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
+  try {
+    result = childProcess.spawnSync(commandName, args)
+    if (result.status === 0) {
+      return true
     }
+    return false
+  } catch (e) {
+    return false
+  }
 }
