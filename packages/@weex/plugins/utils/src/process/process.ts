@@ -108,6 +108,14 @@ export function runAsync(command: string, args: string[] = []): Promise<any> {
   })
 }
 
+export function runSync(command: string, args: string[] = []) {
+  try {
+    return childProcess.spawnSync(command, args)
+  } catch (e) {
+    return null
+  }
+}
+
 export function which(execName, args = []): string[] {
   const spawnArgs = [execName, ...args]
   const result = childProcess.spawnSync('which', spawnArgs)

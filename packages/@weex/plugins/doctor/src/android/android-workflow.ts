@@ -1,5 +1,5 @@
 import { Workflow, ValidationType, ValidationMessage, ValidationResult, DoctorValidator } from '../doctor'
-import { kAndroidHome, AndroidSdk } from './android-sdk'
+import { kAndroidHome, AndroidSdk, mustAndroidSdkVersion } from './android-sdk'
 import { canRunSync, runSync } from '../base/process'
 
 // const licenseAccepted = new RegExp('All SDK package licenses accepted.')
@@ -52,6 +52,14 @@ export class AndroidValidator implements DoctorValidator {
       }
       return new ValidationResult(ValidationType.missing, this.messages)
     }
+    if (!this.androidSdk.isMustAndroidSdkVersion) {
+      this.messages.push(
+        new ValidationMessage(
+          `There is no required version SDK plaform android-${mustAndroidSdkVersion}.`,
+          true /* isError */,
+        ),
+      )
+    }
 
     this.messages.push(new ValidationMessage(`Android SDK at ${this.androidSdk.directory}`))
 
@@ -76,9 +84,9 @@ export class AndroidValidator implements DoctorValidator {
 
     if (validationResult.length) {
       // Android SDK is not functional.
-      validationResult.forEach(message => {
-        this.messages.push(new ValidationMessage(message, true /* isError */))
-      })
+      // validationResult.forEach(message => {
+      //   this.messages.push(new ValidationMessage(message, true /* isError */))
+      // })
       this.messages.push(new ValidationMessage(`Try re-installing or updating your Android SDK.`))
       return new ValidationResult(ValidationType.partial, this.messages, sdkVersionText)
     }

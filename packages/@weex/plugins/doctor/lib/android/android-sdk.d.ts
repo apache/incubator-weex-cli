@@ -1,6 +1,7 @@
 import { VersionOption } from '@weex-cli/utils/lib/base/version';
 import { AndroidStudio } from './android-studio';
 export declare const kAndroidHome: String;
+export declare const mustAndroidSdkVersion: number;
 export declare class AndroidSdkVersion {
     sdk: AndroidSdk;
     sdkLevel: number;
@@ -21,6 +22,7 @@ export declare class AndroidSdk {
     sdkVersions: AndroidSdkVersion[];
     latestVersion: AndroidSdkVersion;
     androidStudio: AndroidStudio;
+    isMustAndroidSdkVersion: boolean;
     constructor();
     readonly adbPath: string;
     readonly sdkManagerPath: string;
