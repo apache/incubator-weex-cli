@@ -133,9 +133,6 @@ class AndroidStudio {
     allLinuxOrWindows() {
         let studios = [];
         function hasStudioAt(path, newerThan) {
-            if (!path) {
-                return false;
-            }
             return studios.every(studio => {
                 if (studio.directory !== path) {
                     return false;
@@ -150,10 +147,10 @@ class AndroidStudio {
         // pointing to the same installation, so we grab only the latest one.
         if (fs.existsSync(platform_1.homedir)) {
             for (let entity of fs.readdirSync(platform_1.homedir)) {
-                const homeDotDir = path.join(process.env['HOME'], entity);
+                const homeDotDir = path.join(platform_1.homedir, entity);
                 if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
                     const studio = this.fromHomeDot(homeDotDir);
-                    if (studio && !hasStudioAt(studio.directory || '', studio.version)) {
+                    if (studio && !hasStudioAt(studio.directory, studio.version)) {
                         studios = studios.filter(other => other.directory !== studio.directory);
                         studios.push(studio);
                     }
