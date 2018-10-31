@@ -113,7 +113,7 @@ class AndroidStudio {
         return new AndroidStudioValid(studioPath, { version: version });
     }
     fromHomeDot(homeDotDir) {
-        const versionMatch = path.basename(platform_1.homedir).match(_dotHomeStudioVersionMatcher)[1];
+        const versionMatch = path.basename(homeDotDir).match(_dotHomeStudioVersionMatcher)[1];
         if (versionMatch.length !== 3) {
             return null;
         }
