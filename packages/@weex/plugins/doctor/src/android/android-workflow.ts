@@ -116,7 +116,7 @@ export class AndroidValidator implements DoctorValidator {
   }
 
   public checkJavaVersion(javaBinary) {
-    if (!canRunSync(javaBinary)) {
+    if (!canRunSync(javaBinary, ['-version'])) {
       this.messages.push(
         new ValidationMessage(`Cannot execute ${javaBinary} to determine the version.`, true /* isError */),
       )
@@ -125,7 +125,7 @@ export class AndroidValidator implements DoctorValidator {
     let javaVersion: string
     const result = runSync(javaBinary, ['-version'])
     if (result.status === 0) {
-      const versionLines = result.stderr.split('\n')
+      const versionLines = result.stderr.toString().split('\n')
       javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0]
     }
     if (!javaVersion) {
