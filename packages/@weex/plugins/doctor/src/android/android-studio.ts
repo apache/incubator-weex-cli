@@ -134,7 +134,7 @@ export class AndroidStudio {
   }
 
   public fromHomeDot(homeDotDir) {
-    const versionMatch = path.basename(homedir).match(_dotHomeStudioVersionMatcher)[1]
+    const versionMatch = path.basename(homeDotDir).match(_dotHomeStudioVersionMatcher)[1]
     if (versionMatch.length !== 3) {
       return null
     }
