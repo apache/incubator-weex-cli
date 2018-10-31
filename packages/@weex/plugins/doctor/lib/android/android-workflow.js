@@ -78,14 +78,14 @@ class AndroidValidator {
         return new doctor_1.ValidationResult(2 /* installed */, this.messages, sdkVersionText);
     }
     checkJavaVersion(javaBinary) {
-        if (!process_1.canRunSync(javaBinary)) {
+        if (!process_1.canRunSync(javaBinary, ['-version'])) {
             this.messages.push(new doctor_1.ValidationMessage(`Cannot execute ${javaBinary} to determine the version.`, true /* isError */));
             return false;
         }
         let javaVersion;
         const result = process_1.runSync(javaBinary, ['-version']);
         if (result.status === 0) {
-            const versionLines = result.stderr.split('\n');
+            const versionLines = result.stderr.toString().split('\n');
             javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
         }
         if (!javaVersion) {
