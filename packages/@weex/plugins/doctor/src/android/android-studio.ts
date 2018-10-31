@@ -156,9 +156,6 @@ export class AndroidStudio {
     let studios: AndroidStudioValid[] = []
 
     function hasStudioAt(path: string, newerThan?: VersionOption): boolean {
-      if (!path) {
-        return false
-      }
       return studios.every(studio => {
         if (studio.directory !== path) {
           return false
@@ -174,10 +171,10 @@ export class AndroidStudio {
     // pointing to the same installation, so we grab only the latest one.
     if (fs.existsSync(homedir)) {
       for (let entity of fs.readdirSync(homedir)) {
-        const homeDotDir = path.join(process.env['HOME'], entity)
+        const homeDotDir = path.join(homedir, entity)
         if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
           const studio = this.fromHomeDot(homeDotDir)
-          if (studio && !hasStudioAt(studio.directory || '', studio.version)) {
+          if (studio && !hasStudioAt(studio.directory, studio.version)) {
             studios = studios.filter(other => other.directory !== studio.directory)
             studios.push(studio)
           }
