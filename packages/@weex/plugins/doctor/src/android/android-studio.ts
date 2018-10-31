@@ -156,6 +156,9 @@ export class AndroidStudio {
     let studios: AndroidStudioValid[] = []
 
     function hasStudioAt(path: string, newerThan?: VersionOption): boolean {
+      if (!path) {
+        return false
+      }
       return studios.every(studio => {
         if (studio.directory !== path) {
           return false
@@ -174,7 +177,7 @@ export class AndroidStudio {
         const homeDotDir = path.join(process.env['HOME'], entity)
         if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
           const studio = this.fromHomeDot(homeDotDir)
-          if (studio && !hasStudioAt(studio.directory, studio.version)) {
+          if (studio && !hasStudioAt(studio.directory || '', studio.version)) {
             studios = studios.filter(other => other.directory !== studio.directory)
             studios.push(studio)
           }
