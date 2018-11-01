@@ -37,7 +37,7 @@ class AndroidStudioValid {
             ? path.join(this.directory, 'jre', 'jdk', 'Contents', 'Home')
             : path.join(this.directory, 'jre');
         const javaExecutable = path.join(javaPath, 'bin', 'java');
-        if (!process_1.canRunSync(javaExecutable)) {
+        if (!process_1.canRunSync(javaExecutable, ['-version'])) {
             this.validationMessages.push(`Unable to find bundled Java version.`);
         }
         else {
@@ -113,7 +113,7 @@ class AndroidStudio {
         return new AndroidStudioValid(studioPath, { version: version });
     }
     fromHomeDot(homeDotDir) {
-        const versionMatch = path.basename(platform_1.homedir).match(_dotHomeStudioVersionMatcher)[1];
+        const versionMatch = path.basename(homeDotDir).match(_dotHomeStudioVersionMatcher)[1];
         if (versionMatch.length !== 3) {
             return null;
         }
@@ -147,7 +147,7 @@ class AndroidStudio {
         // pointing to the same installation, so we grab only the latest one.
         if (fs.existsSync(platform_1.homedir)) {
             for (let entity of fs.readdirSync(platform_1.homedir)) {
-                const homeDotDir = path.join(process.env['HOME'], entity);
+                const homeDotDir = path.join(platform_1.homedir, entity);
                 if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
                     const studio = this.fromHomeDot(homeDotDir);
                     if (studio && !hasStudioAt(studio.directory, studio.version)) {
