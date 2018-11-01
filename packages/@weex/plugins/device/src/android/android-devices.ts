@@ -80,7 +80,7 @@ class AndroidDevice extends Devices {
     return new Promise(async (resolve, reject) => {
       let cmd
       let tryTimes = 0
-      let maxTryTimes = 10
+      let maxTryTimes = 18
       let timeInterval = 10000
       let timer
       const deviceInfo = this.getDeviceById(id)
