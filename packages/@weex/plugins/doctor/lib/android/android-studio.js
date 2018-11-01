@@ -37,7 +37,7 @@ class AndroidStudioValid {
             ? path.join(this.directory, 'jre', 'jdk', 'Contents', 'Home')
             : path.join(this.directory, 'jre');
         const javaExecutable = path.join(javaPath, 'bin', 'java');
-        if (!process_1.canRunSync(javaExecutable)) {
+        if (!process_1.canRunSync(javaExecutable, ['-version'])) {
             this.validationMessages.push(`Unable to find bundled Java version.`);
         }
         else {
