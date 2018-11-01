@@ -134,6 +134,39 @@ class AndroidDevice extends Devices {
     })
   }
 
+  async findAdbId(options: RunDeviceOptions): Promise<string> {
+    let adbId = null
+    await this.launchById(options.id)
+    const deviceCmdList = await find('name', options.id)
+    const adbSimulatorDeviceList = this.getAndroidDevicesList(true)
+
+    if (!deviceCmdList || !deviceCmdList.length) {
+      throw new Error(`The device not launch ${options.id}`)
+    }
+
+    for (let i = 0; i < adbSimulatorDeviceList.length; i++) {
+      const simulator = adbSimulatorDeviceList[i]
+      if (adbId) {
+        break
+      }
+      const portMatch = simulator.id.match(/-(\w+)/)
+      if (!portMatch || !portMatch[1]) {
+        continue
+      }
+      const portCmdList = await find('port', portMatch[1])
+      if (!portCmdList || !portCmdList.length) {
+        continue
+      }
+
+      deviceCmdList.forEach(cmd => {
+        if (portCmdList[0].pid === cmd.pid) {
+          adbId = simulator.id
+        }
+      })
+    }
+    return adbId
+  }
+
   async run(options: RunDeviceOptions) {
     const deviceInfo = this.getDeviceById(options.id)
     const { androidShellCmdString } = options
@@ -143,32 +176,15 @@ class AndroidDevice extends Devices {
       throw Error(`Not find device ${options.id}`)
     }
     if (deviceInfo.isSimulator) {
-      await this.launchById(options.id)
-      const deviceCmdList = await find('name', deviceInfo.id)
-      const adbSimulatorDeviceList = this.getAndroidDevicesList(true)
-
-      if (!deviceCmdList || !deviceCmdList.length) {
-        throw new Error(`The device not launch ${deviceInfo.id}`)
-      }
-
-      for (let i = 0; i < adbSimulatorDeviceList.length; i++) {
-        const simulator = adbSimulatorDeviceList[i]
-        if (adbId) {
-          break
-        }
-        const portMatch = simulator.id.match(/-(\w+)/)
-        if (!portMatch || !portMatch[1]) {
-          continue
-        }
-        const portCmdList = await find('port', portMatch[1])
-        if (!portCmdList || !portCmdList.length) {
-          continue
-        }
-
-        deviceCmdList.forEach(cmd => {
-          if (portCmdList[0].pid === cmd.pid) {
-            adbId = simulator.id
-          }
+      adbId = await this.findAdbId(options)
+      if (!adbId) {
+        // try twice
+        const timeInterval = isWindows ? 30000 : 10000
+        await new Promise(resolve => {
+          setTimeout(async () => {
+            adbId = await this.findAdbId(options)
+            resolve()
+          }, timeInterval)
         })
       }
     } else {
