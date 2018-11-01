@@ -56,7 +56,8 @@ export class AndroidValidator implements DoctorValidator {
       this.messages.push(
         new ValidationMessage(
           `There is no required version SDK plaform android-${mustAndroidSdkVersion}.`,
-          true /* isError */,
+          false /* isError */,
+          true /* isWaring */,
         ),
       )
     }

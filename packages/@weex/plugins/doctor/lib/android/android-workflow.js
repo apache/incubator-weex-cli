@@ -41,7 +41,7 @@ class AndroidValidator {
             return new doctor_1.ValidationResult(0 /* missing */, this.messages);
         }
         if (!this.androidSdk.isMustAndroidSdkVersion) {
-            this.messages.push(new doctor_1.ValidationMessage(`There is no required version SDK plaform android-${android_sdk_1.mustAndroidSdkVersion}.`, true /* isError */));
+            this.messages.push(new doctor_1.ValidationMessage(`There is no required version SDK plaform android-${android_sdk_1.mustAndroidSdkVersion}.`, false /* isError */, true /* isWaring */));
         }
         this.messages.push(new doctor_1.ValidationMessage(`Android SDK at ${this.androidSdk.directory}`));
         let sdkVersionText;
