@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const android_workflow_1 = require("./android/android-workflow");
 const ios_workflow_1 = require("./ios/ios-workflow");
 const platform_1 = require("@weex-cli/utils/lib/platform/platform");
+const colors = require("colors");
 class ValidatorTask {
     constructor(validator, result) {
         this.validator = validator;
@@ -66,18 +67,25 @@ class Doctor {
             const validator = validatorTask.validator;
             const results = [];
             let result;
+            let color;
             results.push(validatorTask.result);
             result = this.mergeValidationResults(results);
-            messageResult += `\n${result.leadingBox} ${validator.title} is \n`;
+            color =
+                result.type === 0 /* missing */
+                    ? colors.red
+                    : result.type === 2 /* installed */
+                        ? colors.green
+                        : colors.yellow;
+            messageResult += `${color(`\n${result.leadingBox} ${validator.title} is \n`)}`;
             // console.log(`${result.leadingBox} ${validator.title} is`)
             for (let message of result.messages) {
                 const text = message.message.replace('\n', '\n      ');
                 if (message.isError) {
-                    messageResult += `    ✗  ${text}\n`;
+                    messageResult += `${colors.red(`    ✗  ${text}`)}\n`;
                     // console.log(`    ✗  ${text}`);
                 }
                 else if (message.isWaring) {
-                    messageResult += `    !  ${text}\n`;
+                    messageResult += `${colors.yellow(`    !  ${text}`)}\n`;
                     // console.log(`    !  ${text}`);
                 }
                 else {

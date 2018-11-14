@@ -1,6 +1,7 @@
 import { AndroidWorkflow, AndroidValidator } from './android/android-workflow'
 import { IOSWorkflow, IOSValidator } from './ios/ios-workflow'
 import { isWindows } from '@weex-cli/utils/lib/platform/platform'
+import * as colors from 'colors'
 
 export const enum ValidationType {
   missing,
@@ -73,18 +74,24 @@ export class Doctor {
       const validator: DoctorValidator = validatorTask.validator
       const results: ValidationResult[] = []
       let result: ValidationResult
+      let color: any
       results.push(validatorTask.result)
       result = this.mergeValidationResults(results)
-
-      messageResult += `\n${result.leadingBox} ${validator.title} is \n`
+      color =
+        result.type === ValidationType.missing
+          ? colors.red
+          : result.type === ValidationType.installed
+            ? colors.green
+            : colors.yellow
+      messageResult += `${color(`\n${result.leadingBox} ${validator.title} is \n`)}`
       // console.log(`${result.leadingBox} ${validator.title} is`)
       for (let message of result.messages) {
         const text = message.message.replace('\n', '\n      ')
         if (message.isError) {
-          messageResult += `    ✗  ${text}\n`
+          messageResult += `${colors.red(`    ✗  ${text}`)}\n`
           // console.log(`    ✗  ${text}`);
         } else if (message.isWaring) {
-          messageResult += `    !  ${text}\n`
+          messageResult += `${colors.yellow(`    !  ${text}`)}\n`
           // console.log(`    !  ${text}`);
         } else {
           messageResult += `    •  ${text}\n`
