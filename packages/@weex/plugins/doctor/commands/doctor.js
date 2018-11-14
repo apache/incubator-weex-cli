@@ -20,6 +20,7 @@ module.exports = {
     })
     logger.log(androidAndiOSReport)
 
+    logger.log(`${logger.checkmark} Weex Cli Environment:\n`)
     spinner = logger.spin(`Check if you need to update weex-cli core...`)
     
     const coreConfig = parameters.options.__config.configs
@@ -37,7 +38,6 @@ module.exports = {
       })
     }
     
-    logger.log(`${logger.checkmark} Weex Cli Environment:\n`)
     const moduleConfig = parameters.options.__config.modules
     const mods = moduleConfig.mods
     for (let item in mods) {
