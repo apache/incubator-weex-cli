@@ -1,7 +1,5 @@
 import Cli from './cli'
-import * as uniqueTempDir from 'unique-temp-dir'
 import * as sinon from 'sinon'
-import * as stripANSI from 'strip-ansi'
 
 sinon.stub(console, 'log')
 
@@ -22,15 +20,15 @@ test('can start the cli', async () => {
     trash: '',
     modules: {
       mods: {},
-      last_update_time: new Date().getTime()
+      last_update_time: new Date().getTime(),
     },
-  globalConfigFileName: ''
+    globalConfigFileName: '',
   }
   const options = {}
   const cli = new Cli(cliConfiguration, options)
   expect(typeof cli.start).toBe('function')
-  const toolbox = await cli.start();
-  console.log(toolbox)  
+  const toolbox = await cli.start()
+  console.log(toolbox)
   expect(toolbox.commandName).toBe('weex')
   expect(Array.isArray(toolbox.plugin.commands)).toBeTruthy()
   expect(Array.isArray(toolbox.plugin.extensions)).toBeTruthy()

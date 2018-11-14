@@ -9,12 +9,12 @@ import { fs } from '../../toolbox/fs-tools'
 import command from './repair'
 
 const globalConfig = {
-  moduleRoot: '' + uniqueTempDir({create: true}),
+  moduleRoot: '' + uniqueTempDir({ create: true }),
   moduleConfigFileName: 'config.json',
   registry: 'https://registry.npmjs.org/',
   modules: {
-    mods: {}
-  }
+    mods: {},
+  },
 }
 const packagename = 'debug'
 const config = {}
@@ -30,12 +30,15 @@ function createFakeToolbox(): Toolbox {
     success: sinon.stub(),
     colors: {
       green: sinon.stub(),
-      yellow: sinon.stub()
+      yellow: sinon.stub(),
     },
   }
-  fakeContext.parameters = { first: null, options: {
-    __config: globalConfig
-  }}
+  fakeContext.parameters = {
+    first: null,
+    options: {
+      __config: globalConfig,
+    },
+  }
   return fakeContext
 }
 
@@ -55,7 +58,7 @@ test('show helps while config with not args', async () => {
   const toolbox = createFakeToolbox()
   toolbox.parameters.first = null
   await command.run(toolbox)
-  const {info, table, success } = toolbox.logger
+  const { info, table, success } = toolbox.logger
   expect(info.callCount).toBe(2)
   expect(table.callCount).toBe(1)
   expect(success.callCount).toBe(1)

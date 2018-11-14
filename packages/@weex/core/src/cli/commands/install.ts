@@ -1,4 +1,4 @@
-import { CliConfiguration, ModType, installPackage } from '../cli';
+import { CliConfiguration, ModType, installPackage } from '../cli'
 import * as path from 'path'
 
 const debug = require('debug')('weex:core:install')
@@ -9,25 +9,20 @@ export default {
   description: 'Install weex plugin for Weex Cli',
   hidden: false,
   run: async toolbox => {
-    const {
-      parameters,
-      fs,
-      system,
-      logger
-    } = toolbox;
-    const globalConfiguration: CliConfiguration = parameters.options.__config;
-    const packagename = parameters.first;
+    const { parameters, fs, logger } = toolbox
+    const globalConfiguration: CliConfiguration = parameters.options.__config
+    const packagename = parameters.first
     const moduleConfigFilePath = path.join(globalConfiguration.moduleRoot, globalConfiguration.moduleConfigFileName)
     const showHelp = async () => {
       let commandData = [
         [logger.colors.green('Command'), logger.colors.green('Description')],
-        [`install ${logger.colors.yellow('<Package>')}`, 'Install a extension or plugin for Weex Cli.']
+        [`install ${logger.colors.yellow('<Package>')}`, 'Install a extension or plugin for Weex Cli.'],
       ]
-      logger.table(commandData, {format: 'markdown'})
+      logger.table(commandData, { format: 'markdown' })
       logger.info(`\nTo see the exist module, you can run \`weex version\``)
     }
-    let version;
-    let name;
+    let version
+    let name
     if (packagename) {
       const first = packagename.slice(0, 1)
       // check for origin npm package
@@ -54,8 +49,8 @@ export default {
         root: globalConfiguration.moduleRoot,
         registry: globalConfiguration.registry,
       })
-      let commands = [];
-      let type = ModType.EXTENSION;
+      let commands = []
+      let type = ModType.EXTENSION
       for (let i = 0; i < packages.length; i++) {
         const commandBasePath = path.join(packages[i].root, 'commands')
         const commandFiles: string[] = fs.list(commandBasePath) || []
@@ -104,10 +99,9 @@ export default {
         mods: globalConfiguration.modules.mods,
         last_update_time: new Date().getTime(),
       })
-      logger.success(`\nInstall ${type === ModType.EXTENSION ? 'Extension': 'Plugin'} ${packagename} success!`)
+      logger.success(`\nInstall ${type === ModType.EXTENSION ? 'Extension' : 'Plugin'} ${packagename} success!`)
+    } else {
+      await showHelp()
     }
-    else {
-      await showHelp();
-    }
-  }
+  },
 }

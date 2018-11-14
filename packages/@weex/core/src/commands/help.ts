@@ -1,18 +1,9 @@
-import * as path from 'path';
-
 export default {
   name: 'help',
   alias: 'h',
   dashed: true,
-  run: async ({ 
-    parameters, 
-    runtime, 
-    logger, 
-    fs, 
-    meta 
-  }) => {
+  run: async ({ parameters, runtime, logger, fs, meta }) => {
     const showHelp = async (subcommand?: string) => {
-      
       let highLightKeys = {
         platform: logger.colors.yellow('<Platform>'),
         plugin: logger.colors.yellow('<Plugin>'),
@@ -39,7 +30,10 @@ export default {
         'plugin-create': [`plugin create [plugin]`, 'Create a weex plugin template.'],
         run: [`run ${highLightKeys.platform}`, 'Build android/ios application and run.'],
         build: [`build ${highLightKeys.platform}`, 'Build android/ios application for production.'],
-        doctor: ['doctor', 'Checks your system for configuration problems which might prevent the Weex CLI from working properly.'],
+        doctor: [
+          'doctor',
+          'Checks your system for configuration problems which might prevent the Weex CLI from working properly.',
+        ],
         autocomplete: ['autocomplete', 'Configures your current command-line completion settings.'],
         'device-list': [`device list`, 'Lists all recognized connected physical or virtual devices.'],
         'device-log': [`device log`, 'Opens the log stream for the selected device.'],
@@ -56,7 +50,7 @@ export default {
       }
       let usageTableData = [
         [logger.colors.success('Synopsis'), logger.colors.success('Usage')],
-        ['General', `${logger.colors.yellow('$ weex <Command> [Command Parameters] [--command <Options>]')}`]
+        ['General', `${logger.colors.yellow('$ weex <Command> [Command Parameters] [--command <Options>]')}`],
       ]
       let generalCommandData = [
         [logger.colors.success('Command'), logger.colors.success('Description')],
@@ -65,7 +59,7 @@ export default {
         helps.doctor,
         helps.repair,
         helps.install,
-        helps.uninstall
+        helps.uninstall,
       ]
       let projectDevelopmentData = [
         [logger.colors.success('Command'), logger.colors.success('Description')],
@@ -87,13 +81,13 @@ export default {
         helps['plugin-create'],
         helps.run,
         helps.build,
-        helps.lint
+        helps.lint,
       ]
       let deviceData = [
         [logger.colors.success('Command'), logger.colors.success('Description')],
         helps['device-log'],
         helps['device-run'],
-        helps['device-list']
+        helps['device-list'],
       ]
       let configurationData = [
         [logger.colors.success('Command'), logger.colors.success('Description')],
@@ -103,66 +97,56 @@ export default {
         helps['config-list'],
         helps['config-delete'],
       ]
-      let thirdPartData = [
-        [logger.colors.success('Command'), logger.colors.success('Description')],
-
-      ]
+      let thirdPartData = [[logger.colors.success('Command'), logger.colors.success('Description')]]
       let globalOptionData = [
         [logger.colors.success('Option'), logger.colors.success('Description')],
         [`--help, -h`, 'Prints help about the selected command in the console.'],
         [`--version`, 'Prints the client version.'],
         [`--verbose`, 'Prints a detailed diagnostic log for the execution of the current command.'],
       ]
-      const info = meta.getModulesInfo();
+      const info = meta.getModulesInfo()
       if (info && info.mods) {
         for (let mod in info.mods) {
           if (!/@weex-cli/.test(mod) && Array.isArray(info.mods[mod].commands)) {
             info.mods[mod].commands.forEach(cmd => {
               if (cmd.alias) {
-                thirdPartData.push(
-                  [`${cmd.name} (${cmd.alias})`, cmd.description]
-                )
+                thirdPartData.push([`${cmd.name} (${cmd.alias})`, cmd.description])
+              } else {
+                thirdPartData.push([`${cmd.name}`, cmd.description])
               }
-              else {
-                thirdPartData.push(
-                  [`${cmd.name}`, cmd.description]
-                )
-              }
-            });
+            })
           }
         }
       }
       if (subcommand && helps[subcommand]) {
-        logger.info('\nUsage:\n');
+        logger.info('\nUsage:\n')
         let relatedCommandData = [
           [logger.colors.success('Command'), logger.colors.success('Description')],
-          helps[subcommand]
+          helps[subcommand],
         ]
-        logger.table(relatedCommandData, {format: 'markdown'})
-      }
-      else {
+        logger.table(relatedCommandData, { format: 'markdown' })
+      } else {
         logger.warn('\nWeex Cli\n')
-        logger.table(usageTableData, {format: 'markdown'})
+        logger.table(usageTableData, { format: 'markdown' })
         logger.success('\n# General Commands\n')
-        logger.table(generalCommandData, {format: 'markdown'})
+        logger.table(generalCommandData, { format: 'markdown' })
         logger.success('\n# Project Development Commands\n')
-        logger.table(projectDevelopmentData, {format: 'markdown'})
+        logger.table(projectDevelopmentData, { format: 'markdown' })
         logger.success('\n# Device Commands\n')
-        logger.table(deviceData, {format: 'markdown'})
+        logger.table(deviceData, { format: 'markdown' })
         logger.success('\n# Configuration Commands\n')
-        logger.table(configurationData, {format: 'markdown'})
+        logger.table(configurationData, { format: 'markdown' })
         logger.success('\n# Third Part Commands\n')
-        logger.table(thirdPartData, {format: 'markdown'})
+        logger.table(thirdPartData, { format: 'markdown' })
         logger.success('\n# Global Options\n')
-        logger.table(globalOptionData, {format: 'markdown'})
+        logger.table(globalOptionData, { format: 'markdown' })
       }
     }
-    const subcommand = parameters.string;
+    const subcommand = parameters.string
     if (subcommand) {
       await showHelp(subcommand.replace(' ', '-'))
-    }
-    else {
-      await showHelp();
+    } else {
+      await showHelp()
     }
   },
 }
