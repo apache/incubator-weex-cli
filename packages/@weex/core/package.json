@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/core",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.0-beta.16",
   "description": "Core for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint && np --yolo --no-yarn --any-branch",
+    "release": "yarn build && yarn lint && np --yolo --no-yarn --any-branch",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "integrate": "jest -c jest-integration.config.json",
