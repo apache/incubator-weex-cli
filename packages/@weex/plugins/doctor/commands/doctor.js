@@ -37,6 +37,7 @@ module.exports = {
       })
     }
     
+    logger.log(`${logger.checkmark} Weex Cli Environment:\n`)
     const moduleConfig = parameters.options.__config.modules
     const mods = moduleConfig.mods
     for (let item in mods) {
