@@ -8,14 +8,14 @@ import { strings } from '../../toolbox/string-tools'
 import command from './install'
 
 const globalConfig = {
-  moduleRoot: uniqueTempDir({create: true}),
+  moduleRoot: uniqueTempDir({ create: true }),
   moduleConfigFileName: 'config.json',
   registry: 'https://registry.npmjs.org/',
   modules: {
-    mods: {}
-  }
+    mods: {},
+  },
 }
-const config = {test: 'Hello~'}
+const config = { test: 'Hello~' }
 
 function createFakeToolbox(): Toolbox {
   const fakeContext = new Toolbox()
@@ -24,7 +24,7 @@ function createFakeToolbox(): Toolbox {
     read: sinon.stub(),
     write: sinon.stub(),
     list: sinon.stub(),
-    exists: sinon.stub()
+    exists: sinon.stub(),
   }
   fakeContext.system = {
     userhome: sinon.stub(),
@@ -35,15 +35,18 @@ function createFakeToolbox(): Toolbox {
     success: sinon.stub(),
     colors: {
       green: sinon.stub(),
-      yellow: sinon.stub()
+      yellow: sinon.stub(),
     },
   }
   fakeContext.inquirer = {
-    prompt: sinon.stub()
+    prompt: sinon.stub(),
   }
-  fakeContext.parameters = { first: null, options: {
-    __config: globalConfig
-  }}
+  fakeContext.parameters = {
+    first: null,
+    options: {
+      __config: globalConfig,
+    },
+  }
   fakeContext.inquirer.prompt.onFirstCall().returns(config)
   fakeContext.fs.read.onFirstCall().returns({})
   return fakeContext
@@ -51,7 +54,7 @@ function createFakeToolbox(): Toolbox {
 
 afterAll(() => {
   jetpack.remove(globalConfig.moduleRoot)
-});
+})
 
 test('has the right interface', () => {
   expect(command.name).toBe('install')

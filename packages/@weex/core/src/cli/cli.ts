@@ -20,6 +20,13 @@ export interface ModData {
   last_update_time: number
 }
 
+export interface Command {
+  name?: string
+  alias?: string
+  dashed?: boolean
+  description?: string
+}
+
 export interface ModItem {
   type: ModType
   version: string
@@ -53,7 +60,7 @@ export interface CliConfiguration {
   registry: string
   argv: string
   trash: string
-  modules: ModData,
+  modules: ModData
   globalConfigFileName: string
   configs?: {
     [key: string]: any
@@ -123,8 +130,7 @@ export default class Cli {
     const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
     if (this.cliConfiguration.modules) {
       this.plugins = pickPlugins(this.cliConfiguration.modules)
-    }
-    else {
+    } else {
       fs.write(moduleConfigFilePath, {
         mods: {},
         last_update_time: new Date().getTime(),
@@ -144,7 +150,10 @@ export default class Cli {
       let type = ModType.EXTENSION
       // If the module has been instll, skip
       if (!plugin || !plugin.name) {
-        const res: { error?: string;[key: string]: any } = await suggestPackage(command, this.cliConfiguration.registry)
+        const res: { error?: string; [key: string]: any } = await suggestPackage(
+          command,
+          this.cliConfiguration.registry,
+        )
         if (!res.error) {
           const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${command}`, 'latest', {
             root: this.cliConfiguration.moduleRoot,
@@ -153,50 +162,44 @@ export default class Cli {
           for (let i = 0; i < packages.length; i++) {
             const commandBasePath = path.join(packages[i].root, 'commands')
             const commandFiles: string[] = fs.list(commandBasePath) || []
+            commands = []
             commandFiles.forEach(file => {
-              let content
+              let content: Command = {}
               try {
                 content = require(path.join(commandBasePath, file))
               } catch (e) {
                 debug(`Check module error with: ${e.stack}`)
                 // try prev version
               }
-              commands.push({
-                name: content.name || '',
-                alias: content.alias || '',
-                showed: typeof content.dashed === 'boolean' ? !content.dashed : true,
-                description: content.description || '',
-              })
-              type = ModType.PLUGIN
+              if (content.name) {
+                commands.push({
+                  name: content.name || '',
+                  alias: content.alias || '',
+                  showed: typeof content.dashed === 'boolean' ? !content.dashed : true,
+                  description: content.description || '',
+                })
+                type = ModType.PLUGIN
+              } else {
+                type = ModType.EXTENSION
+              }
             })
-            if (commands.length > 0) {
-              this.cliConfiguration.modules.mods[packages[i].package.name] = {
-                type: type,
-                version: packages[i].package.version,
-                dependencies: packages[i].package.pluginDependencies,
-                next_version: '',
-                is_next: true,
-                changelog: packages[i].package.changelog || '',
-                local: packages[i].root,
-                commands: commands,
-              }
-              this.plugins.push({
-                value: packages[i].root,
-                options: {},
-                commands: commands,
-                name: packages[i].package.name,
-              })
-            } else {
-              this.cliConfiguration.modules.mods[packages[i].package.name] = {
-                type: type,
-                version: packages[i].package.version,
-                dependencies: packages[i].package.pluginDependencies,
-                next_version: '',
-                is_next: true,
-                changelog: packages[i].package.changelog || '',
-                local: packages[i].root,
-              }
+
+            this.cliConfiguration.modules.mods[packages[i].package.name] = {
+              type: type,
+              version: packages[i].package.version,
+              dependencies: packages[i].package.pluginDependencies,
+              next_version: '',
+              is_next: true,
+              changelog: packages[i].package.changelog || '',
+              local: packages[i].root,
+              commands: commands,
             }
+            this.plugins.push({
+              value: packages[i].root,
+              options: {},
+              commands: commands,
+              name: packages[i].package.name,
+            })
           }
           // update module file
           fs.write(moduleConfigFilePath, {
@@ -232,7 +235,7 @@ export default class Cli {
                 await repairPackage(this.cliConfiguration, item, upgradeList[item].next_version)
                 logger.success(
                   `[${logger.checkmark}] Upgrade ${item} ${upgradeList[item].version} -> ${
-                  upgradeList[item].next_version
+                    upgradeList[item].next_version
                   } success`,
                 )
               }
@@ -241,7 +244,7 @@ export default class Cli {
               await repairPackage(this.cliConfiguration, res.choose, upgradeList[res.choose].next_version)
               logger.success(
                 `[${logger.checkmark}] Upgrade ${res.choose} ${upgradeList[res.choose].version} -> ${
-                upgradeList[res.updatelist].next_version
+                  upgradeList[res.updatelist].next_version
                 } success`,
               )
             }
@@ -335,13 +338,19 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
  * @param options install options
  * @param result data from reduce
  */
-export async function installPackage(config: CliConfiguration, name: string, version: string, options: any, result: any = []) {
+export async function installPackage(
+  config: CliConfiguration,
+  name: string,
+  version: string,
+  options: any,
+  result: any = [],
+) {
   const info: any = await install(name, version || 'latest', options)
   let res = result.concat(info)
   if (info.package.pluginDependencies) {
     for (let name in info.package.pluginDependencies) {
       let sub = await installPackage(config, name, info.package.pluginDependencies[name], options, res)
-      res = res.concat(sub)
+      return sub
     }
   }
   return res

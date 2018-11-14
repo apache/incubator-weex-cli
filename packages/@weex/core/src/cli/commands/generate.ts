@@ -31,7 +31,7 @@ export default {
       const replace = await inquirer.ask({
         type: 'confirm',
         name: 'yesno',
-        message: `Project ${name} is exist, replace it?`
+        message: `Project ${name} is exist, replace it?`,
       })
       if (replace.yesno) {
         const spinner = logger.spin(`Removing ${path.join(process.cwd(), name)} ...`)

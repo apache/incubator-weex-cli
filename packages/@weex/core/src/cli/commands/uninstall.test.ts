@@ -7,15 +7,15 @@ import { Toolbox } from '../../core/toolbox'
 import { strings } from '../../toolbox/string-tools'
 import { fs } from '../../toolbox/fs-tools'
 import command from './uninstall'
-import {ModType} from '../cli'
+import { ModType } from '../cli'
 
 const globalConfig = {
-  moduleRoot: '' + uniqueTempDir({create: true}),
+  moduleRoot: '' + uniqueTempDir({ create: true }),
   moduleConfigFileName: 'config.json',
   registry: 'https://registry.npmjs.org/',
   modules: {
-    mods: {}
-  }
+    mods: {},
+  },
 }
 const packagename = 'testpackage'
 const config = {}
@@ -34,20 +34,23 @@ function createFakeToolbox(): Toolbox {
     warn: sinon.stub(),
     colors: {
       green: sinon.stub(),
-      yellow: sinon.stub()
+      yellow: sinon.stub(),
     },
   }
-  fakeContext.parameters = { first: null, options: {
-    __config: globalConfig
-  }}
-  fakeContext.logger.spin.onFirstCall().returns({test: '', succeed: callback})
+  fakeContext.parameters = {
+    first: null,
+    options: {
+      __config: globalConfig,
+    },
+  }
+  fakeContext.logger.spin.onFirstCall().returns({ test: '', succeed: callback })
   return fakeContext
 }
 
 beforeAll(() => {
   globalConfig.modules.mods[packagename] = {
     local,
-    type: ModType.PLUGIN
+    type: ModType.PLUGIN,
   }
   jetpack.file(local, config)
 })
@@ -68,7 +71,7 @@ test('show helps while config with not args', async () => {
   const toolbox = createFakeToolbox()
   toolbox.parameters.first = null
   await command.run(toolbox)
-  const {info, table } = toolbox.logger
+  const { info, table } = toolbox.logger
   expect(info.callCount).toBe(1)
   expect(table.callCount).toBe(1)
 })
