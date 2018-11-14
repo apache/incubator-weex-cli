@@ -20,6 +20,9 @@
   },
   "author": "Erha19 <faterrole@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "apisauce": "^0.15.1",
     "app-module-path": "^2.2.0",
