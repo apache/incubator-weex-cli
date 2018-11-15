@@ -1,11 +1,5 @@
 export default {
-  run: ({ 
-    parameters, 
-    runtime, 
-    logger, 
-    strings, 
-    meta 
-  }) => {
+  run: ({ parameters, runtime, logger, strings, meta }) => {
     const infoMessage = strings.isBlank(parameters.first)
       ? `Welcome to ${runtime.brand} CLI version ${meta.version()}!`
       : `Sorry, didn't recognize that command!`

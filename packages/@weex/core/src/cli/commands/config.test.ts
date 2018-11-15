@@ -8,9 +8,9 @@ import { strings } from '../../toolbox/string-tools'
 import * as uniqueTempDir from 'unique-temp-dir'
 import command from './config'
 
-const home = '' + uniqueTempDir({create: true});
-const globalConfigFileName = 'config.json';
-const config = {test: 'Hello~'}
+const home = '' + uniqueTempDir({ create: true })
+const globalConfigFileName = 'config.json'
+const config = { test: 'Hello~' }
 
 function createFakeToolbox(): Toolbox {
   const fakeContext = new Toolbox()
@@ -18,7 +18,7 @@ function createFakeToolbox(): Toolbox {
   fakeContext.fs = {
     read: sinon.stub(),
     write: sinon.stub(),
-    exists: sinon.stub()
+    exists: sinon.stub(),
   }
   fakeContext.system = {
     userhome: sinon.stub(),
@@ -28,18 +28,21 @@ function createFakeToolbox(): Toolbox {
     info: sinon.stub(),
     success: sinon.stub(),
     colors: {
-      green: sinon.stub()
+      green: sinon.stub(),
     },
   }
   fakeContext.inquirer = {
-    prompt: sinon.stub()
+    prompt: sinon.stub(),
   }
-  fakeContext.parameters = { first: null, options: {
-    __config: {
-      home: home,
-      globalConfigFileName: globalConfigFileName
-    }
-  }}
+  fakeContext.parameters = {
+    first: null,
+    options: {
+      __config: {
+        home: home,
+        globalConfigFileName: globalConfigFileName,
+      },
+    },
+  }
   fakeContext.inquirer.prompt.onFirstCall().returns(config)
   fakeContext.fs.read.onFirstCall().returns({})
   return fakeContext
@@ -47,11 +50,11 @@ function createFakeToolbox(): Toolbox {
 
 beforeAll(() => {
   jetpack.write(path.join(home, globalConfigFileName), config)
-});
+})
 
 afterAll(() => {
   jetpack.remove(home)
-});
+})
 
 test('has the right interface', () => {
   expect(command.name).toBe('config')
@@ -74,7 +77,7 @@ test('show helps while config with not args', async () => {
 test('show helps while config with --help', async () => {
   const toolbox = createFakeToolbox()
   toolbox.parameters.first = null
-  toolbox.parameters.options['help'] = true;
+  toolbox.parameters.options['help'] = true
   await command.run(toolbox)
   const { success, info, table } = toolbox.logger
   expect(success.callCount).toBe(2)

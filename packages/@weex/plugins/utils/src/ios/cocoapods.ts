@@ -1,4 +1,4 @@
-import { runAsync } from '../process/process'
+import { runSync } from '../process/process'
 import * as path from 'path'
 import * as fs from 'fs'
 import { versionParse, VersionOption, compareVersion } from '../base/version'
@@ -32,15 +32,10 @@ export class CocoaPods {
   public cocoaPodsVersionText: string
 
   constructor() {
-    runAsync('pod', ['--version'])
-      .then((result: { status: number; stdout: string }) => {
-        if (result.status === 0) {
-          this.cocoaPodsVersionText = result.stdout.toString().trim()
-        }
-      })
-      .catch(e => {
-        console.error(e)
-      })
+    const result = runSync('pod', ['--version'])
+    if (result && result.status === 0) {
+      this.cocoaPodsVersionText = result.stdout.toString().trim()
+    }
   }
 
   get evaluateCocoaPodsInstallation() {
