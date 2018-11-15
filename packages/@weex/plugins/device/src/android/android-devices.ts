@@ -77,6 +77,7 @@ class AndroidDevice extends Devices {
    *
    * @param id
    *
+   * @returns null | number --the node process pid of launch simulator (if have)
    */
   launchById(id: DeviceInfo['id']): Promise<string | null> {
     return new Promise(async (resolve, reject) => {
@@ -114,7 +115,13 @@ class AndroidDevice extends Devices {
       if (!deviceInfo.isSimulator) {
         return resolve(null)
       }
-      const deviceCmdList = await find('name', deviceInfo.id)
+      const deviceCmdList = (await find('name', deviceInfo.id)).filter(cmdObj => {
+        if (cmdObj.cmd.indexOf(`-avd`) === -1) {
+          return false
+        }
+        return true
+      })
+      console.log(deviceCmdList)
       if (deviceCmdList.length) {
         // Launched
         return resolve(null)
