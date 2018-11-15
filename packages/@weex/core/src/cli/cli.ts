@@ -54,6 +54,7 @@ export interface PluginItem {
 export interface CliConfiguration {
   corePath: string
   coreName: string
+  coreRoot: string
   moduleRoot: string
   moduleConfigFileName: string
   home: string
