@@ -134,9 +134,11 @@
   version "0.25.36"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.36.tgz#1ddaf3211c7cd7046fcaefe68c713469ccfc9504"
 
-"@weex-cli/utils@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@weex-cli/utils/-/utils-0.0.6.tgz#a86bf4fc0a4830c240a9cf66d9e2dda1736887cb"
+"@weex-cli/utils@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@weex-cli/utils/-/utils-0.0.7.tgz#e72092792717b112a4bd8528152e737fa7e26d62"
+  dependencies:
+    debug "^4.0.1"
 
 abab@^2.0.0:
   version "2.0.0"
@@ -873,6 +875,12 @@ debug@^3.1.0:
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   dependencies:
     ms "2.0.0"
+
+debug@^4.0.1:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.0.tgz#373687bffa678b38b1cd91f861b63850035ddc87"
+  dependencies:
+    ms "^2.1.1"
 
 decamelize@^1.0.0, decamelize@^1.1.1:
   version "1.2.0"
@@ -2715,6 +2723,10 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
+
+ms@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
 
 nan@^2.9.2:
   version "2.11.0"

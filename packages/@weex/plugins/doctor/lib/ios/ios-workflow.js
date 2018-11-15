@@ -7,7 +7,7 @@ const process_1 = require("@weex-cli/utils/lib/process/process");
 const child_process_1 = require("child_process");
 const version_1 = require("@weex-cli/utils/lib/base/version");
 const plist = require("@weex-cli/utils/lib/ios/plist-utils");
-const ios_env_1 = require("@weex-cli/utils/lib/ios/ios-env");
+// import IosEnv from '@weex-cli/utils/lib/ios/ios-env'
 class IOSWorkflow {
     get appliesToHostPlatform() {
         return process.platform === 'darwin';
@@ -18,13 +18,13 @@ class IOSWorkflow {
 }
 exports.IOSWorkflow = IOSWorkflow;
 class IOSValidator {
+    // private iosEnv: IosEnv = new IosEnv()
     constructor() {
         this.messages = [];
         this.xcodeStatus = 0 /* missing */;
         this.brewStatus = 0 /* missing */;
         this.cocoaPods = new cocoapods_1.CocoaPods();
         this.xcode = new mac_1.Xcode();
-        this.iosEnv = new ios_env_1.default();
         this.title = 'iOS toolchain - develop for iOS devices';
     }
     get hasHomebrew() {

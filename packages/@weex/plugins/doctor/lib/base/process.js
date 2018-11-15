@@ -80,7 +80,10 @@ function which(execName, args = []) {
     if (result.status !== 0) {
         return [];
     }
-    const lines = result.stdout.toString().trim().split('\n');
+    const lines = result.stdout
+        .toString()
+        .trim()
+        .split('\n');
     return lines;
 }
 exports.which = which;

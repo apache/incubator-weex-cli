@@ -3,6 +3,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const android_workflow_1 = require("./android/android-workflow");
 const ios_workflow_1 = require("./ios/ios-workflow");
 const platform_1 = require("@weex-cli/utils/lib/platform/platform");
+const colors = require("colors");
+class ValidatorTask {
+    constructor(validator, result) {
+        this.validator = validator;
+        this.result = result;
+        this.validator = validator;
+        this.result = result;
+    }
+}
+class ValidationResult {
+    /// [ValidationResult.type] should only equal [ValidationResult.installed]
+    /// if no [messages] are hints or errors.
+    constructor(type, messages, statusInfo) {
+        this.type = type;
+        this.messages = messages;
+        this.statusInfo = statusInfo;
+        this.type = type;
+        this.messages = messages;
+    }
+    get leadingBox() {
+        switch (this.type) {
+            case 0 /* missing */:
+                return '[✗]';
+            case 2 /* installed */:
+                return '[✓]';
+            case 1 /* partial */:
+                return '[!]';
+        }
+        return null;
+    }
+}
+exports.ValidationResult = ValidationResult;
 class Doctor {
     constructor() {
         this.validators = [];
@@ -30,26 +62,39 @@ class Doctor {
      */
     diagnose() {
         const taskList = this.startValidatorTasks();
+        let messageResult = '';
         for (let validatorTask of taskList) {
             const validator = validatorTask.validator;
             const results = [];
             let result;
+            let color;
             results.push(validatorTask.result);
             result = this.mergeValidationResults(results);
-            console.log(`${result.leadingBox} ${validator.title} is`);
+            color =
+                result.type === 0 /* missing */
+                    ? colors.red
+                    : result.type === 2 /* installed */
+                        ? colors.green
+                        : colors.yellow;
+            messageResult += `${color(`\n${result.leadingBox} ${validator.title} is \n`)}`;
+            // console.log(`${result.leadingBox} ${validator.title} is`)
             for (let message of result.messages) {
                 const text = message.message.replace('\n', '\n      ');
                 if (message.isError) {
-                    console.log(`    ✗  ${text}`);
+                    messageResult += `${colors.red(`    ✗  ${text}`)}\n`;
+                    // console.log(`    ✗  ${text}`);
                 }
                 else if (message.isWaring) {
-                    console.log(`    !  ${text}`);
+                    messageResult += `${colors.yellow(`    !  ${text}`)}\n`;
+                    // console.log(`    !  ${text}`);
                 }
                 else {
-                    console.log(`    •  ${text}`);
+                    messageResult += `    •  ${text}\n`;
+                    // console.log(`    •  ${text}`);
                 }
             }
         }
+        return messageResult;
     }
     mergeValidationResults(results) {
         let mergedType = results[0].type;
@@ -78,37 +123,6 @@ class Doctor {
     }
 }
 exports.Doctor = Doctor;
-class ValidationResult {
-    /// [ValidationResult.type] should only equal [ValidationResult.installed]
-    /// if no [messages] are hints or errors.
-    constructor(type, messages, statusInfo) {
-        this.type = type;
-        this.messages = messages;
-        this.statusInfo = statusInfo;
-        this.type = type;
-        this.messages = messages;
-    }
-    get leadingBox() {
-        switch (this.type) {
-            case 0 /* missing */:
-                return '[✗]';
-            case 2 /* installed */:
-                return '[✓]';
-            case 1 /* partial */:
-                return '[!]';
-        }
-        return null;
-    }
-}
-exports.ValidationResult = ValidationResult;
-class ValidatorTask {
-    constructor(validator, result) {
-        this.validator = validator;
-        this.result = result;
-        this.validator = validator;
-        this.result = result;
-    }
-}
 // A series of tools and required install steps for a target platform (iOS or Android).
 class Workflow {
 }

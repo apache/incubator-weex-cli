@@ -3,7 +3,7 @@ import { IToolbox } from '../core/toolbox'
 
 export interface IMeta {
   version: () => string
-  commandInfo: () => string[][],
+  commandInfo: () => string[][]
   getModulesInfo: () => any
 }
 

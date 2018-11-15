@@ -13,7 +13,49 @@ const process_1 = require("../base/process");
 // macOS:
 // /Applications/Android Studio.app/Contents/
 // $HOME/Applications/Android Studio.app/Contents/
-const _dotHomeStudioVersionMatcher = new RegExp('^\.AndroidStudio([^\d]*)([\d.]+)');
+const _dotHomeStudioVersionMatcher = new RegExp('^.AndroidStudio([^d]*)([d.]+)');
+class AndroidStudioValid {
+    constructor(directory, option) {
+        this.directory = directory;
+        this.option = option;
+        this.isValid = true;
+        this.validationMessages = [];
+        this.directory = directory;
+        this.configured = this.option.configured;
+        this.version = this.option.version;
+        this.init();
+    }
+    init() {
+        if (this.configured) {
+            this.validationMessages.push(`android-studio-dir = ${this.configured}`);
+        }
+        if (!fs.existsSync(this.directory)) {
+            this.validationMessages.push(`Android Studio not found at ${this.directory}`);
+            return;
+        }
+        let javaPath = platform_1.isMacOS
+            ? path.join(this.directory, 'jre', 'jdk', 'Contents', 'Home')
+            : path.join(this.directory, 'jre');
+        const javaExecutable = path.join(javaPath, 'bin', 'java');
+        if (!process_1.canRunSync(javaExecutable, ['-version'])) {
+            this.validationMessages.push(`Unable to find bundled Java version.`);
+        }
+        else {
+            const result = process_1.runSync(javaExecutable, ['-version']);
+            if (result && result.status === 0) {
+                const versionLines = result.stderr.toString().split('\n');
+                const javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
+                this.validationMessages.push(`Java version ${javaVersion}`);
+                this.isValid = true;
+                this.javaPath = javaPath;
+            }
+            else {
+                this.validationMessages.push('Unable to determine bundled Java version.');
+            }
+        }
+    }
+}
+exports.AndroidStudioValid = AndroidStudioValid;
 class AndroidStudio {
     constructor() {
         this.iosWorkflow = new ios_workflow_1.IOSWorkflow();
@@ -22,9 +64,14 @@ class AndroidStudio {
     // Locates the newest, valid version of Android Studio.
     latestValid() {
         const studios = this.allInstalled();
+        if (studios.length) {
+            this.javaPath = studios[studios.length - 1].javaPath;
+        }
+        // for (let i = 0; i < studios.length; i++) {
+        // }
     }
     allInstalled() {
-        platform_1.isMacOS ? this.allMacOS() : this.allLinuxOrWindows();
+        return platform_1.isMacOS ? this.allMacOS() : this.allLinuxOrWindows();
     }
     allMacOS() {
         let directories = [];
@@ -38,7 +85,7 @@ class AndroidStudio {
     }
     checkForStudio(path) {
         if (!fs.existsSync(path)) {
-            return;
+            return [];
         }
         const candidatePaths = [];
         try {
@@ -66,7 +113,7 @@ class AndroidStudio {
         return new AndroidStudioValid(studioPath, { version: version });
     }
     fromHomeDot(homeDotDir) {
-        const versionMatch = path.basename(platform_1.homedir).match(_dotHomeStudioVersionMatcher)[1];
+        const versionMatch = path.basename(homeDotDir).match(_dotHomeStudioVersionMatcher)[1];
         if (versionMatch.length !== 3) {
             return null;
         }
@@ -100,7 +147,7 @@ class AndroidStudio {
         // pointing to the same installation, so we grab only the latest one.
         if (fs.existsSync(platform_1.homedir)) {
             for (let entity of fs.readdirSync(platform_1.homedir)) {
-                const homeDotDir = path.join(process.env['HOME'], entity);
+                const homeDotDir = path.join(platform_1.homedir, entity);
                 if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
                     const studio = this.fromHomeDot(homeDotDir);
                     if (studio && !hasStudioAt(studio.directory, studio.version)) {
@@ -124,45 +171,4 @@ class AndroidStudio {
     }
 }
 exports.AndroidStudio = AndroidStudio;
-class AndroidStudioValid {
-    constructor(directory, option) {
-        this.directory = directory;
-        this.option = option;
-        this.isValid = true;
-        this.validationMessages = [];
-        this.directory = directory;
-        this.configured = this.option.configured;
-        this.version = this.option.version;
-        this.init();
-    }
-    init() {
-        if (this.configured) {
-            this.validationMessages.push(`android-studio-dir = ${this.configured}`);
-        }
-        if (!fs.existsSync(this.directory)) {
-            this.validationMessages.push(`Android Studio not found at ${this.directory}`);
-            return;
-        }
-        this.javaPath = platform_1.isMacOS
-            ? path.join(this.directory, 'jre', 'jdk', 'Contents', 'Home')
-            : path.join(this.directory, 'jre');
-        const javaExecutable = path.join(this.javaPath, 'bin', 'java');
-        if (!process_1.canRunSync(javaExecutable)) {
-            this.validationMessages.push(`Unable to find bundled Java version.`);
-        }
-        else {
-            const result = process_1.runSync(javaExecutable, ['-version']);
-            if (result && result.status === 0) {
-                const versionLines = result.stderr.toString().split('\n');
-                const javaVersion = versionLines.length >= 2 ? versionLines[1] : versionLines[0];
-                this.validationMessages.push(`Java version ${javaVersion}`);
-                this.isValid = true;
-            }
-            else {
-                this.validationMessages.push('Unable to determine bundled Java version.');
-            }
-        }
-    }
-}
-exports.AndroidStudioValid = AndroidStudioValid;
 //# sourceMappingURL=android-studio.js.map
