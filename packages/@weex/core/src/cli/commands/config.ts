@@ -78,7 +78,7 @@ export default {
       await showHelp()
       return
     }
-    const configurationPath = path.join(globalConfiguration.home, globalConfiguration.globalConfigFileName)
+    const configurationPath = path.join(globalConfiguration.coreRoot, globalConfiguration.globalConfigFileName)
     const get = async (key?: string) => {
       if (cache) {
         return cache
