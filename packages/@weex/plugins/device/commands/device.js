@@ -13,8 +13,6 @@ module.exports = {
     const iOSDevice = new IosDevices()
     const androidDevice = new AndroidDevices()
     const first = parameters.first
-    const second = parameters.second
-    const third = parameters.third
     const options = parameters.options
 
     
@@ -114,7 +112,7 @@ module.exports = {
         await list();
         break;
       case 'run':
-        await run(second, third)
+        await run()
         break;
       default:
         await list();
