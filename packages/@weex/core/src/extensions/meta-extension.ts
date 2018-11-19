@@ -1,10 +1,11 @@
-import { commandInfo, getVersion, getModulesInfo } from '../toolbox/meta-tools'
+import { generateHelp, commandInfo, getVersion, getModulesInfo } from '../toolbox/meta-tools'
 import { IToolbox } from '../core/toolbox'
-
+import { MetaOptions } from '../toolbox/meta-types'
 export interface IMeta {
   version: () => string
   commandInfo: () => string[][]
-  getModulesInfo: () => any
+  getModulesInfo: () => any[]
+  generateHelp: (param: MetaOptions, brand?: string) => any[]
 }
 
 /**
@@ -17,6 +18,7 @@ export default function attach(toolbox: IToolbox): void {
     version: () => getVersion(toolbox),
     commandInfo: () => commandInfo(toolbox),
     getModulesInfo: () => getModulesInfo(toolbox),
+    generateHelp
   }
   toolbox.meta = meta
 }
