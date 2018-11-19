@@ -1,0 +1,96 @@
+{
+  "name": "@weex-cli/xxx",
+  "version": "0.0.1",
+  "description": "xxx for weex-toolkit",
+  "main": "index.js",
+  "scripts": {
+    "build": "yarn format && yarn clean && yarn compile",
+    "clean": "rm -rf ./lib",
+    "compile": "tsc -p ./",
+    "coverage": "jest --coverage",
+    "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
+    "lint": "tslint -p .",
+    "publish": "yarn build && yarn lint && np --yolo --no-yarn ----access=public",
+    "precommit": "lint-staged",
+    "snapupdate": "jest --updateSnapshot",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "watch": "tsc -watch -p ./"
+  },
+  "author": "",
+  "files": [
+    "lib/"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.9.0",
+    "eslint-config-weex": "^1.0.10",
+    "eslint-plugin-weex": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/cli-table2": "^0.2.1",
+    "@types/colors": "^1.2.1",
+    "@types/eslint": "^4.16.4",
+    "@types/jest": "^22.2.3",
+    "@types/node": "^10.0.4",
+    "@types/pluralize": "^0.0.28",
+    "@types/ramda": "^0.25.32",
+    "coveralls": "^3.0.1",
+    "expect": "^23.1.0",
+    "jest": "^23.1.0",
+    "lint-staged": "^7.1.3",
+    "np": "^3.0.4",
+    "prettier": "^1.14.0",
+    "ramdasauce": "^2.1.0",
+    "sinon": "^5.1.0",
+    "temp-write": "^3.4.0",
+    "ts-jest": "^22.4.6",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^3.0.1",
+    "unique-temp-dir": "^1.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(\\.|/)(test)\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "tslint --fix",
+      "git add"
+    ],
+    "*.md": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weexteam/weex-toolkit/issues"
+  },
+  "keywords": [
+    "device"
+  ]
+}
