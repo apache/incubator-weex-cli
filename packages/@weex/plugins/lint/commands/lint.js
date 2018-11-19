@@ -87,7 +87,7 @@ module.exports = {
     }
 
     const showHelp = async () => {
-      let options = {
+      let params = {
         append: 'This script has alias(l), you can run it like \`weex l [options] file.js [file.js] [dir]\`',
         commandend: 'Run the lint script to check if your code has a problem',
         commands: [
@@ -212,7 +212,6 @@ module.exports = {
             },
             {
               key:'-h, --help',
-              type: '[String]',
               description: 'Show help'
             },
             {
@@ -239,7 +238,7 @@ module.exports = {
           ]
         }
       }
-      meta.generateHelp(options)
+      meta.generateHelp(params)
     }
     if (options.version || options.v) { // version from package.json
 
