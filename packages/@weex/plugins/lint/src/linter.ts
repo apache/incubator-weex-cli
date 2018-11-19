@@ -2,33 +2,28 @@ import { CLIEngine } from 'eslint'
 
 export default class WeexLinter {
   private engine: CLIEngine
-  
+
   private defaultOptions: CLIEngine.Options = {
     useEslintrc: false,
-    extensions: [
-      '.js',
-      '.vue'
-    ],
+    extensions: ['.js', '.vue'],
     baseConfig: {
-      extends: [
-        'eslint-config-weex/vue'
-      ]
-    }
+      extends: ['eslint-config-weex/vue'],
+    },
   }
 
   constructor(options: CLIEngine.Options) {
     this.engine = new CLIEngine(Object.assign(options, this.defaultOptions))
   }
 
-  public executeOnFiles (files) {
+  public executeOnFiles(files) {
     return this.engine.executeOnFiles(files)
   }
 
-  public executeOnText (sourcecode) {
+  public executeOnText(sourcecode) {
     return this.engine.executeOnText(sourcecode)
   }
 
-  public getConfigForFile (printConfig) {
+  public getConfigForFile(printConfig) {
     return this.engine.getConfigForFile(printConfig)
   }
 
@@ -43,4 +38,4 @@ export default class WeexLinter {
   public getFormatter(code) {
     return this.engine.getFormatter(code)
   }
-} 
+}

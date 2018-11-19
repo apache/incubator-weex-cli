@@ -1,7 +1,7 @@
 {
-  "name": "@weex-cli/xxx",
-  "version": "0.0.1",
-  "description": "xxx for weex-toolkit",
+  "name": "@weex-cli/lint",
+  "version": "0.0.4",
+  "description": "lint package for weex-toolkit",
   "main": "index.js",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
@@ -10,17 +10,17 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint && np --yolo --no-yarn ----access=public",
+    "release": "yarn build && yarn lint && np --yolo --no-yarn",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "tsc -watch -p ./"
   },
-  "author": "",
-  "files": [
-    "lib/"
-  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Mario<faterrole@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "babel-eslint": "^10.0.1",
@@ -31,7 +31,6 @@
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
     "@types/colors": "^1.2.1",
-    "@types/eslint": "^4.16.4",
     "@types/jest": "^22.2.3",
     "@types/node": "^10.0.4",
     "@types/pluralize": "^0.0.28",
