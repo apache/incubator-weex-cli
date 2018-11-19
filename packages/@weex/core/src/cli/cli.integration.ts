@@ -1,4 +1,4 @@
-import Cli from './cli'
+import Cli, { CliConfiguration } from './cli'
 import * as sinon from 'sinon'
 
 sinon.stub(console, 'log')
@@ -9,9 +9,10 @@ beforeAll(() => jest.setTimeout(90 * 1000))
 afterAll(() => jest.setTimeout(5 * 1000))
 
 test('can start the cli', async () => {
-  const cliConfiguration = {
+  const cliConfiguration: CliConfiguration = {
     corePath: '',
     coreName: '',
+    coreRoot: '',
     moduleRoot: '',
     moduleConfigFileName: '',
     home: '',
