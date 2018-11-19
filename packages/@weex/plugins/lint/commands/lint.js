@@ -5,11 +5,13 @@ const debug = require('debug')('lint')
 
 module.exports = {
   name: 'lint',
+  alias: 'l',
   description: 'Lint codes and generate code report',
   run: async ({
     logger,
     parameters,
-    inquirer
+    inquirer,
+    meta
   }) => {
     const files = parameters.array
     const options = parameters.options
@@ -85,59 +87,163 @@ module.exports = {
     }
 
     const showHelp = async () => {
-      let usageTableData = [
-        [logger.colors.green('Synopsis'), logger.colors.green('Usage')],
-        ['$ weex lint', 'Lint weex code'],
-      ]
-      let Options = [
-        [logger.colors.green('Basic configuration:'), ''],
-        ['-c, --config path::String', 'Use configuration from this file or shareable config'],
-        ['--no-eslintrc', 'Disable use of configuration from .eslintrc - default: true'],
-        ['--env [String]', 'Specify environments'],
-        ['--ext [String]', 'Specify JavaScript file extensions - default: [.js, .vue]'],
-        ['--global [String]', 'Define global variables'],
-        ['--parser String', 'Specify the parser to be used'],
-        ['--parser-options Object', 'Specify parser options'],           
-        [logger.colors.green('Caching:'), ''],
-        ['--cache','Only check changed files - default: false'],             
-        ['--cache-file path::String','Path to the cache file. Deprecated: use --cache-location - default: .eslintcache'],             
-        ['--cache-location path::String','Path to the cache file or directory'],
-        [logger.colors.green('Handling warnings:'), ''],
-        ['--quiet', 'Report errors only - default: false'],
-        ['-f, --format String', 'Use a specific output format - default:stylish'],
-        ['--color, --no-color', 'Force enabling/disabling of color'],    
-        [logger.colors.green('Ignoring files:'), ''],
-        ['-ignore-path path::String', 'Specify path of ignore file'],
-        ['--no-ignore', 'Disable use of ignore files and patterns'],         
-        ['--ignore-pattern [String]', 'Pattern of files to ignore (in addition to those in .eslintignore)'],
-        [logger.colors.green('Specifying rules and plugins:'), ''],
-        ['-rulesdir [path::String]', 'Use additional rules from this directory'],
-        ['--plugin [String]', 'Specify plugins'],
-        ['--rule Object', 'Specify rules'],
-        [logger.colors.green('Miscellaneous:'), ''],
-        ['-v, --version', 'Output the version number'],
-        ['-h, --help', 'Show help'],
-        ['--fix', 'Automatically fix problems'],
-        ['--fix-dry-run', 'Automatically fix problems without saving the changes to the file system'],
-        ['--no-inline-config', 'Prevent comments from changing config or rules'],
-        ['--report-unused-disable-directives', 'Adds reported errors for unused eslint-disable directives'],
-        ['--print-config path::String', 'Print the configuration for the given file']
-      ]
-
-      logger.success('\n# weex lint\n')
-      logger.table(usageTableData, {
-        format: 'markdown'
-      })
-      logger.info('\nRun the lint script to check if your code has a problem')
-      logger.success('\n# Options\n')
-      logger.table(Options, {
-      })
-      logger.info(`\nThis script has alias(c), you can run it like \`weex c [sub-command]\``)
+      let options = {
+        append: 'This script has alias(l), you can run it like \`weex l [options] file.js [file.js] [dir]\`',
+        commandend: 'Run the lint script to check if your code has a problem',
+        commands: [
+          {
+            heading: ['Usage', 'Description']
+          },
+          {
+            key: 'lint',
+            alias: 'l',
+            type: '[options] file.js [file.js] [dir]',
+            description: 'Lint weex code'
+          }
+        ],
+        options: {
+          'Basic configuration:': [
+            {
+              key:'-c, --config',
+              type: 'path::String',
+              description: 'Use configuration from this file or shareable config',
+              default: ''
+            },
+            {
+              key:'--no-eslintrc',
+              description: 'Disable use of configuration from .eslintrc',
+              default: 'true'
+            },
+            {
+              key:'--env',
+              type: '[String]',
+              description: 'Specify environments',
+              default: ''
+            },
+            {
+              key:'--global',
+              type: '[String]',
+              description: 'Define global variables'
+            },
+            {
+              key:'--parser',
+              type: 'String',
+              description: 'Specify the parser to be used',
+            },
+            {
+              key:'--parser-options',
+              type: 'Object',
+              description: 'Specify parser options',
+            }
+          ],
+          'Caching:': [
+            {
+              key: '--cache',
+              description:'Only check changed files',
+              default: 'false'
+            },
+            {
+              key: '--cache-file',
+              type:'path::String',
+              description:'Path to the cache file. Deprecated: use --cache-location',
+              default: '.eslintcache'
+            },
+            {
+              key: '--cache-location',
+              type:'path::String',
+              description:'Path to the cache file or directory',
+            }
+          ],
+          'Handling warnings:': [
+            {
+              key: '--quiet',
+              type:'path::String',
+              description:'Report errors only',
+              default: 'false'
+            },
+            {
+              key: '-f, --format',
+              type:'String',
+              description:'Use a specific output format',
+              default: 'stylish'
+            },
+            {
+              key: '--color, --no-color',
+              description:'Force enabling/disabling of color',
+            }
+          ],
+          'Ignoring files:': [
+            {
+              key: '-ignore-path',
+              type:'path::String',
+              description:'Specify path of ignore file',
+            },
+            {
+              key: '--no-ignore',
+              description:'Disable use of ignore files and patterns',
+            },
+            {
+              key: '--ignore-pattern',
+              type:'[String]',
+              description:'Pattern of files to ignore (in addition to those in .eslintignore)',
+            }
+          ],
+          'Specifying rules and plugins:': [
+            {
+              key:'-rulesdir',
+              type: '[path::String]',
+              description: 'Use additional rules from this directory'
+            },
+            {
+              key:'--rule',
+              type: 'Object',
+              description: 'Specify rules'
+            },
+            {
+              key:'--plugin',
+              type: '[String]',
+              description: 'Specify plugins'
+            },
+          ],
+          'Miscellaneous:': [
+            {
+              key:'-v, --version',
+              description: 'Output the version number'
+            },
+            {
+              key:'-h, --help',
+              type: '[String]',
+              description: 'Show help'
+            },
+            {
+              key:'--fix',
+              description: 'Automatically fix problems'
+            },
+            {
+              key:'--fix-dry-run',
+              description: 'Automatically fix problems without saving the changes to the file system'
+            },
+            {
+              key:'--no-inline-config',
+              description: 'Prevent comments from changing config or rules'
+            },
+            {
+              key:'--report-unused-disable-directives',
+              description: 'Adds reported errors for unused eslint-disable directives'
+            },
+            {
+              key:'--print-config',
+              type: 'path::String',
+              description: 'Print the configuration for the given file'
+            }
+          ]
+        }
+      }
+      meta.generateHelp(options)
     }
+    if (options.version || options.v) { // version from package.json
 
-    if (options.version) { // version from package.json
-
-      log.info(`v${require("../package.json").version}`);
+      logger.info(`v${require("../package.json").version}`);
 
     } else if (options.printConfig) {
       if (files.length) {
@@ -155,7 +261,7 @@ module.exports = {
 
       logger.info(JSON.stringify(fileConfig, null, "  "));
       return 0;
-    } else if (options.help || (!files.length && !useStdin)) {
+    } else if (options.help || options.h || (!files.length && !useStdin)) {
 
       showHelp();
 
