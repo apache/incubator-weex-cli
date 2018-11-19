@@ -7,7 +7,8 @@ module.exports = {
     {
       logger,
       parameters,
-      inquirer
+      inquirer,
+      meta
     }
   ) => {
     const iOSDevice = new IosDevices()
@@ -15,6 +16,37 @@ module.exports = {
     const first = parameters.first
     const options = parameters.options
 
+    const showHelp = async () => {
+      let params = {
+        commandend: 'Run the device script to run/list the devices',
+        commands: [
+          {
+            heading: ['Usage', 'Description']
+          },
+          {
+            key: 'device run',
+            description: 'Run the simulator'
+          },
+          {
+            key: 'device list',
+            description: 'List the device (including real device and simulator)'
+          }
+        ],
+        options: {
+          'Miscellaneous:': [
+            {
+              key:'-v, --version',
+              description: 'Output the version number'
+            },
+            {
+              key:'-h, --help',
+              description: 'Show help'
+            }
+          ]
+        }
+      }
+      meta.generateHelp(params)
+    }
     
     const list = async () => {
       let spinner = logger.spin('Detact iOS Device ...')
@@ -107,16 +139,24 @@ module.exports = {
       }
     }
 
-    switch (first) {
-      case 'list': 
-        await list();
-        break;
-      case 'run':
-        await run()
-        break;
-      default:
-        await list();
-        break;
+    if (options.version || options.v) { // version from package.json
+
+      logger.info(`v${require("../package.json").version}`);
+
+    } else if (options.help || options.h) {
+      await showHelp()
+    } else {
+      switch (first) {
+        case 'list': 
+          await list();
+          break;
+        case 'run':
+          await run()
+          break;
+        default:
+          await showHelp();
+          break;
+      }
     }
   }
 }
