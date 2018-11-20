@@ -1,7 +1,7 @@
-out
-node_modules
-.vscode-test/
-*.vsix
+lib/
+node_modules/
+
+# coverage
+coverage/
+
 package-lock.json
-yarn-error.log
-.weex-templates

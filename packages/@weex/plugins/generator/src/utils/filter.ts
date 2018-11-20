@@ -1,7 +1,15 @@
-const match = require('minimatch')
+import * as match from 'minimatch'
 import evaluate from './eval'
 
-export const filter = (files, filters, data, done) => {
+/**
+ * Filter files
+ * 
+ * @param files 
+ * @param filters 
+ * @param data 
+ * @param done 
+ */
+export function filter (files, filters, data, done){
   if (!filters) {
     return done()
   }
@@ -18,3 +26,5 @@ export const filter = (files, filters, data, done) => {
   })
   done()
 }
+
+export default filter

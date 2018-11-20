@@ -20,19 +20,23 @@
   "author": "balloonzzq <zqzhuang888@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "@types/rimraf": "^2.0.2",
+    "chalk": "^2.4.1",
     "consolidate": "^0.15.1",
+    "debug": "^4.1.0",
     "download-git-repo": "^1.1.0",
     "handlebars": "^4.0.11",
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.4",
-    "rimraf": "^2.6.2"
+    "read-metadata": "^1.0.0",
+    "rimraf": "^2.6.2",
+    "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",
-    "@types/node": "^10.0.4",
+    "@types/node": "^10.12.9",
     "@types/pluralize": "^0.0.28",
     "@types/ramda": "^0.25.32",
+    "@types/rimraf": "^2.0.2",
     "coveralls": "^3.0.1",
     "expect": "^23.1.0",
     "jest": "^23.1.0",
