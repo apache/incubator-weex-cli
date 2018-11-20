@@ -151,12 +151,16 @@ export default class Cli {
       let type = ModType.EXTENSION
       // If the module has been instll, skip
       if (!plugin || !plugin.name) {
+        let packageSubName = command
+        if (command === 'create' || command === 'platform') {
+          packageSubName = 'generator'
+        }
         const res: { error?: string; [key: string]: any } = await suggestPackage(
-          command,
+          packageSubName,
           this.cliConfiguration.registry,
         )
         if (!res.error) {
-          const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${command}`, 'latest', {
+          const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${packageSubName}`, 'latest', {
             root: this.cliConfiguration.moduleRoot,
             registry: this.cliConfiguration.registry,
           })
