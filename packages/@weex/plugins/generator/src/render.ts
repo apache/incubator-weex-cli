@@ -32,40 +32,43 @@ interface Metadate {
 }
 
 export default function(source: string, dest = './build', metadata: Metadate) {
-  const metalsmith = Metalsmith(process.cwd());
+  return new Promise((resolve, reject) => {
+    const metalsmith = Metalsmith(process.cwd());
 
-  metadata.helpers && Object.keys(metadata.helpers).map(key => {
-    Handlebars.registerHelper(key, metadata.helpers[key]);
-  });
+    metadata.helpers && Object.keys(metadata.helpers).map(key => {
+      Handlebars.registerHelper(key, metadata.helpers[key]);
+    });
 
-  const helpers = { chalk, logger: console };
+    const helpers = { chalk, logger: console };
 
-  if (metadata.metalsmith && typeof metadata.metalsmith.before === 'function') {
-    metadata.metalsmith.before(metalsmith, metadata, helpers);
-  }
+    if (metadata.metalsmith && typeof metadata.metalsmith.before === 'function') {
+      metadata.metalsmith.before(metalsmith, metadata, helpers);
+    }
 
-  if (typeof metadata.metalsmith === 'function') {
-    metadata.metalsmith(metalsmith, metadata, helpers);
-  }
-  else if (metadata.metalsmith && typeof metadata.metalsmith.after === 'function') {
-    metadata.metalsmith.after(metalsmith, metadata, helpers);
-  }
+    if (typeof metadata.metalsmith === 'function') {
+      metadata.metalsmith(metalsmith, metadata, helpers);
+    }
+    else if (metadata.metalsmith && typeof metadata.metalsmith.after === 'function') {
+      metadata.metalsmith.after(metalsmith, metadata, helpers);
+    }
 
-  metalsmith
-    .source(path.join(source, 'template'))
-    .destination(dest)
-    .clean(true)
-    .metadata(metadata)
-    .use(renderTemplateFiles(metadata.skipInterpolation))
-    .use(filterFiles(metadata.filters || filters))
-    .use(template)
-    .build((err, files) => {
-      if (err) throw err
-      if (typeof metadata.complete === 'function') {
-        const helpers = { chalk, logger: console, files };
-        metadata.complete(metadata, helpers);
-      }
-    })
+    metalsmith
+      .source(path.join(source, 'template'))
+      .destination(dest)
+      .clean(true)
+      .metadata(metadata)
+      .use(renderTemplateFiles(metadata.skipInterpolation))
+      .use(filterFiles(metadata.filters || filters))
+      .use(template)
+      .build((err, files) => {
+        if (err) throw err
+        if (typeof metadata.complete === 'function') {
+          const helpers = { chalk, logger: console, files };
+          metadata.complete(metadata, helpers);
+        }
+      })
+    resolve(metadata)
+  })
 }
 
 /**
