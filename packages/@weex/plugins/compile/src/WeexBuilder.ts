@@ -75,7 +75,7 @@ export class WeexBuilder extends WebpackBuilder {
        * See: https://webpack.js.org/plugins/banner-plugin/
        */
       new webpack.BannerPlugin({
-        banner: '// { "framework": "Vue"} \n',
+        banner: '// { "framework": "Vue"}',
         raw: true,
         exclude: "Vue"
       })
@@ -120,6 +120,7 @@ export class WeexBuilder extends WebpackBuilder {
         },
         watch: this.options.watch || false,
         devtool: this.options.devtool || false,
+        // make uglify plugin can be work
         optimization: {
           minimize: false
         },
@@ -231,23 +232,11 @@ export class WeexBuilder extends WebpackBuilder {
         *
         * See: https://webpack.js.org/configuration/optimization/#optimization-minimizer
         */
-        if (!configs["optimization"]) {
-          configs["optimization"] = {}
-        }
-
-        configs["optimization"] = {
-          minimizer: [new UglifyJsPlugin({
-            uglifyOptions: {
-              output: {
-                comments: false
-              }
-            },
-            parallel: os.cpus().length - 1,
-            extractComments: true
-          })]
-        }
+        configs.plugins.unshift(new UglifyJsPlugin({
+          sourceMap: true,
+          parallel: os.cpus().length - 1
+        }))
       }
-
       return configs
     }
 
