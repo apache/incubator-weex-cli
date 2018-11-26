@@ -1,5 +1,5 @@
 {
-  "name": "@weex-cli/build",
+  "name": "@weex-cli/compile",
   "version": "1.0.0",
   "description": "Plugin for compile weex file.",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint && np --yolo --no-yarn ----access=public",
+    "release": "yarn build && yarn lint && np --yolo --no-yarn",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
@@ -51,6 +51,9 @@
     "tslint-config-standard": "^7.0.0",
     "typescript": "^3.0.1",
     "unique-temp-dir": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "jest": {
     "testEnvironment": "node",
