@@ -13,8 +13,6 @@ import { vueLoader } from './vueLoader'
 import WebpackBuilder from './WebpackBuilder'
 
 export class WeexBuilder extends WebpackBuilder {
-  
-
   constructor(source: string, dest: string, options: any) {
     super(source, dest, options)
   }
@@ -59,11 +57,10 @@ export class WeexBuilder extends WebpackBuilder {
     url: false,
     util: false,
     vm: false,
-    zlib: false
+    zlib: false,
   }
 
   async initConfig() {
-
     const destExt = path.extname(this.dest)
     const sourceExt = path.extname(this.rawSource)
     let outputPath
@@ -77,19 +74,19 @@ export class WeexBuilder extends WebpackBuilder {
       new webpack.BannerPlugin({
         banner: '// { "framework": "Vue"}',
         raw: true,
-        exclude: "Vue"
-      })
+        exclude: 'Vue',
+      }),
     ]
-    
+
     // ./bin/weex-builder.js test dest --filename=[name].web.js
     if (this.options.filename) {
       outputFilename = this.options.filename
     } else {
-      outputFilename = "[name].js"
+      outputFilename = '[name].js'
     }
     // Call like: ./bin/weex-builder.js test/index.vue dest/test.js
     // Need to rename the filename of
-    if (destExt && this.dest[this.dest.length - 1] !== "/" && sourceExt) {
+    if (destExt && this.dest[this.dest.length - 1] !== '/' && sourceExt) {
       outputPath = path.dirname(this.dest)
       outputFilename = path.basename(this.dest)
     } else {
@@ -102,12 +99,12 @@ export class WeexBuilder extends WebpackBuilder {
 
     const webpackConfig = () => {
       const entrys = {}
-      
+
       this.source.forEach(s => {
         let file = path.relative(path.resolve(this.base), s)
-        file = file.replace(/\.\w+$/, "")
+        file = file.replace(/\.\w+$/, '')
         if (!this.options.web) {
-          s += "?entry=true"
+          s += '?entry=true'
         }
         entrys[file] = s
       })
@@ -116,13 +113,13 @@ export class WeexBuilder extends WebpackBuilder {
         entry: entrys,
         output: {
           path: outputPath,
-          filename: outputFilename
+          filename: outputFilename,
         },
         watch: this.options.watch || false,
         devtool: this.options.devtool || false,
         // make uglify plugin can be work
         optimization: {
-          minimize: false
+          minimize: false,
         },
         /*
         * Options affecting the resolving of modules.
@@ -135,41 +132,38 @@ export class WeexBuilder extends WebpackBuilder {
               test: /\.js$/,
               use: [
                 {
-                  loader: "babel-loader",
+                  loader: 'babel-loader',
                   options: {
-                    presets: ["es2015", "stage-0"]
-                  }
-                }
-              ]
+                    presets: ['es2015', 'stage-0'],
+                  },
+                },
+              ],
             },
             {
               test: /\.we$/,
               use: [
                 {
-                  loader: "weex-loader"
-                }
-              ]
-            }
-          ]
+                  loader: 'weex-loader',
+                },
+              ],
+            },
+          ],
         },
         /**
          * See: https://webpack.js.org/configuration/resolve/#resolveloader
          */
         resolveLoader: {
-          modules: [
-            path.join(__dirname, "../node_modules"),
-            path.resolve("node_modules")
-          ],
-          extensions: [".js", ".json"],
-          mainFields: ["loader", "main"],
-          moduleExtensions: ["-loader"]
+          modules: [path.join(__dirname, '../node_modules'), path.resolve('node_modules')],
+          extensions: ['.js', '.json'],
+          mainFields: ['loader', 'main'],
+          moduleExtensions: ['-loader'],
         },
         /*
         * Add additional plugins to the compiler.
         *
         * See: http://webpack.github.io/docs/configuration.html#plugins
         */
-        plugins: plugins
+        plugins: plugins,
       }
 
       if (this.options.web) {
@@ -177,50 +171,47 @@ export class WeexBuilder extends WebpackBuilder {
           test: /\.vue(\?[^?]+)?$/,
           use: [
             {
-              loader: "vue-loader",
-              options: Object.assign(
-                vueLoader({ useVue: true, usePostCSS: false }),
-                {
-                  /**
-                   * important! should use postTransformNode to add $processStyle for
-                   * inline style prefixing.
-                   */
-                  optimizeSSR: false,
-                  postcss: [
-                    // to convert weex exclusive styles.
-                    postcssPluginWeex(),
-                    autoprefixer({
-                      browsers: ["> 0.1%", "ios >= 8", "not ie < 12"]
-                    }),
-                    postcssPluginPx2rem({
-                      // base on 750px standard.
-                      rootValue: 75,
-                      // to leave 1px alone.
-                      minPixelValue: 1.01
-                    })
-                  ],
-                  compilerModules: [
-                    {
-                      postTransformNode: el => {
-                        // to convert vnode for weex components.
-                        weexVuePrecompiler()(el)
-                      }
-                    }
-                  ]
-                }
-              )
-            }
-          ]
+              loader: 'vue-loader',
+              options: Object.assign(vueLoader({ useVue: true, usePostCSS: false }), {
+                /**
+                 * important! should use postTransformNode to add $processStyle for
+                 * inline style prefixing.
+                 */
+                optimizeSSR: false,
+                postcss: [
+                  // to convert weex exclusive styles.
+                  postcssPluginWeex(),
+                  autoprefixer({
+                    browsers: ['> 0.1%', 'ios >= 8', 'not ie < 12'],
+                  }),
+                  postcssPluginPx2rem({
+                    // base on 750px standard.
+                    rootValue: 75,
+                    // to leave 1px alone.
+                    minPixelValue: 1.01,
+                  }),
+                ],
+                compilerModules: [
+                  {
+                    postTransformNode: el => {
+                      // to convert vnode for weex components.
+                      weexVuePrecompiler()(el)
+                    },
+                  },
+                ],
+              }),
+            },
+          ],
         })
       } else {
         configs.module.rules.push({
           test: /\.vue(\?[^?]+)?$/,
           use: [
             {
-              loader: "weex-loader",
-              options: vueLoader({ useVue: false })
-            }
-          ]
+              loader: 'weex-loader',
+              options: vueLoader({ useVue: false }),
+            },
+          ],
         })
         configs.node = this.nodeConfiguration
       }
@@ -232,10 +223,12 @@ export class WeexBuilder extends WebpackBuilder {
         *
         * See: https://webpack.js.org/configuration/optimization/#optimization-minimizer
         */
-        configs.plugins.unshift(new UglifyJsPlugin({
-          sourceMap: true,
-          parallel: os.cpus().length - 1
-        }))
+        configs.plugins.unshift(
+          new UglifyJsPlugin({
+            sourceMap: true,
+            parallel: os.cpus().length - 1,
+          }),
+        )
       }
       return configs
     }
@@ -248,21 +241,15 @@ export class WeexBuilder extends WebpackBuilder {
     let mergeConfigs
 
     if (this.source.length === 0) {
-      return callback(
-        "no " +
-          (this.options.ext || "") +
-          ' files found in source "' +
-          this.rawSource +
-          '"'
-      )
+      return callback('no ' + (this.options.ext || '') + ' files found in source "' + this.rawSource + '"')
     }
 
     if (this.options.config) {
       if (exist(this.options.config)) {
-        try{
+        try {
           mergeConfigs = require(path.resolve(this.options.config))
           configs = webpackMerge(configs, mergeConfigs)
-        } catch(e) {
+        } catch (e) {
           console.error(e)
         }
       }
@@ -290,8 +277,8 @@ export class WeexBuilder extends WebpackBuilder {
             // Makes the build much quieter
             chunks: false,
             // Shows colors in the console
-            colors: true
-          })
+            colors: true,
+          }),
       }
 
       if (err) {
@@ -313,14 +300,13 @@ export class WeexBuilder extends WebpackBuilder {
       compiler.watch(
         {
           ignored: /node_modules/,
-          poll: 1000
+          poll: 1000,
         },
-        formatResult
+        formatResult,
       )
     } else {
       compiler.run(formatResult)
     }
-
   }
 }
 
