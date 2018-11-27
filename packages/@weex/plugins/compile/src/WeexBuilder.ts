@@ -199,13 +199,13 @@ export class WeexBuilder extends WebpackBuilder {
                     },
                   },
                 ],
-              }),
+              })
             },
           ],
         })
       } else {
         configs.module.rules.push({
-          test: /\.vue(\?[^?]+)?$/,
+          test: /\.[vue|we](\?[^?]+)?$/,
           use: [
             {
               loader: 'weex-loader',

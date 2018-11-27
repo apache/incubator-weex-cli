@@ -4,15 +4,93 @@ module.exports = {
   name: "compile",
   description: "Compile weex bundle",
   alias: "c",
-  run: async context => {
-    const options = context.parameters.options;
-    const source = context.parameters.first;
-    const target = context.parameters.second;
-    const logger = context.logger;
-    if (source && target) {
+  run: async (
+    {
+      logger,
+      parameters,
+      inquirer,
+      meta,
+      compile
+    }
+  ) => {
+    const options = parameters.options;
+    const source = parameters.first;
+    const target = parameters.second;
+    const array = parameters.array;
+
+    const showHelp = async () => {
+      let params = {
+        commandend: 'Compile JS/Vue to Weex bundle',
+        commands: [
+          {
+            heading: ['Usage', 'Description']
+          },
+          {
+            key: 'compile',
+            type: '[source] [target] --<options>',
+            description: 'Compile from source floder to target floder.'
+          },
+          {
+            key: 'compile',
+            type: '[filename.vue] [floder | path/filename.js]',
+            description: 'Compile specify file to floder or a specify file.'
+          }
+        ],
+        options: {
+          'Base': [
+            {
+              key: '-e,--ext',
+              type: '[ext]',
+              description: 'set default extname for compiler',
+              default: '[\'vue\', \'js\']'
+            },
+            {
+              key: '--web',
+              description: 'compile for web render',
+            },
+            {
+              key: '-w,--watch',
+              description: 'compile with watch mode'
+            },
+            {
+              key: '-d,--devtool',
+              type: '[devtool]',
+              description: 'set webpack devtool mode'
+            },
+            {
+              key: '-m,--min',
+              description: 'uglify the output js content'
+            },
+            {
+              key: '-c,--config',
+              type: '[path]',
+              description: 'compile with specify webpack config file'
+            },
+            {
+              key: '-b,--base',
+              type: '[path]',
+              description: 'set the base path of source'
+            }
+          ],
+          'Miscellaneous:': [
+            {
+              key:'-v, --version',
+              description: 'Output the version number'
+            },
+            {
+              key:'-h, --help',
+              description: 'Show help'
+            }
+          ]
+        }
+      }
+      meta.generateHelp(params)
+    }
+
+    if (array.length >= 2) {
       const progressBar = logger.progress();
       let maxProgress = 0;
-      await context.compile(
+      await compile(
         source,
         target,
         {
@@ -50,6 +128,8 @@ module.exports = {
           }
         }
       );
+    } else if (array.length < 2) {
+      await showHelp()
     }
   }
 };
