@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "outDir": "lib",
+    "lib": ["es2016", "es2016.array.include", "scripthost"],
+    "types": [
+      "node",
+      "jest"
+    ],
+    "plugins": [{
+      "name": "typescript-plugin-add-type"
+    }],
+    "sourceMap": true,
+    "rootDir": "src",
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    /* Strict Type-Checking Option */
+    "strict": false, /* disable all strict type-checking options */
+    /* Additional Checks */
+    "experimentalDecorators": true,
+    "noUnusedLocals": false, /* Report errors on unused locals. */
+    // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
+    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
+    "noUnusedParameters": false  /* Report errors on unused parameters. */
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/fixtures", "src/**/*.test.ts"]
+}
