@@ -17,6 +17,7 @@ module.exports = {
     const source = parameters.first;
     const target = parameters.second;
     const array = parameters.array;
+    let progressBar;
 
     const showHelp = async () => {
       let params = {
@@ -87,13 +88,44 @@ module.exports = {
       meta.generateHelp(params)
     }
 
+    const translateOptions = (cliOptions) => {
+      return {
+        watch: cliOptions.watch || cliOptions.w,
+        devtool: cliOptions.devtool || cliOptions.d,
+        ext: path.extname(source) || cliOptions.ext || cliOptions.e || "vue|we",
+        web: cliOptions.web || cliOptions.w,
+        min: cliOptions.min || cliOptions.m,
+        config: cliOptions.config || cliOptions.c,
+        base: cliOptions.base || cliOptions.b,
+        outputConfig: cliOptions.outputConfig
+      }
+    }
+
+    const formateResult = (error, output, json) => {
+      progressBar.hide();
+      if (error) {
+        logger.error(`${logger.xmark} Build failed, please check the error below:`);
+        if (Array.isArray(error)) {
+          error.forEach(e => {
+            logger.error(e.replace("/n", "\n"));
+          });
+        } else if (error.stack) {
+          logger.error(error.stack.replace("/n", "\n"));
+        } else {
+          logger.error(error.replace("/n", "\n"));
+        }
+      } else {
+        logger.log(output.toString());
+      }
+    }
+
     if (array.length >= 2) {
-      const progressBar = logger.progress();
+      progressBar = logger.progress();
       let maxProgress = 0;
       await compile(
         source,
         target,
-        {
+        Object.assign({
           onProgress: function(complete, action) {
             if (complete > maxProgress) {
               maxProgress = complete;
@@ -101,32 +133,9 @@ module.exports = {
               complete = maxProgress;
             }
             progressBar.show(action, complete);
-          },
-          watch: options.watch || options.w,
-          devtool: options.devtool || options.d,
-          ext: path.extname(source) || options.ext || options.e || "vue|we",
-          web: options.web || options.w,
-          min: options.min || options.m,
-          config: options.config || options.c,
-          base: options.base || options.b
-        },
-        (error, output, json) => {
-          progressBar.hide();
-          if (error) {
-            logger.error("Build Failed!");
-            if (Array.isArray(error)) {
-              error.forEach(e => {
-                logger.error(e.replace("/n", "\n"));
-              });
-            } else if (error.stack) {
-              logger.error(error.stack.replace("/n", "\n"));
-            } else {
-              logger.error(error.replace("/n", "\n"));
-            }
-          } else {
-            logger.log(output.toString());
           }
-        }
+        }, translateOptions(options)),
+        formateResult
       );
     } else if (array.length < 2) {
       await showHelp()

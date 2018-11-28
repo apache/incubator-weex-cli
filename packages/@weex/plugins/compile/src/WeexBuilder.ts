@@ -60,7 +60,7 @@ export class WeexBuilder extends WebpackBuilder {
     zlib: false,
   }
 
-  async initConfig() {
+  async resolveConfig() {
     const destExt = path.extname(this.dest)
     const sourceExt = path.extname(this.rawSource)
     let outputPath
@@ -205,7 +205,7 @@ export class WeexBuilder extends WebpackBuilder {
         })
       } else {
         configs.module.rules.push({
-          test: /\.[vue|we](\?[^?]+)?$/,
+          test: /\.(we|vue)(\?[^?]+)?$/,
           use: [
             {
               loader: 'weex-loader',
@@ -237,7 +237,7 @@ export class WeexBuilder extends WebpackBuilder {
   }
 
   async build(callback) {
-    let configs = await this.initConfig()
+    let configs = await this.resolveConfig()
     let mergeConfigs
 
     if (this.source.length === 0) {
@@ -253,8 +253,20 @@ export class WeexBuilder extends WebpackBuilder {
           console.error(e)
         }
       }
+    } else {
+      let defatultConfig = path.resolve('weex.config.js')
+      if (exist(defatultConfig)) {
+        try {
+          mergeConfigs = require(path.resolve(defatultConfig))
+          configs = webpackMerge(configs, mergeConfigs)
+        } catch (e) {
+          console.error(e)
+        }
+      }
     }
-
+    if (this.options.outputConfig) {
+      console.log(JSON.stringify(configs, null, 2))
+    }
     const compiler = webpack(configs)
     const formatResult = (err, stats) => {
       const result = {
