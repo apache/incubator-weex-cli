@@ -1,5 +1,5 @@
 import { IToolbox } from '../core/toolbox'
-import { open } from '../toolbox/open-tools'
+import { open, chromeOpn } from '../toolbox/open-tools'
 
 /**
  * Extensions to print to the console.
@@ -9,4 +9,5 @@ import { open } from '../toolbox/open-tools'
 export default function attach(toolbox: IToolbox): void {
   // attach the feature set
   toolbox.open = open
+  toolbox.chromeOpn = chromeOpn
 }
