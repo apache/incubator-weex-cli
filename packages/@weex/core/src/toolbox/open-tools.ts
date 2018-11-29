@@ -1,5 +1,6 @@
 import * as execa from 'execa'
 import * as path from 'path'
+import * as chromeOpn from 'chrome-opn'
 
 /**
  * open a file or uri using the default application for the file type.
@@ -57,4 +58,4 @@ function escape(s) {
   return s.replace(/"/g, '\\"')
 }
 
-export { open }
+export { open, chromeOpn }
