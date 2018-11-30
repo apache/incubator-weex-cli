@@ -97,7 +97,8 @@ module.exports = {
         min: cliOptions.min || cliOptions.m,
         config: cliOptions.config || cliOptions.c,
         base: cliOptions.base || cliOptions.b,
-        outputConfig: cliOptions.outputConfig
+        outputConfig: cliOptions.outputConfig,
+        prod: cliOptions.prod
       }
     }
 
