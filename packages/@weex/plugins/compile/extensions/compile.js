@@ -15,6 +15,8 @@ module.exports = context => {
       return result;
     }
   };
+
+  context.compiler = WeexBuilder
 };
 
 async function build(source, dest, options, callback) {
