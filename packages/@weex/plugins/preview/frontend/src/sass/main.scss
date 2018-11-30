@@ -1,0 +1,56 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import "./notify.scss";
+
+* {
+  font-family: Saira, sans-serif;
+}
+
+html, body, #app-main {
+    height: 100%;
+}
+
+body {
+  background-color: #ecf0f1;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  overflow-y: auto;
+}
+
+h1, h2, h3, h4, h5 {
+  display: block;
+  font-weight: 400;
+}
+
+li, span, p, a, h1, h2, h3, h4, h5 {
+  line-height: 1;
+}
+
+p {
+  display: block;
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+
+button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+#app-main {
+  height: 100%;
+  width: 100%;
+  background-color: #eff2f7;
+}

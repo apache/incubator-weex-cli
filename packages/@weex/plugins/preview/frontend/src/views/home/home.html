@@ -1,0 +1,43 @@
+<div class="preview">
+  <div class="navbar">
+    <div class="title">
+      Weex&nbsp&nbspPreview
+    </div>
+  </div>
+  <div class="container">
+    <div class="left-block">
+      <div class="device mobile">
+        <div class="screen">
+          <a class="open" :href="previewUrl" target="_blank">
+            <i class="iconfont icon-open"></i>
+          </a>
+          <iframe ref="iframe" frameborder="0" :src="previewUrl"
+            class="screen">
+
+          </iframe>
+        </div>
+      </div>
+    </div>
+    <div class="right-block">
+      <div class="message">
+        <a class="qrcode" :href="qrcodeUrl">
+          <qrcode :value="qrcodeUrl" :title="qrcodeUrl" :size="200"></qrcode>
+        </a>
+        <p class="tips">Use <a target="_blank" href="https://weex-project.io/playground.html">Weex playground app</a>
+          to scan the QRCode</p>
+        <p class="bundleurl">
+          <a :href="qrcodeUrl" target="_blank">
+            <i class="iconfont icon-dakai"></i>
+            See the source code
+          </a>
+        </p>
+        <div class="bundles">
+          <div class="item" :title="page" v-for="(page, index) in pages" :key="index" @click="togglePage(page)">
+            {{page | sliceFilename}}
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

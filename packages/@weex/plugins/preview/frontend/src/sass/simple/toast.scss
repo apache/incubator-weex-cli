@@ -1,0 +1,132 @@
+$snotify-toast-bg: #fff !default;
+$snotify-toast-color: #88898a !default;
+$snotify-toast-progressBar: #c7c7c7 !default;
+$snotify-toast-progressBarPercentage: #4c4c4c !default;
+
+$snotify-border-width: 4px !default;
+$snotify-simple-border-color: #000 !default;
+$snotify-success-border-color: #009688 !default;
+$snotify-info-border-color: #f37327 !default;
+$snotify-warning-border-color: #ff9800 !default;
+$snotify-error-border-color: #f44336 !default;
+$snotify-async-border-color: #f37327 !default;
+$snotify-confirm-border-color: #009688 !default;
+$snotify-prompt-border-color: $snotify-confirm-border-color !default;
+
+.snotifyToast {
+  display: block;
+  cursor: pointer;
+  background-color: $snotify-toast-bg;
+  max-height: 300px;
+  height: 100%;
+  margin: 5px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: auto;
+  box-shadow: 0px 2px 7px 0px #ddd;
+  &--in {
+    animation-name: appear;
+  }
+
+  &--out {
+    animation-name: disappear;
+  }
+
+  &__inner {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    padding: 5px 50px 5px 15px;
+    min-height: 50px;
+    font-size: 16px;
+    color: $snotify-toast-color;
+  }
+
+  &__noIcon {
+    padding: 5px 15px 5px 15px;
+  }
+
+  &__progressBar {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    background-color: $snotify-toast-progressBar;
+
+    &__percentage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 5px;
+      background-color: $snotify-toast-progressBarPercentage;
+      max-width: 100%;
+    }
+  }
+
+  &__title {
+    font-size: 14px;
+    line-height: 20px;
+    color: $snotify-toast-color;
+  }
+
+  &__body {
+    font-size: 14px;
+    color: $snotify-toast-color;
+  }
+}
+
+.snotifyToast-show {
+  transform: translate(0, 0);
+  opacity: 1;
+}
+
+.snotifyToast-remove {
+  max-height: 0;
+  overflow: hidden;
+  transform: translate(0, 50%);
+  opacity: 0;
+}
+
+/***************
+ ** Modifiers **
+ **************/
+
+.snotify-simple {
+  // border-left: $snotify-border-width solid $snotify-simple-border-color;
+}
+
+.snotify-success {
+  // border-left: $snotify-border-width solid $snotify-success-border-color;
+}
+
+.snotify-info {
+  // border-left: $snotify-border-width solid $snotify-info-border-color;
+}
+
+.snotify-warning {
+  // border-left: $snotify-border-width solid $snotify-warning-border-color;
+}
+
+.snotify-error {
+  // border-left: $snotify-border-width solid $snotify-error-border-color;
+}
+
+.snotify-async {
+  // border-left: $snotify-border-width solid $snotify-async-border-color;
+}
+
+.snotify-confirm {
+  // border-left: $snotify-border-width solid $snotify-confirm-border-color;
+}
+
+.snotify-prompt {
+  border-left: $snotify-border-width solid $snotify-prompt-border-color;
+}
+
+.snotify-confirm,
+.snotify-prompt {
+  .snotifyToast__inner {
+    padding: 10px 15px;
+  }
+}
