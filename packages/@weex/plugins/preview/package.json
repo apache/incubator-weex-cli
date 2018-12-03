@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/preview",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "preview weex page",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,9 @@
   },
   "author": "",
   "files": [
-    "lib/"
+    "lib/",
+    "frontend/preview/",
+    "commands/"
   ],
   "license": "MIT",
   "publishConfig": {
