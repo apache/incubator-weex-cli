@@ -13,7 +13,7 @@ import './sass/main.scss'
 
 Vue.directive('b-tooltip', vBTooltip)
 
-const options: {toast: SnotifyToastConfig} = {
+const options: { toast: SnotifyToastConfig } = {
   toast: {
     position: SnotifyPosition.rightBottom,
     bodyMaxLength: 20,
@@ -22,8 +22,8 @@ const options: {toast: SnotifyToastConfig} = {
     showProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
-    backdrop: -1
-  }
+    backdrop: -1,
+  },
 }
 Vue.use(Snotify, options)
 
@@ -32,5 +32,5 @@ new Vue({
   el: '#app-main',
   store,
   router: createRouter(),
-  components: {}
+  components: {},
 })

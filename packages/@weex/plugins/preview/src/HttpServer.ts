@@ -9,7 +9,7 @@ export interface HttpOptions {
 
 export class HttpServer {
   private server: any
-  constructor (options: any) {
+  constructor(options: any) {
     this.server = this.startHttpServer(options)
   }
 
@@ -18,9 +18,9 @@ export class HttpServer {
     return server
   }
 
-  async listen(port: number|string) {
-    return new Promise((resolve, reject)=>{
-      this.server.listen(port, '0.0.0.0', (data) => {
+  async listen(port: number | string) {
+    return new Promise((resolve, reject) => {
+      this.server.listen(port, '0.0.0.0', data => {
         resolve(data)
       })
     })

@@ -2,31 +2,25 @@ import { Commit } from 'vuex'
 import * as types from '../mutation-types'
 
 export interface State {
-  connectUrl: string,
+  connectUrl: string
   version: string
 }
 
 const state: State = {
   connectUrl: '',
-  version: '-'
+  version: '-',
 }
 
-const getters = {
+const getters = {}
 
-}
+const actions = {}
 
-const actions = {
-
-}
-
-const mutations = {
-
-}
+const mutations = {}
 
 export default {
   namespaced: true,
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

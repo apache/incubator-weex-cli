@@ -4,7 +4,7 @@ import * as path from 'path'
 
 export interface PreviewOptions {
   staticSourceLocation?: string
-  port: number,
+  port: number
   wsport: number
 }
 
@@ -12,7 +12,7 @@ export class Previewer {
   public httpServer: any = null
   public hotReloadServer: any = null
   public defaultFrontendLocation: string = path.join(__dirname, '../frontend/preview')
-  constructor (options: PreviewOptions) {
+  constructor(options: PreviewOptions) {
     this.init(options)
   }
 
@@ -21,12 +21,11 @@ export class Previewer {
       root: options.staticSourceLocation || this.defaultFrontendLocation,
       cache: '-1',
       showDir: true,
-      autoIndex: true
+      autoIndex: true,
     })
     await this.httpServer.listen(options.port)
     this.hotReloadServer = new HotReloadServer({
-      port: options.wsport
+      port: options.wsport,
     })
   }
-
 }

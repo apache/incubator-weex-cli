@@ -1,51 +1,52 @@
 export interface IParser {
-  unique (array: any [])
-
+  unique(array: any[])
 }
 
 export class Parser implements IParser {
-
-  unique (array: any []) {
+  unique(array: any[]) {
     let unique = {}
-    array.forEach(function (item) {
+    array.forEach(function(item) {
       unique[JSON.stringify(item)] = item
     })
-    array = Object.keys(unique).map(function (u) {
+    array = Object.keys(unique).map(function(u) {
       return JSON.parse(u)
     })
     return array
   }
 
-  mergeApmData (data: any) {
+  mergeApmData(data: any) {
     let result = {}
     for (let key in data) {
       result[key] = {}
       result[key]['stage'] = {}
-      data[key]['stage'] && data[key]['stage'].forEach((stage) => {
-        for (let stagekey in stage) {
-          result[key]['stage'][stagekey] = stage[stagekey]
-        }
-      })
+      data[key]['stage'] &&
+        data[key]['stage'].forEach(stage => {
+          for (let stagekey in stage) {
+            result[key]['stage'][stagekey] = stage[stagekey]
+          }
+        })
       result[key]['properties'] = {}
-      data[key]['properties'] && data[key]['properties'].forEach((properties) => {
-        for (let propertieskey in properties) {
-          result[key]['properties'][propertieskey] = properties[propertieskey]
-        }
-      })
+      data[key]['properties'] &&
+        data[key]['properties'].forEach(properties => {
+          for (let propertieskey in properties) {
+            result[key]['properties'][propertieskey] = properties[propertieskey]
+          }
+        })
       result[key]['stats'] = {}
-      data[key]['stats'] && data[key]['stats'].forEach((statss) => {
-        for (let statsskey in statss) {
-          result[key]['stats'][statsskey] = statss[statsskey]
-        }
-      })
+      data[key]['stats'] &&
+        data[key]['stats'].forEach(statss => {
+          for (let statsskey in statss) {
+            result[key]['stats'][statsskey] = statss[statsskey]
+          }
+        })
       result[key]['event'] = {}
-      data[key]['event'] && data[key]['event'].forEach((events) => {
-        for (let eventskey in events) {
-          result[key]['event'][eventskey] = events[eventskey]
-        }
-      })
+      data[key]['event'] &&
+        data[key]['event'].forEach(events => {
+          for (let eventskey in events) {
+            result[key]['event'][eventskey] = events[eventskey]
+          }
+        })
       result[key]['wxinteraction'] = data[key]['wxinteraction']
-
     }
     return result
   }
@@ -62,5 +63,4 @@ export class Parser implements IParser {
   //   console.log(result)
   //   return result
   // }
-
 }

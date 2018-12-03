@@ -10,15 +10,15 @@ export interface PerMessageDeflateOptions {
   serverMaxWindowBits?: number
   clientMaxWindowBits?: number
   zlibDeflateOptions?: {
-      flush?: number;
-      finishFlush?: number;
-      chunkSize?: number;
-      windowBits?: number;
-      level?: number;
-      memLevel?: number;
-      strategy?: number;
-      dictionary?: Buffer | Buffer[] | DataView;
-      info?: boolean;
+    flush?: number
+    finishFlush?: number
+    chunkSize?: number
+    windowBits?: number
+    level?: number
+    memLevel?: number
+    strategy?: number
+    dictionary?: Buffer | Buffer[] | DataView
+    info?: boolean
   }
   threshold?: number
   concurrencyLimit?: number
@@ -52,19 +52,19 @@ export interface ClientOptions {
 export class HotReloadServer {
   public clients: any[]
   public wss: any
-  constructor (options: ClientOptions) {
+  constructor(options: ClientOptions) {
     this.clients = []
     this.wss = this.startWebSocket(options)
   }
 
   startWebSocket(options: ClientOptions) {
     const wss = new WebSocket.Server(options)
-    wss.on('connection', (ws) => {
+    wss.on('connection', ws => {
       this.clients.push(ws)
-      ws.on('message', (message) => {
-        this.clients.forEach((client) => {
+      ws.on('message', message => {
+        this.clients.forEach(client => {
           if (client.readyState === WebSocket.OPEN) {
-            client.send('websocket connected', (err) => {
+            client.send('websocket connected', err => {
               if (err) {
                 debug(err)
               }
@@ -74,7 +74,7 @@ export class HotReloadServer {
       })
       // while socket recive close or error sigle, socket destroy and remve client from clients
       // websocket close handle
-      ws.on('close', (data) => {
+      ws.on('close', data => {
         debug('websocket close -> ', data)
         if (ws && ws.upgradeReq) {
           this.clients.splice(this.findClient(ws.upgradeReq.url))
@@ -83,7 +83,7 @@ export class HotReloadServer {
         ws.close()
       })
       // websocket error handle
-      ws.on('error', (error) => {
+      ws.on('error', error => {
         if (error) {
           debug('websocket error -> ', error)
           if (ws && ws.upgradeReq) {
@@ -100,7 +100,7 @@ export class HotReloadServer {
   // send web socket messsage to client
   async sendSocketMessage(message: string) {
     return new Promise((resolve, reject) => {
-      this.clients.forEach((client) => {
+      this.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message || 'refresh', (err: Error) => {
             if (err) {

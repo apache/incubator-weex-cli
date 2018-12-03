@@ -1,9 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import {
-  State,
-  Action,
-  namespace
-} from 'vuex-class'
+import { State, Action, namespace } from 'vuex-class'
 import SockJS from 'simple-websocket'
 import QrcodeVue from 'qrcode.vue'
 import './home.scss'
@@ -13,20 +9,19 @@ const Module = namespace('home')
 @Component({
   template: require('./home.html'),
   components: {
-    'qrcode': QrcodeVue
+    qrcode: QrcodeVue,
   },
   filters: {
-    sliceFilename (value: any) {
+    sliceFilename(value: any) {
       let array = value.split('/')
       let len: number = array.length
       if (len > 2) {
         return `${array[len - 2]}/${array[len - 1]}`
       }
       return value
-    }
-  }
+    },
+  },
 })
-
 export class HomeComponent extends Vue {
   entry: string = ''
   pages: string[] = []
@@ -35,11 +30,11 @@ export class HomeComponent extends Vue {
   port: number | string
   socket: any = null
   preview: string = ''
-  created () {
+  created() {
     this.init(this.$route.query)
   }
 
-  mounted () {
+  mounted() {
     if (this.entry) {
       this.previewUrl = this.generatePreviewUrl(this.entry)
       this.qrcodeUrl = this.generateQRCodeUrl(this.port, this.transformEntry(this.entry))
@@ -49,7 +44,7 @@ export class HomeComponent extends Vue {
     }
   }
 
-  init (query: any) {
+  init(query: any) {
     if (query.entry) {
       this.entry = query.entry
     }
@@ -69,13 +64,13 @@ export class HomeComponent extends Vue {
     }
   }
 
-  connectHotreloadServer (port: number | string) {
+  connectHotreloadServer(port: number | string) {
     this.socket = new SockJS(`ws://${window.location.hostname}:${port}`)
     // this.socket = new SockJS(`ws://localhost:8080/sockjs-node/768/vz1v51sz/websocket`)
-    this.socket.on('connect', (data) => {
+    this.socket.on('connect', data => {
       this.$snotify.success('HotReload Conneted')
     })
-    this.socket.on('data', (data) => {
+    this.socket.on('data', data => {
       this.$snotify.success('Updated')
       let reloadPreview = this.previewUrl
       this.previewUrl = ''
@@ -83,19 +78,19 @@ export class HomeComponent extends Vue {
         this.previewUrl = reloadPreview
       })
     })
-    this.socket.on('close', (data) => {
+    this.socket.on('close', data => {
       this.$snotify.error('HotReload Disconneted')
     })
-    this.socket.on('error', (data) => {
+    this.socket.on('error', data => {
       console.error(data)
     })
   }
 
-  transformEntry (entry) {
+  transformEntry(entry) {
     return `http://${window.location.host}/dist/${entry}`
   }
 
-  generatePreviewUrl (entry) {
+  generatePreviewUrl(entry) {
     if (this.preview === 'single') {
       return `/assets/weex/weex.html?page=${entry.replace('.js', '.web.js')}`
     } else {
@@ -103,11 +98,11 @@ export class HomeComponent extends Vue {
     }
   }
 
-  generateQRCodeUrl (port: number | string, url: string) {
+  generateQRCodeUrl(port: number | string, url: string) {
     return `${url}?wsport=${port}&_wx_tpl=${url}`
   }
 
-  togglePage (entry: string) {
+  togglePage(entry: string) {
     this.previewUrl = this.generatePreviewUrl(entry)
     this.qrcodeUrl = this.generateQRCodeUrl(this.port, this.transformEntry(entry))
   }
