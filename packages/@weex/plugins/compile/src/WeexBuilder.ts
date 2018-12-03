@@ -258,6 +258,10 @@ new Vue(App)
           filename: outputFilename,
         },
         watch: this.options.watch || false,
+        watchOptions: {
+          aggregateTimeout: 300,
+          ignored: /\.temp/
+        },
         devtool: this.options.devtool || 'eval-source-map',
         resolve: {
           extensions: ['.js', '.vue', '.json'],
