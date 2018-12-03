@@ -5,7 +5,7 @@ const debug = require('debug')('weex:core:install')
 
 export default {
   name: 'install',
-  alias: ['i'],
+  alias: ['update', 'i'],
   description: 'Install weex plugin for Weex Cli',
   hidden: false,
   run: async toolbox => {
