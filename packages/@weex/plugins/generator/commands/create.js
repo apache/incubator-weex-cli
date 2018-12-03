@@ -77,7 +77,7 @@ module.exports = {
       let keys = Object.keys(meta.prompts)
       keys.forEach(key => {
         let prompt = meta.prompts[key]
-        promptDefault = prompt.default || ''
+        promptDefault = typeof prompt.default !== 'undefined' ? prompt.default : ''
         propmts.push({
           type: promptMapping[prompt.type] || prompt.type,
           name: key,
