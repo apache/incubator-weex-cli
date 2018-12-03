@@ -1,33 +1,33 @@
 const path = require("path");
 const detect = require('detect-port');
 const ip = require('ip').address();
-const { Previewer } = require('../lib');
+const {
+  Previewer
+} = require('../lib');
 
 module.exports = {
   name: "preview",
   description: "Preview weex page",
   alias: "p",
-  run: async (
-    {
-      logger,
-      parameters,
-      inquirer,
-      meta,
-      compile,
-      chromeOpn
-    }
-  ) => {
+  run: async ({
+    logger,
+    parameters,
+    inquirer,
+    meta,
+    compile,
+    chromeOpn
+  }) => {
     const options = parameters.options;
     const source = parameters.first;
     const array = parameters.array;
     let preview = null;
     let previewOptions = {};
+    let spinner
 
     const showHelp = async () => {
       let params = {
         commandend: 'Preview weex page',
-        commands: [
-          {
+        commands: [{
             heading: ['Usage', 'Description']
           },
           {
@@ -42,8 +42,7 @@ module.exports = {
           }
         ],
         options: {
-          'Base': [
-            {
+          'Base': [{
               key: '-e,--ext',
               type: '[ext]',
               description: 'set default extname for compiler',
@@ -77,13 +76,12 @@ module.exports = {
               description: 'set the base path of source'
             }
           ],
-          'Miscellaneous:': [
-            {
-              key:'-v, --version',
+          'Miscellaneous:': [{
+              key: '-v, --version',
               description: 'Output the version number'
             },
             {
-              key:'-h, --help',
+              key: '-h, --help',
               description: 'Show help'
             }
           ]
@@ -105,6 +103,20 @@ module.exports = {
       }
     }
 
+    const translateCompileOptions = (cliOptions) => {
+      return {
+        watch: cliOptions.watch || cliOptions.w,
+        devtool: cliOptions.devtool || cliOptions.d,
+        ext: path.extname(source) || cliOptions.ext || cliOptions.e || "vue|we",
+        web: cliOptions.web || cliOptions.w,
+        min: cliOptions.min || cliOptions.m,
+        config: cliOptions.config || cliOptions.c,
+        base: cliOptions.base || cliOptions.b,
+        outputConfig: cliOptions.outputConfig,
+        prod: cliOptions.prod
+      }
+    }
+
     const formateResult = (error, output, json) => {
       if (error) {
         logger.error(`${logger.xmark} Build failed, please check the error below:`);
@@ -122,66 +134,92 @@ module.exports = {
       }
     }
 
-    const afterComileWeexBundle = async (error, output, json) => {
+    const outputCompileError = (error) => {
+      logger.error(`${logger.xmark} Build failed, please check the error below:`);
+      if (Array.isArray(error)) {
+        error.forEach(e => {
+          logger.error(e.replace("/n", "\n"));
+        });
+      } else if (error.stack) {
+        logger.error(error.stack.replace("/n", "\n"));
+      } else {
+        logger.error(error.replace("/n", "\n"));
+      }
+    }
+    
+    const postComileWeexBundle = async (error, output, json) => {
       if (error) {
-        logger.error(`${logger.xmark} Build failed, please check the error below:`);
-        if (Array.isArray(error)) {
-          error.forEach(e => {
-            logger.error(e.replace("/n", "\n"));
-          });
-        } else if (error.stack) {
-          logger.error(error.stack.replace("/n", "\n"));
-        } else {
-          logger.error(error.replace("/n", "\n"));
-        }
+        outputCompileError(error)
       } else {
         const pages = json.chunks.map(chunk => {
           return chunk.files[0]
         })
-        await compile(
-          source,
-        `${preview.defaultFrontendLocation}/dist`,
-          {
-            watch: true,
-            filename: '[name].web.js',
-            web: true,
-            config: options.config || options.c
-          },
-          async (error, output, json) => {
-            if (error) {
-              logger.error(`${logger.xmark} Build failed, please check the error below:`);
-              if (Array.isArray(error)) {
-                error.forEach(e => {
-                  logger.error(e.replace("/n", "\n"));
-                });
-              } else if (error.stack) {
-                logger.error(error.stack.replace("/n", "\n"));
-              } else {
-                logger.error(error.replace("/n", "\n"));
-              }
-            } else {
-              // logger.log(`Time:${json.time}ms`);
-              await compile(
-                source,
-                `${preview.defaultFrontendLocation}/dist`,
-                {
-                  config: options.config || options.c
-                },
-                async () => {
-                  await preview.hotReloadServer.sendSocketMessage()
-                }
-              );
-            }
-          }
-        )
+
         let previewUrl = ''
         if (json.isSigleWebRender) {
           previewUrl = encodeURI(`http://${ip}:${previewOptions.port}?entry=${previewOptions.entry || pages[0]}&wsport=${previewOptions.wsport}&pages=${JSON.stringify(pages)}&preview=single`)
         } else {
           previewUrl = encodeURI(`http://${ip}:${previewOptions.port}?entry=${previewOptions.entry || pages[0]}&wsport=${previewOptions.wsport}&pages=${JSON.stringify(pages)}`)
         }
-        logger.log(`Preview your page on ${logger.colors.yellow(previewUrl)}`)
         chromeOpn(previewUrl, null, false)
+        logger.log('\nIf your browser does not open automatically, you can click on the link below:')
+        logger.warn(previewUrl)
+        logger.log('\n----------------------------')
+
+
+        spinner = logger.spin('[Web] Compiling bundle ...')
+        // compile web with watch mode
+        await compile(
+          source,
+          `${preview.defaultFrontendLocation}/dist`,
+          Object.assign({
+            onProgress: (complete, action) => {
+              if (complete >= 1) {
+                spinner.stopAndPersist({
+                  symbol: logger.colors.green(logger.checkmark),
+                  text: `${logger.colors.grey(`[Web] Complete ${json.time} ms`)}`
+                })
+              } else {
+                spinner.text = `[Web] Compiling bundle ... ${(complete * 100).toFixed(0)}%`
+              }
+            }
+          }, {
+            watch: true,
+            filename: '[name].web.js',
+            web: true,
+            config: options.config || options.c
+          }),
+          async (error, output, json) => {
+            if (error) {
+              outputCompileError(error)
+            } else {
+              spinner = logger.spin('[Native] Compiling bundle ...')
+              await compile(
+                source,
+                `${preview.defaultFrontendLocation}/dist`,
+                Object.assign({
+                  onProgress: (complete, action) => {
+                    if (complete >= 1) {
+                      spinner.stopAndPersist({
+                        symbol: logger.colors.green(logger.checkmark),
+                        text: `${logger.colors.grey(`[Native] Complete ${json.time} ms`)}`
+                      })
+                    } else {
+                      spinner.text = `[Native] Compiling bundle ... ${(complete * 100).toFixed(0)}%`
+                    }
+                  }
+                }, translateCompileOptions(options)),
+                async (error, output, json) => {
+                  if (error) {
+                    outputCompileError(error)
+                  } else {
+                    await preview.hotReloadServer.sendSocketMessage()
+                  }
+                }
+              );
+            }
+          }
+        )
       }
     }
 
@@ -191,10 +229,8 @@ module.exports = {
       await compile(
         source,
         `${preview.defaultFrontendLocation}/dist`,
-        {
-          config: options.config || options.c
-        },
-        afterComileWeexBundle
+        translateCompileOptions(options),
+        postComileWeexBundle
       );
     } else if (array.length < 1) {
       await showHelp()
