@@ -15,7 +15,6 @@ import { State } from './index'
 //   })
 // }
 
-const getterTree: GetterTree<State, any> = {
-}
+const getterTree: GetterTree<State, any> = {}
 
 export default getterTree

@@ -9,23 +9,19 @@ Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
 
-export interface GlobalState {
+export interface GlobalState {}
 
-}
-
-const state: GlobalState = {
-
-}
+const state: GlobalState = {}
 
 const store = new Vuex.Store({
   modules: {
-    home
+    home,
   },
   state,
   actions,
   getters,
   mutations,
-  strict: debug
+  strict: debug,
 })
 
 if (module.hot) {
@@ -33,8 +29,8 @@ if (module.hot) {
     const homeModule = require('./modules/home').default
     store.hotUpdate({
       modules: {
-        homeModule
-      }
+        homeModule,
+      },
     })
   })
 }
@@ -42,5 +38,5 @@ if (module.hot) {
 export default store
 
 export interface State extends GlobalState {
-  home: HomeState,
+  home: HomeState
 }

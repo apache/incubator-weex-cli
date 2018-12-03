@@ -1,7 +1,7 @@
 import Vue, { Component } from 'vue'
 import * as api from 'vue-hot-reload-api'
 
-export async function makeHot (id: string, componentLoader: () => Promise<Component>, acceptFunc: void) {
+export async function makeHot(id: string, componentLoader: () => Promise<Component>, acceptFunc: void) {
   if (module.hot) {
     api.install(Vue)
     if (!api.compatible) {
@@ -13,6 +13,6 @@ export async function makeHot (id: string, componentLoader: () => Promise<Compon
   }
 }
 
-export function reload (id: string, component: Component) {
+export function reload(id: string, component: Component) {
   api.reload(id, component)
 }
