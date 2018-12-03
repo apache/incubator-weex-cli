@@ -99,7 +99,7 @@ export class HotReloadServer {
 
   // send web socket messsage to client
   async sendSocketMessage(message: string) {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message || 'refresh', (err: Error) => {

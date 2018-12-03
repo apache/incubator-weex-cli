@@ -92,5 +92,8 @@
   },
   "keywords": [
     "device"
-  ]
+  ],
+  "pluginDependencies": {
+    "@weex-cli/compile": "latest"
+  }
 }
