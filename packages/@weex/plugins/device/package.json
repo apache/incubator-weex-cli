@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/device",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "device for weex-toolkit",
   "main": "index.js",
   "scripts": {
