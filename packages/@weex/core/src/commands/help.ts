@@ -1,8 +1,9 @@
+
 export default {
   name: 'help',
   alias: 'h',
   dashed: true,
-  run: async ({ parameters, runtime, logger, fs, meta }) => {
+  run: async ({ parameters, logger, meta }) => {
     const showHelp = async (subcommand?: string) => {
       let highLightKeys = {
         platform: logger.colors.yellow('<Platform>'),
@@ -36,8 +37,8 @@ export default {
         ],
         autocomplete: ['autocomplete', 'Configures your current command-line completion settings.'],
         'device-list': [`device list`, 'Lists all recognized connected physical or virtual devices.'],
-        'device-log': [`device log`, 'Opens the log stream for the selected device.'],
-        'device-run': [`device run`, 'Runs the selected application on a connected device.'],
+        // 'device-log': [`device log`, 'Opens the log stream for the selected device.'],
+        'device-run': [`device run`, 'Choose one simulator to run.'],
         install: [`install ${highLightKeys.package}`, 'Install plugin for the Weex Cli.'],
         uninstall: [`uninstall ${highLightKeys.package}`, 'Uninstall plugin for the Weex Cli.'],
         repair: [`repair ${highLightKeys.command}`, 'Repair cli dependencies or the core.'],
@@ -85,7 +86,7 @@ export default {
       ]
       let deviceData = [
         [logger.colors.success('Command'), logger.colors.success('Description')],
-        helps['device-log'],
+        // helps['device-log'],
         helps['device-run'],
         helps['device-list'],
       ]

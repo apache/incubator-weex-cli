@@ -1,0 +1,1 @@
+Plugin for compile weex file.

@@ -1,8 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const match = require('minimatch');
+const match = require("minimatch");
 const eval_1 = require("./eval");
-exports.filter = (files, filters, data, done) => {
+/**
+ * Filter files
+ *
+ * @param files
+ * @param filters
+ * @param data
+ * @param done
+ */
+function filter(files, filters, data, done) {
     if (!filters) {
         return done();
     }
@@ -18,5 +26,7 @@ exports.filter = (files, filters, data, done) => {
         });
     });
     done();
-};
+}
+exports.filter = filter;
+exports.default = filter;
 //# sourceMappingURL=filter.js.map

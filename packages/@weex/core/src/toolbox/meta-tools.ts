@@ -2,7 +2,8 @@ import * as jetpack from 'fs-jetpack'
 import { equals, map, pipe, propEq, reject, replace } from 'ramda'
 import { IToolbox } from '../core/toolbox'
 import * as path from 'path'
-
+import { logger } from './logger-tools'
+import { MetaOptions } from './meta-types'
 /**
  * Finds the version for the currently running CLI.
  *
@@ -77,4 +78,98 @@ export function getModulesInfo(toolbox: IToolbox): any {
     info = jetpack.read(moduleConfigFilePath, 'json')
   }
   return info
+}
+
+
+/**
+ * Generate help info
+ *
+ * @export
+ * @param {MetaOptions} params
+ * @param {string} [brand]
+ * @returns {*}
+ */
+export function generateHelp(params:MetaOptions, brand:string = 'weex'): any {
+  if (params.appstart) {
+    logger.log(params.appstart)
+  }
+  logger.success('\n# Commands\n');
+  if (Array.isArray(params.commands)) {
+    let tables = []
+    params.commands.forEach(command => {
+      if (command.heading) {
+        if (Array.isArray(command.heading)) {
+          tables.push(command.heading.map(item => logger.colors.green(item)))
+        }
+      }
+      else {
+        tables.push([`$ ${brand} ${command.key}${command.alias?`(${command.alias})`: ''} ${logger.colors.yellow(command.type || '')}`, `${command.description}${command.default?` - ${command.default}`:``}`])
+      }
+    })
+    logger.table(tables, {
+      format: 'markdown'
+    })
+  } else {
+    let keys = Object.keys(params.commands) || []
+    let len = keys.length
+    for(let i = 0; i < len; i++) {
+      let tables = []
+      logger.log(`\n${keys[i]}\n`)
+      params.commands[keys[i]].forEach(command => {
+        if (command.heading) {
+          if (Array.isArray(command.heading)) {
+            tables.push(command.heading.map(item => logger.colors.green(item)))
+          }
+        }
+        else {
+          tables.push([`$ ${brand} ${command.key}${command.alias?`(${command.alias})`: ''} ${logger.colors.yellow(command.type || '')}`, `${command.description}${command.default?` - ${command.default}`:``}`])
+        }
+      })
+      logger.table(tables, {
+        format: 'markdown'
+      })
+    }
+  }
+  if (params.commandend) {
+    logger.log(`\n${params.commandend}`)
+  }
+  logger.success('\n# Options');
+  if (Array.isArray(params.options)) {
+    let tables = []
+    params.options.forEach(option => {
+      if (option.heading) {
+        if (Array.isArray(option.heading)) {
+          tables.push(option.heading.map(item => logger.colors.green(item)))
+        }
+      }
+      else {
+        tables.push([`${option.key}${option.alias?`(${option.alias})`: ''} ${logger.colors.yellow(option.type || '')}`, `${option.description}${option.default?` - ${option.default}`:``}`])
+      }
+    })
+    logger.table(tables)
+  } else {
+    let keys = Object.keys(params.options) || []
+    let len = keys.length
+    for(let i = 0; i < len; i++) {
+      let tables = []
+      logger.log(`\n${keys[i]}\n`)
+      params.options[keys[i]].forEach(option => {
+        if (option.heading) {
+          if (Array.isArray(option.heading)) {
+            tables.push(option.heading.map(item => logger.colors.green(item)))
+          }
+        }
+        else {
+          tables.push([`${option.key}${option.alias?`(${option.alias})`: ''} ${logger.colors.yellow(option.type || '')}`, `${option.description}${option.default?` - ${option.default}`:``}`])
+        }
+      })
+      logger.table(tables)
+    }
+  }
+  if (params.optionend) {
+    logger.log(`\n${params.optionend}`)
+  }
+  if (params.append) {
+    logger.log(`\n${params.append}`)
+  }
 }
