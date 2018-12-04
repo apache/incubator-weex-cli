@@ -31,32 +31,13 @@ module.exports = {
             heading: ['Usage', 'Description']
           },
           {
-            key: 'compile',
-            type: '[source] [target] --<options>',
-            description: 'Compile from source floder to target floder.'
-          },
-          {
-            key: 'compile',
-            type: '[filename.vue] [floder | path/filename.js]',
-            description: 'Compile specify file to floder or a specify file.'
+            key: 'preview',
+            type: '[source] --entry [filename]',
+            description: 'Preview weex pages on floder'
           }
         ],
         options: {
           'Base': [{
-              key: '-e,--ext',
-              type: '[ext]',
-              description: 'set default extname for compiler',
-              default: '[\'vue\', \'js\']'
-            },
-            {
-              key: '--web',
-              description: 'compile for web render',
-            },
-            {
-              key: '-w,--watch',
-              description: 'compile with watch mode'
-            },
-            {
               key: '-d,--devtool',
               type: '[devtool]',
               description: 'set webpack devtool mode'
