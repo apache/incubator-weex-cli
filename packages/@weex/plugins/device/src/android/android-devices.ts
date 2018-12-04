@@ -121,7 +121,6 @@ class AndroidDevice extends Devices {
         }
         return true
       })
-      console.log(deviceCmdList)
       if (deviceCmdList.length) {
         // Launched
         return resolve(null)

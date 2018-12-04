@@ -1,1 +1,1 @@
-Plugin for compile weex file.
+Plugin for manage device with commandline.
