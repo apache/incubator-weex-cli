@@ -101,7 +101,7 @@ module.exports = {
           })
           await generator(templatePath, target, metadata)
         } else {
-          logger.error(`Local template "${templatePath}" not found.`);
+          logger.error(`Local template "${templatePath}" not found`);
         }
       } else {
         const hasHash = /\//.test(template)
@@ -123,8 +123,8 @@ module.exports = {
         })
         await generator(templatePath, target, metadata)
       }
-      await updatePlatformConfig(platform, templatePath, target)
-      logger.success(`${logger.checkmark} Add ${platform} project success.`)
+      await updatePlatformConfig(platform, templatePath)
+      logger.success(`${logger.checkmark} Add ${platform} project success`)
     }
 
     const remove = async (platform) => {
@@ -135,9 +135,9 @@ module.exports = {
         await fse.remove(project)
         await updatePlatformConfig(platform, '', true)
         spinner.stop();
-        logger.success(`${logger.checkmark} Remove ${platform} project success.`)
+        logger.success(`${logger.checkmark} Remove ${platform} project success`)
       } else {
-        logger.warn(`Current workspace has not ${platform} project, please check.`)
+        logger.warn(`Current workspace has not ${platform} project, please check`)
       }
     }
 
@@ -172,7 +172,7 @@ module.exports = {
           })
           await generator(templatePath, target, metadata)
         } else {
-          logger.error(`Local template "${templatePath}" not found.`);
+          logger.error(`Local template "${templatePath}" not found`);
         }
       } else {
         const hasHash = /\//.test(template)
@@ -195,7 +195,7 @@ module.exports = {
         await generator(templatePath, target, metadata)
       }
       await updatePlatformConfig(platform, templatePath)
-      logger.success(`${logger.checkmark} Update ${platform} project success.`)
+      logger.success(`${logger.checkmark} Update ${platform} project success`)
     }
 
     const updatePlatformConfig = async (platform, template, del) => {
@@ -257,7 +257,7 @@ module.exports = {
         options: {
           'Base': [{
             key: '--no-cache',
-            description: 'Fetching latest template with no cache.'
+            description: 'Fetching latest template with no cache'
           }],
           'Miscellaneous:': [{
               key: '-v, --version',
@@ -296,7 +296,7 @@ module.exports = {
       }
 
       if (!isWeexWorkSpace(process.cwd())) {
-        logger.error('The current directory is not the project directory of weex, please check.')
+        logger.error('The current directory is not the project directory of weex, please check')
         return
       }
 
