@@ -15,7 +15,8 @@ module.exports = {
   }) => {
     const files = parameters.array
     const options = parameters.options
-    const useStdin = typeof text === "string";
+    const useStdin = typeof text === "string"
+    let spinner = null
     const translateOptions = (cliOptions) => {
       return {
         envs: cliOptions.env,
@@ -51,7 +52,12 @@ module.exports = {
      */
     const printResults = (engine, results, format, outputFile) => {
       let formatter;
-
+      results.forEach(r => {
+        spinner.stopAndPersist({
+          symbol: r.errorCount > 0 ? logger.colors.red(logger.xmark) : logger.colors.green(logger.checkmark),
+          text: `${r.filePath}`
+        })
+      })
       try {
         formatter = engine.getFormatter(format);
       } catch (e) {
@@ -240,10 +246,9 @@ module.exports = {
       }
       meta.generateHelp(params)
     }
+
     if (options.version || options.v) { // version from package.json
-
       logger.info(`v${require("../package.json").version}`);
-
     } else if (options.printConfig) {
       if (files.length) {
         logger.error("The --print-config option must be used with exactly one file name.");
@@ -255,45 +260,38 @@ module.exports = {
       }
 
       const engine = new Linter(translateOptions(options));
-
       const fileConfig = engine.getConfigForFile(options.printConfig);
 
-      logger.info(JSON.stringify(fileConfig, null, "  "));
+      logger.info(JSON.stringify(fileConfig, null, 2));
       return 0;
     } else if (options.help || options.h || (!files.length && !useStdin)) {
-
-      showHelp();
-
+      await showHelp();
     } else {
-
       if (options.fix && options.fixDryRun) {
         logger.error("The --fix option and the --fix-dry-run option cannot be used together.");
         return 2;
       }
-
       if (useStdin && options.fix) {
         logger.error("The --fix option is not available for piped-in code; use --fix-dry-run instead.");
         return 2;
       }
-
       if (options.fixType && !options.fix && !options.fixDryRun) {
         logger.error("The --fix-type option requires either --fix or --fix-dry-run.");
         return 2;
       }
-
+      spinner = logger.spin('Start weex code lint ...')
+      
       const engine = new Linter(translateOptions(options));
       const report = useStdin ? engine.executeOnText(text, options.stdinFilename, true) : engine.executeOnFiles(files);
-
+      
       if (options.fix) {
         debug("Fix mode enabled - applying fixes");
         engine.outputFixes(report);
       }
-
       if (options.quiet) {
         debug("Quiet mode enabled - filtering out warnings");
         report.results = engine.getErrorResults(report.results);
       }
-
       if (printResults(engine, report.results, options.format, options.outputFile)) {
         const tooManyWarnings = options.maxWarnings >= 0 && report.warningCount > options.maxWarnings;
 
@@ -304,12 +302,6 @@ module.exports = {
         return (report.errorCount || tooManyWarnings) ? 1 : 0;
       }
       return 2;
-
-
     }
-    // const linter = new Linter(translateOptions(options))
-    // const report = linter.verifyFiles([files])
-
-    // console.log(report.results[0].messages[0].message)
   }
 }
