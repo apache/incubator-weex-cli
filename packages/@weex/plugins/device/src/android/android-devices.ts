@@ -1,5 +1,5 @@
 const find = require('find-process')
-// const debug = require('debug')('device')
+const debug = require('debug')('device')
 
 import { exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
 import AndroidSdk from '@weex-cli/utils/lib/android/android-env.js'
@@ -192,20 +192,24 @@ class AndroidDevice extends Devices {
       options,
     )
     let tryTimes = 0
+    let isRunning = false
     let timer
 
     const clearTimer = () => {
       clearInterval(timer)
       timer = null
-      tryTimes = -1
+      isRunning = false
     }
 
     return new Promise((resolve, reject) => {
       timer = setInterval(async () => {
         let isContinue = false
 
-        if (tryTimes === -1) {
+        debug('runCmdWithTry setInterval', isRunning, tryTimes)
+        if (isRunning) {
           return
+        } else {
+          isRunning = true
         }
         tryTimes = tryTimes + 1
         try {
