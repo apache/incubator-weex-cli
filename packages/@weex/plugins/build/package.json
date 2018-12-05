@@ -1,7 +1,7 @@
 {
-  "name": "@weex-cli/build-native",
+  "name": "@weex-cli/build",
   "version": "0.0.4",
-  "description": "build-native for weex-toolkit",
+  "description": "Build module for weex-toolkit",
   "main": "index.js",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
