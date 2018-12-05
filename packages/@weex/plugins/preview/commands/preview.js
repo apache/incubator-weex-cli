@@ -61,7 +61,7 @@ module.exports = {
               key: '-v, --version',
               description: 'Output the version number'
             },
-            {
+            {  
               key: '-h, --help',
               description: 'Show help'
             }
@@ -161,7 +161,7 @@ module.exports = {
                   text: `${logger.colors.grey(`[Web] Complete ${json.time} ms`)}`
                 })
               } else {
-                spinner.text = `[Web] Compiling bundle ... ${(complete * 100).toFixed(0)}%`
+                spinner.text = `[${(complete * 100).toFixed(0)}%] Compiling web bundle ...`
               }
             }
           }, {
@@ -186,7 +186,7 @@ module.exports = {
                         text: `${logger.colors.grey(`[Native] Complete ${json.time} ms`)}`
                       })
                     } else {
-                      spinner.text = `[Native] Compiling bundle ... ${(complete * 100).toFixed(0)}%`
+                      spinner.text = `[${(complete * 100).toFixed(0)}%] Compiling native bundle ...`
                     }
                   }
                 }, translateCompileOptions(options)),
