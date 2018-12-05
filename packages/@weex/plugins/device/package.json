@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/device",
-  "version": "0.0.12",
+  "version": "0.0.15",
   "description": "device for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "publish": "yarn build && yarn lint",
+    "prepublish": "yarn build && yarn lint",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",
@@ -78,8 +78,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier --write",
-      "tslint --fix",
+      "yarn format",
       "git add"
     ],
     "*.md": [

@@ -24,10 +24,12 @@ export default class IosDevices extends Devices {
     const lines = text.split('\n')
     for (const line of lines) {
       const lineToLower = line.toLowerCase()
-      if (lineToLower.indexOf('macbook') >= 0 ||
-          lineToLower.indexOf('watch') >= 0 ||
-          lineToLower.indexOf('tv') >= 0 ||
-          lineToLower.indexOf('ipad') >= 0) {
+      if (
+        lineToLower.indexOf('macbook') >= 0 ||
+        lineToLower.indexOf('watch') >= 0 ||
+        lineToLower.indexOf('tv') >= 0 ||
+        lineToLower.indexOf('ipad') >= 0
+      ) {
         continue
       }
       const device = line.match(REG_DEVICE)

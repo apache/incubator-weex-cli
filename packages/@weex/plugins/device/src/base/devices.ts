@@ -1,3 +1,5 @@
+const debug = require('debug')('device')
+
 import * as EventEmitter from 'events'
 import { MOBILE_TYPES } from '../common/const'
 import { DeviceInfo, RunDeviceOptions, messageType } from '../common/device'
@@ -39,7 +41,7 @@ export class Devices extends EventEmitter {
 
   getDeviceById(id: DeviceInfo['id']): DeviceInfo | null {
     let result = null
-
+    debug(this.list)
     this.list.some(device => {
       if (device.id === id) {
         result = device
