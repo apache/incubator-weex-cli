@@ -194,11 +194,21 @@ class AndroidDevice extends Devices {
     let tryTimes = 0
     let timer
 
+    const clearTimer = () => {
+      clearInterval(timer)
+      timer = null
+      tryTimes = -1
+    }
+
     return new Promise((resolve, reject) => {
       timer = setInterval(async () => {
         let isContinue = false
+
+        if (tryTimes === -1) {
+          return
+        }
+        tryTimes = tryTimes + 1
         try {
-          tryTimes = tryTimes + 1
           await exec(cmdString, {
             event: this,
             onOutCallback(str) {
@@ -211,15 +221,15 @@ class AndroidDevice extends Devices {
           if (isTryFun(e.toString())) {
             return (isContinue = true)
           }
-          clearInterval(timer)
+          clearTimer()
           reject(e)
         }
         if (!isContinue) {
-          clearInterval(timer)
+          clearTimer()
           resolve()
         }
         if (tryTimes >= maxTryTimes) {
-          clearInterval(timer)
+          clearTimer()
           reject(new Error('Run command timeout, please retry!'))
         }
       }, timeInterval)
