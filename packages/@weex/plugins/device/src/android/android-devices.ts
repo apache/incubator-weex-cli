@@ -1,4 +1,5 @@
 const find = require('find-process')
+// const debug = require('debug')('device')
 
 import { exec, runAndGetOutput } from '@weex-cli/utils/lib/process/process.js'
 import AndroidSdk from '@weex-cli/utils/lib/android/android-env.js'
@@ -84,7 +85,7 @@ class AndroidDevice extends Devices {
       let cmd
       let tryTimes = 0
       let maxTryTimes = 15
-      let timeInterval = isWindows ? 20000 : 6000
+      let timeInterval = isWindows ? 20000 : 7000
       let timer
       const deviceInfo = this.getDeviceById(id)
       const startSimulatorDeviceList = this.getAndroidDevicesList(true)
@@ -122,11 +123,11 @@ class AndroidDevice extends Devices {
         return true
       })
       if (deviceCmdList.length) {
-        // Launched
+        // If find device cmd in process think launched
         return resolve(null)
       }
+      // If not find device cmd wait
       checkIsLaunchFinished()
-      // Don't know whether succeed or fail
       try {
         await exec(`${this.androidSdk.getEmulatorPath()} -avd ${deviceInfo.name}`, {
           handleChildProcess(childProcess) {
@@ -173,10 +174,62 @@ class AndroidDevice extends Devices {
     return adbId
   }
 
+  private runCmdWithTry(options: {
+    cmdString: string
+    maxTryTimes?: number
+    timeInterval?: number
+    isTryFun?: Function
+  }) {
+    const { cmdString, maxTryTimes, isTryFun, timeInterval } = Object.assign(
+      {
+        cmdString: '',
+        maxTryTimes: 6,
+        isTryFun: (str?: string) => {
+          return false
+        },
+        timeInterval: isWindows ? 10000 : 5000,
+      },
+      options,
+    )
+    let tryTimes = 0
+    let timer
+
+    return new Promise((resolve, reject) => {
+      timer = setInterval(async () => {
+        let isContinue = false
+        try {
+          tryTimes = tryTimes + 1
+          await exec(cmdString, {
+            event: this,
+            onOutCallback(str) {
+              if (isTryFun(str)) {
+                isContinue = true
+              }
+            },
+          })
+        } catch (e) {
+          if (isTryFun(e.toString())) {
+            return (isContinue = true)
+          }
+          clearInterval(timer)
+          reject(e)
+        }
+        if (!isContinue) {
+          clearInterval(timer)
+          resolve()
+        }
+        if (tryTimes >= maxTryTimes) {
+          clearInterval(timer)
+          reject(new Error('Run command timeout, please retry!'))
+        }
+      }, timeInterval)
+    })
+  }
+
   async run(options: RunDeviceOptions) {
     const deviceInfo = this.getDeviceById(options.id)
-    const { androidShellCmdString } = options
     let adbId = null
+    const { androidShellCmdString } = options
 
     if (!deviceInfo) {
       throw Error(`Not find device ${options.id}`)
@@ -185,7 +238,7 @@ class AndroidDevice extends Devices {
       adbId = await this.findAdbId(options)
       if (!adbId) {
         // try twice
-        const timeInterval = isWindows ? 30000 : 10000
+        const timeInterval = isWindows ? 15000 : 7000
         await new Promise(resolve => {
           setTimeout(async () => {
             adbId = await this.findAdbId(options)
@@ -196,26 +249,24 @@ class AndroidDevice extends Devices {
     } else {
       adbId = options.id
     }
-
     if (!adbId) {
       throw Error(`Not find adbId ${options.id}`)
     }
-
-    try {
-      await exec(`${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} install -r ${options.appPath}`, {
+    // Install apk and if system not ready retry
+    await this.runCmdWithTry({
+      cmdString: `${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} install -r ${options.appPath}`,
+      isTryFun(str) {
+        return str.indexOf(`Can't find service`) >= 0 || str.indexOf(`Is the system running`) >= 0
+      },
+    })
+    await exec(
+      `${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} shell am start -n ${
+        options.applicationId
+      }/.SplashActivity ${androidShellCmdString || ''}`,
+      {
         event: this,
-      })
-      await exec(
-        `${this.androidSdk.ANDROID_ADB_PATH} -s ${adbId} shell am start -n ${
-          options.applicationId
-        }/.SplashActivity ${androidShellCmdString || ''}`,
-        {
-          event: this,
-        },
-      )
-    } catch (e) {
-      throw e
-    }
+      },
+    )
   }
 }
 
