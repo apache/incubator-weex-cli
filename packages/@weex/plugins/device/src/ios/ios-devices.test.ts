@@ -15,6 +15,7 @@ describe('Test IOS', () => {
   const iosDevices = new IosDevice()
   const iosDeviceList = iosDevices.getList()
 
+  debug(iosDeviceList)
   test('Run ios simulator', async () => {
     let firstSimulator = null
 
