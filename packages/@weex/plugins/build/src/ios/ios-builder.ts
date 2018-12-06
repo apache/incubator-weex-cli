@@ -6,6 +6,7 @@ import Builder from '../base/builder'
 import { IosBuilderConfig, RunOptions } from '../common/builder'
 import { IOS_DERIVE_DATA_PATH, PLATFORM_TYPES } from '../common/const'
 import { IOS_CODE_SIGNING_ERROR } from '../common/error-list'
+import * as userhome from 'userhome'
 
 export default class IosBuilder extends Builder {
   protected config: IosBuilderConfig
@@ -38,14 +39,22 @@ export default class IosBuilder extends Builder {
     await exec(
       createCmdString('xcodebuild', cmdParams),
       Object.assign(options, {
-        event: this,
+        event: this
       }),
       { cwd: projectPath },
     )
-    return path.join(
+
+    let productPath = path.join(
       projectPath,
       `${IOS_DERIVE_DATA_PATH}/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`,
     )
+    if (options.iOSProductPath) {
+      productPath = options.iOSProductPath
+    }
+    else if (!fs.existsSync(productPath)) {
+      productPath = userhome(`Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`)
+    }
+    return productPath
   }
 
   private async buildForRealDevice(options?: RunOptions): Promise<string> {
@@ -95,10 +104,17 @@ export default class IosBuilder extends Builder {
       throw e
     }
 
-    return path.join(
+    let productPath = path.join(
       projectPath,
       `${IOS_DERIVE_DATA_PATH}/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`,
     )
+    if (options.iOSProductPath) {
+      productPath = options.iOSProductPath
+    }
+    else if (!fs.existsSync(productPath)) {
+      productPath = userhome(`Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`)
+    }
+    return productPath
   }
 
   private getIOSProjectInfo(

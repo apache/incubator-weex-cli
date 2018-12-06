@@ -25,7 +25,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/utils": "^0.0.7"
+    "@weex-cli/utils": "^0.0.7",
+    "userhome": "^1.0.0"
   },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
