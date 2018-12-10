@@ -10,10 +10,12 @@ const replacer = {
       if (key === 'WXEntryBundleURL') {
         value = path.join('bundlejs', value)
       }
-      return source.replace(
-        /<\/dict>\n?\W*?<\/plist>\W*?\n?\W*?\n?$/i,
-        match => `  <key>${key}</key>\n  <string>${value}</string>\n${match}`,
-      )
+      if (!r.test(source)) {
+        return source.replace(
+          /<\/dict>\n?\W*?<\/plist>\W*?\n?\W*?\n?$/i,
+          match => `  <key>${key}</key>\n  <string>${value}</string>\n${match}`,
+        )
+      }
     }
     return source.replace(r, '$1' + value + '</string>')
   },
@@ -29,30 +31,31 @@ const replacer = {
     return source.replace(regexp, function(m, a, b) {
       return a + value + (b || '')
     })
-  },
-}
-
-const _resolveConfigDef = (source, configDef, config, key) => {
-  if (configDef.type) {
-    if (config[key] === undefined) {
-      console.warn('Config:[' + key + '] must have a value!')
-      return source
-    }
-    return replacer[configDef.type](source, configDef.key, config[key])
-  } else {
-    return configDef.handler(source, config[key], replacer)
   }
 }
 
 class PlatformConfigResolver {
-  public def
+  public def: any = null
 
-  constructor(def) {
+  constructor(def: any) {
     this.def = def
   }
+
+  private resolveConfigDef = (source, configDef, config, key) => {
+    if (configDef.type) {
+      if (config[key] === undefined) {
+        console.warn('Config:[' + key + '] must have a value!')
+        return source
+      }
+      return replacer[configDef.type](source, configDef.key, config[key])
+    } else {
+      return configDef.handler(source, config[key], replacer)
+    }
+  }
+
   resolve(config, basePath) {
     basePath = basePath || process.cwd()
-    for (const d in this.def) {
+    for (let d in this.def) {
       if (this.def.hasOwnProperty(d)) {
         const targetPath = path.join(basePath, d)
         let source = fs.readFileSync(targetPath).toString()
@@ -61,10 +64,10 @@ class PlatformConfigResolver {
             const configDef = this.def[d][key]
             if (Array.isArray(configDef)) {
               configDef.forEach(def => {
-                source = _resolveConfigDef(source, def, config, key)
+                source = this.resolveConfigDef(source, def, config, key)
               })
             } else {
-              source = _resolveConfigDef(source, configDef, config, key)
+              source = this.resolveConfigDef(source, configDef, config, key)
             }
           }
         }
@@ -75,11 +78,21 @@ class PlatformConfigResolver {
 }
 
 const androidConfigResolver = new PlatformConfigResolver({
-  'build.gradle': {
+  'app/build.gradle': {
     AppId: {
       type: 'regexp',
       key: /(applicationId ")[^"]*(")/g,
+    }
+  },
+  'app/src/main/res/values-zh-rCN/strings.xml': {
+    AppName: {
+      type: 'xmlTag',
+      key: 'app_name',
     },
+    SplashText: {
+      type: 'xmlTag',
+      key: 'dummy_content',
+    }
   },
   'app/src/main/res/values/strings.xml': {
     AppName: {
@@ -89,7 +102,7 @@ const androidConfigResolver = new PlatformConfigResolver({
     SplashText: {
       type: 'xmlTag',
       key: 'dummy_content',
-    },
+    }
   },
   'app/src/main/res/xml/app_config.xml': {
     WeexBundle: {
@@ -106,7 +119,7 @@ const androidConfigResolver = new PlatformConfigResolver({
           return replacer.xmlAttr(source, 'local_url', 'file://assets/dist/' + name, 'preference')
         }
       },
-    },
+    }
   },
 })
 
