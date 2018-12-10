@@ -1,10 +1,12 @@
-import { IosBuilder } from '@weex-cli/build-native'
+import { IosBuilder } from '@weex-cli/build'
 import { IosDevices } from '@weex-cli/device'
 import Runner from '../base/runner'
 import { RunnerConfig } from '../common/runner'
-import CONFIG from '../common/config'
+import ConfigResolver from '../common/config'
 import { PLATFORM_TYPES } from '../common/const'
+import * as DEBUG from 'debug'
 
+const debug = DEBUG('run')
 export default class IosRunner extends Runner {
   protected config: RunnerConfig
 
@@ -16,7 +18,7 @@ export default class IosRunner extends Runner {
     const config = this.config
     const wsServer = this.wsServer
     const serverInfo = wsServer.getServerInfo()
-    CONFIG[this.type].resolve(
+    ConfigResolver[this.type].resolve(
       Object.assign(
         {
           Ws: `ws://${serverInfo.hostname}:${serverInfo.port}`,
@@ -29,7 +31,7 @@ export default class IosRunner extends Runner {
     )
   }
 
-  async buildNative() {
+  async buildNative(options:any = {}) {
     const config = this.config
 
     const iosBuilder = new IosBuilder({
@@ -37,14 +39,14 @@ export default class IosRunner extends Runner {
       preCmds: ['pod update'],
     })
     this.transmitEvent(iosBuilder)
-    const { appPath } = await iosBuilder.run({
+    const { appPath } = await iosBuilder.run(Object.assign({
       onOutCallback: outString => {
-        console.log('BUILD OUTPUT:', outString)
+        debug('BUILD OUTPUT:', outString)
       },
       onErrorCallback: outString => {
-        console.error('BUILD ERROR:', outString)
+        debug('BUILD ERROR:', outString)
       },
-    })
+    }, options))
     return appPath
   }
 

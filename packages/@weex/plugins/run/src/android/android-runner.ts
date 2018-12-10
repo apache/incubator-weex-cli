@@ -1,10 +1,12 @@
 import Runner from '../base/runner'
 import { RunnerConfig } from '../common/runner'
-import { AndroidBuilder } from '@weex-cli/build-native'
+import { AndroidBuilder } from '@weex-cli/build'
 import { AndroidDevices } from '@weex-cli/device'
 import CONFIG from '../common/config'
 import { PLATFORM_TYPES } from '../common/const'
+import * as DEBUG from 'debug'
 
+const debug = DEBUG('run')
 export default class IosRunner extends Runner {
   protected config: RunnerConfig
 
@@ -26,20 +28,20 @@ export default class IosRunner extends Runner {
     )
   }
 
-  async buildNative() {
+  async buildNative(options:any = {}) {
     const config = this.config
     const androidBuilder = new AndroidBuilder({
       projectPath: config.projectPath,
     })
     this.transmitEvent(androidBuilder)
-    const { appPath } = await androidBuilder.run({
+    const { appPath } = await androidBuilder.run(Object.assign({
       onOutCallback: outString => {
-        console.log('BUILD OUTPUT:', outString)
+        debug('BUILD OUTPUT:', outString)
       },
       onErrorCallback: outString => {
-        console.error('BUILD ERROR:', outString)
+        debug('BUILD ERROR:', outString)
       },
-    })
+    }, options))
     return appPath
   }
 
@@ -48,7 +50,6 @@ export default class IosRunner extends Runner {
     const wsServer = this.wsServer
     const serverInfo = wsServer.getServerInfo()
     const androidDevice = new AndroidDevices()
-
     this.transmitEvent(androidDevice)
     await androidDevice.run({
       id: config.deviceId,

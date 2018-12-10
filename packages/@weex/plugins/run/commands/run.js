@@ -34,13 +34,14 @@ module.exports = {
     const iOSDevice = new device.IOSDevices()
     const options = parameters.options
     let platform = parameters.first
-
+    let spinner
+    let closeSpinner = false
     const runnerOptions = {
-      jsBundleFolderPath: options.target || 'dist',
-      jsBundleEntry: options.entry || 'index.js',
+      jsBundleFolderPath: options.target || options.__config.defaultWeexBundleTarget,
+      jsBundleEntry: options.entry || options.__config.defaultWeexBundleEntry,
       projectPath: options.local || '',
-      applicationId: options.appid || 'com.weex.app',
-      preCommand: options.precmd || 'npm run dev',
+      applicationId: options.appid || '',
+      preCommand: options.precmd || options.__config.defaultWeexBundleCommand,
       deviceId: options.deviceid || '',
       nativeConfig: {}
     }
@@ -90,119 +91,69 @@ module.exports = {
     }
     
     const receiveEvent = (event) => {
-      // event.on(MESSAGETYPE.OUTPUTERR, (err) => {
-      // 	this.sendEvent(outputErrorEvent(err))
-      // })
-      // event.on(MESSAGETYPE.OUTPUT, (log) => {
-      // 	this.sendEvent(outputLogEvent(log))
-      // })
+      event.on(MESSAGETYPE.OUTPUTERR, (err) => {
+        spinner.stopAndPersist({
+          symbol: logger.colors.red(`[${logger.xmark}]`),
+          text: err
+        })
+      })
+      event.on(MESSAGETYPE.OUTPUT, (log) => {
+        if (!closeSpinner) {
+          spinner.text = log
+        } else {
+          spinner.clear()
+        }
+      })
       event.on(MESSAGETYPE.STATE, (state) => {
-        if (state === RUNNERSTATE.WATCH_FILE_CHANGE_DONE) {
-          logger.log('Start to build APP...')
+        if (state === RUNNERSTATE.START) {
+          spinner = logger.spin('Start')
         }
-        if (state === RUNNERSTATE.BUILD_NATIVE_DONE) {
-          logger.success('Build APP done！')
-          logger.log('Start Launch APP...')
+        else if (state === RUNNERSTATE.START_SERVER_DONE) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Start websocket server done')}`
+          })
+          spinner = logger.spin('Start setting native config')
         }
-        if (state === RUNNERSTATE.INSTALL_AND_LANUNCH_APP_DONE) {
-          logger.success('Launch APP done！')
+        else if (state === RUNNERSTATE.SET_NATIVE_CONFIG_DONE) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Set native config done')}`
+          })
+          spinner = logger.spin('Copy JS source')
+        }
+        else if (state === RUNNERSTATE.COPY_JS_BUNDLE_DOEN) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Copy JS source done')}`
+          })
+          spinner = logger.spin('Watching files')
+        }
+        else if (state === RUNNERSTATE.WATCH_FILE_CHANGE_DONE) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Watching JS source done')}`
+          })
+          spinner = logger.spin('Building APP ...\n')
+        }
+        else if (state === RUNNERSTATE.BUILD_NATIVE_DONE) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Build APP done')}`
+          })
+          spinner = logger.spin('Lanuching APP...')
+          closeSpinner = true
+        }
+        else if (state === RUNNERSTATE.INSTALL_AND_LANUNCH_APP_DONE) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Launch APP done')}`
+          })
         }
         if (state === RUNNERSTATE.END) {
-          logger.log('All done!')
+          logger.success('Hotreload server is actived, enjoy your develop')
         }
       })
-    }
-
-    const list = async () => {
-      let spinner = logger.spin('Detact iOS Device ...')
-      const iOSDeviceList = await iOSDevice.getList()
-      spinner.stopAndPersist({
-        symbol: ``,
-        text: `${logger.colors.green('--- iOS Device ---')}`
-      })
-      let iosTable = [['ID', 'Name']];
-      for (let item in iOSDeviceList) {
-        let device = iOSDeviceList[item]
-        iosTable.push([
-          device.id,
-          `${device.name}${device.isSimulator? ' (Simulator)': ''}`
-        ])
-      }
-      logger.table(iosTable, {format: 'lean'})
-      spinner = logger.spin('Detact Android Device ...')
-      const androidDeviceList = await androidDevice.getList()
-      spinner.stopAndPersist({
-        symbol: ``,
-        text: `${logger.colors.green('--- Android Device ---')}`
-      })
-      let androidTable = [['ID', 'Name']];
-      for (let item in androidDeviceList) {
-        let device = androidDeviceList[item]
-        androidTable.push([
-          device.id,
-          `${device.name} ${device.isSimulator? '(Simulator)': ''}`
-        ])
-      }
-      logger.table(androidTable, {format: 'lean'})
-    }
-
-    const run = async (appid, package) => {
-      const iOSDeviceList = await iOSDevice.getList()
-      const androidDeviceList = await androidDevice.getList()
-      let listNames = []
-      if (iOSDeviceList.length <= 0 && androidDeviceList.length <= 0) {
-        logger.error(`No device detact, please run \`weex doctor\` to check your environment.`)
-        return ;
-      }
-      if (iOSDeviceList && iOSDeviceList.length > 0) {
-        listNames.push(new inquirer.Separator(' = iOS devices = '));
-        for (let device of iOSDeviceList) {
-          if (device.isSimulator) {
-            listNames.push(
-              {
-                name: `${device.name} ${device.isSimulator ? '(Simulator)' : ''}`,
-                value: {
-                  type: 'iOS',
-                  id: device.id
-                }
-              }
-            );
-          }
-        }
-      }
-      if (androidDeviceList && androidDeviceList.length > 0) {
-        listNames.push(new inquirer.Separator(' = android devices = '));
-        for (let device of androidDeviceList) {
-          if (device.isSimulator) {
-            listNames.push(
-              {
-                name: `${device.name} ${device.isSimulator ? '(Simulator)' : ''}`,
-                value: {
-                  type: 'android',
-                  id: device.id
-                }
-              }
-            );
-          }
-        }
-      }
-
-      const answers = await inquirer.prompt([
-        {
-          type: 'list',
-          message: 'Choose one of the following devices',
-          name: 'chooseDevice',
-          choices: listNames
-        }
-      ])
-      
-      const device = answers.chooseDevice;
-      if (device.type === 'iOS') {
-        await iOSDevice.launchById(device.id)
-      }
-      else {
-        await androidDevice.launchById(device.id)
-      }
     }
 
     if (options.version || options.v) { // version from package.json
@@ -255,18 +206,30 @@ module.exports = {
           runnerOptions.deviceId = answers.chooseDevice
         }
         if (fse.existsSync(androidConfigurationFilePath)) {
-          nativeConfig = fse.readJson(androidConfigurationFilePath, {throws: false})
+          nativeConfig = await fse.readJson(androidConfigurationFilePath, {throws: false})
         }
         runner = new AndroidRunner({
           jsBundleFolderPath: path.resolve(runnerOptions.jsBundleFolderPath),
           jsBundleEntry: runnerOptions.jsBundleEntry,
           projectPath: runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexAndroidProjectPath) ,
           deviceId: runnerOptions.deviceId,
-          applicationId: runnerOptions.applicationId,
+          applicationId: runnerOptions.applicationId || nativeConfig.AppId,
           nativeConfig
         })
         receiveEvent(runner)
-        await runner.run()
+        await runner.run({
+          // onOutCallback: output => {
+          //   // console.OUTPUT('BUILD OUTPUT:', output)
+          //   if(!closeSpinner && spinner) {
+          //     spinner.text = output
+          //   } else {
+          //     logger.write('Output', output)
+          //   }
+          // },
+          // onErrorCallback: error => {
+            
+          // }
+        })
       } else if (platform === 'ios') {
         let iosConfigurationFilePath = path.resolve(options.__config.weexIOSConfigFilename)
         if (!runnerOptions.deviceId) {
@@ -297,14 +260,14 @@ module.exports = {
           runnerOptions.deviceId = answers.chooseDevice
         }
         if (fse.existsSync(iosConfigurationFilePath)) {
-          nativeConfig = fse.readJson(iosConfigurationFilePath, {throws: false})
+          nativeConfig = await fse.readJson(iosConfigurationFilePath, {throws: false})
         }
         runner = new IosRunner({
           jsBundleFolderPath: path.resolve(runnerOptions.jsBundleFolderPath),
           jsBundleEntry: runnerOptions.jsBundleEntry,
           projectPath: runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexIOSProjectPath) ,
           deviceId: runnerOptions.deviceId,
-          applicationId: runnerOptions.applicationId,
+          applicationId: runnerOptions.applicationId || nativeConfig.AppId,
           nativeConfig
         })
         receiveEvent(runner)

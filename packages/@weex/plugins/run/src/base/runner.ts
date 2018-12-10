@@ -111,7 +111,7 @@ export default class Runner extends EventEmitter {
     return true
   }
 
-  protected async buildNative() {
+  protected async buildNative(options?:any) {
     console.error('Not define `updateList`')
   }
 
@@ -119,7 +119,7 @@ export default class Runner extends EventEmitter {
     console.error('Not define `installAndLaunchApp`')
   }
 
-  public async run(): Promise<any> {
+  public async run(options?: any): Promise<any> {
     let appPath
     try {
       // All method catch in here
@@ -136,7 +136,7 @@ export default class Runner extends EventEmitter {
       this.watchFileChange()
       this.emit(messageType.state, runnerState.watchFileChangeDone)
 
-      appPath = await this.buildNative()
+      appPath = await this.buildNative(options)
       this.emit(messageType.state, runnerState.buildNativeDone)
 
       await this.installAndLaunchApp(appPath)
