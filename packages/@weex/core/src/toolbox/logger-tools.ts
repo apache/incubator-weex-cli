@@ -5,9 +5,12 @@ import { commandInfo } from './meta-tools'
 import { Toolbox } from '../core/toolbox'
 import * as ora from 'ora'
 import { times, flip, prop } from 'ramda'
+import * as logUpdate from 'log-update'
+import * as cliSpinners from 'cli-spinners'
 
 // hack typescript
 const colors: any = importedColors
+const { dots } = cliSpinners
 
 import { ILOGGER } from './logger-types'
 
@@ -229,6 +232,26 @@ function printHelp(toolbox: Toolbox): void {
   printCommands(toolbox)
 }
 
+async function logPromise (promise, text, completedLabel = ''){
+  const {frames, interval} = dots;
+
+  let index = 0;
+
+  const id = setInterval(() => {
+    index = ++index % frames.length;
+    logUpdate(`${colors.yellow(frames[index])} ${text} ${colors.gray('- this may take a few seconds')}`);
+  }, interval);
+
+  const returnValue = await promise;
+
+  clearInterval(id);
+
+  logUpdate(`${colors.green('✔︎')} ${text} ${colors.gray(completedLabel)}`);
+  logUpdate.done();
+
+  return returnValue;
+};
+
 const checkmark = colors.success('✔︎')
 const xmark = colors.error('ⅹ')
 
@@ -249,6 +272,7 @@ const logger: ILOGGER = {
   printHelp,
   checkmark,
   xmark,
+  logPromise
 }
 
 export { logger, ILOGGER, LOGLEVEL }
