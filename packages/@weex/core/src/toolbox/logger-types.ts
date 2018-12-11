@@ -34,4 +34,6 @@ export interface ILOGGER {
   printCommands(toolbox: IToolbox): void
   /* Prints help info, including version and commands. */
   printHelp(toolbox: IToolbox): void
+  /* Prints progress unit promise has resolved. */
+  logPromise(promise: Promise<any>, text: string, completedLabel: string): void
 }
