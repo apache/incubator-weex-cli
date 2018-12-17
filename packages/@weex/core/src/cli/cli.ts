@@ -30,6 +30,7 @@ export interface Command {
 export interface ModItem {
   type: ModType
   version: string
+  description: string
   dependencies?: {
     [key: string]: string
   }
@@ -192,6 +193,7 @@ export default class Cli {
             this.cliConfiguration.modules.mods[packages[i].package.name] = {
               type: type,
               version: packages[i].package.version,
+              description: packages[i].package.description || '',
               dependencies: packages[i].package.pluginDependencies,
               next_version: '',
               is_next: true,
@@ -307,6 +309,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
       config.modules.mods[packages[i].package.name] = {
         type: type,
         version: packages[i].package.version,
+        description: packages[i].package.description || '',
         dependencies: packages[i].package.pluginDependencies,
         next_version: '',
         is_next: true,
@@ -319,6 +322,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
       config.modules.mods[packages[i].package.name] = {
         type: type,
         version: packages[i].package.version,
+        description: packages[i].package.description || '',
         dependencies: packages[i].package.pluginDependencies,
         next_version: '',
         is_next: true,
@@ -479,7 +483,7 @@ export async function getNpmPackageLatestVersion(name: string, registry: string)
 export async function analyzer(type: string, stack: string | number, options?: any) {
   if (type === 'repair') {
     if (ErrorType.PACKAGE_NOT_FOUND === stack) {
-      const innerMods = ['@weex-cli/debug', '@weex-cli/generator', '@weex-cli/build', '@weex-cli/preview']
+      const innerMods = ['@weex-cli/debug', '@weex-cli/generator', '@weex-cli/build', '@weex-cli/preview', '@weex-cli/run', '@weex-cli/doctor', '@weex-cli/lint', '@weex-cli/device']
       let score
       let tempScore
       let suggestName
