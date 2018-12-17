@@ -39,7 +39,7 @@ export default class IosBuilder extends Builder {
     await exec(
       createCmdString('xcodebuild', cmdParams),
       Object.assign(options, {
-        event: this
+        event: this,
       }),
       { cwd: projectPath },
     )
@@ -50,9 +50,10 @@ export default class IosBuilder extends Builder {
     )
     if (options.iOSProductPath) {
       productPath = options.iOSProductPath
-    }
-    else if (!fs.existsSync(productPath)) {
-      productPath = userhome(`Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`)
+    } else if (!fs.existsSync(productPath)) {
+      productPath = userhome(
+        `Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`,
+      )
     }
     return productPath
   }
@@ -110,9 +111,10 @@ export default class IosBuilder extends Builder {
     )
     if (options.iOSProductPath) {
       productPath = options.iOSProductPath
-    }
-    else if (!fs.existsSync(productPath)) {
-      productPath = userhome(`Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`)
+    } else if (!fs.existsSync(productPath)) {
+      productPath = userhome(
+        `Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/${projectInfo.scheme}.app`,
+      )
     }
     return productPath
   }
