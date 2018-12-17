@@ -52,6 +52,7 @@ module.exports = {
       let spinner = logger.spin(`Verify iOS and Android environment ...`)
       const androidAndiOSReport = androidAndiOSDoctor.diagnose()
       let message = ''
+      const coreConfig = parameters.options.__config.configs
 
       spinner.stopAndPersist({
         symbol: `${logger.checkmark}`,
@@ -59,10 +60,9 @@ module.exports = {
       })
       logger.log(androidAndiOSReport)
 
-      logger.log(`${logger.checkmark} Weex Cli Environment:\n`)
+      logger.log(`${logger.checkmark} Weex Cli Environment (v${coreConfig.version}, on ${os.platform} ${os.release()}):\n`)
       spinner = logger.spin(`Check if you need to update weex-cli core...`)
       
-      const coreConfig = parameters.options.__config.configs
       if (!coreConfig.is_next && coreConfig.next_version) {
         spinner.stopAndPersist({
           symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
@@ -73,7 +73,7 @@ module.exports = {
       else {
         spinner.stopAndPersist({
           symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-          text: `${logger.colors.green('@weex-cli/core is the latest version')}`
+          text: `${logger.colors.green('@weex-cli/core')} ${logger.colors.grey(' - core module for the weex-toolkit')}`
         })
       }
       
@@ -83,15 +83,16 @@ module.exports = {
         spinner = logger.spin(`Check if you need to update ${item}...`)
         if (!mods[item].is_next && mods[item].next_version) {
           spinner.stopAndPersist({
-            symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
-            text: `${logger.colors.red(`${item} is not the latest version`)}`
+            symbol: `${logger.colors.yellow(`[${logger.colors.yellow('!')}]`)}`,
+            text: `${logger.colors.yellow(`Update available for ${item}`)}`
           })
-          logger.warn(`\n    •  You can run \`weex repair ${item}@latest\` to update it.\n`)
+          logger.log(`\n    •  Your current version is ${mods[item].version} and the latest available version is ${mods[item].next_version}.`)
+          logger.warn(`    •  You can run \`weex update ${item}@latest\` to update it.\n`)
         } 
         else {
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-            text: `${logger.colors.green(`${item} is the latest version`)}`
+            text: `${logger.colors.green(`${item}`)}${logger.colors.grey(mods[item].description ? logger.colors.grey(` - ${mods[item].description}`) : ' - no description')}`
           })
         }
       }

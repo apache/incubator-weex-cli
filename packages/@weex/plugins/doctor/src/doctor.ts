@@ -83,7 +83,8 @@ export class Doctor {
           : result.type === ValidationType.installed
             ? colors.green
             : colors.yellow
-      messageResult += `${color(`\n${result.leadingBox} ${validator.title} is \n`)}`
+      // console.log(this.androidSdk.latestVersion.AndroidSdkVersion.sdkLevel)
+      messageResult += `${color(`\n${result.leadingBox} ${validator.title}\n`)}`
       // console.log(`${result.leadingBox} ${validator.title} is`)
       for (let message of result.messages) {
         const text = message.message.replace('\n', '\n      ')
