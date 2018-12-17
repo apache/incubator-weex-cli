@@ -1,7 +1,7 @@
 {
   "name": "@weex-cli/device",
   "version": "1.0.0",
-  "description": "device for weex-toolkit",
+  "description": "module for lanuch device with weex-toolkit",
   "main": "index.js",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
