@@ -1,41 +1,66 @@
-const path = require('path')
-const fs = require('fs')
+import * as fse from 'fs-extra'
+import * as path from 'path'
+import * as glob from 'glob'
 
 import { PLATFORM_TYPES } from './const'
 
-const replacer = {
-  plist(source, key, value) {
-    const r = new RegExp('(<key>' + key + '</key>\\s*<string>)[^<>]*?</string>', 'g')
-    if (key === 'WXEntryBundleURL' || key === 'WXSocketConnectionURL') {
-      if (key === 'WXEntryBundleURL') {
-        value = path.join('bundlejs', value)
-      }
-      if (!r.test(source)) {
-        return source.replace(
-          /<\/dict>\n?\W*?<\/plist>\W*?\n?\W*?\n?$/i,
-          match => `  <key>${key}</key>\n  <string>${value}</string>\n${match}`,
-        )
-      }
-    }
-    return source.replace(r, '$1' + value + '</string>')
-  },
-  xmlTag(source, key, value, tagName = 'string') {
-    const r = new RegExp(`<${tagName} name="${key}" .*>[^<]+?</${tagName}>`, 'g')
-    return source.replace(r, `<${tagName} name="${key}">${value}</${tagName}>`)
-  },
-  xmlAttr(source, key, value, tagName = 'string') {
-    const r = new RegExp(`<${tagName} name="${key}"\\s* value="[^"]*?"\\s*/>`, 'g')
-    return source.replace(r, `<${tagName} name="${key}" value="${value}"/>`)
-  },
-  regexp(source, regexp, value) {
-    return source.replace(regexp, function(m, a, b) {
-      return a + value + (b || '')
-    })
-  }
-}
-
 class PlatformConfigResolver {
   public def: any = null
+
+  private replacer: {
+    plist: any
+    xmlTag: any
+    xmlAttr: any
+    regexp: any
+    moveAndReplacePackageName: any
+  } = {
+    plist(source, key, value) {
+      const r = new RegExp('(<key>' + key + '</key>\\s*<string>)[^<>]*?</string>', 'g')
+      if (key === 'WXEntryBundleURL' || key === 'WXSocketConnectionURL') {
+        if (key === 'WXEntryBundleURL') {
+          value = path.join('bundlejs', value)
+        }
+        if (!r.test(source)) {
+          return source.replace(
+            /<\/dict>\n?\W*?<\/plist>\W*?\n?\W*?\n?$/i,
+            match => `  <key>${key}</key>\n  <string>${value}</string>\n${match}`,
+          )
+        }
+      }
+      return source.replace(r, '$1' + value + '</string>')
+    },
+    xmlTag(source, key, value, tagName = 'string') {
+      const r = new RegExp(`<${tagName} name="${key}" .*>[^<]+?</${tagName}>`, 'g')
+      return source.replace(r, `<${tagName} name="${key}">${value}</${tagName}>`)
+    },
+    xmlAttr(source, key, value, tagName = 'string') {
+      const r = new RegExp(`<${tagName} name="${key}"\\s* value="[^"]*?"\\s*/>`, 'g')
+      return source.replace(r, `<${tagName} name="${key}" value="${value}"/>`)
+    },
+    regexp(source, regexp, value) {
+      return source.replace(regexp, function(m, a, b) {
+        return a + value + (b || '')
+      })
+    },
+    moveAndReplacePackageName(oldname, newname) {
+      const oldPath = oldname.split('.').join('/')
+      const newPath = newname.split('.').join('/')
+      const javaSourcePath = 'platforms/android/app/src/main'
+      const options = {
+        root: path.resolve(javaSourcePath),
+      }
+      const files = glob.sync('**/*.+(java|xml)', options)
+      if (Array.isArray(files)) {
+        files.forEach(file => {
+          let data = fse.readFileSync(file, 'utf8')
+          data = data.replace(new RegExp(oldname, 'ig'), newname)
+          fse.outputFileSync(file.replace(new RegExp(oldPath, 'ig'), newPath), data)
+        })
+      }
+      // remove old java source
+      fse.removeSync(path.resolve(javaSourcePath, 'java', oldPath))
+    },
+  }
 
   constructor(def: any) {
     this.def = def
@@ -47,9 +72,9 @@ class PlatformConfigResolver {
         console.warn('Config:[' + key + '] must have a value!')
         return source
       }
-      return replacer[configDef.type](source, configDef.key, config[key])
+      return this.replacer[configDef.type](source, configDef.key, config[key])
     } else {
-      return configDef.handler(source, config[key], replacer)
+      return configDef.handler(source, config[key], this.replacer)
     }
   }
 
@@ -58,8 +83,8 @@ class PlatformConfigResolver {
     for (let d in this.def) {
       if (this.def.hasOwnProperty(d)) {
         const targetPath = path.join(basePath, d)
-        let source = fs.readFileSync(targetPath).toString()
-        for (const key in this.def[d]) {
+        let source = fse.readFileSync(targetPath).toString()
+        for (let key in this.def[d]) {
           if (this.def[d].hasOwnProperty(key)) {
             const configDef = this.def[d][key]
             if (Array.isArray(configDef)) {
@@ -71,7 +96,7 @@ class PlatformConfigResolver {
             }
           }
         }
-        fs.writeFileSync(targetPath, source)
+        fse.writeFileSync(targetPath, source)
       }
     }
   }
@@ -82,7 +107,7 @@ const androidConfigResolver = new PlatformConfigResolver({
     AppId: {
       type: 'regexp',
       key: /(applicationId ")[^"]*(")/g,
-    }
+    },
   },
   'app/src/main/res/values-zh-rCN/strings.xml': {
     AppName: {
@@ -92,7 +117,7 @@ const androidConfigResolver = new PlatformConfigResolver({
     SplashText: {
       type: 'xmlTag',
       key: 'dummy_content',
-    }
+    },
   },
   'app/src/main/res/values/strings.xml': {
     AppName: {
@@ -102,7 +127,7 @@ const androidConfigResolver = new PlatformConfigResolver({
     SplashText: {
       type: 'xmlTag',
       key: 'dummy_content',
-    }
+    },
   },
   'app/src/main/res/xml/app_config.xml': {
     WeexBundle: {
@@ -119,7 +144,26 @@ const androidConfigResolver = new PlatformConfigResolver({
           return replacer.xmlAttr(source, 'local_url', 'file://assets/dist/' + name, 'preference')
         }
       },
-    }
+    },
+  },
+  'app/src/main/AndroidManifest.xml': {
+    AppId: {
+      handler: function(source, value, replacer) {
+        if (!value) {
+          return source
+        }
+        if (/package="(.*)"/.test(source)) {
+          let match = /package="(.*)"/.exec(source)
+          if (match[1]) {
+            replacer.moveAndReplacePackageName(match[1], value)
+            return source.replace(new RegExp(`${match[1]}`, 'ig'), value)
+          }
+          return source
+        } else {
+          return source
+        }
+      },
+    },
   },
 })
 

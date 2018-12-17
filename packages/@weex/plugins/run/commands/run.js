@@ -1,6 +1,7 @@
 const { IosRunner, AndroidRunner } = require('../lib') 
 const fse = require('fs-extra')
 const path = require('path')
+const debug = require('debug')('run')
 
 const MESSAGETYPE = {
   STATE: 'state',
@@ -92,10 +93,7 @@ module.exports = {
     
     const receiveEvent = (event) => {
       event.on(MESSAGETYPE.OUTPUTERR, (err) => {
-        spinner.stopAndPersist({
-          symbol: logger.colors.red(`[${logger.xmark}]`),
-          text: err
-        })
+        debug('Error from ADB or Xcrun: ', err)
       })
       event.on(MESSAGETYPE.OUTPUT, (log) => {
         if (!closeSpinner) {
@@ -106,21 +104,21 @@ module.exports = {
       })
       event.on(MESSAGETYPE.STATE, (state) => {
         if (state === RUNNERSTATE.START) {
-          spinner = logger.spin('Start')
+          spinner = logger.spin('Start hotreload server')
         }
         else if (state === RUNNERSTATE.START_SERVER_DONE) {
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-            text: `${logger.colors.green('Start websocket server done')}`
+            text: `${logger.colors.green('Start hotreload server done')}`
           })
-          spinner = logger.spin('Start setting native config')
+          spinner = logger.spin(`Start setting native config ${logger.colors.gray('- this may take a few seconds')}`)
         }
         else if (state === RUNNERSTATE.SET_NATIVE_CONFIG_DONE) {
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
             text: `${logger.colors.green('Set native config done')}`
           })
-          spinner = logger.spin('Copy JS source')
+          spinner = logger.spin(`Copy JS source ${logger.colors.gray('- this may take a few seconds')}`)
         }
         else if (state === RUNNERSTATE.COPY_JS_BUNDLE_DOEN) {
           spinner.stopAndPersist({
@@ -134,14 +132,14 @@ module.exports = {
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
             text: `${logger.colors.green('Watching JS source done')}`
           })
-          spinner = logger.spin('Building APP ...\n')
+          spinner = logger.spin(`Building APP ${logger.colors.gray('- this may take a few seconds')}\n`)
         }
         else if (state === RUNNERSTATE.BUILD_NATIVE_DONE) {
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
             text: `${logger.colors.green('Build APP done')}`
           })
-          spinner = logger.spin('Lanuching APP...')
+          spinner = logger.spin(`Lanuching APP ${logger.colors.gray('- this may take a few seconds')}`)
           closeSpinner = true
         }
         else if (state === RUNNERSTATE.INSTALL_AND_LANUNCH_APP_DONE) {
@@ -152,6 +150,7 @@ module.exports = {
         }
         if (state === RUNNERSTATE.END) {
           logger.success('Hotreload server is actived, enjoy your develop')
+          logger.log(`${logger.colors.grey('Type Ctrl+C to exist')}`)
         }
       })
     }

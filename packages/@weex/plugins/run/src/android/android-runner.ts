@@ -28,20 +28,25 @@ export default class IosRunner extends Runner {
     )
   }
 
-  async buildNative(options:any = {}) {
+  async buildNative(options: any = {}) {
     const config = this.config
     const androidBuilder = new AndroidBuilder({
       projectPath: config.projectPath,
     })
     this.transmitEvent(androidBuilder)
-    const { appPath } = await androidBuilder.run(Object.assign({
-      onOutCallback: outString => {
-        debug('BUILD OUTPUT:', outString)
-      },
-      onErrorCallback: outString => {
-        debug('BUILD ERROR:', outString)
-      },
-    }, options))
+    const { appPath } = await androidBuilder.run(
+      Object.assign(
+        {
+          onOutCallback: outString => {
+            debug('BUILD OUTPUT:', outString)
+          },
+          onErrorCallback: outString => {
+            debug('BUILD ERROR:', outString)
+          },
+        },
+        options,
+      ),
+    )
     return appPath
   }
 

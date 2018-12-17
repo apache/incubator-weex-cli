@@ -31,7 +31,7 @@ export default class IosRunner extends Runner {
     )
   }
 
-  async buildNative(options:any = {}) {
+  async buildNative(options: any = {}) {
     const config = this.config
 
     const iosBuilder = new IosBuilder({
@@ -39,14 +39,19 @@ export default class IosRunner extends Runner {
       preCmds: ['pod update'],
     })
     this.transmitEvent(iosBuilder)
-    const { appPath } = await iosBuilder.run(Object.assign({
-      onOutCallback: outString => {
-        debug('BUILD OUTPUT:', outString)
-      },
-      onErrorCallback: outString => {
-        debug('BUILD ERROR:', outString)
-      },
-    }, options))
+    const { appPath } = await iosBuilder.run(
+      Object.assign(
+        {
+          onOutCallback: outString => {
+            debug('BUILD OUTPUT:', outString)
+          },
+          onErrorCallback: outString => {
+            debug('BUILD ERROR:', outString)
+          },
+        },
+        options,
+      ),
+    )
     return appPath
   }
 

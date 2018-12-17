@@ -111,7 +111,7 @@ export default class Runner extends EventEmitter {
     return true
   }
 
-  protected async buildNative(options?:any) {
+  protected async buildNative(options?: any) {
     console.error('Not define `updateList`')
   }
 
