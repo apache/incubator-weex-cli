@@ -46,10 +46,8 @@ class PlatformConfigResolver {
       const oldPath = oldname.split('.').join('/')
       const newPath = newname.split('.').join('/')
       const javaSourcePath = 'app/src/main'
-      const options = {
-        root: path.join(basePath, javaSourcePath),
-      }
-      const files = glob.sync('**/*.+(java|xml)', options)
+      const options = {}
+      const files = glob.sync(path.join(basePath, javaSourcePath, '**/*.+(java|xml)'), options)
       if (Array.isArray(files)) {
         files.forEach(file => {
           let data = fse.readFileSync(file, 'utf8')
@@ -57,7 +55,7 @@ class PlatformConfigResolver {
           fse.outputFileSync(file.replace(new RegExp(oldPath, 'ig'), newPath), data)
         })
       }
-      if(oldPath !== newPath) {
+      if(oldPath !== newPath && Array.isArray(files) && files.length > 0) {
         // remove old java source
         fse.removeSync(path.join(basePath, javaSourcePath, 'java', oldPath))
       }
