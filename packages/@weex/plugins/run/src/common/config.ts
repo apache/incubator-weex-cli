@@ -42,12 +42,13 @@ class PlatformConfigResolver {
         return a + value + (b || '')
       })
     },
-    moveAndReplacePackageName(oldname, newname) {
+    moveAndReplacePackageName(oldname, newname, basePath) {
       const oldPath = oldname.split('.').join('/')
       const newPath = newname.split('.').join('/')
       const javaSourcePath = 'platforms/android/app/src/main'
+      basePath = basePath || process.cwd()
       const options = {
-        root: path.resolve(javaSourcePath),
+        root: path.join(basePath, javaSourcePath),
       }
       const files = glob.sync('**/*.+(java|xml)', options)
       if (Array.isArray(files)) {
@@ -58,7 +59,7 @@ class PlatformConfigResolver {
         })
       }
       // remove old java source
-      fse.removeSync(path.resolve(javaSourcePath, 'java', oldPath))
+      fse.removeSync(path.join(basePath, javaSourcePath, 'java', oldPath))
     },
   }
 
@@ -66,7 +67,7 @@ class PlatformConfigResolver {
     this.def = def
   }
 
-  private resolveConfigDef = (source, configDef, config, key) => {
+  private resolveConfigDef = (source, configDef, config, key, basePath) => {
     if (configDef.type) {
       if (config[key] === undefined) {
         console.warn('Config:[' + key + '] must have a value!')
@@ -74,7 +75,7 @@ class PlatformConfigResolver {
       }
       return this.replacer[configDef.type](source, configDef.key, config[key])
     } else {
-      return configDef.handler(source, config[key], this.replacer)
+      return configDef.handler(source, config[key], this.replacer, basePath)
     }
   }
 
@@ -89,10 +90,10 @@ class PlatformConfigResolver {
             const configDef = this.def[d][key]
             if (Array.isArray(configDef)) {
               configDef.forEach(def => {
-                source = this.resolveConfigDef(source, def, config, key)
+                source = this.resolveConfigDef(source, def, config, key, basePath)
               })
             } else {
-              source = this.resolveConfigDef(source, configDef, config, key)
+              source = this.resolveConfigDef(source, configDef, config, key, basePath)
             }
           }
         }
@@ -148,14 +149,14 @@ const androidConfigResolver = new PlatformConfigResolver({
   },
   'app/src/main/AndroidManifest.xml': {
     AppId: {
-      handler: function(source, value, replacer) {
+      handler: function(source, value, replacer, basePath) {
         if (!value) {
           return source
         }
         if (/package="(.*)"/.test(source)) {
           let match = /package="(.*)"/.exec(source)
           if (match[1]) {
-            replacer.moveAndReplacePackageName(match[1], value)
+            replacer.moveAndReplacePackageName(match[1], value, basePath)
             return source.replace(new RegExp(`${match[1]}`, 'ig'), value)
           }
           return source
