@@ -130,7 +130,7 @@ module.exports = {
         else if (state === RUNNERSTATE.WATCH_FILE_CHANGE_DONE) {
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-            text: `${logger.colors.green('Watching JS source done')}`
+            text: `${logger.colors.green('Watch JS source done')}`
           })
           spinner = logger.spin(`Building APP ${logger.colors.gray('- this may take a few seconds')}\n`)
         }
