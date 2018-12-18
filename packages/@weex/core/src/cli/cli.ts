@@ -266,7 +266,7 @@ export default class Cli {
       }
     }
     // run the cli
-    const toolbox = await this.cli.create().run(this.rawArgv, { __config: this.cliConfiguration })
+    const toolbox = await this.cli.create().run(this.rawArgv, { __config: this.cliConfiguration, __analyzer: analyzer })
     // send it back (for testing, mostly)
     return toolbox
   }
@@ -480,7 +480,7 @@ export async function getNpmPackageLatestVersion(name: string, registry: string)
  * @param stack error stack
  * @param options data from error stack
  */
-export async function analyzer(type: string, stack: string | number, options?: any) {
+export async function analyzer(type: string, stack: any, options?: any) {
   if (type === 'repair') {
     if (ErrorType.PACKAGE_NOT_FOUND === stack) {
       const innerMods = ['@weex-cli/debug', '@weex-cli/generator', '@weex-cli/build', '@weex-cli/preview', '@weex-cli/run', '@weex-cli/doctor', '@weex-cli/lint', '@weex-cli/device']
@@ -506,17 +506,37 @@ export async function analyzer(type: string, stack: string | number, options?: a
           logger.info(`- ${version}`)
         })
       }
-    } else {
-      const logPath = path.join(process.cwd(), '.weex-error.log')
-      fs.write(logPath, stack)
-      logger.warn(`Unkown issue, see error stack on logPath.`)
-      logger.warn(`To fix this, you can create a issue on https://github.com/weexteam/weex-toolkit/issues.`)
+    } else if (typeof stack === 'string'){
+      logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
+      let searchKey = stack.split('\n')[0].split(' ').join('+')
+      logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
+      
+      logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
+      logger.log(`https://github.com/weexteam/weex-toolkit/issues/new`)
+      
+      logger.log(logger.colors.grey(`\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`))
+      logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
+
+      logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))
+
+      logger.log(logger.colors.grey(`\nLooking for related issues on:`))
+      logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
     }
-  } else {
-    const logPath = path.join(process.cwd(), '.weex-error.log')
-    fs.write(logPath, stack)
-    logger.warn(`Unkown issue, see error stack on logPath.`)
-    logger.warn(`To fix this, you can create a issue on https://github.com/weexteam/weex-toolkit/issues.`)
+  } else if (typeof stack === 'string') {
+    logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
+    let searchKey = stack.split('\n')[0].split(' ').join('+')
+    logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
+    
+    logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
+    logger.log(`https://github.com/weexteam/weex-toolkit/issues/new`)
+    
+    logger.log(logger.colors.grey(`\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`))
+    logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
+
+    logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))
+
+    logger.log(logger.colors.grey(`\nLooking for related issues on:`))
+    logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
   }
 }
 
