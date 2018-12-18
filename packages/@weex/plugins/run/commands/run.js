@@ -158,7 +158,7 @@ module.exports = {
     }
 
     const prepareJSBundle = async () => {
-      system.exec(options.__config.defaultWeexBundleCommand || 'npm run dev')
+      await system.exec(options.__config.defaultWeexBundleCommand || 'npm run dev')
       return
     }
 
