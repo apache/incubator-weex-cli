@@ -58,7 +58,7 @@ class PlatformConfigResolver {
         })
       }
       // remove old java source
-      fse.removeSync(path.join(basePath, javaSourcePath, 'java'))
+      fse.removeSync(path.join(basePath, javaSourcePath, 'java', oldPath))
     },
   }
 
