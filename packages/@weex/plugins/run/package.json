@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/run",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "module for running iOS/Android/Web platform with weex-toolkit",
   "main": "index.js",
   "scripts": {
