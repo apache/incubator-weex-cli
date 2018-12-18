@@ -57,8 +57,10 @@ class PlatformConfigResolver {
           fse.outputFileSync(file.replace(new RegExp(oldPath, 'ig'), newPath), data)
         })
       }
-      // remove old java source
-      fse.removeSync(path.join(basePath, javaSourcePath, 'java', oldPath))
+      if(oldPath !== newPath) {
+        // remove old java source
+        fse.removeSync(path.join(basePath, javaSourcePath, 'java', oldPath))
+      }
     },
   }
 
