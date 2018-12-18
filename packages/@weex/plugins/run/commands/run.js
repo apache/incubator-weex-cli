@@ -35,6 +35,7 @@ module.exports = {
   ) => {
     const iOSDevice = new device.IOSDevices()
     const options = parameters.options
+    const analyzer = options.__analyzer
     let platform = parameters.first
     let spinner
     let closeSpinner = false
@@ -156,6 +157,11 @@ module.exports = {
       })
     }
 
+    const prepareJSBundle = async () => {
+      system.exec(options.__config.defaultWeexBundleCommand || 'npm run dev')
+      return
+    }
+
     if (options.version || options.v) { // version from package.json
 
       logger.info(`v${require("../package.json").version}`);
@@ -180,19 +186,40 @@ module.exports = {
       if (platform === 'android') {
         let androidConfigurationFilePath = path.resolve(options.__config.weexAndroidConfigFilename)
         let projectPath = runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexAndroidProjectPath)
-        if (!fse.existsSync(projectPath)) {
-          let spinner = logger.spin('Adding android project ...')
-          try {
-            await system.exec('weex platform add android')
-          }
-          catch(err) {
-            logger.error(err)
-            return
-          }
+        let spinner = logger.spin('Compiling JSBundle...')
+        try {
+          await prepareJSBundle()
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-            text: `${logger.colors.green('Add android project success')}`
+            text: `${logger.colors.green('Compile JSBundle done')}`
           })
+        } catch(err) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
+            text: `${logger.colors.red('Compile JSBundle failed')}`
+          })
+          analyzer('run', err.stack || err)
+          // exist
+          return 
+        }
+        if (!fse.existsSync(projectPath)) {
+          spinner = logger.spin('Adding android project ...')
+          try {
+            await system.exec('weex platform add android')
+            spinner.stopAndPersist({
+              symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+              text: `${logger.colors.green('Add android project done')}`
+            })
+          }
+          catch(err) {
+            analyzer('run', err.stack || err)
+            spinner.stopAndPersist({
+              symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
+              text: `${logger.colors.red('Add android project failed')}`
+            })
+            return
+          }
+          
         }
         if (!runnerOptions.deviceId) {
           const androidDevice = new device.AndroidDevices()
@@ -248,18 +275,33 @@ module.exports = {
       } else if (platform === 'ios') {
         let iosConfigurationFilePath = path.resolve(options.__config.weexIOSConfigFilename)
         let projectPath = runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexIOSProjectPath)
+        try {
+          await prepareJSBundle()
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Compile JSBundle done')}`
+          })
+        } catch(err) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
+            text: `${logger.colors.red('Compile JSBundle failed')}`
+          })
+          analyzer('run', err.stack || err)
+          // exist
+          return 
+        }
         if (!fse.existsSync(projectPath)) {
           let spinner = logger.spin('Adding iOS project ...')
           try {
             await system.exec('weex platform add ios')
           }
           catch(err) {
-            logger.error(err)
+            analyzer('run', err.stack || err)
             return
           }
           spinner.stopAndPersist({
             symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-            text: `${logger.colors.green('Add iOS project success')}`
+            text: `${logger.colors.green('Add iOS project done')}`
           })
         }
         if (!runnerOptions.deviceId) {
@@ -303,7 +345,23 @@ module.exports = {
         receiveEvent(runner)
         await runner.run()
       } else if (platform === 'web') {
-
+        let spinner = logger.spin(`Running \`${options.__config.defaultPreviewWebCommand}\` command...`)
+        try {
+          system.exec(options.__config.defaultPreviewWebCommand)
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green(`Run \`${options.__config.defaultPreviewWebCommand}\` command done`)}`
+          })
+        }
+        catch(err) {
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
+            text: `${logger.colors.red('Run web command failed')}`
+          })
+          analyzer('run', err.stack||err)
+          return
+        }
+        
       }
     }
   }
