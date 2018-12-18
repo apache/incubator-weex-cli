@@ -29,7 +29,8 @@ module.exports = {
       parameters,
       inquirer,
       meta,
-      device
+      device,
+      system
     }
   ) => {
     const iOSDevice = new device.IOSDevices()
@@ -178,6 +179,21 @@ module.exports = {
       }
       if (platform === 'android') {
         let androidConfigurationFilePath = path.resolve(options.__config.weexAndroidConfigFilename)
+        let projectPath = runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexAndroidProjectPath)
+        if (!fse.existsSync(projectPath)) {
+          let spinner = logger.spin('Adding android project ...')
+          try {
+            await system.exec('weex platform add android')
+          }
+          catch(err) {
+            logger.error(err)
+            return
+          }
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Add android project success')}`
+          })
+        }
         if (!runnerOptions.deviceId) {
           const androidDevice = new device.AndroidDevices()
           let androidDeviceList = await androidDevice.getList()
@@ -210,7 +226,7 @@ module.exports = {
         runner = new AndroidRunner({
           jsBundleFolderPath: path.resolve(runnerOptions.jsBundleFolderPath),
           jsBundleEntry: runnerOptions.jsBundleEntry,
-          projectPath: runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexAndroidProjectPath) ,
+          projectPath: projectPath ,
           deviceId: runnerOptions.deviceId,
           applicationId: runnerOptions.applicationId || nativeConfig.AppId,
           nativeConfig
@@ -231,6 +247,21 @@ module.exports = {
         })
       } else if (platform === 'ios') {
         let iosConfigurationFilePath = path.resolve(options.__config.weexIOSConfigFilename)
+        let projectPath = runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexIOSProjectPath)
+        if (!fse.existsSync(projectPath)) {
+          let spinner = logger.spin('Adding iOS project ...')
+          try {
+            await system.exec('weex platform add ios')
+          }
+          catch(err) {
+            logger.error(err)
+            return
+          }
+          spinner.stopAndPersist({
+            symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+            text: `${logger.colors.green('Add iOS project success')}`
+          })
+        }
         if (!runnerOptions.deviceId) {
           const iosDevice = new device.IOSDevices()
           let iosDeviceList = await iosDevice.getList()
@@ -264,7 +295,7 @@ module.exports = {
         runner = new IosRunner({
           jsBundleFolderPath: path.resolve(runnerOptions.jsBundleFolderPath),
           jsBundleEntry: runnerOptions.jsBundleEntry,
-          projectPath: runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexIOSProjectPath) ,
+          projectPath: projectPath,
           deviceId: runnerOptions.deviceId,
           applicationId: runnerOptions.applicationId || nativeConfig.AppId,
           nativeConfig
