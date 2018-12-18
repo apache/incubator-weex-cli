@@ -24,6 +24,7 @@ export default class IosRunner extends Runner {
           Ws: `ws://${serverInfo.hostname}:${serverInfo.port}`,
           port: serverInfo.port,
           ip: serverInfo.hostname,
+          platform: PLATFORM_TYPES.ios
         },
         config.nativeConfig,
       ),

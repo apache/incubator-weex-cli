@@ -45,8 +45,7 @@ class PlatformConfigResolver {
     moveAndReplacePackageName(oldname, newname, basePath) {
       const oldPath = oldname.split('.').join('/')
       const newPath = newname.split('.').join('/')
-      const javaSourcePath = 'platforms/android/app/src/main'
-      basePath = basePath || process.cwd()
+      const javaSourcePath = 'app/src/main'
       const options = {
         root: path.join(basePath, javaSourcePath),
       }
@@ -59,7 +58,7 @@ class PlatformConfigResolver {
         })
       }
       // remove old java source
-      fse.removeSync(path.join(basePath, javaSourcePath, 'java', oldPath))
+      fse.removeSync(path.join(basePath, javaSourcePath, 'java'))
     },
   }
 
@@ -80,7 +79,7 @@ class PlatformConfigResolver {
   }
 
   resolve(config, basePath) {
-    basePath = basePath || process.cwd()
+    basePath = basePath || path.join(process.cwd(), `platforms/${config.platform}`)
     for (let d in this.def) {
       if (this.def.hasOwnProperty(d)) {
         const targetPath = path.join(basePath, d)

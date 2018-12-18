@@ -20,6 +20,7 @@ export default class IosRunner extends Runner {
     CONFIG[this.type].resolve(
       Object.assign(
         {
+          platform: PLATFORM_TYPES.android
           // Some special config
         },
         config.nativeConfig,
