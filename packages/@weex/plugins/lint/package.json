@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/lint",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lint module for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.9.0",
     "eslint-config-weex": "^1.0.10",
-    "eslint-plugin-weex": "^1.1.5"
+    "eslint-plugin-weex": "^1.1.8"
   },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
