@@ -139,10 +139,9 @@ module.exports = {
       }
     }
 
-    if (options.version || options.v) { // version from package.json
-
-      logger.info(`v${require("../package.json").version}`);
-
+    if (options.version || options.v) { 
+      // version from package.json
+      logger.log(`${require("../package.json").version}`);
     } else if (options.help || options.h) {
       await showHelp()
     } else {
