@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/run",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "module for running iOS/Android/Web platform with weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,8 @@
   "files": [
     "lib/",
     "!*.map",
-    "!*.debug.js"
+    "!*.debug.js",
+    "commands/"
   ],
   "license": "MIT",
   "dependencies": {
