@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/build",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Build module for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,8 @@
   "files": [
     "lib/",
     "!*.map",
-    "!*.debug.js"
+    "!*.debug.js",
+    "commands"
   ],
   "license": "MIT",
   "dependencies": {
