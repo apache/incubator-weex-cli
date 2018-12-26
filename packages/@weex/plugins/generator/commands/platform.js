@@ -280,7 +280,7 @@ module.exports = {
 
     if (options.version || options.v) { // version from package.json
 
-      logger.info(`v${require("../package.json").version}`);
+      logger.info(`${require("../package.json").version}`);
 
     } else if (options.help || options.h) {
       await showHelp()
