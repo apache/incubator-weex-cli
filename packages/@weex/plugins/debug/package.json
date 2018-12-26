@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/debug",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Module for debug weex file",
   "main": "index.js",
   "scripts": {
@@ -50,6 +50,6 @@
     "prettier": "^1.14.0"
   },
   "pluginDependencies": {
-    "@weex-cli/compile": "1.0.2"
+    "@weex-cli/compile": "1.0.3"
   }
 }

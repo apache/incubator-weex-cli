@@ -5,6 +5,7 @@ const ip = require('ip').address()
 const exit = require('exit')
 const path = require('path')
 const detect = require('detect-port')
+const pkg = require('../package.json')
 
 module.exports = {
   name: 'debug',
@@ -13,15 +14,76 @@ module.exports = {
   run: async ({
     logger,
     parameters,
-    compile
+    compile,
+    meta
   }) => {
     const options = parameters.options
     const source = parameters.first
+    
+    const showHelp = async () => {
+      let params = {
+        commandend: 'Debug Weex page, also can compile some \`.vue\` page',
+        commands: [
+          {
+            heading: ['Usage', 'Description']
+          },
+          {
+            key: 'debug',
+            type: '',
+            description: 'Just open the devtool server.'
+          },
+          {
+            key: 'debug',
+            type: '[source] --<options>',
+            description: 'Compile source then open devtool server.'
+          }
+        ],
+        options: {
+          'Base': [
+            {
+              key: '-p, --port',
+              description: 'set default extname for compiler',
+              default: '8080'
+            },
+            {
+              key: '--host',
+              description: 'specify host adress',
+            },
+            {
+              key: '--channelid',
+              description: 'specify debug channel id'
+            },
+            {
+              key: '--manul',
+              default: 'false',
+              description: 'control open browser or not'
+            },
+            {
+              key: '--remote-debug-port',
+              description: 'specify remote debug port for headless chromium',
+              default: '9222'
+            },
+          ],
+          'Miscellaneous:': [
+            {
+              key:'-v, --version',
+              description: 'Output the version number'
+            },
+            {
+              key:'-h, --help',
+              description: 'Show help'
+            }
+          ]
+        }
+      }
+      meta.generateHelp(params)
+    }
 
     const transformOptions = async (options) => {
       let defaultPort = await detect(8089)
       return {
-        port: options.port || defaultPort,
+        ip: options.host,
+        port: options.port || options.p || defaultPort,
         channelId: options.channelid,
         manual: options.manual,
         remoteDebugPort: options.remoteDebugPort
@@ -30,43 +92,50 @@ module.exports = {
 
     let devtoolOptions = await transformOptions(options)
 
-    if (source) {
-      await compile(
-        source,
-        path.join(__dirname, '../frontend/public/weex'), {
-          watch: false,
-          filename: '[name].js',
-          web: false,
-          config: options.config || options.c
-        },
-        async (error, output, json) => {
-          
-          // console.log(json)
-          let bundles = json.assets.map(asset => {
-            let entry 
-            let date = new Date()
-            const formateTime = (value) => {
-              return value < 10 ? '0' + value : value
-            }
-            if (/\./.test(source)) {
-              entry = path.resolve(source)
-            } else {
-              entry = path.resolve(source, asset.name.replace('.js', '.vue'))
-            }
-            return {
-              updateTime: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${formateTime(date.getHours())}:${formateTime(date.getMinutes())}:${formateTime(date.getSeconds())}`,
-              output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}`,
-              size: (asset.size / 1024).toFixed(0),
-              time: json.time,
-              entry: entry
-            }
-          })
-          await api.startDevtoolServer(bundles, devtoolOptions)
-        }
-      )
+    if (options.help || options.h) {
+      await showHelp()
+    } else if (options.v || options.version) {
+      logger.log(pkg.version)
     } else {
-      await api.startDevtoolServer([], devtoolOptions)
+      if (source) {
+        await compile(
+          source,
+          path.join(__dirname, '../frontend/public/weex'), {
+            watch: false,
+            filename: '[name].js',
+            web: false,
+            config: options.config || options.c
+          },
+          async (error, output, json) => {
+            
+            // console.log(json)
+            let bundles = json.assets.map(asset => {
+              let entry 
+              let date = new Date()
+              const formateTime = (value) => {
+                return value < 10 ? '0' + value : value
+              }
+              if (/\./.test(source)) {
+                entry = path.resolve(source)
+              } else {
+                entry = path.resolve(source, asset.name.replace('.js', '.vue'))
+              }
+              return {
+                updateTime: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${formateTime(date.getHours())}:${formateTime(date.getMinutes())}:${formateTime(date.getSeconds())}`,
+                output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}`,
+                size: (asset.size / 1024).toFixed(0),
+                time: json.time,
+                entry: entry
+              }
+            })
+            await api.startDevtoolServer(bundles, devtoolOptions)
+          }
+        )
+      } else {
+        await api.startDevtoolServer([], devtoolOptions)
+      }
     }
+    
 
   }
 }

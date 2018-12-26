@@ -71,8 +71,8 @@ export class HomeComponent extends Vue {
     }
   ]
   tips: Tip[]
-  activeType: string = sessionStorage.getItem('activeMode') || 'debug'
-  activeBundle: string = sessionStorage.getItem('activeBundle') || ''
+  activeType: string = localStorage.getItem('activeMode') || 'debug'
+  activeBundle: string = localStorage.getItem('activeBundle') || ''
   socket: any = null
   defaultBundles: any = [{
     updateTime: '2018年12月25日 15:12',
@@ -134,7 +134,7 @@ export class HomeComponent extends Vue {
 
   toggleType (type) {
     this.activeType = type
-    sessionStorage.setItem(`activeMode`, type)
+    localStorage.setItem(`activeMode`, type)
   }
 
   disconnect () {
@@ -145,7 +145,7 @@ export class HomeComponent extends Vue {
 
   openQRCode (bundle: any) {
     this.activeBundle = bundle.entry
-    sessionStorage.setItem('activeBundle', bundle.entry)
+    localStorage.setItem('activeBundle', bundle.entry)
   }
 
   open (value: string) {

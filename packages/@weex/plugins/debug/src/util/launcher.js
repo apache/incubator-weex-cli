@@ -1,4 +1,4 @@
-const chromeOpn = require('chrome-opn')
+const opn = require('opn')
 
 const pendingList = []
 let pending = false
@@ -7,7 +7,7 @@ const launchChrome = function (url, remoteDebugPort, wait, callback) {
     pending = true
     url = url.replace(/[&*]/g, '\\&')
     const args = remoteDebugPort > 0 ? ['-remote-debugging-port=' + remoteDebugPort] : null
-    chromeOpn(url, args, !!wait).then(cp => {
+    opn(url, args, !!wait).then(cp => {
       cp.once('close', e => {
         callback && callback(null)
         if (pendingList.length > 0) {
@@ -27,9 +27,7 @@ const launchChrome = function (url, remoteDebugPort, wait, callback) {
     })
   }
 }
-const launchNewChrome = function (url, args) {}
 
 module.exports = {
-  launchNewChrome,
   launchChrome
 }
