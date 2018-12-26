@@ -32,7 +32,7 @@
           </a>
         </p>
         <div class="bundles">
-          <div class="item" :title="page" v-for="(page, index) in pages" :key="index" @click="togglePage(page)">
+          <div class="item" :class="{'active': entry === page}" :title="page" v-for="(page, index) in pages" :key="index" @click="togglePage(page)">
             {{page | sliceFilename}}
           </div>
           

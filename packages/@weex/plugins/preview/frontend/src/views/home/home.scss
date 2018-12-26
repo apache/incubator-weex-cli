@@ -149,6 +149,11 @@
       overflow: hidden;
       text-overflow:ellipsis;
       white-space: nowrap;
+      &.active {
+        background: #36a1f9;
+        border-color: #5bb5ff;
+        color: #fff;
+      }
     }
   }
 }

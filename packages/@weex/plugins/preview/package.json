@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "watch": "tsc -watch -p ./"
   },
-  "author": "",
+  "author": "Mario <faterrole@gmail.com>",
   "files": [
     "lib/",
     "frontend/preview/",
