@@ -247,8 +247,9 @@ module.exports = {
       meta.generateHelp(params)
     }
 
-    if (options.version || options.v) { // version from package.json
-      logger.info(`v${require("../package.json").version}`);
+    if (options.version || options.v) {
+      // version from package.json
+      logger.info(`${require("../package.json").version}`);
     } else if (options.printConfig) {
       if (files.length) {
         logger.error("The --print-config option must be used with exactly one file name.");
