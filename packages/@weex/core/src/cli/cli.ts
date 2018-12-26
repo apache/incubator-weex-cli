@@ -298,10 +298,10 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
         // try prev version
       }
       commands.push({
-        name: content.name || '',
-        alias: content.alias || '',
-        showed: typeof content.dashed === 'boolean' ? !content.dashed : true,
-        description: content.description || '',
+        name: content && content.name || '',
+        alias: content && content.alias || '',
+        showed: content && typeof content.dashed === 'boolean' ? !content.dashed : true,
+        description: content && content.description || '',
       })
       type = ModType.PLUGIN
     })
@@ -512,7 +512,7 @@ export async function analyzer(type: string, stack: any, options?: any) {
       logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
       
       logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
-      logger.log(`https://github.com/weexteam/weex-toolkit/issues/new`)
+      logger.log(`https://github.com/weexteam/weex-toolkit/issues/new?labels=${type}`)
       
       logger.log(logger.colors.grey(`\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`))
       logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
@@ -538,6 +538,8 @@ export async function analyzer(type: string, stack: any, options?: any) {
     logger.log(logger.colors.grey(`\nLooking for related issues on:`))
     logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
   }
+  console.log('\n\n\n\n\n')
+  console.log(type, stack, options)
 }
 
 export function formateTime(date: Date) {
