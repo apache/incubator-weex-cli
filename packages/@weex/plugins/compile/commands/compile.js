@@ -1,4 +1,5 @@
 const path = require("path");
+const pkg = require('../package.json')
 
 module.exports = {
   name: "compile",
@@ -120,7 +121,13 @@ module.exports = {
       }
     }
 
-    if (array.length >= 2) {
+    if (options.help || options.h) {
+      await showHelp()
+    }) else if (array.length < 2) {
+      await showHelp()
+    }  else if (options.v || options.version) {
+      logger.log(pkg.version)
+    } else if (array.length >= 2) {
       progressBar = logger.progress();
       let maxProgress = 0;
       await compile(
@@ -138,8 +145,6 @@ module.exports = {
         }, translateOptions(options)),
         formateResult
       );
-    } else if (array.length < 2) {
-      await showHelp()
-    }
+    } 
   }
 };
