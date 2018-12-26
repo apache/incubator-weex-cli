@@ -1,0 +1,88 @@
+<b-container class="wx-home-content">
+  <b-row class="justify-content-md-center">
+    <b-col>
+      <b-container class="box" :class="{ready: connectUrl}">
+        <div class="wx-home-tabs">
+          <div class="wx-home-tab-border">
+              <div class="wx-home-tab" :class="{'active': activeType === 'debug'}" @click = "toggleType('debug')">调试</div>
+              <div class="wx-home-tab" :class="{'active': activeType === 'pages'}" @click = "toggleType('pages')">页面</div>
+          </div>
+        </div>
+        <div v-if="activeType === 'debug'">
+          <b-row>
+            <div class="qrcode-box">
+              <div class="qrcode">
+                <qrcode :value="connectUrl" :title="connectUrl" :size="200"></qrcode>
+              </div>
+            </div>
+          </b-row>
+          <b-row class="header">
+            <img class='logo' src="" alt="">
+            <div class="title">
+              Welcome to Weex Debugger
+            </div>
+            <div class="version">
+              Version {{version}}
+            </div>
+          </b-row>
+          <b-row class="items" v-for="(tip, index) in tips" :key="index" >
+            <a @click="navigator(tip.url )" target="_blank" class="wx-home-url-block">
+              <span class="iconfont" :class="tip.icon">
+  
+              </span>
+              <div class="tips">
+                <div class="text">
+                  {{tip.title}}
+                </div>
+                <small>
+                  {{tip.des}}
+                </small>
+              </div>
+            </a>
+          </b-row>
+        </div>
+        <div v-else>
+          <b-row class="bundles" v-if="bundles.length <= 0">
+            <div class="tip_header">
+              <i class="iconfont icon-bangzhu"></i>
+            </div>
+            <div class="tip">
+                暂无可预览页面，你可以通过下面的命令进行页面编译
+            </div>
+            <code>
+              $ weex debug [ folder | file ]
+            </code>
+          </b-row>
+          <b-row class="bundles" v-for="(bundle, key) in bundles">
+            <div class="infomations">
+                <div class="icon">{{bundle.entry | getFirstPathNameWord}}</div>
+                <div class="title">
+                  <div class="name">{{bundle.entry | getPathName}}</div>
+                  <div class="updateTime">{{bundle.updateTime}}</div>
+                </div>
+            </div>
+            <div class="operate">
+              <i class="iconfont icon-wenjian" v-b-popover.hover="'打开文件'" @click="open(bundle.entry)"></i>
+              <i class="iconfont icon-qrcode" v-b-popover.hover="'二维码预览'" @click="openQRCode(bundle)"></i>
+              <a class="iconfont icon-mock" target="_blank" :href="bundle.output" v-b-popover.hover="'查看代码'"></a>
+            </div>
+            <div class="preview" :class="{'active': activeBundle === bundle.entry}">
+                <div class="message">
+                  <div class="label">页面信息:</div>
+                  <div class="value">二维码路径：{{bundle.output | generateQRCodePath}}</div>
+                  <span class="qrcode_copy" @click="copy(bundle.output, 'generateQRCodePath')">Copy</span>
+                  <div class="value">文件地址：{{bundle.entry}}</div>
+                  <span class="address_copy" @click="copy(bundle.entry)">Copy</span>
+                  <div class="value">文件大小：{{bundle.size}} KB</div>
+                  <div class="value">编译耗时：{{bundle.time}} ms</div>
+                </div>
+                <qrcode class="preview_qrcode" :value="bundle.output | generateQRCodePath" :title="bundle.output | generateQRCodePath" :size="120"></qrcode>
+            </div>
+          </b-row>
+          
+        </div>
+
+      </b-container>
+    </b-col>
+  </b-row>
+</b-container>

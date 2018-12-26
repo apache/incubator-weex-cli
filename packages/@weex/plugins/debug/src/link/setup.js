@@ -23,5 +23,5 @@ const setup = () => {
   mlink.load(__dirname)
 }
 module.exports = {
-  setup
+  setup,
 }

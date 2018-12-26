@@ -1,0 +1,10 @@
+// modify bootstrap-checkbox
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #f37327 !important;
+}
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(177, 121, 0, 0.25) !important;
+}
+.custom-control-input:active ~ .custom-control-label::before {
+  background-color: #ffd9ae !important;
+}

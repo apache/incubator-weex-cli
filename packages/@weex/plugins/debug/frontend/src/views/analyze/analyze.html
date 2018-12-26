@@ -1,0 +1,252 @@
+<div class="wx-analyze-content">
+  <div class="wx-analyze-container">
+    <div class="wx-analyzer-submenu">
+      <div class="menu">
+        <span class="iconfont icon-luzhi" :class="{'red': start}" @click="startAnalyze()" title="开始捕获"></span>
+        <span class="iconfont icon-jinzhi" @click="clearHistory()" title="清空记录"></span>
+        <span class="split"></span>
+        <span class="iconfont icon-lajitong" @click="clearHistory(activeId)" title="清空选中记录"></span>
+      </div>
+      <div class="setting" :class="{'active': !activeId}" @click="handleSetting()">
+        分析设置
+      </div>
+      <div class="history-title">
+        历史记录
+      </div>
+      <ul class="history">
+        <!-- <li class="loading" v-for="(item,index) in process.values" :key="index">
+          <b-progress class="process-bar" :value="item.value" variant="success" :animated="true" size="sm"></b-progress>
+          <span class="iconfont icon-loading"></span>
+          <div class="message">
+              <div class="process">{{item.value}}%...</div>
+          </div>
+        </li> -->
+        <li v-for="(history,index) in historys" :class="{'active': activeId === history.key}" @click="activeHistory(history)">
+          <span class="iconfont icon-shujutubiao"></span>
+          <div class="message" :title="history.value">
+            
+            <div class="url">{{history.value}}</div>
+            <div class="time">{{history.time}}ms</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="wx-analyzer-profile">
+      <b-progress :value="progressValue"   :max="progressMaxValue" class="wx-analyzer-profile-progress"></b-progress>
+      <div class="profile-box"  v-if="!reportData">
+          <div class="profile-title">
+            分析设置
+          </div>
+          <div class="profile-steps"></div>
+          <div class="profile-setting ">
+            <div class="item">
+              <div class="button">
+                <b-checkbox v-model="reloadToggle"></b-checkbox>
+              </div>
+              <div class="message">
+                <div class="title">刷新当前页面</div>
+                <small>性能分析需要收集页面加载过程中上报的数据，勾选该选项可以自动刷新当前页面并获取对应的性能数据</small>
+                <small>
+                    注：如果当前页面下会有多个实例，将会一次性生成多份页面数据，需自主区分当前页面
+                </small>
+              </div>
+            </div>
+            <!-- <div class="item">
+                <div class="button">
+                  <b-checkbox v-model="compareToggle"></b-checkbox>
+                </div>
+                <div class="message">
+                  <div class="title">对比历史数据</div>
+                  <wx-select class="select" :defaultOption="defaultHistory" :options="historys" size="lg" :disabled="!compareToggle" @change="handleHistoryChange($event)"></wx-select>
+                  <small>性能分析需要收集页面加载过程中上报的数据，勾选该选项可以自动刷新当前页面并获取对应的性能数据</small>
+                </div>
+                
+            </div> -->
+            <div class="item">
+                <div class="button">
+                  <b-checkbox v-model="captureToggle"></b-checkbox>
+                </div>
+                <div class="message">
+                  <div class="title">设置自动捕获时间</div>
+                  <wx-select class="select" :defaultOption="defaultCapture" :options="captures" label="ms/次" size="sm" :disabled="!captureToggle" @change="handleCaptureTimesChange($event)"></wx-select>
+                  <small>数据捕获时间一定程度上会影响页面加载流程的完整性，页面加载越完整，获取的数据会更多更精准，默认捕获时间为5s/次，可手动设置自动捕获时间</small>
+                </div>
+            </div>
+          </div>
+          <div class="profile-operate">
+              <div class="button-group">
+                <div class="oprate-button" @click="startAnalyze()" :class="{'active': start}">
+                    {{start?'停止捕获': '开始捕获'}}
+                </div>
+                <label class="oprate-button" target="performanceFile">
+                    <input style="display: none;" id="performanceFile" type="file" @change="tirggerFile($event)">
+                    加载数据
+                </label>
+              </div>
+          </div>
+      </div>
+      <div class="profile-report-box clearfix" v-if="reportData">
+        <a :download="downloadName" :href="downloadHref" class="download-data-button">
+          <span class="iconfont icon-xiazai"></span>
+          下载数据
+        </a>
+        <div class="profile-title">
+          分析报告
+        </div>
+<!-- 
+        <div class="profile-type-menu">
+          <b-form-radio-group v-model="reportType"
+                          :options="reportOptions"
+                          plain
+                          name="plainInline" />
+        </div> -->
+        <h3>基本信息</h3>
+        <small>Weex 页面基本信息</small>
+        <div class="basic-line">
+          <div class="basic-item">
+            <div class="label sm">页面地址：</div>
+            <div class="value lg" :title="reportData.properties.wxBizID">{{reportData.properties.wxBizID}}</div>
+            <button class="copy" v-b-tooltip.click title="复制成功" @click="copyText(reportData.properties.wxBizID)">复制</button>
+          </div>
+          <div class="basic-item">
+            <div class="label sm">页面类型：</div>
+            <div class="value">{{reportData.properties.wxBundleType}}</div>
+          </div>
+        </div>
+        <div class="basic-line">
+          <div class="basic-item">
+            <div class="label sm">请求类型：</div>
+            <div class="value">{{reportData.properties.wxRequestType}}</div>
+          </div>
+          <div class="basic-item">
+            <div class="label">JSFramework版本：</div>
+            <div class="value">{{reportData.properties.wxJSLibVersion}}</div>
+          </div>
+          <div class="basic-item">
+            <div class="label">WeexSDK版本：</div>
+            <div class="value">{{reportData.properties.wxSDKVersion}}</div>
+          </div>
+        </div>
+        <div class="basic-line" v-if="reportData.device">
+          <div class="basic-item">
+            <div class="label sm">应用名称：</div>
+            <div class="value">{{reportData.device.name}}</div>
+          </div>
+          <div class="basic-item">
+            <div class="label sm">设备信息：</div>
+            <div class="value" >{{reportData.device.platform}}({{reportData.device.model}})</div>
+          </div>
+          <div class="basic-item">
+            <div class="label lg">DevtoolSDK版本：</div>
+            <div class="value">{{reportData.device.devtoolVersion}}</div>
+          </div>
+        </div>
+        <h3>可交互时间</h3>
+        <small>Weex 页面加载至可交互所用时间</small>
+        <div class="chart">
+          <ve-waterfall :data-empty="chartData.rows.length <= 0" height="360px" :data="chartData" :settings="chartSettings" :after-config="mockAfterConfig"></ve-waterfall>
+        </div>
+        <h3>渲染耗时分析</h3>
+        <small>Weex 页面渲染组件耗时分析</small>
+        <div class="filter">
+          <div class="filter-title">筛选类型：</div>
+          <wx-select class="select" :defaultOption="defaultRenderType" :options="renderTypes" label="标签" size="md" @change="handleFilterTypeChange($event)"></wx-select>
+        </div>
+        <div class="table">
+          <div class="table-body">
+              <div class="table-header">
+                <div class="cell info">节点信息</div>
+                <div class="cell attr">属性</div>
+                <div class="cell style">样式</div>
+                <div class="cell time">渲染时间点</div>
+                <div class="cell diff">耗时Diff</div>
+              </div>
+              <div class="table-item" v-for="(item, index) in reportData.wxinteraction" :key="index" v-if="defaultRenderType.value === 'all' || defaultRenderType.value === item.type">
+                <div class="cell info"><{{item.type}}> ref:{{item.ref}}</div>
+                <div class="cell attr" :title="JSON.stringify(item.attrs)">{{JSON.stringify(item.attrs)}} <span class="detail" @click="showDetail('attrs', item.attrs)">
+                  详细
+                </span></div>
+                <div class="cell style" :title="JSON.stringify(item.style)">{{JSON.stringify(item.style)}} <span class="detail" @click="showDetail('style', item.style)">
+                    详细
+                  </span></div>
+                <div class="cell time">
+                  <span>{{item.renderOriginDiffTime}} ms</span>
+                </div>
+                <div class="cell diff">
+                    <span :class="item.diff <= 20 ? 'green' : 'red'">+ {{item.diff}} ms</span>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <h3>页面评价</h3>
+        <small>Weex 页面评分</small>
+        <div class="profile-report-score">
+          <div class="label">
+            得分：<span class="score" :class="{'green': pageScoreTableData.score >= 85, 'red': pageScoreTableData.score < 60, 'yellow': pageScoreTableData.score >= 60 && pageScoreTableData.score <= 85}">
+              {{pageScoreTableData.score}} 
+            </span>
+          </div>
+        </div>
+        <div class="table">
+            <div class="table-body">
+                <div class="table-header">
+                  <div class="cell name">性能指标</div>
+                  <div class="cell value">指标值</div>
+                  <div class="cell description">扣分值</div>
+                  <div class="cell range">建议范围</div>
+                  <div class="cell doc">优化文档</div>
+                </div>
+                <div v-for="(item, index) in pageScoreTableData.data" :key="index">
+                    <div class="table-item label" >
+                      <div class="cell">{{item.label}}</div>
+                    </div>
+                    <div class="table-item" :class="{'red': value.score < 0, 'green': value.score > 0}" v-for="(value, key) in item.values" :key="key">
+                      <div class="cell name">{{value.name}}</div>
+                      <div class="cell value">{{value.value || '-'}}</div>
+                      <div class="cell description" :class="{'red': value.score < 0, 'green': value.score > 0}">{{value.score > 0 ? '+':''}}{{value.score}}</div>
+                      <div class="cell range">{{value.range}}</div>
+                      <div class="cell doc" :id="'score-doc-' + value.key">
+                        <div v-html="value.tip.join('; ')"></div>
+                      </div>
+                      <b-popover placement="top" :target="'score-doc-' + value.key" title="优化文档" triggers="hover" >
+                          <div v-html="value.tip.join('; ')"></div>
+                      </b-popover>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <h3>详细数据</h3>
+        <small>Weex 页面详细性能指标数据</small>
+        <div class="table">
+            <div class="table-body">
+                <div class="table-header">
+                  <div class="cell name">指标项</div>
+                  <div class="cell value">指标值</div>
+                  <div class="cell doc">指标说明</div>
+                  <div class="cell note">优化建议</div>
+                </div>
+                <div class="table-item" v-for="(item, index) in performanceTableData.items" :key="index">
+                    <div class="cell name">{{item.name}}</div>
+                    <div class="cell value">{{item.value}}</div>
+                    <div class="cell doc" :id="'detail-doc-' + item.name">{{performanceMode[item.name] && (performanceMode[item.name].text || performanceMode[item.name])}}</div>
+                    <div class="cell note" :id="'detail-note-' + item.name">
+                      <div v-html="typeof performanceMode[item.name] === 'string'? '-': performanceMode[item.name] && performanceMode[item.name].tips.join(';')"></div>
+                    </div>
+                    <b-popover placement="top" :target="'detail-doc-' + item.name" title="指标说明" triggers="hover" :content="performanceMode[item.name] && (performanceMode[item.name].text || performanceMode[item.name])"></b-popover>
+                    <b-popover placement="top" :target="'detail-note-' + item.name" title="优化建议" triggers="hover">
+                      <div v-html="typeof performanceMode[item.name] === 'string'? '-': performanceMode[item.name] && performanceMode[item.name].tips.join('<\br>')"></div>
+                    </b-popover>
+                </div>
+                
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <b-modal v-model="modalShow" size="lg" hide-footer hide-backdrop hide-title class="wx-debug-miniapp-modal">
+      <div>
+        <tree-view :data="detailMessage" :options="treeViewerOptions"></tree-view>
+      </div>
+    </b-modal>
+</div>

@@ -1,74 +1,67 @@
 const Promise = require('ipromise')
 class Handler {
-  constructor (handler, router) {
+  constructor(handler, router) {
     this.handler = handler
     this.router = router
   }
 
-  at (fromString) {
+  at(fromString) {
     this.fromString = fromString
     return this
   }
 
-  when (condition) {
+  when(condition) {
     if (typeof condition === 'string') {
       this.condition = new Function(
         'message',
-        'with(message) {return ' + condition + ';}'
+        'with(message) {return ' + condition + ';}',
       )
-    }
-    else if (typeof condition === 'function') {
+    } else if (typeof condition === 'function') {
       this.condition = condition
     }
     return this
   }
 
-  test (message) {
+  test(message) {
     return (
       message.match(this.fromString) &&
       (!this.condition || this.condition(message))
     )
   }
 
-  run (message) {
+  run(message) {
     if (this.test(message)) {
       return this.handler.call(this.router, message)
     }
   }
 }
-function _run (handlerList, message, i = 0) {
+function _run(handlerList, message, i = 0) {
   const promise = new Promise()
   const handler = handlerList[i]
   if (handler) {
     const ret = handler.run(message)
     if (ret && typeof ret.then === 'function') {
       if (i + 1 < handlerList.length) {
-        ret.then(function (data) {
+        ret.then(function(data) {
           if (data === false) {
             promise.resolve(false)
-          }
-          else {
+          } else {
             promise.resolve(_run(handlerList, data || message, i + 1))
           }
         })
-      }
-      else {
+      } else {
         return ret
       }
-    }
-    else if (ret === false) {
+    } else if (ret === false) {
       promise.resolve(ret)
-    }
-    else {
+    } else {
       if (i + 1 < handlerList.length) {
         promise.resolve(_run(handlerList, ret || message, i + 1))
-      }
-      else {
+      } else {
         promise.resolve(ret)
       }
     }
-  }
-  else {
+  } else {
     promise.resolve()
   }
   return promise

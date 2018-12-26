@@ -7,10 +7,10 @@ const config = require('../../config')
 const { logger } = require('../../util')
 
 class RuntimeManager {
-  constructor () {
+  constructor() {
     this.runtimeTerminalMap = {}
   }
-  connect (channelId) {
+  connect(channelId) {
     return new Promise((resolve, reject) => {
       request
         .getRemote(`http://127.0.0.1:${config.REMOTE_DEBUG_PORT || 9222}/json`)
@@ -20,11 +20,13 @@ class RuntimeManager {
           for (const target of list) {
             const urlObj = URL.parse(target.url)
             if (
-              urlObj.pathname === '/runtime' &&
-              urlObj.port === config.SERVER_PORT + ''
+              urlObj.pathname === '/runtime.html' &&
+              urlObj.port === config.port + ''
             ) {
               found = target
               break
+            } else if (urlObj.pathname === '/debug.html') {
+              found = target
             }
           }
           if (found) {
@@ -32,27 +34,24 @@ class RuntimeManager {
               logger.verbose(
                 `Have found the webSocketDebuggerUrl: ${
                   found.webSocketDebuggerUrl
-                }`
+                }`,
               )
               const ws = new WebSocket(found.webSocketDebuggerUrl)
               const terminal = new WebsocketTerminal(ws, channelId)
               const _runtimeTerminalMaps = this.runtimeTerminalMap[channelId]
               if (_runtimeTerminalMaps && _runtimeTerminalMaps.length > 0) {
                 _runtimeTerminalMaps.unshift(terminal)
-              }
-              else {
+              } else {
                 this.runtimeTerminalMap[channelId] = [terminal]
               }
               resolve(terminal)
-            }
-            else {
+            } else {
               logger.verbose(
-                `Not found the webSocketDebuggerUrl from the ${found}`
+                `Not found the webSocketDebuggerUrl from the ${found}`,
               )
               reject('TOAST_DO_NOT_OPEN_CHROME_DEVTOOL')
             }
-          }
-          else {
+          } else {
             logger.verbose(`Not found the remote debug json`)
             reject('TOAST_CAN_NOT_FIND_RUNTIME')
           }
@@ -62,17 +61,16 @@ class RuntimeManager {
         })
     })
   }
-  remove (channelId) {
+  remove(channelId) {
     const terminals = this.runtimeTerminalMap[channelId]
     if (terminals && terminals.length > 0) {
       const popTerminal = terminals.pop()
       popTerminal.websocket.close()
-    }
-    else {
-      logger.error('Try to remove a non-exist runtime')
+    } else {
+      logger.error(new Error('Try to remove a non-exist runtime'))
     }
   }
-  has (channelId) {
+  has(channelId) {
     const terminals = this.runtimeTerminalMap[channelId]
     return terminals && terminals.length > 0
   }

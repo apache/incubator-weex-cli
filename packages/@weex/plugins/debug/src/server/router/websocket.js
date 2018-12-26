@@ -6,12 +6,19 @@ const inspectorHub = mlink.Hub.get('proxy.inspector')
 const proxyNativeHub = mlink.Hub.get('proxy.native')
 const proxyDebuggerHub = mlink.Hub.get('page.debugger')
 const runtimeWorkerHub = mlink.Hub.get('runtime.worker')
+const entryHub = mlink.Hub.get('page.entry')
 const wsRouter = Router()
+
+wsRouter.all('/page/entry', async (ctx, next) => {
+  const terminal = new WebsocketTerminal(ctx.websocket)
+  entryHub.join(terminal, false)
+  await next()
+})
 
 wsRouter.all('/debugProxy/inspector/:channelId', async (ctx, next) => {
   const terminal = new WebsocketTerminal(ctx.websocket)
   terminal.channelId = ctx.params.channelId
-  inspectorHub.join(terminal, true)
+  inspectorHub.join(terminal, false)
   await next()
 })
 

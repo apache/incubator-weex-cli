@@ -2,57 +2,53 @@ const mlink = require('../index')
 const Router = mlink.Router
 const DeviceManager = require('../managers/device_manager')
 const config = require('../../config')
+const { util } = require('../../util')
 const debuggerRouter = Router.get('debugger')
 
-debuggerRouter.on(Router.Event.TERMINAL_LEAVED, 'proxy.native', function (
-  signal
-) {
+debuggerRouter.on(Router.Event.TERMINAL_LEAVED, 'proxy.native', signal => {
   const device = DeviceManager.getDevice(signal.channelId)
   if (!device) {
     return
   }
-  DeviceManager.removeDevice(signal.channelId, function () {
+  DeviceManager.removeDevice(signal.channelId, () => {
     debuggerRouter.pushMessageByChannelId('page.debugger', signal.channelId, {
       method: 'WxDebug.deviceDisconnect',
-      params: device
+      params: device,
     })
   })
 })
 
-debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'page.debugger', function (
-  signal
-) {
+debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'page.debugger', signal => {
   const device = DeviceManager.getDevice(signal.channelId)
   debuggerRouter.pushMessageByChannelId('page.debugger', signal.channelId, {
     method: 'WxDebug.pushDebuggerInfo',
     params: {
       device,
-      bundles: config.BUNDLE_URLS || []
-    }
+      bundles: config.BUNDLE_URLS || [],
+      connectUrl: util.getConnectUrl(signal.channelId),
+    },
   })
 })
 
 debuggerRouter
-  .registerHandler(function (message) {
+  .registerHandler(message => {
     const device = DeviceManager.registerDevice(
       message.payload.params,
-      message.channelId
+      message.channelId,
     )
     if (device) {
       message.payload = {
         method: 'WxDebug.pushDebuggerInfo',
         params: {
-          device
-        }
+          device,
+          bundles: config.bundles || [],
+          connectUrl: util.getConnectUrl(message.channelId),
+        },
       }
-      debuggerRouter.pushMessageByChannelId(
-        'page.debugger',
-        message.channelId,
-        {
-          method: 'WxDebug.startDebugger',
-          params: message.channelId
-        }
-      )
+      debuggerRouter.pushMessage('page.entry', {
+        method: 'WxDebug.startDebugger',
+        params: message.channelId,
+      })
       message.to('page.debugger')
     }
     return false

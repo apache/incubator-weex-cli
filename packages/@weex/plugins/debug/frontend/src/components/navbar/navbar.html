@@ -1,0 +1,23 @@
+<b-navbar toggleable="md" fixed="top" class="wx-navbar">
+  <b-navbar-brand class="wx-navbar-brand">
+    <a href="/" class="logo"></a>
+  </b-navbar-brand>
+  <b-navbar-nav>
+    <b-nav-item class="wx-navbar-item title">{{title}}</b-nav-item>
+  </b-navbar-nav>
+  <b-navbar-nav class="ml-auto">
+    <template></template>
+    <b-nav-item class="wx-navbar-item operate" v-if="enableEnvironmentSetting" @click="toggleEnvironmentSetting()" :class="{'active': environmentSetting}">
+      <span class="iconfont icon-gaojishezhi">
+
+      </span>
+      环境设置
+    </b-nav-item>
+    <b-nav-item class="wx-navbar-item operate" @click="toggleHelpSetting()" :class="{'active': helpSetting}">
+      <span class="iconfont icon-bangzhu">
+
+      </span>
+      帮助
+    </b-nav-item>
+  </b-navbar-nav>
+</b-navbar>

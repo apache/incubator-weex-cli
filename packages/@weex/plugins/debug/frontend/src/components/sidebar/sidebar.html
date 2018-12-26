@@ -1,0 +1,13 @@
+<div class="wx-sidebar">
+  <div class="wx-sidebar-content">
+    <ul>
+      <li v-for="link in links">
+        <router-link tag="a" :to="link.path" v-if="link.type === linkType.link">
+          <span class="iconfont" :class="link.icon"></span>
+          <div class="text">{{link.name}}</div>
+        </router-link>
+        <div class="deviding-line" v-if="link.type === linkType.dividing"></div>
+      </li>
+    </ul>
+  </div>
+</div>

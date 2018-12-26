@@ -1,74 +1,72 @@
-const devtool = require('../index')
+const {
+  api
+} = require('../index')
 const ip = require('ip').address()
 const exit = require('exit')
+const path = require('path')
+const detect = require('detect-port')
 
 module.exports = {
   name: 'debug',
   description: 'Debug weex bundle',
   alias: 'd',
-  run: async context => {
-    // tools
-    const logger = context.logger
-    const WebSocket = context.ws
-    const staticService = context.staticService
-    const opn = context.opn
-    const headless = context.headless
-    // params
-    // TODO: detact port
-    const remoteDebugPort = 9228
-    const port = 8099
+  run: async ({
+    logger,
+    parameters,
+    compile
+  }) => {
+    const options = parameters.options
+    const source = parameters.first
 
-    const devtoolOptions = {
-      ip: ip,
-      port: port,
-      remoteDebugPort: remoteDebugPort,
-      // need to put the runtime.html into the same http server
-      staticSource: staticService.getSourceLocation()
+    const transformOptions = async (options) => {
+      let defaultPort = await detect(8089)
+      return {
+        port: options.port || defaultPort,
+        channelId: options.channelid,
+        manual: options.manual,
+        remoteDebugPort: options.remoteDebugPort
+      }
     }
 
-    const entry = await devtool.start(devtoolOptions)
+    let devtoolOptions = await transformOptions(options)
 
-    // socket to control debugger status.
-    // should be use after device has been connected.
-    // use to control debugger.
-    const debuggerProxyUrl = entry.debuggerProxyUrl
-    // socket to control native
-    const nativeProxyUrl = entry.nativeProxyUrl
-    // socket to control inspector
-    const inspectorProxyUrl = entry.inspectorProxyUrl
-    // url need to be lanuch on chrome or chromium with debug mode.
-    const runtiemUrl = entry.runtimeUrl
-    // socket id
-    // const channelId = entry.channelId
-    // chrome devtool socket need to remove ws://
-    const chromeDevtoolUrl = inspectorProxyUrl.replace('ws://', '')
+    if (source) {
+      await compile(
+        source,
+        path.join(__dirname, '../frontend/public/weex'), {
+          watch: false,
+          filename: '[name].js',
+          web: false,
+          config: options.config || options.c
+        },
+        async (error, output, json) => {
+          
+          // console.log(json)
+          let bundles = json.assets.map(asset => {
+            let entry 
+            let date = new Date()
+            const formateTime = (value) => {
+              return value < 10 ? '0' + value : value
+            }
+            if (/\./.test(source)) {
+              entry = path.resolve(source)
+            } else {
+              entry = path.resolve(source, asset.name.replace('.js', '.vue'))
+            }
+            return {
+              updateTime: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${formateTime(date.getHours())}:${formateTime(date.getMinutes())}:${formateTime(date.getSeconds())}`,
+              output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}`,
+              size: (asset.size / 1024).toFixed(0),
+              time: json.time,
+              entry: entry
+            }
+          })
+          await api.startDevtoolServer(bundles, devtoolOptions)
+        }
+      )
+    } else {
+      await api.startDevtoolServer([], devtoolOptions)
+    }
 
-    await headless.launchHeadless(runtiemUrl, {
-      remoteDebugPort: remoteDebugPort
-    })
-
-    const debuggerWs = new WebSocket(debuggerProxyUrl)
-
-    debuggerWs.on('message', message => {
-      const msg = JSON.parse(message)
-      if (msg.method === 'WxDebug.startDebugger') {
-        console.log(
-          'Inspector Connection Url: %s',
-          `http://${ip}:${port}/${staticService.getInspectorReleactivePath()}?ws=${chromeDevtoolUrl}`
-        )
-        opn(
-          `http://${ip}:${port}/${staticService.getInspectorReleactivePath()}?ws=${chromeDevtoolUrl}`
-        )
-      }
-    })
-
-    process.on('SIGINT', () => {
-      headless.closeHeadless()
-      exit(0)
-    })
-
-    logger.log(
-      `Connecting Url: http://${ip}:${port}/fake.html?_wx_devtool=${nativeProxyUrl}`
-    )
   }
 }

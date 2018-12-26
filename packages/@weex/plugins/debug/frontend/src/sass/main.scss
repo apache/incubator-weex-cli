@@ -1,0 +1,42 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import "notify.scss";
+@import "bcheckbox.scss";
+@import "bmodal.scss";
+@import "~vue-tour/dist/vue-tour.css";
+@import "vtour.scss";
+@import "~v-charts/lib/style.css";
+
+* {
+  font-family: Saira, sans-serif;
+}
+
+html, body, #app-main {
+    height: 100%;
+    overflow: hidden;
+}
+
+#app-main {
+  height: 100%;
+  width: 100%;
+  background-color: #f0f0f0;
+}
+
+a, span, i {
+  color: #333;
+}
+a {
+  &:hover {
+    text-decoration: none;
+    color: #333;
+  }
+}
+ul,li {
+  margin: 0;
+  padding:0;
+  list-style: none;
+}
+button {
+  &:focus {
+    outline: none;
+  }
+}

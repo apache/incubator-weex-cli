@@ -51,7 +51,7 @@ const bundleWrapper = (code, sourceUrl) => {
     '__weex_data__',
     '__weex_downgrade__',
     '__weex_require_module__',
-    'Vue'
+    'Vue',
   ]
   const bundlewrapper =
     'function __weex_bundle_entry__(' + injectedGlobals.join(',') + '){'
@@ -63,6 +63,7 @@ const bundleWrapper = (code, sourceUrl) => {
   }
   return anno + bundlewrapper + code.replace(rearRegexp, '}\n$&')
 }
+
 const transformUrlToLocalUrl = sourceURl => {
   const rHttpHeader = /^(https?|taobao|qap):\/\/(?!.*your_current_ip)/i
   let bundleUrl
@@ -70,15 +71,13 @@ const transformUrlToLocalUrl = sourceURl => {
     const query = queryParser.parse(URL.parse(sourceURl).query)
     if (query['_wx_tpl']) {
       bundleUrl = util.normalize(query['_wx_tpl']).replace(rHttpHeader, '')
-    }
-    else {
+    } else {
       bundleUrl = util.normalize(sourceURl).replace(rHttpHeader, '')
     }
-  }
-  else {
+  } else {
     bundleUrl = sourceURl.replace(
       /^(https?|taobao|qap):\/\/(.*your_current_ip):(\d+)\//i,
-      'file://'
+      'file://',
     )
   }
   if (bundleUrl.charAt(bundleUrl.length - 1) === '?') {
@@ -156,13 +155,13 @@ __EventEmitter__.prototype = {
 const mockBrowserApi = `// Redefine navigator 
 Object.defineProperty(navigator, 'appCodeName', {
   get: function() {
-    return 'WEEXDEBUGGER';
+    return 'Weex Debugger';
   }
 });
   
 Object.defineProperty(navigator, 'product', {
   get: function() {
-    return 'WEEX';
+    return 'Weex';
   }
 });
 
@@ -224,7 +223,16 @@ Object.defineProperty(this, 'clearInterval', {
     return __cachedClearInterval__;
   },
   set: function () {}
-});`
+});
+
+// Redefine onmessage
+var __eventEmitter__ = new __EventEmitter__();
+var __postmessage__ = self.postMessage
+self.addEventListener('message', function(message) {
+  __eventEmitter__.emit(message.data && message.data.method, message.data);
+}, false);
+
+`
 
 const mockContextApi = `// Redefine the JSFramework API
 var __syncRequest__ = function(data, channelId) {
@@ -250,19 +258,13 @@ self.callNativeModule = function () {
     }
   }
   var result = __syncRequest__(message, __channelId__);
-  if (___shouldReturnResult__ && __requestId__) {
-    __postData__({
-      id: __requestId__,
-      result: null,
-      error: {
-        errorCode: 0
-      }
-    });
-  }
   if (result && result.error) {
     self.console.error(result.error);
     // throw new Error(result.error);
-  } else return result && result.ret;
+  }
+  else {
+    return result && result.ret
+  };
 }
 
 self.callNativeComponent = function () {
@@ -283,7 +285,10 @@ self.callNativeComponent = function () {
   if (result.error) {
     self.console.error(result.error);
     // throw new Error(result.error);
-  } else return result.ret;
+  }
+  else {
+    return result.ret;
+  };
 };
 
 self.callNative = function (instance, tasks, callback) {
@@ -328,11 +333,10 @@ self.nativeLog = function (args) {
 
 const generateSandboxWorkerEntry = env => {
   const worker = fse.readFileSync(
-    path.join(__dirname, '../worker/sandbox_worker.js')
+    path.join(__dirname, '../worker/sandbox_worker.js'),
   )
-  const androidMockApi =
-    env && env.isLayoutAndSandbox
-      ? `self.callCreateBody = function (instance, domStr) {
+  const mockAndroidApi = env.isLayoutAndSandbox
+    ? `self.callCreateBody = function (instance, domStr) {
   if (!domStr) return;
   var payload = {
     method: 'WxDebug.callCreateBody',
@@ -449,17 +453,18 @@ self.callRemoveEvent = function (instance, ref, event) {
   };
   __postData__(payload);
 }`
-      : ''
+    : ''
   let environment = `${eventConstructor}
 
 ${mockBrowserApi}
 
 ${mockContextApi}
 
-${androidMockApi}
+${mockAndroidApi}
 `
-  if (env && env.jsframework) {
+  if (env.jsframework) {
     environment += `importScripts('${env.jsframework}');\n`
+    // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
   return `${environment}
 ${worker}
@@ -467,36 +472,157 @@ ${worker}
 }
 
 const generateWorkerEntry = env => {
-  const worker = fse.readFileSync(path.join(__dirname, '../worker/worker.js'))
-  let environment = `${eventConstructor}
+  const worker = fse.readFileSync(path.join(__dirname, "../worker/worker.js"));
+  const androidMockApi = env.isLayoutAndSandbox
+    ? `self.callCreateBody = function (instance, domStr) {
+  if (!domStr) return;
+  var payload = {
+    method: 'WxDebug.callCreateBody',
+    params: {
+      instance: instance,
+      domStr: domStr
+    }
+  };
+  __postData__(payload);
+};
 
+self.callUpdateFinish = function (instance, tasks, callback) {
+  var payload = {
+    method: 'WxDebug.callUpdateFinish',
+    params: {
+      instance: instance,
+      tasks: tasks,
+      callback: callback
+    }
+  };
+  __postData__(payload);
+};
+
+self.callCreateFinish = function (instance) {
+  var payload = {
+    method: 'WxDebug.callCreateFinish',
+    params: {
+      instance: instance
+    }
+  };
+  __postData__(payload);
+}
+
+self.callRefreshFinish = function (instance, tasks, callback) {
+  var payload = {
+    method: 'WxDebug.callRefreshFinish',
+    params: {
+      instance: instance,
+      tasks: tasks,
+      callback: callback
+    }
+  };
+  __postData__(payload);
+}
+
+self.callUpdateAttrs = function (instance, ref, data) {
+  var payload = {
+    method: 'WxDebug.callUpdateAttrs',
+    params: {
+      instance: instance,
+      ref: ref,
+      data: data
+    }
+  };
+  __postData__(payload);
+}
+
+self.callUpdateStyle = function (instance, ref, data) {
+  var payload = {
+    method: 'WxDebug.callUpdateStyle',
+    params: {
+      instance: instance,
+      ref: ref,
+      data: data
+    }
+  };
+  __postData__(payload);
+}
+
+self.callRemoveElement = function (instance, ref) {
+  var payload = {
+    method: 'WxDebug.callRemoveElement',
+    params: {
+      instance: instance,
+      ref: ref
+    }
+  };
+  __postData__(payload);
+}
+
+self.callMoveElement = function (instance, ref, parentRef, index_str) {
+  var payload = {
+    method: 'WxDebug.callMoveElement',
+    params: {
+      instance: instance,
+      ref: ref,
+      parentRef: parentRef,
+      index_str: index_str
+    }
+  };
+  __postData__(payload);;
+}
+
+self.callAddEvent = function (instance, ref, event) {
+  var payload = {
+    method: 'WxDebug.callAddEvent',
+    params: {
+      instance: instance,
+      ref: ref,
+      event: event
+    }
+  };
+  __postData__(payload);
+}
+
+self.callRemoveEvent = function (instance, ref, event) {
+  var payload = {
+    method: 'WxDebug.callRemoveEvent',
+    params: {
+      instance: instance,
+      ref: ref,
+      event: event
+    }
+  };
+  __postData__(payload);
+}`
+    : "";
+  let environment = `${eventConstructor}
+  
 ${mockBrowserApi}
 
 ${mockContextApi}
 
+${androidMockApi}
+
 self.$$frameworkFlag = {};
-`
-  if (env && env.jsframework) {
-    environment += `importScripts('${env.jsframework}');\n`
+`;
+  if (env.jsframework) {
+    environment += `importScripts('${env.jsframework}');\n`;
     // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
-  if (env && env.importScripts && env.importScripts.length > 0) {
+  if (env.importScripts && env.importScripts.length > 0) {
     env.importScripts.forEach(script => {
-      environment += `importScripts('${script}');\n`
-    })
+      environment += `importScripts('${script}');\n`;
+    });
   }
-  if (env && env.sourceUrl) {
-    environment += `importScripts('${env.sourceUrl}');\n`
+  if (env.sourceUrl) {
+    environment += `importScripts('${env.sourceUrl}');\n`;
   }
   return `
 ${environment}
 ${worker}
-  `
-}
+  `;
+};
 
 const pickDomain = str => {
-  if (/file:\/\/\//.test(str)) {
-    return 'local'
+  if (/file:\/\//.test(str)) {
+    return str.replace('file://', '')
   }
   if (/http(s)?/.test(str)) {
     return URL.parse(str).hostname
@@ -508,5 +634,5 @@ module.exports = {
   transformUrlToLocalUrl,
   generateSandboxWorkerEntry,
   generateWorkerEntry,
-  pickDomain
+  pickDomain,
 }

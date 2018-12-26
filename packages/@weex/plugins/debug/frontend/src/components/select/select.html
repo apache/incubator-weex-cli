@@ -1,0 +1,16 @@
+<div class="wx-select">
+  <div class="wx-select-content" :class="uiSize">
+    <div class="wx-select-default" @click="toggle()" :class="{'disabled': uiDisabled}">
+      {{uiOption && uiOption.text? uiOption.text: uiOption}}
+      <span class="iconfont icon-xiala">
+
+      </span>
+    </div>
+    <ul class="wx-select-items" v-if="uiOptions.length > 0" :class="{'disabled': uiDisabled, 'active' : open}">
+      <li class="select-item" v-for="(option,index) in uiOptions" :title="option.text? option.text : option" :key="index" @click="change(option)">
+        {{option.text? option.text : option}}
+      </li>
+    </ul>
+  </div>
+  <div class="wx-select-label" v-if="label">{{uiLabel}}</div>
+</div>

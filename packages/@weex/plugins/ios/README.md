@@ -1,1 +1,0 @@
-Plugin for manage/compile/pack iOS project.
