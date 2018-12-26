@@ -1,6 +1,8 @@
 const path = require("path");
 const detect = require('detect-port');
 const ip = require('ip').address();
+const pkg = require('../package.json');
+
 const {
   Previewer
 } = require('../lib');
@@ -203,8 +205,11 @@ module.exports = {
         )
       }
     }
-
-    if (array.length >= 1) {
+    if (options.help || options.h) {
+      await showHelp()
+    } else if (options.version || options.v) {
+      console.log(pkg.version)
+    } else if (array.length >= 1) {
       previewOptions = await translateOptions(options)
       preview = new Previewer(previewOptions)
       await compile(
