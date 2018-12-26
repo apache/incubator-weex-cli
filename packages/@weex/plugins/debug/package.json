@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/debug",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Module for debug weex file",
   "main": "index.js",
   "scripts": {
@@ -12,12 +12,14 @@
   "files": [
     "src/",
     "frontend/public/",
+    "!frontend/public/weex",
     "commands/",
     "index.js",
     "README.md"
   ],
   "license": "MIT",
   "dependencies": {
+    "boxen": "^2.1.0",
     "chalk": "^1.1.3",
     "commander": "^2.9.0",
     "del": "^2.2.1",

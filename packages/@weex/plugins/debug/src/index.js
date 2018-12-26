@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const boxen = require('boxen')
+const  boxen= require('boxen')
 
 const detect = require('detect-port')
 const headless = require('./server/headless')
