@@ -59,7 +59,10 @@ let config = {
     },{
       from: 'src/runtime',
       to: './runtime',
-    }]),
+    },{
+      from: 'node_modules/monaco-editor/min/vs',
+      to: './vs',
+    }])
   ]
 }
 

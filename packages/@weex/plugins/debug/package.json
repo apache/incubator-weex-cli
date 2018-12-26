@@ -1,12 +1,12 @@
 {
   "name": "@weex-cli/debug",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Module for debug weex file",
   "main": "index.js",
   "scripts": {
     "format": "eslint ./src --fix",
     "lint": "eslint ./",
-    "prepublish": "npm run format"
+    "prepublish": "npm run format && cd frontend && npm run compile"
   },
   "author": "Mario <faterrole@gmail.com>",
   "files": [
