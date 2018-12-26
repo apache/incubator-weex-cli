@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/compile",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Plugin for compile weex file.",
   "main": "index.js",
   "scripts": {
@@ -29,9 +29,9 @@
     "postcss-plugin-weex": "^0.1.6",
     "sourcer": "^0.1.4",
     "uglifyjs-webpack-plugin": "^2.0.1",
-    "vue": "^2.5.11",
+    "vue": "2.5.21",
     "vue-loader": "^12.2.2",
-    "vue-template-compiler": "^2.5.11",
+    "vue-template-compiler": "2.5.21",
     "webpack": "^3.10.0",
     "webpack-merge": "^4.1.2",
     "weex-loader": "^0.7.7",
