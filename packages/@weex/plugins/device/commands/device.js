@@ -2,7 +2,7 @@ const { IosDevices, AndroidDevices} = require('../lib')
 
 module.exports = {
   name: 'device',
-  description: 'Use for list/run Android/iOS device',
+  description: 'Module for manage Android/iOS device',
   run: async (
     {
       logger,
