@@ -13,5 +13,5 @@ module.exports = {
   request,
   logger,
   launcher,
-  wrapper,
+  wrapper
 }

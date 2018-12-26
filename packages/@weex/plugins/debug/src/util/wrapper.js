@@ -51,7 +51,7 @@ const bundleWrapper = (code, sourceUrl) => {
     '__weex_data__',
     '__weex_downgrade__',
     '__weex_require_module__',
-    'Vue',
+    'Vue'
   ]
   const bundlewrapper =
     'function __weex_bundle_entry__(' + injectedGlobals.join(',') + '){'
@@ -71,13 +71,15 @@ const transformUrlToLocalUrl = sourceURl => {
     const query = queryParser.parse(URL.parse(sourceURl).query)
     if (query['_wx_tpl']) {
       bundleUrl = util.normalize(query['_wx_tpl']).replace(rHttpHeader, '')
-    } else {
+    }
+    else {
       bundleUrl = util.normalize(sourceURl).replace(rHttpHeader, '')
     }
-  } else {
+  }
+  else {
     bundleUrl = sourceURl.replace(
       /^(https?|taobao|qap):\/\/(.*your_current_ip):(\d+)\//i,
-      'file://',
+      'file://'
     )
   }
   if (bundleUrl.charAt(bundleUrl.length - 1) === '?') {
@@ -333,7 +335,7 @@ self.nativeLog = function (args) {
 
 const generateSandboxWorkerEntry = env => {
   const worker = fse.readFileSync(
-    path.join(__dirname, '../worker/sandbox_worker.js'),
+    path.join(__dirname, '../worker/sandbox_worker.js')
   )
   const mockAndroidApi = env.isLayoutAndSandbox
     ? `self.callCreateBody = function (instance, domStr) {
@@ -472,7 +474,7 @@ ${worker}
 }
 
 const generateWorkerEntry = env => {
-  const worker = fse.readFileSync(path.join(__dirname, "../worker/worker.js"));
+  const worker = fse.readFileSync(path.join(__dirname, '../worker/worker.js'))
   const androidMockApi = env.isLayoutAndSandbox
     ? `self.callCreateBody = function (instance, domStr) {
   if (!domStr) return;
@@ -591,7 +593,7 @@ self.callRemoveEvent = function (instance, ref, event) {
   };
   __postData__(payload);
 }`
-    : "";
+    : ''
   let environment = `${eventConstructor}
   
 ${mockBrowserApi}
@@ -601,24 +603,24 @@ ${mockContextApi}
 ${androidMockApi}
 
 self.$$frameworkFlag = {};
-`;
+`
   if (env.jsframework) {
-    environment += `importScripts('${env.jsframework}');\n`;
+    environment += `importScripts('${env.jsframework}');\n`
     // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
   if (env.importScripts && env.importScripts.length > 0) {
     env.importScripts.forEach(script => {
-      environment += `importScripts('${script}');\n`;
-    });
+      environment += `importScripts('${script}');\n`
+    })
   }
   if (env.sourceUrl) {
-    environment += `importScripts('${env.sourceUrl}');\n`;
+    environment += `importScripts('${env.sourceUrl}');\n`
   }
   return `
 ${environment}
 ${worker}
-  `;
-};
+  `
+}
 
 const pickDomain = str => {
   if (/file:\/\//.test(str)) {
@@ -634,5 +636,5 @@ module.exports = {
   transformUrlToLocalUrl,
   generateSandboxWorkerEntry,
   generateWorkerEntry,
-  pickDomain,
+  pickDomain
 }

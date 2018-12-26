@@ -16,19 +16,21 @@ debuggerRouter
           channelId,
           connectUrl: util.getConnectUrl(channelId),
           bundles: config.bundles || []
-        },
+        }
       }
       message.reply()
-    } else if (method === 'WxDebug.queryServerVersion') {
+    }
+    else if (method === 'WxDebug.queryServerVersion') {
       let pkg = require('../../../package.json')
       debuggerRouter.pushMessage('page.entry', {
         method: 'WxDebug.pushServerVersion',
         params: {
-          version: pkg.version,
-        },
+          version: pkg.version
+        }
       })
       message.discard()
-    } else if (method === 'WxDebug.openFile') {
+    }
+    else if (method === 'WxDebug.openFile') {
       opn(message.payload.params)
     }
   })

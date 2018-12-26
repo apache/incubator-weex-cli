@@ -9,24 +9,24 @@ const mlink = require('./link')
 const { launcher } = require('./util')
 const Router = mlink.Router
 
-const { logger, util, hook } = require('./util')
+const { logger, util } = require('./util')
 
-function resolveConnectUrl(config) {
+function resolveConnectUrl (config) {
   const host = config.ip + ':' + config.port
   util.setConnectUrl(
     config.connectUrl ||
-      `http://${host}/devtool_fake.html?_wx_devtool=ws://${host}/debugProxy/native/{channelId}`,
+      `http://${host}/devtool_fake.html?_wx_devtool=ws://${host}/debugProxy/native/{channelId}`
   )
 }
 
-exports.startServerAndLaunch = function(ip, port, manual, cb) {
+exports.startServerAndLaunch = function (ip, port, manual, cb) {
   this.startServer(ip, port).then(() => {
     cb && cb()
     if (!manual) this.launch(ip, port)
   })
 }
 
-exports.startServer = function(ip, port) {
+exports.startServer = function (ip, port) {
   return new Promise((resolve, reject) => {
     const inUse = config.inUse
     let message = chalk.green('Start debugger server!')
@@ -37,7 +37,7 @@ exports.startServer = function(ip, port) {
           '(on port ' +
             inUse.open +
             ',' +
-            (' because ' + inUse.old + ' is already in use)'),
+            (' because ' + inUse.old + ' is already in use)')
         )
     }
     message += '\n\n'
@@ -57,33 +57,34 @@ exports.startServer = function(ip, port) {
       ':' +
       port +
       '\n'
-    debugServer.start(port, function() {
+    debugServer.start(port, function () {
       logger.log(
         boxen(message, {
           padding: 1,
           borderColor: 'green',
-          margin: 1,
-        }),
+          margin: 1
+        })
       )
       resolve()
     })
   })
 }
 
-exports.launch = function(ip, port) {
+exports.launch = function (ip, port) {
   const debuggerURL = 'http://' + (ip || 'localhost') + ':' + port + '/'
   logger.info('Launching Dev Tools...')
   if (config.ENABLE_HEADLESS) {
     // Check whether the port is occupied
-    detect(config.REMOTE_DEBUG_PORT).then(function(open) {
+    detect(config.REMOTE_DEBUG_PORT).then(function (open) {
       if (+config.REMOTE_DEBUG_PORT !== open) {
         headless.closeHeadless()
         logger.info(
           `Starting inspector on port ${open}, because ${
             config.REMOTE_DEBUG_PORT
-          } is already in use`,
+          } is already in use`
         )
-      } else {
+      }
+      else {
         logger.info(`Starting inspector on port ${open}`)
       }
       config.REMOTE_DEBUG_PORT = open
@@ -93,13 +94,13 @@ exports.launch = function(ip, port) {
   launcher.launchChrome(debuggerURL, config.REMOTE_DEBUG_PORT || 9222)
 }
 
-exports.reload = function() {
+exports.reload = function () {
   Router.get('debugger').pushMessage('proxy.native', {
-    method: 'WxDebug.reload',
+    method: 'WxDebug.reload'
   })
 }
 
-exports.start = function(bundles, config, cb) {
+exports.start = function (bundles, config, cb) {
   config.bundles = bundles
   resolveConnectUrl(config)
   this.startServerAndLaunch(config.ip, config.port, config.manual, cb)

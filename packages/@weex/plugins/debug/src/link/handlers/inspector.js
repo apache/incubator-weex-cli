@@ -5,7 +5,7 @@ const redirectMessage = /^(Page.(enable|disable|reload)|Debugger|Target|Worker|R
 const ignoredMessage = /^(ServiceWorker)/
 const chromeDevtoolDiabledProtocol = [
   // 'Network.enable',
-  'Page.getResourceTree',
+  'Page.getResourceTree'
   // 'Profiler.enable',
   // 'Runtime.enable',
   // 'DOM.enable',
@@ -20,7 +20,7 @@ const chromeDevtoolDiabledProtocol = [
 ]
 
 debuggerRouter
-  .registerHandler(function(message) {
+  .registerHandler(function (message) {
     const device = DeviceManager.getDevice(message.channelId)
     if (device) {
       if (redirectMessage.test(message.payload.method)) {
@@ -28,15 +28,19 @@ debuggerRouter
           message.payload.ignoreCache = true
         }
         message.to('runtime.proxy')
-      } else if (ignoredMessage.test(message.payload.method)) {
+      }
+      else if (ignoredMessage.test(message.payload.method)) {
         message.discard()
-      } else {
+      }
+      else {
         if (message.payload.method === 'Page.startScreencast') {
           message.to('page.debugger')
-        } else if (message.payload.method === 'Runtime.enable') {
+        }
+        else if (message.payload.method === 'Runtime.enable') {
           message.payload.method = 'Console.enable'
           message.to('proxy.native')
-        } else if (message.payload.method === 'Page.screencastFrameAck') {
+        }
+        else if (message.payload.method === 'Page.screencastFrameAck') {
           message.to('page.debugger')
         }
         message.to('proxy.native')
@@ -44,18 +48,19 @@ debuggerRouter
       if (chromeDevtoolDiabledProtocol.indexOf(message.payload.method) >= 0) {
         message.payload = {
           id: message.payload.id,
-          result: {},
+          result: {}
         }
         message.reply()
       }
-    } else {
+    }
+    else {
       debuggerRouter.pushMessageByChannelId(
         'page.debugger',
         message.channelId,
         {
           method: 'WxDebug.deviceDisconnect',
-          params: device,
-        },
+          params: device
+        }
       )
     }
   })

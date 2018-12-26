@@ -8,37 +8,38 @@ const RuntimeManager = require('../managers/runtime_manager')
 const runtimeProxyHub = Hub.get('runtime.proxy')
 
 debuggerRouter
-  .registerHandler(function(message) {
+  .registerHandler(function (message) {
     message.to('proxy.native')
   })
   .at('sync.native')
 
 debuggerRouter
-  .registerHandler(function(message) {
+  .registerHandler(function (message) {
     message.to('runtime.worker')
   })
   .at('sync.v8')
 
 debuggerRouter
-  .registerHandler(function(message) {
+  .registerHandler(function (message) {
     const payload = message.payload
     if (payload.method === 'syncReturn') {
       message.payload = {
         ret: payload.params.ret,
-        id: payload.params.syncId,
+        id: payload.params.syncId
       }
       message.to('sync.v8')
-    } else {
+    }
+    else {
       message.to('proxy.native')
     }
   })
   .at('runtime.worker')
 
-debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'runtime.worker', function(
-  signal,
+debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'runtime.worker', function (
+  signal
 ) {
   RuntimeManager.connect(signal.channelId).then(
-    function(terminal) {
+    function (terminal) {
       runtimeProxyHub.join(terminal)
       const device = DeviceManager.getDevice(signal.channelId)
       if (device) {
@@ -47,13 +48,14 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'runtime.worker', function(
             'proxy.native',
             signal.channelId,
             {
-              method: 'WxDebug.reload',
-            },
+              method: 'WxDebug.reload'
+            }
           )
         }
-      } else {
+      }
+      else {
         Logger.error(
-          'device with channelId[' + signal.channelId + '] is not found',
+          'device with channelId[' + signal.channelId + '] is not found'
         )
       }
     },
@@ -61,15 +63,15 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'runtime.worker', function(
       debuggerRouter.pushMessageByChannelId('page.debugger', signal.channelId, {
         method: 'WxDebug.prompt',
         params: {
-          messageText: errorText,
-        },
+          messageText: errorText
+        }
       })
-    },
+    }
   )
 })
 
-debuggerRouter.on(Router.Event.TERMINAL_LEAVED, 'runtime.worker', function(
-  signal,
+debuggerRouter.on(Router.Event.TERMINAL_LEAVED, 'runtime.worker', function (
+  signal
 ) {
   if (RuntimeManager.has(signal.channelId)) {
     RuntimeManager.remove(signal.channelId)

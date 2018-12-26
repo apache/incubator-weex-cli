@@ -1,4 +1,4 @@
-exports.objectGet = function(object, prop, defaultValue) {
+exports.objectGet = function (object, prop, defaultValue) {
   const props = prop.split('.')
   let p = props.shift()
   let cur = object
@@ -9,7 +9,7 @@ exports.objectGet = function(object, prop, defaultValue) {
   }
   return cur || defaultValue
 }
-exports.objectLocate = function objectLocate(object, prop) {
+exports.objectLocate = function objectLocate (object, prop) {
   if (!prop) return object
   const props = prop.split('.')
   let p = props.shift()
@@ -23,14 +23,15 @@ exports.objectLocate = function objectLocate(object, prop) {
   }
   return cur
 }
-exports.clearObjectAt = function(object, prop) {
+exports.clearObjectAt = function (object, prop) {
   const props = prop.split('.')
   let p = props.shift()
   let cur = object
   while (p) {
     if (props.length === 0) {
       cur[p] = {}
-    } else {
+    }
+    else {
       cur = cur[p]
     }
 
@@ -39,7 +40,7 @@ exports.clearObjectAt = function(object, prop) {
   }
   return cur
 }
-exports.matchHubId = function(base, target) {
+exports.matchHubId = function (base, target) {
   return (
     base === target ||
     (target.indexOf(base) === 0 && target.charAt(base.length) === '.')

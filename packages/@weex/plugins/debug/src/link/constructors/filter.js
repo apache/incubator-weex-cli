@@ -1,7 +1,7 @@
 const invok = require('invok')
 const Promise = require('ipromise')
 class Filter {
-  constructor(handler, condition) {
+  constructor (handler, condition) {
     this.condition = condition
     this.handler = handler
     this.isGeneratorFunction =
@@ -9,38 +9,40 @@ class Filter {
     if (typeof this.condition === 'string') {
       this.condition = new Function(
         'message',
-        'with(message) {return ' + this.condition + ';}',
+        'with(message) {return ' + this.condition + ';}'
       )
     }
   }
 
-  when(condition) {
+  when (condition) {
     if (condition === 'string') {
       this.condition = new Function(
         'message',
-        'with(message) {return ' + condition + ';}',
+        'with(message) {return ' + condition + ';}'
       )
     }
   }
 
-  run(message, next) {
+  run (message, next) {
     if (!this.condition || this.condition(message)) {
       if (this.isGeneratorFunction) {
         return invok(this.handler, this, [message, next])
-      } else {
+      }
+      else {
         const p = new Promise()
-        this.handler(message, function() {
+        this.handler(message, function () {
           next().linkTo(p)
         })
         return p
       }
-    } else {
+    }
+    else {
       return next()
     }
   }
 }
-function resolveFilterChain(message, filterChain, currentIndex = 0) {
-  return filterChain[currentIndex].run(message, function() {
+function resolveFilterChain (message, filterChain, currentIndex = 0) {
+  return filterChain[currentIndex].run(message, function () {
     return currentIndex + 1 < filterChain.length
       ? resolveFilterChain(message, filterChain, currentIndex + 1)
       : Promise.resolve()

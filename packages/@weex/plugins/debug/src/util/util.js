@@ -30,5 +30,5 @@ module.exports = {
   normalize,
   getConnectUrl,
   setConnectUrl,
-  getWmlConnectUrl,
+  getWmlConnectUrl
 }

@@ -11,7 +11,7 @@ const LOGLEVEL = {
   WARN: 'warn',
   INFO: 'info',
   ERROR: 'error',
-  SUCCESS: 'success',
+  SUCCESS: 'success'
 }
 
 const SEVERITY = {
@@ -20,7 +20,7 @@ const SEVERITY = {
   warn: 3000,
   info: 3000,
   error: 5000,
-  success: 10000,
+  success: 10000
 }
 
 const LOGCOLOR = {
@@ -29,7 +29,7 @@ const LOGCOLOR = {
   warn: 'yellow',
   info: 'white',
   error: 'red',
-  success: 'green',
+  success: 'green'
 }
 
 let DEFAULT_LOGLEVEL = LOGLEVEL.LOG
@@ -39,10 +39,12 @@ const formatError = (error, isVerbose) => {
   if (error instanceof Error) {
     if (isVerbose) {
       message = error.stack
-    } else {
+    }
+    else {
       message = error
     }
-  } else {
+  }
+  else {
     // Plain text error message
     message = error.stack
   }
@@ -80,12 +82,13 @@ const log = loglevel => {
       time = new Date()
       prefix = chalk.gray(
         `${fill(time.getHours())}:${fill(time.getMinutes())}:${fill(
-          time.getSeconds(),
-        )}`,
+          time.getSeconds()
+        )}`
       )
       sep = ':'
       console.log(chalk.grey(prefix), sep, chalk[color](message))
-    } else {
+    }
+    else {
       console.log(chalk[color](message))
     }
   }
@@ -94,7 +97,7 @@ const log = loglevel => {
 const subscribe = event => {
   if (!(event instanceof EventEmitter)) {
     throw new Error(
-      'Subscribe method only accepts an EventEmitter instance as argument',
+      'Subscribe method only accepts an EventEmitter instance as argument'
     )
   }
   event
@@ -122,5 +125,5 @@ module.exports = {
   error: log('error'),
   success: log('success'),
   events,
-  LOGLEVELS,
+  LOGLEVELS
 }

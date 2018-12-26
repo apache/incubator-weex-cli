@@ -1,10 +1,10 @@
 {
   "name": "@weex-cli/debug",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "Module for debug weex file",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write \"**/*.js\" --loglevel error && eslint ./ --fix",
+    "format": "eslint ./src --fix",
     "lint": "eslint ./",
     "prepublish": "npm run format"
   },

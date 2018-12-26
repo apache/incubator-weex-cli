@@ -13,7 +13,7 @@ debuggerRouter.on(Router.Event.TERMINAL_LEAVED, 'proxy.native', signal => {
   DeviceManager.removeDevice(signal.channelId, () => {
     debuggerRouter.pushMessageByChannelId('page.debugger', signal.channelId, {
       method: 'WxDebug.deviceDisconnect',
-      params: device,
+      params: device
     })
   })
 })
@@ -25,8 +25,8 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'page.debugger', signal => {
     params: {
       device,
       bundles: config.BUNDLE_URLS || [],
-      connectUrl: util.getConnectUrl(signal.channelId),
-    },
+      connectUrl: util.getConnectUrl(signal.channelId)
+    }
   })
 })
 
@@ -34,7 +34,7 @@ debuggerRouter
   .registerHandler(message => {
     const device = DeviceManager.registerDevice(
       message.payload.params,
-      message.channelId,
+      message.channelId
     )
     if (device) {
       message.payload = {
@@ -42,12 +42,12 @@ debuggerRouter
         params: {
           device,
           bundles: config.bundles || [],
-          connectUrl: util.getConnectUrl(message.channelId),
-        },
+          connectUrl: util.getConnectUrl(message.channelId)
+        }
       }
       debuggerRouter.pushMessage('page.entry', {
         method: 'WxDebug.startDebugger',
-        params: message.channelId,
+        params: message.channelId
       })
       message.to('page.debugger')
     }

@@ -4,10 +4,10 @@ const tools = require('../tools')
 const { logger } = require('../../util')
 
 class Message {
-  constructor(payload, hubId, terminalId, channelId) {
+  constructor (payload, hubId, terminalId, channelId) {
     this._from = {
       hubId,
-      terminalId,
+      terminalId
     }
     this.channelId = channelId
     this._to = []
@@ -18,57 +18,57 @@ class Message {
     this._createTime = new Date()
   }
 
-  get payload() {
+  get payload () {
     return this._payload[0]
   }
 
-  set payload(value) {
+  set payload (value) {
     this._payload.unshift(value)
   }
 
-  reply() {
+  reply () {
     this.to(this._from.hubId, this._from.terminalId)
   }
 
-  match(fromString) {
+  match (fromString) {
     return (
       !fromString ||
       tools.matchHubId(
         fromString,
-        this._from.hubId + '.' + this._from.terminalId,
+        this._from.hubId + '.' + this._from.terminalId
       )
     )
   }
 
-  to(hubId, terminalId) {
+  to (hubId, terminalId) {
     this._to.push({
       hubId,
-      terminalId,
+      terminalId
     })
   }
 
-  discard() {
+  discard () {
     this._discard = true
     this.destroy()
   }
 
-  destroy() {
+  destroy () {
     if (this._discard) {
       logger.verbose(
         `${this.id}#[${this._from.hubId}@${
           this._from.terminalId.split('-')[0]
         }-${this.channelId ? this.channelId.split('-')[0] : '*'}] discard`,
-        this._payload.length > 1 ? this._payload : this.payload,
+        this._payload.length > 1 ? this._payload : this.payload
       )
     }
     _messageBuffer = _messageBuffer.filter(m => m.id !== this.id)
   }
 
-  isAlive() {
+  isAlive () {
     return !this._discard
   }
 
-  route(resolver) {
+  route (resolver) {
     this.routed = true
     if (this._to.length === 0 && this.channelId) {
       // todo 如果没有明确的to但是有channelId 该当如何
@@ -79,15 +79,16 @@ class Message {
       if (!to.terminalId && resolver) {
         this.destination.push.apply(
           this.destination,
-          resolver(this._from, to, this.channelId),
+          resolver(this._from, to, this.channelId)
         )
-      } else {
+      }
+      else {
         this.destination.push(to)
       }
     })
   }
 
-  selectOne(to) {
+  selectOne (to) {
     let found = false
     for (let i = 0; i < this._to.length; i++) {
       if (
@@ -104,11 +105,12 @@ class Message {
         this.payload,
         this._from.hubId,
         this._from.terminalId,
-        this.channelId,
+        this.channelId
       )
       selected._to = [to]
       return selected
-    } else {
+    }
+    else {
       throw new Error('message select not found')
     }
   }

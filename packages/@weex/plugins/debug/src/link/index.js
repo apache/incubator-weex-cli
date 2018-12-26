@@ -6,5 +6,5 @@ module.exports = {
   Terminal: require('./constructors/terminal'),
   Handler: require('./constructors/handler'),
   Channel: require('./constructors/channel'),
-  load: require('./tools/loader'),
+  load: require('./tools/loader')
 }
