@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/device",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "module for lanuch device with weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,9 @@
   "files": [
     "lib/",
     "!*.map",
-    "!*.debug.js"
+    "!*.debug.js",
+    "extensions",
+    "commands"
   ],
   "dependencies": {
     "@weex-cli/utils": "^0.0.7",
