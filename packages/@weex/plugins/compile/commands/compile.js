@@ -123,7 +123,7 @@ module.exports = {
 
     if (options.help || options.h) {
       await showHelp()
-    }) else if (array.length < 2) {
+    } else if (array.length < 2) {
       await showHelp()
     }  else if (options.v || options.version) {
       logger.log(pkg.version)
