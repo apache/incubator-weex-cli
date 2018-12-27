@@ -35,6 +35,8 @@ export default function(source: string, dest = './build', metadata: Metadate) {
   return new Promise((resolve, reject) => {
     const metalsmith = Metalsmith(process.cwd());
 
+    metadata = Object.assign(metalsmith.metadata(), metadata)
+
     metadata.helpers && Object.keys(metadata.helpers).map(key => {
       Handlebars.registerHelper(key, metadata.helpers[key]);
     });
