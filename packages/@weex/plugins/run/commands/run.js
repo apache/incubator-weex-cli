@@ -158,7 +158,7 @@ module.exports = {
     }
 
     const prepareJSBundle = async () => {
-      await system.exec(options.__config.defaultWeexBundleCommand || 'npm run dev')
+      system.exec(options.__config.defaultWeexBundleCommand || 'npm run dev')
       return
     }
 
@@ -274,6 +274,7 @@ module.exports = {
       } else if (platform === 'ios') {
         let iosConfigurationFilePath = path.resolve(options.__config.weexIOSConfigFilename)
         let projectPath = runnerOptions.projectPath ? path.resolve(runnerOptions.projectPath) : path.resolve(options.__config.weexIOSProjectPath)
+        let spinner = logger.spin('Compiling JSBundle...')        
         try {
           await prepareJSBundle()
           spinner.stopAndPersist({
