@@ -1,19 +1,19 @@
 import * as path from 'path'
 
 export default class Config {
-  public root:string =  process.cwd()
-  public rootPath: string =  path.join(process.cwd(), './plugins')
-  public filename: string =  'plugins.json'
-  public androidPath: string =  path.join(process.cwd(), './platforms/android')
+  public root: string = process.cwd()
+  public rootPath: string = path.join(process.cwd(), './plugins')
+  public filename: string = 'plugins.json'
+  public androidPath: string = path.join(process.cwd(), './platforms/android')
   public iosPath: string = path.join(process.cwd(), './platforms/ios')
-  public androidConfigFilename:string ='.weex_plugin.json'
+  public androidConfigFilename: string = '.weex_plugin.json'
   public defaultConfig: any = {
     ios: [],
     web: [],
-    android: []
+    android: [],
   }
 
-  constructor (options: any = {}) {
+  constructor(options: any = {}) {
     this.root = options.root || this.root
     this.rootPath = options.rootPath || this.rootPath
     this.filename = options.filename || this.filename

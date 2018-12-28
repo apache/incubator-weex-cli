@@ -5,57 +5,57 @@ import * as https from 'https'
 
 const registryurl = 'registry.npmjs.org'
 
-const getNpmPackageInfo = async (packagename:string, version: string = 'latest') => {
+const getNpmPackageInfo = async (packagename: string, version: string = 'latest') => {
   return new Promise((resolve, reject) => {
-    return https.get({
-      host: registryurl,
-      path: `/${packagename}/${version}`
-    }, (response) => {
-      let body = ''
-      response.on('data', function (data) {
-        body += data
-      })
-      response.on('end', function () {
-        let parse = JSON.parse(body)
-        resolve(parse)
-      })
-      response.on('error', function (error) {
-        console.log(error)
-        resolve(error)
-      })
-    })
+    return https.get(
+      {
+        host: registryurl,
+        path: `/${packagename}/${version}`,
+      },
+      response => {
+        let body = ''
+        response.on('data', function(data) {
+          body += data
+        })
+        response.on('end', function() {
+          let parse = JSON.parse(body)
+          resolve(parse)
+        })
+        response.on('error', function(error) {
+          console.log(error)
+          resolve(error)
+        })
+      },
+    )
   })
 }
 
-const getLastestVersion = async (name) => {
-  return new Promise((resolve, reject) => {
+const getLastestVersion = async name => {
+  return new Promise(async (resolve, reject) => {
     let trynum = 0
-    const load = async (npmName) => {
+    const load = async npmName => {
       if (!npmName) {
         reject('Unknow plugin')
         return
       }
-      let info:any = await getNpmPackageInfo(npmName)
+      let info: any = await getNpmPackageInfo(npmName)
       let prefix
       if (info.error && trynum === 0) {
         trynum++
         if (npmName === 'weex-gcanvas') {
           prefix = 'weex-plugin--'
-        }
-        else {
+        } else {
           prefix = 'weex-plugin-'
         }
-        load(prefix + npmName)
-      }
-      else if (info.error && trynum !== 0) {
+        await load(prefix + npmName)
+      } else if (info.error && trynum !== 0) {
         reject(info.error)
         return
-      }
-      else {
+      } else {
         resolve(info.version)
       }
     }
-    load(name)
+    await load(name)
   })
 }
 
@@ -64,18 +64,18 @@ const unpackTgz = (packageTgz, unpackTarget) => {
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(packageTgz)
-      .on('error', function (err) {
+      .on('error', function(err) {
         reject('Unable to open tarball ' + packageTgz + ': ' + err)
       })
       .pipe(zlib.createUnzip())
-      .on('error', function (err) {
+      .on('error', function(err) {
         reject('Error during unzip for ' + packageTgz + ': ' + err)
       })
       .pipe(tar.Extract(extractOpts))
-      .on('error', function (err) {
+      .on('error', function(err) {
         reject('Error during untar for ' + packageTgz + ': ' + err)
       })
-      .on('end', function (result) {
+      .on('end', function(result) {
         resolve(result)
       })
   })
@@ -84,5 +84,5 @@ const unpackTgz = (packageTgz, unpackTarget) => {
 export default {
   getNpmPackageInfo,
   getLastestVersion,
-  unpackTgz
+  unpackTgz,
 }

@@ -1,7 +1,6 @@
 import * as fse from 'fs-extra'
 
 export default {
-  
   applyPatch(file, patch) {
     let content = fse.readFileSync(file, 'utf8')
 
@@ -17,20 +16,18 @@ export default {
     let patch = ''
     if (version) {
       patch = `\tpod '${name}', '${version}'\n`
-    }
-    else {
+    } else {
       patch = `\tpod '${name}'\n`
     }
 
     return {
       pattern: /\t*pod\s+'\w+'\s*,?.*\n/,
       patch: patch,
-      findPattern: new RegExp('\\t*pod\\s+\'' + name + '\'\\s*,?.*\\n', 'g')
+      findPattern: new RegExp("\\t*pod\\s+'" + name + "'\\s*,?.*\\n", 'g'),
     }
   },
 
   revokePatch(file, patch) {
     fse.writeFileSync(file, fse.readFileSync(file, 'utf8').replace(patch.findPattern, ''))
-  }
-
+  },
 }

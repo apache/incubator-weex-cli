@@ -10,10 +10,8 @@ import { LOGLEVEL } from './log-types'
 import Config from './config'
 import npmHelper from './utils/npm-helper'
 import podfile from './utils/podfile'
-import gradle from './utils/gradle'
 
 export default class Plugin extends EventEmitter {
-
   private shouldInstallPackage: boolean = false
   private shouldUninstallPackage: boolean = false
   private config: Config
@@ -21,7 +19,7 @@ export default class Plugin extends EventEmitter {
   private pluginConfigPath: string
   private androidPluginConfigs: any[]
   private androidPluginConfigPath: string
-  constructor (config?: any) {
+  constructor(config?: any) {
     super()
     this.config = new Config(config)
     this.pluginConfigs = this.config.defaultConfig
@@ -44,7 +42,7 @@ export default class Plugin extends EventEmitter {
     if (fse.existsSync(packageFilePath)) {
       const pkg = require(packageFilePath)
       pkg.dependencies[pluginName] = version
-      fse.writeJson(packageFilePath, pkg, {spaces: '\t'})
+      fse.writeJson(packageFilePath, pkg, { spaces: '\t' })
     }
     await utils.installNpmPackage()
     const browserPluginName = option.web && option.web.name ? option.web.name : pluginName
@@ -52,18 +50,18 @@ export default class Plugin extends EventEmitter {
       this.emit(LOGLEVEL.LOG, `Update plugins.json...`)
       // Update plugin.json in the project.
       this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, browserPluginName, option, 'web')
-      utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
+      await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
       this.emit(LOGLEVEL.LOG, `Building plugins...`)
       try {
         await utils.buildJS('build:plugin', true)
         this.emit(LOGLEVEL.SUCCESS, `Building plugins successful.`)
-      } catch(error) {
+      } catch (error) {
         this.emit(LOGLEVEL.ERROR, error)
       }
     }
   }
-  
-  installPList (projectRoot, projectPath, config) {
+
+  installPList(projectRoot, projectPath, config) {
     const xcodeproj = xcode.project(projectPath)
     xcodeproj.parseSync()
     const xcBuildConfiguration = xcodeproj.pbxXCBuildConfigurationSection()
@@ -77,27 +75,29 @@ export default class Plugin extends EventEmitter {
       }
     }
     if (plistFileEntry) {
-      plistFile = path.join(projectRoot, plistFileEntry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'))
+      plistFile = path.join(
+        projectRoot,
+        plistFileEntry.buildSettings.INFOPLIST_FILE.replace(/^"(.*)"$/g, '$1').replace(/\\&/g, '&'),
+      )
     }
-  
+
     if (!fse.existsSync(plistFile)) {
       this.emit(LOGLEVEL.ERROR, 'Could not find *-Info.plist file')
-    }
-    else {
+    } else {
       let obj = plist.parse(fse.readFileSync(plistFile, 'utf8'))
       obj = merge.recursive(true, obj, config)
       fse.writeFileSync(plistFile, plist.build(obj))
     }
   }
-  
-  handleInstall (dir, pluginName, version, option) {
+
+  async handleInstall(dir, pluginName, version, option) {
     if (option.web) {
       // should install npm package into project or not.
       this.shouldInstallPackage = true
     }
     // check out the type of current project
     if (utils.isIOSProject(dir)) {
-      const project:any = utils.isIOSProject(dir)
+      const project: any = utils.isIOSProject(dir)
       if (!fse.existsSync(path.join(dir, project.name, 'Podfile'))) {
         this.emit(LOGLEVEL.ERROR, "can't find Podfile file")
         return
@@ -111,7 +111,7 @@ export default class Plugin extends EventEmitter {
         }
         this.installPList(dir, projectPath, option.ios.plist || {})
       } else if (option.ios) {
-        const iosVersion = option.ios && option.ios.version || version
+        const iosVersion = (option.ios && option.ios.version) || version
         const buildPatch = podfile.makeBuildPatch(iosPackageName, iosVersion)
         // Build Podfile config.
         podfile.applyPatch(path.join(dir, project.name, 'Podfile'), buildPatch)
@@ -119,67 +119,70 @@ export default class Plugin extends EventEmitter {
         this.emit(LOGLEVEL.INFO, `if you want to update it, please use \`weex plugin update\` command.`)
         // Update plugin.json in the project.
         this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, iosPackageName, option, 'ios')
-        utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
+        await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
       }
     }
     if (utils.isAndroidProject(dir)) {
       const androidPackageName = option.android && option.android.name ? option.android.name : pluginName
       if (option.android) {
-        this.androidPluginConfigs = utils.updateAndroidPluginConfigs(this.androidPluginConfigs, androidPackageName, option.android)
-        utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
+        this.androidPluginConfigs = utils.updateAndroidPluginConfigs(
+          this.androidPluginConfigs,
+          androidPackageName,
+          option.android,
+        )
+        await utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
         // Update plugin.json in the project.
         this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, androidPackageName, option, 'android')
-        utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
+        await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
         this.emit(LOGLEVEL.WARN, `${pluginName} has installed success in Android project.`)
         this.emit(LOGLEVEL.INFO, `if you want to update it, please use \`weex plugin update\` command.`)
       }
     }
   }
 
-  async installNewPlugin (dir, pluginName, version) {
-    let result:any = await utils.isNewVersionPlugin(pluginName, version)
+  async installNewPlugin(dir, pluginName, version) {
+    let result: any = await utils.isNewVersionPlugin(pluginName, version)
     if (result.error) {
       this.emit(LOGLEVEL.ERROR, result.error)
       return
     } else if (result) {
-      this.handleInstall(dir, pluginName, version, result)
+      await this.handleInstall(dir, pluginName, version, result)
       if (this.shouldInstallPackage) {
-        this.installInPackage(dir, pluginName, version, result)
+        await this.installInPackage(dir, pluginName, version, result)
       }
-    }
-    else {
+    } else {
       this.emit(LOGLEVEL.WARN, `This package of weex is not support anymore! Please choose other package.`)
     }
   }
 
-  async installForWeb (plugins) {
+  async installForWeb(plugins) {
     if (!Array.isArray(plugins) || plugins.length <= 0) {
       return
     }
     const packageJsonFile = path.join(this.config.root, 'package.json')
     let packageJson = JSON.parse(fse.readFileSync(packageJsonFile))
-  
+
     plugins.forEach(plugin => {
       packageJson['dependencies'][plugin.name] = plugin.version
     })
-  
+
     packageJson = utils.sortDependencies(packageJson)
-  
-    fse.writeJson(packageJsonFile, packageJson, {spaces: '\t'})
-  
+
+    fse.writeJson(packageJsonFile, packageJson, { spaces: '\t' })
+
     this.emit(LOGLEVEL.LOG, `Downloading plugins...`)
-  
+
     await utils.installNpmPackage()
     this.emit(LOGLEVEL.LOG, `Building plugins...`)
     try {
       await utils.buildJS('build:plugin', true)
       this.emit(LOGLEVEL.SUCCESS, `Building plugins successful.`)
-    } catch(error) {
+    } catch (error) {
       this.emit(LOGLEVEL.ERROR, error)
     }
   }
 
-  async installForIOS (plugins) {
+  async installForIOS(plugins) {
     if (!Array.isArray(plugins) || plugins.length <= 0) {
       return
     }
@@ -191,7 +194,7 @@ export default class Plugin extends EventEmitter {
     })
   }
 
-  async installForAndroid (plugins) {
+  async installForAndroid(plugins) {
     if (!Array.isArray(plugins) || plugins.length <= 0) {
       return
     }
@@ -200,12 +203,12 @@ export default class Plugin extends EventEmitter {
       this.androidPluginConfigs = utils.updateAndroidPluginConfigs(this.androidPluginConfigs, plugin.name, plugin)
       this.emit(LOGLEVEL.SUCCESS, `${plugin.name} has installed success in Android project`)
     })
-    utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
+    await utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
   }
-  
-  async install (pluginName) {
+
+  async install(pluginName) {
     let version
-    if (/@/ig.test(pluginName)) {
+    if (/@/gi.test(pluginName)) {
       const temp = pluginName.split('@')
       pluginName = temp[0]
       version = temp[1]
@@ -215,13 +218,12 @@ export default class Plugin extends EventEmitter {
     if (!version) {
       version = await npmHelper.getLastestVersion(pluginName)
       await this.installNewPlugin(dir, pluginName, version)
-    }
-    else {
+    } else {
       await this.installNewPlugin(dir, pluginName, version)
     }
   }
 
-  async installForNewPlatform (platforms) {
+  async installForNewPlatform(platforms) {
     const pluginsList = JSON.parse(fse.readFileSync(path.join(this.config.rootPath, this.config.filename)))
     if (platforms && !Array.isArray(platforms)) {
       platforms = [platforms]
@@ -243,7 +245,7 @@ export default class Plugin extends EventEmitter {
     })
   }
 
-  async uninstallInPackage (dir, pluginName) {
+  async uninstallInPackage(dir, pluginName) {
     const packageJsonPath = path.join(dir, 'package.json')
     // Update package.json
     if (fse.existsSync(packageJsonPath)) {
@@ -251,48 +253,47 @@ export default class Plugin extends EventEmitter {
       if (packageJson.dependencies[pluginName]) {
         delete packageJson.dependencies[pluginName]
       }
-      fse.writeJson(packageJsonPath, packageJson, {spaces: '\t'})
+      fse.writeJson(packageJsonPath, packageJson, { spaces: '\t' })
     }
     this.emit(LOGLEVEL.INFO, `Update plugins.json...`)
     // Update plugin.json in the project.
     this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, pluginName, {}, 'web')
-    utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
-  
+    await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
+
     this.emit(LOGLEVEL.INFO, `Building plugins...`)
     await utils.buildJS('build:plugin', true)
     this.emit(LOGLEVEL.SUCCESS, `Building plugins successful.`)
   }
 
-  async handleUninstall (dir, pluginName, version, option) {
-
-    if(option.web) {
+  async handleUninstall(dir, pluginName, version, option) {
+    if (option.web) {
       // should install npm package into project or not.
       this.shouldUninstallPackage = true
     }
-  
+
     // check out the type of current project
     if (utils.isIOSProject(dir)) {
-      const project:any = utils.isIOSProject(dir)
+      const project: any = utils.isIOSProject(dir)
       if (!fse.existsSync(path.join(dir, project.name, 'Podfile'))) {
         this.emit(LOGLEVEL.ERROR, "can't find Podfile file")
         return
       }
       const iosPackageName = option.ios && option.ios.name ? option.ios.name : pluginName
-      const iosVersion = option.ios && option.ios.version || version
+      const iosVersion = (option.ios && option.ios.version) || version
       const buildPatch = podfile.makeBuildPatch(iosPackageName, iosVersion)
       // Remove Podfile config.
       podfile.revokePatch(path.join(dir, project.name, 'Podfile'), buildPatch)
       this.emit(LOGLEVEL.INFO, `${pluginName} has removed from iOS project`)
       // Update plugin.json in the project.
       this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, iosPackageName, '', 'ios')
-      utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
+      await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
     }
-    
+
     if (utils.isAndroidProject(dir)) {
       const androidPackageName = option.android && option.android.name ? option.android.name : pluginName
-      
+
       this.androidPluginConfigs = utils.updateAndroidPluginConfigs(this.androidPluginConfigs, androidPackageName)
-      utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
+      await utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
       // const androidVersion = option.android && option.android.version || version
       // const buildPatch = gradle.makeBuildPatch(androidPackageName, androidVersion, option.android.groupId || '')
       // Remove gradle config.
@@ -300,48 +301,47 @@ export default class Plugin extends EventEmitter {
       this.emit(LOGLEVEL.INFO, `${pluginName} has removed from Android project`)
       // Update plugin.json in the project.
       this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, androidPackageName, '', 'android')
-      utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
+      await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
     }
 
     if (fse.existsSync(path.join(dir, 'package.json'))) {
       await this.uninstallInPackage(dir, pluginName)
-    }
-    else {
-      this.emit(LOGLEVEL.WARN, `The project may not be a weex project, please use \`${colors.white.bold('weex create [projectname]')}\``)
+    } else {
+      this.emit(
+        LOGLEVEL.WARN,
+        `The project may not be a weex project, please use \`${colors.white.bold('weex create [projectname]')}\``,
+      )
     }
   }
 
-  async uninstallNewPlugin (dir, pluginName, version) {
+  async uninstallNewPlugin(dir, pluginName, version) {
     let result = await utils.isNewVersionPlugin(pluginName, version)
     if (result) {
       await this.handleUninstall(dir, pluginName, version, result)
       if (this.shouldUninstallPackage) {
-        this.uninstallInPackage(dir, pluginName)
+        await this.uninstallInPackage(dir, pluginName)
       }
-    }
-    else {
+    } else {
       this.emit(LOGLEVEL.ERROR, `This package of weex is not support anymore! Please choose other package.`)
     }
   }
 
-  async uninstall (pluginName) {
+  async uninstall(pluginName) {
     let version
-    if (/@/ig.test(pluginName)) {
+    if (/@/gi.test(pluginName)) {
       const temp = pluginName.split('@')
       pluginName = temp[0]
       version = temp[1]
     }
-  
+
     const dir = process.cwd()
-  
+
     // get the lastest version
     if (!version) {
       version = await npmHelper.getLastestVersion(pluginName)
       await this.uninstallNewPlugin(dir, pluginName, version)
-    }
-    else {
+    } else {
       await this.uninstallNewPlugin(dir, pluginName, version)
     }
   }
-
 }
