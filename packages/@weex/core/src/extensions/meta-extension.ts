@@ -18,7 +18,7 @@ export default function attach(toolbox: IToolbox): void {
     version: () => getVersion(toolbox),
     commandInfo: () => commandInfo(toolbox),
     getModulesInfo: () => getModulesInfo(toolbox),
-    generateHelp
+    generateHelp,
   }
   toolbox.meta = meta
 }

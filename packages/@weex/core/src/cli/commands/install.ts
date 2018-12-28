@@ -8,11 +8,7 @@ export default {
   alias: ['update', 'i'],
   description: 'Install weex plugin for Weex Cli',
   hidden: false,
-  run: async ({
-    parameters,
-    fs,
-    logger
-  }) => {
+  run: async ({ parameters, fs, logger }) => {
     const globalConfiguration: CliConfiguration = parameters.options.__config
     const packagename = parameters.first
     const moduleConfigFilePath = path.join(globalConfiguration.moduleRoot, globalConfiguration.moduleConfigFileName)
