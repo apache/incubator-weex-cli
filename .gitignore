@@ -2,3 +2,6 @@ node_modules/
 
 # coverage
 coverage/
+
+*.log
+package-lock.json
