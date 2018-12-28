@@ -34,7 +34,7 @@ export default {
           'doctor',
           'Checks your system for configuration problems which might prevent the Weex CLI from working properly.',
         ],
-        autocomplete: ['autocomplete', 'Configures your current command-line completion settings.'],
+        // autocomplete: ['autocomplete', 'Configures your current command-line completion settings.'],
         'device-list': [`device list`, 'Lists all recognized connected physical or virtual devices.'],
         // 'device-log': [`device log`, 'Opens the log stream for the selected device.'],
         'device-run': [`device run`, 'Choose one simulator to run.'],
@@ -55,7 +55,7 @@ export default {
       let generalCommandData = [
         [logger.colors.success('Command'), logger.colors.success('Description')],
         helps.help,
-        helps.autocomplete,
+        // helps.autocomplete,
         helps.doctor,
         helps.repair,
         helps.install,
@@ -101,7 +101,7 @@ export default {
       let globalOptionData = [
         [logger.colors.success('Option'), logger.colors.success('Description')],
         [`--help, -h`, 'Prints help about the selected command in the console.'],
-        [`--version`, 'Prints the client version.']
+        [`--version`, 'Prints the client version.'],
         // [`--verbose`, 'Prints a detailed diagnostic log for the execution of the current command.'],
       ]
       const info = meta.getModulesInfo()
