@@ -22,11 +22,11 @@ export default {
         'platform-list': [`platform list`, 'List ios/android platform.'],
         'platform-update': [`platform update ${highLightKeys.platform}`, 'Update ios/android platform.'],
         plugin: ['plugin', 'Manage weex plugins.'],
-        'plugin-add': [`plugin add ${highLightKeys.plugin}`, 'Add weex ios/android plugin.'],
-        'plugin-remove': [`plugin remove ${highLightKeys.plugin}`, 'Remove weex ios/android plugin.'],
-        'plugin-update': [`plugin update ${highLightKeys.plugin}`, 'Update weex ios/android plugin.'],
-        'plugin-list': [`plugin list`, 'List weex ios/android plugin.'],
-        'plugin-search': [`plugin search ${highLightKeys.plugin}`, 'Search weex ios/android plugin.'],
+        'plugin-add': [`plugin add ${highLightKeys.plugin}`, 'Add weex ios/android/web plugin.'],
+        'plugin-remove': [`plugin remove ${highLightKeys.plugin}`, 'Remove weex ios/android/web plugin.'],
+        'plugin-install': [`plugin install ${highLightKeys.platform}`, 'Install plugin for specified platform.'],
+        // 'plugin-list': [`plugin list`, 'List weex ios/android plugin.'],
+        // 'plugin-search': [`plugin search ${highLightKeys.plugin}`, 'Search weex ios/android plugin.'],
         'plugin-create': [`plugin create [plugin]`, 'Create a weex plugin template.'],
         run: [`run ${highLightKeys.platform}`, 'Build android/ios application and run.'],
         build: [`build ${highLightKeys.platform}`, 'Build android/ios application for production.'],
@@ -101,8 +101,8 @@ export default {
       let globalOptionData = [
         [logger.colors.success('Option'), logger.colors.success('Description')],
         [`--help, -h`, 'Prints help about the selected command in the console.'],
-        [`--version`, 'Prints the client version.'],
-        [`--verbose`, 'Prints a detailed diagnostic log for the execution of the current command.'],
+        [`--version`, 'Prints the client version.']
+        // [`--verbose`, 'Prints a detailed diagnostic log for the execution of the current command.'],
       ]
       const info = meta.getModulesInfo()
       if (info && info.mods) {
