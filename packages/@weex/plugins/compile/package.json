@@ -20,10 +20,10 @@
   "author": "Mario<faterrole@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
     "autoprefixer": "^8.6.2",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.7.0",
+    "babel-loader": "^8.0.4",
     "fs-extra": "^7.0.1",
     "postcss-plugin-px2rem": "^0.7.0",
     "postcss-plugin-weex": "^0.1.6",
