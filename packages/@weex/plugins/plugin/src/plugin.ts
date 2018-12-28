@@ -130,7 +130,11 @@ export default class Plugin extends EventEmitter {
           androidPackageName,
           option.android,
         )
-        await utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
+        await utils.writeAndroidPluginFile(
+          this.config.androidPath,
+          this.androidPluginConfigPath,
+          this.androidPluginConfigs,
+        )
         // Update plugin.json in the project.
         this.pluginConfigs = utils.updatePluginConfigs(this.pluginConfigs, androidPackageName, option, 'android')
         await utils.writePluginFile(this.config.rootPath, this.pluginConfigPath, this.pluginConfigs)
@@ -293,7 +297,11 @@ export default class Plugin extends EventEmitter {
       const androidPackageName = option.android && option.android.name ? option.android.name : pluginName
 
       this.androidPluginConfigs = utils.updateAndroidPluginConfigs(this.androidPluginConfigs, androidPackageName)
-      await utils.writeAndroidPluginFile(this.config.androidPath, this.androidPluginConfigPath, this.androidPluginConfigs)
+      await utils.writeAndroidPluginFile(
+        this.config.androidPath,
+        this.androidPluginConfigPath,
+        this.androidPluginConfigs,
+      )
       // const androidVersion = option.android && option.android.version || version
       // const buildPatch = gradle.makeBuildPatch(androidPackageName, androidVersion, option.android.groupId || '')
       // Remove gradle config.
