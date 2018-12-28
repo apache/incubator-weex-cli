@@ -139,6 +139,11 @@ module.exports = {
         })
 
         let previewUrl = ''
+        
+        if (!previewOptions.entry) {
+          previewOptions.entry = pages[0]
+        }
+
         if (json.isSigleWebRender) {
           previewUrl = encodeURI(`http://${ip}:${previewOptions.port}?entry=${previewOptions.entry.replace('.vue', '.js') || pages[0]}&wsport=${previewOptions.wsport}&pages=${JSON.stringify(pages)}&preview=single`)
         } else {
