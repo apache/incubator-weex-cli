@@ -97,7 +97,7 @@ export default class Cli {
     this.rawArgv = data.argv
 
     this.updateTime = data.configs.update_time || 7
-    
+
     this.argv = parseParams(data.argv)
 
     this.cliConfiguration = data
@@ -224,7 +224,11 @@ export default class Cli {
       } else {
         // check if there has some module need to be upgraded
         // check last_update_time
-        const info: any = await updateNpmPackageInfo(this.cliConfiguration.modules, this.cliConfiguration.registry, this.updateTime)
+        const info: any = await updateNpmPackageInfo(
+          this.cliConfiguration.modules,
+          this.cliConfiguration.registry,
+          this.updateTime,
+        )
         if (info) {
           let upgradeList = {}
           for (let mod in info.mods) {
@@ -245,8 +249,12 @@ export default class Cli {
 
           let lists = Object.keys(upgradeList).map(key => {
             return {
-              name: `${key} ${logger.colors.grey(`${upgradeList[key].version} -> ${upgradeList[key].next_version}${generateChangelog(upgradeList[key].changelog)}`)}`,
-              value: key
+              name: `${key} ${logger.colors.grey(
+                `${upgradeList[key].version} -> ${upgradeList[key].next_version}${generateChangelog(
+                  upgradeList[key].changelog,
+                )}`,
+              )}`,
+              value: key,
             }
           })
           let yes = 'Yes, update all'
@@ -321,10 +329,10 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
         // try prev version
       }
       commands.push({
-        name: content && content.name || '',
-        alias: content && content.alias || '',
+        name: (content && content.name) || '',
+        alias: (content && content.alias) || '',
         showed: content && typeof content.dashed === 'boolean' ? !content.dashed : true,
-        description: content && content.description || '',
+        description: (content && content.description) || '',
       })
       type = ModType.PLUGIN
     })
@@ -448,7 +456,7 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
     if (!res.error) {
       spinner.stopAndPersist({
         symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
-        text: `sync module [${mod}]`
+        text: `sync module [${mod}]`,
       })
       if (semver.gt(res.latest, modData.mods[mod].version)) {
         modData.mods[mod].is_next = false
@@ -463,12 +471,12 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
       if (res.error === ErrorType.PACKAGE_NOT_FOUND) {
         spinner.stopAndPersist({
           symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
-          text: `Package [${mod}] not found on registry ${registry}`
+          text: `Package [${mod}] not found on registry ${registry}`,
         })
       } else {
         spinner.stopAndPersist({
           symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
-          text: `Unkonw error with checking [${mod}], ${res.error}`
+          text: `Unkonw error with checking [${mod}], ${res.error}`,
         })
       }
     }
@@ -498,7 +506,7 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
     const latest = res.data['version']
     return {
       latest: latest,
-      package: res.data
+      package: res.data,
     }
   } else {
     error = `can't found ${name} latest version`
@@ -519,7 +527,16 @@ export async function analyzer(type: string, stack: any, options?: any) {
   logger.log('\n')
   if (type === 'repair') {
     if (ErrorType.PACKAGE_NOT_FOUND === stack) {
-      const innerMods = ['@weex-cli/debug', '@weex-cli/generator', '@weex-cli/build', '@weex-cli/preview', '@weex-cli/run', '@weex-cli/doctor', '@weex-cli/lint', '@weex-cli/device']
+      const innerMods = [
+        '@weex-cli/debug',
+        '@weex-cli/generator',
+        '@weex-cli/build',
+        '@weex-cli/preview',
+        '@weex-cli/run',
+        '@weex-cli/doctor',
+        '@weex-cli/lint',
+        '@weex-cli/device',
+      ]
       let score
       let tempScore
       let suggestName
@@ -542,15 +559,22 @@ export async function analyzer(type: string, stack: any, options?: any) {
           logger.info(`- ${version}`)
         })
       }
-    } else if (typeof stack === 'string'){
+    } else if (typeof stack === 'string') {
       logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
-      let searchKey = stack.split('\n')[0].split(' ').join('+')
+      let searchKey = stack
+        .split('\n')[0]
+        .split(' ')
+        .join('+')
       logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
-      
+
       logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
       logger.log(`https://github.com/weexteam/weex-toolkit/issues/new?labels=${type}`)
-      
-      logger.log(logger.colors.grey(`\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`))
+
+      logger.log(
+        logger.colors.grey(
+          `\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`,
+        ),
+      )
       logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
 
       logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))
@@ -560,13 +584,20 @@ export async function analyzer(type: string, stack: any, options?: any) {
     }
   } else if (typeof stack === 'string') {
     logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
-    let searchKey = stack.split('\n')[0].split(' ').join('+')
+    let searchKey = stack
+      .split('\n')[0]
+      .split(' ')
+      .join('+')
     logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
-    
+
     logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
     logger.log(`https://github.com/weexteam/weex-toolkit/issues/new`)
-    
-    logger.log(logger.colors.grey(`\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`))
+
+    logger.log(
+      logger.colors.grey(
+        `\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`,
+      ),
+    )
     logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
 
     logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))

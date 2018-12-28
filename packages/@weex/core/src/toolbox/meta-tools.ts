@@ -80,7 +80,6 @@ export function getModulesInfo(toolbox: IToolbox): any {
   return info
 }
 
-
 /**
  * Generate help info
  *
@@ -89,11 +88,11 @@ export function getModulesInfo(toolbox: IToolbox): any {
  * @param {string} [brand]
  * @returns {*}
  */
-export function generateHelp(params:MetaOptions, brand:string = 'weex'): any {
+export function generateHelp(params: MetaOptions, brand: string = 'weex'): any {
   if (params.appstart) {
     logger.log(params.appstart)
   }
-  logger.success('\n# Commands\n');
+  logger.success('\n# Commands\n')
   if (Array.isArray(params.commands)) {
     let tables = []
     params.commands.forEach(command => {
@@ -101,18 +100,22 @@ export function generateHelp(params:MetaOptions, brand:string = 'weex'): any {
         if (Array.isArray(command.heading)) {
           tables.push(command.heading.map(item => logger.colors.green(item)))
         }
-      }
-      else {
-        tables.push([`$ ${brand} ${command.key}${command.alias?`(${command.alias})`: ''} ${logger.colors.yellow(command.type || '')}`, `${command.description}${command.default?` - ${command.default}`:``}`])
+      } else {
+        tables.push([
+          `$ ${brand} ${command.key}${command.alias ? `(${command.alias})` : ''} ${logger.colors.yellow(
+            command.type || '',
+          )}`,
+          `${command.description}${command.default ? ` - ${command.default}` : ``}`,
+        ])
       }
     })
     logger.table(tables, {
-      format: 'markdown'
+      format: 'markdown',
     })
   } else {
     let keys = Object.keys(params.commands) || []
     let len = keys.length
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       let tables = []
       logger.log(`\n${keys[i]}\n`)
       params.commands[keys[i]].forEach(command => {
@@ -120,20 +123,24 @@ export function generateHelp(params:MetaOptions, brand:string = 'weex'): any {
           if (Array.isArray(command.heading)) {
             tables.push(command.heading.map(item => logger.colors.green(item)))
           }
-        }
-        else {
-          tables.push([`$ ${brand} ${command.key}${command.alias?`(${command.alias})`: ''} ${logger.colors.yellow(command.type || '')}`, `${command.description}${command.default?` - ${command.default}`:``}`])
+        } else {
+          tables.push([
+            `$ ${brand} ${command.key}${command.alias ? `(${command.alias})` : ''} ${logger.colors.yellow(
+              command.type || '',
+            )}`,
+            `${command.description}${command.default ? ` - ${command.default}` : ``}`,
+          ])
         }
       })
       logger.table(tables, {
-        format: 'markdown'
+        format: 'markdown',
       })
     }
   }
   if (params.commandend) {
     logger.log(`\n${params.commandend}`)
   }
-  logger.success('\n# Options');
+  logger.success('\n# Options')
   if (Array.isArray(params.options)) {
     let tables = []
     params.options.forEach(option => {
@@ -141,16 +148,18 @@ export function generateHelp(params:MetaOptions, brand:string = 'weex'): any {
         if (Array.isArray(option.heading)) {
           tables.push(option.heading.map(item => logger.colors.green(item)))
         }
-      }
-      else {
-        tables.push([`${option.key}${option.alias?`(${option.alias})`: ''} ${logger.colors.yellow(option.type || '')}`, `${option.description}${option.default?` - ${option.default}`:``}`])
+      } else {
+        tables.push([
+          `${option.key}${option.alias ? `(${option.alias})` : ''} ${logger.colors.yellow(option.type || '')}`,
+          `${option.description}${option.default ? ` - ${option.default}` : ``}`,
+        ])
       }
     })
     logger.table(tables)
   } else {
     let keys = Object.keys(params.options) || []
     let len = keys.length
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       let tables = []
       logger.log(`\n${keys[i]}\n`)
       params.options[keys[i]].forEach(option => {
@@ -158,9 +167,11 @@ export function generateHelp(params:MetaOptions, brand:string = 'weex'): any {
           if (Array.isArray(option.heading)) {
             tables.push(option.heading.map(item => logger.colors.green(item)))
           }
-        }
-        else {
-          tables.push([`${option.key}${option.alias?`(${option.alias})`: ''} ${logger.colors.yellow(option.type || '')}`, `${option.description}${option.default?` - ${option.default}`:``}`])
+        } else {
+          tables.push([
+            `${option.key}${option.alias ? `(${option.alias})` : ''} ${logger.colors.yellow(option.type || '')}`,
+            `${option.description}${option.default ? ` - ${option.default}` : ``}`,
+          ])
         }
       })
       logger.table(tables)
