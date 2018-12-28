@@ -23,8 +23,8 @@ export class WeexBuilder extends WebpackBuilder {
   private routerFileName: string = 'router.js'
   private pluginFileName: string = 'plugins/plugins.js'
   private pluginConfigFileName: string = 'plugins/plugins.json'
-  private isWin:boolean = /^win/.test(process.platform)
-  private isSigleWebRender:boolean = false
+  private isWin: boolean = /^win/.test(process.platform)
+  private isSigleWebRender: boolean = false
   constructor(source: string, dest: string, options: any) {
     super(source, dest, options)
   }
@@ -90,15 +90,15 @@ export class WeexBuilder extends WebpackBuilder {
       }),
       /**
        * Plugin: webpack.DefinePlugin
-       * Description: The DefinePlugin allows you to create global constants which can be configured at compile time. 
+       * Description: The DefinePlugin allows you to create global constants which can be configured at compile time.
        *
        * See: https://webpack.js.org/plugins/define-plugin/
        */
       new webpack.DefinePlugin({
         'process.env': {
-          'NODE_ENV': JSON.stringify(this.options.prod ? 'production' : 'development')
-        }
-      })
+          NODE_ENV: JSON.stringify(this.options.prod ? 'production' : 'development'),
+        },
+      }),
     ]
 
     // ./bin/weex-builder.js test dest --filename=[name].web.js
@@ -122,7 +122,7 @@ export class WeexBuilder extends WebpackBuilder {
     const hasVueRouter = (content: string) => {
       return /(\.\/)?router/.test(content)
     }
-    
+
     const getEntryFileContent = (source, routerpath) => {
       const hasPluginInstalled = fse.existsSync(path.resolve(this.pluginFileName))
       let dependence = `import Vue from 'vue'\n`
@@ -144,21 +144,21 @@ export class WeexBuilder extends WebpackBuilder {
       }
       return entryContents
     }
-    
-    const getRouterFileContent = (source) => {
+
+    const getRouterFileContent = source => {
       const dependence = `import Vue from 'vue'\n`
       let routerContents = fse.readFileSync(source).toString()
       routerContents = dependence + routerContents
       return routerContents
     }
-    
+
     const getWebRouterEntryFile = (entry: string, router: string) => {
       const entryFile = path.resolve(this.vueTemplateFloder, this.entryFileName)
       const routerFile = path.resolve(this.vueTemplateFloder, this.routerFileName)
       fse.outputFileSync(entryFile, getEntryFileContent(entry, routerFile))
       fse.outputFileSync(routerFile, getRouterFileContent(router))
       return {
-        index: entryFile
+        index: entryFile,
       }
     }
 
@@ -206,7 +206,7 @@ new Vue(App)
       return contents
     }
 
-    const getNormalEntryFile = (entries: string[], base: string, isweb:boolean):any => {
+    const getNormalEntryFile = (entries: string[], base: string, isweb: boolean): any => {
       let result = {}
       entries.forEach(entry => {
         const extname = path.extname(entry)
@@ -228,15 +228,15 @@ new Vue(App)
       const entryFile = path.join(base, this.entryFileName)
       const routerFile = path.join(base, this.routerFileName)
       const existEntry = await fse.pathExists(entryFile)
-      let entrys:any = {}
+      let entrys: any = {}
       if (existEntry) {
         const content = await fse.readFile(entryFile, 'utf8')
         if (hasVueRouter(content)) {
           if (options.web) {
             entrys = getWebRouterEntryFile(entryFile, routerFile)
           } else {
-            entrys =  {
-              'index': entryFile
+            entrys = {
+              index: entryFile,
             }
           }
         } else {
@@ -260,14 +260,14 @@ new Vue(App)
         watch: this.options.watch || false,
         watchOptions: {
           aggregateTimeout: 300,
-          ignored: /\.temp/
+          ignored: /\.temp/,
         },
         devtool: this.options.devtool || 'eval-source-map',
         resolve: {
           extensions: ['.js', '.vue', '.json'],
           alias: {
-            '@': this.base || path.resolve('src')
-          }
+            '@': this.base || path.resolve('src'),
+          },
         },
         /*
         * Options affecting the resolving of modules.
@@ -282,9 +282,7 @@ new Vue(App)
                 {
                   loader: 'babel-loader',
                   options: {
-                    presets: [
-                      path.join(__dirname, '../node_modules/babel-preset-env'),
-                    ]
+                    presets: [path.join(__dirname, '../node_modules/@babel/preset-env')],
                   },
                 },
               ],
@@ -349,7 +347,7 @@ new Vue(App)
                     },
                   },
                 ],
-              })
+              }),
             },
           ],
         })
@@ -389,7 +387,7 @@ new Vue(App)
 
   async build(callback) {
     let configs = await this.resolveConfig()
-    debug(this.options.web? 'web -->' : 'weex -->', JSON.stringify(configs, null, 2))
+    debug(this.options.web ? 'web -->' : 'weex -->', JSON.stringify(configs, null, 2))
     let mergeConfigs
 
     if (this.source.length === 0) {
