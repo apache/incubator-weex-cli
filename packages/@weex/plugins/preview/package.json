@@ -4,7 +4,7 @@
   "description": "preview weex page",
   "main": "index.js",
   "scripts": {
-    "build": "yarn format && yarn clean && yarn compile",
+    "build": "yarn format && yarn clean && yarn compile && cd frontend && npm run compile && cd ..",
     "clean": "rm -rf ./lib",
     "compile": "tsc -p ./",
     "coverage": "jest --coverage",
