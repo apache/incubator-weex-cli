@@ -6,4 +6,6 @@ src/css
 src/**/*.js
 src/**/*.map
 *.log
+
 preview/
+package-lock.json
