@@ -16,7 +16,13 @@ export class Previewer {
     this.init(options)
   }
 
-  async init(options: PreviewOptions) {
+  init(options: PreviewOptions) {
+    /* tslint:disable */
+
+    this.initServer(options)
+  }
+
+  async initServer(options: PreviewOptions) {
     this.httpServer = new HttpServer({
       root: options.staticSourceLocation || this.defaultFrontendLocation,
       cache: '-1',
