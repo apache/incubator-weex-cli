@@ -8,8 +8,11 @@ export default {
   alias: ['update', 'i'],
   description: 'Install weex plugin for Weex Cli',
   hidden: false,
-  run: async toolbox => {
-    const { parameters, fs, logger } = toolbox
+  run: async ({
+    parameters,
+    fs,
+    logger
+  }) => {
     const globalConfiguration: CliConfiguration = parameters.options.__config
     const packagename = parameters.first
     const moduleConfigFilePath = path.join(globalConfiguration.moduleRoot, globalConfiguration.moduleConfigFileName)
@@ -53,7 +56,14 @@ export default {
       let type = ModType.EXTENSION
       for (let i = 0; i < packages.length; i++) {
         const commandBasePath = path.join(packages[i].root, 'commands')
+        const extensionBasePath = path.join(packages[i].root, 'extensions')
         const commandFiles: string[] = fs.list(commandBasePath) || []
+        // continue next package while the package has not commands and extensions folder
+        if (!fs.exists(commandBasePath) && !fs.exists(extensionBasePath)) {
+          logger.log(`The module ${logger.colors.yellow(packages[i].package.name)} was not suitable for the weex core`)
+          logger.log('Please check the spelling')
+          return
+        }
         commandFiles.forEach(file => {
           let content
           try {
@@ -73,6 +83,7 @@ export default {
         if (commands.length > 0) {
           globalConfiguration.modules.mods[packages[i].package.name] = {
             type: type,
+            description: packages[i].package.description,
             version: packages[i].package.version,
             dependencies: packages[i].package.pluginDependencies,
             next_version: '',
@@ -84,6 +95,7 @@ export default {
         } else {
           globalConfiguration.modules.mods[packages[i].package.name] = {
             type: type,
+            description: packages[i].package.description,
             version: packages[i].package.version,
             dependencies: packages[i].package.pluginDependencies,
             next_version: '',
