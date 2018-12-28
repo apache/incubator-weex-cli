@@ -87,15 +87,17 @@ export interface CoreOptions {
 
 export default class Cli {
   private cli: any
+  private updateTime: number
   private rawArgv: string[] | string
   private argv: IParameters
   private plugins: PluginItem[] = []
   private cliConfiguration: CliConfiguration
   constructor(data: CliConfiguration, options: CoreOptions = {}) {
     debug('Init Cli instance on <%s>', __filename)
-
     this.rawArgv = data.argv
 
+    this.updateTime = data.configs.update_time || 7
+    
     this.argv = parseParams(data.argv)
 
     this.cliConfiguration = data
@@ -167,8 +169,13 @@ export default class Cli {
           })
           for (let i = 0; i < packages.length; i++) {
             const commandBasePath = path.join(packages[i].root, 'commands')
+            const extensionBasePath = path.join(packages[i].root, 'extensions')
             const commandFiles: string[] = fs.list(commandBasePath) || []
             commands = []
+            // continue next package while the package has not commands and extensions folder
+            if (!fs.existsAsync(commandBasePath) && !fs.existsAsync(extensionBasePath)) {
+              continue
+            }
             commandFiles.forEach(file => {
               let content: Command = {}
               try {
@@ -217,7 +224,7 @@ export default class Cli {
       } else {
         // check if there has some module need to be upgraded
         // check last_update_time
-        const info: any = await updateNpmPackageInfo(this.cliConfiguration.modules, this.cliConfiguration.registry)
+        const info: any = await updateNpmPackageInfo(this.cliConfiguration.modules, this.cliConfiguration.registry, this.updateTime)
         if (info) {
           let upgradeList = {}
           for (let mod in info.mods) {
@@ -225,10 +232,26 @@ export default class Cli {
               upgradeList[mod] = info.mods[mod]
             }
           }
-          let lists = Object.keys(upgradeList)
+          const generateChangelog = (changelog: any[] | string): string => {
+            if (!changelog) {
+              return ''
+            }
+            if (typeof changelog === 'string') {
+              changelog = [changelog]
+            }
+            changelog = changelog.map(log => `\n    • ${log}`)
+            return `\n  changelog:${changelog.join('')}`
+          }
+
+          let lists = Object.keys(upgradeList).map(key => {
+            return {
+              name: `${key} ${logger.colors.grey(`${upgradeList[key].version} -> ${upgradeList[key].next_version}${generateChangelog(upgradeList[key].changelog)}`)}`,
+              value: key
+            }
+          })
           let yes = 'Yes, update all'
           let no = 'No, next time'
-          let choices = [yes, no, new inquirer.Separator('Or choose update package')].concat(Object.keys(upgradeList))
+          let choices = [yes, no, new inquirer.Separator('Or choose update package')].concat(lists)
           if (lists.length > 0) {
             let res = await inquirer.prompt({
               name: 'choose',
@@ -418,24 +441,35 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
     return false
   }
   logger.info(`Time: ${formateTime(date)}, verify if there is an update`)
-  const spinner = logger.spin('Checking ... please wait')
   for (let mod in modData.mods) {
-    spinner.text = `Checking ${mod} ...`
-    let res = await getNpmPackageLatestVersion(mod, registry)
+    let spinner = logger.spin(`Checking ${mod} ... ${logger.colors.grey('this may take a few seconds')}`)
+    spinner.text = ``
+    let res = await getLatestNpmPackageInfo(mod, registry)
     if (!res.error) {
-      spinner.succeed(`Finished checking [${mod}]`)
+      spinner.stopAndPersist({
+        symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
+        text: `sync module [${mod}]`
+      })
       if (semver.gt(res.latest, modData.mods[mod].version)) {
         modData.mods[mod].is_next = false
         modData.mods[mod].next_version = res.latest
+        modData.mods[mod].changelog = res.package.changelog || ''
       } else {
         modData.mods[mod].is_next = true
         modData.mods[mod].next_version = res.latest
+        modData.mods[mod].changelog = res.package.changelog || ''
       }
     } else {
       if (res.error === ErrorType.PACKAGE_NOT_FOUND) {
-        spinner.fail(`Package [${mod}] not found on registry ${registry}`)
+        spinner.stopAndPersist({
+          symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
+          text: `Package [${mod}] not found on registry ${registry}`
+        })
       } else {
-        spinner.fail(`Unkonw error with checking [${mod}], ${res.error}`)
+        spinner.stopAndPersist({
+          symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
+          text: `Unkonw error with checking [${mod}], ${res.error}`
+        })
       }
     }
   }
@@ -450,20 +484,21 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
  * @param registry npm registry
  * @returns {error?:string, latest?:string}
  */
-export async function getNpmPackageLatestVersion(name: string, registry: string) {
+export async function getLatestNpmPackageInfo(name: string, registry: string) {
   const npmApi = http.create({
     baseURL: `${registry}`,
   })
-  const res: any = await npmApi.get(`${name}`)
+  const res: any = await npmApi.get(`${name}/latest`)
   let error
   if (res.data.error) {
     if (/not_found/.test(res.data.error)) {
       error = ErrorType.PACKAGE_NOT_FOUND
     }
-  } else if (res.data['dist-tags']['latest']) {
-    const latest = res.data['dist-tags']['latest']
+  } else if (res.data['version']) {
+    const latest = res.data['version']
     return {
       latest: latest,
+      package: res.data
     }
   } else {
     error = `can't found ${name} latest version`
@@ -481,6 +516,7 @@ export async function getNpmPackageLatestVersion(name: string, registry: string)
  * @param options data from error stack
  */
 export async function analyzer(type: string, stack: any, options?: any) {
+  logger.log('\n')
   if (type === 'repair') {
     if (ErrorType.PACKAGE_NOT_FOUND === stack) {
       const innerMods = ['@weex-cli/debug', '@weex-cli/generator', '@weex-cli/build', '@weex-cli/preview', '@weex-cli/run', '@weex-cli/doctor', '@weex-cli/lint', '@weex-cli/device']
@@ -538,8 +574,6 @@ export async function analyzer(type: string, stack: any, options?: any) {
     logger.log(logger.colors.grey(`\nLooking for related issues on:`))
     logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
   }
-  console.log('\n\n\n\n\n')
-  console.log(type, stack, options)
 }
 
 export function formateTime(date: Date) {
