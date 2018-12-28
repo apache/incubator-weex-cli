@@ -1,7 +1,7 @@
 {
-  "name": "@weex-cli/xxx",
-  "version": "0.0.1",
-  "description": "xxx for weex-toolkit",
+  "name": "@weex-cli/plugin",
+  "version": "1.0.0-beta.0",
+  "description": "Module for manage weex plugin and create plugin project",
   "main": "index.js",
   "scripts": {
     "build": "yarn format && yarn clean && yarn compile",
