@@ -20,8 +20,8 @@
   "author": "Mario <faterrole@gmail.com>",
   "files": [
     "lib/",
-    "frontend/preview/",
-    "commands/"
+    "commands/",
+    "frontend/preview/**/*"
   ],
   "license": "MIT",
   "publishConfig": {
