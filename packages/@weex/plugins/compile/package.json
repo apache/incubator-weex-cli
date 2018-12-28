@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/compile",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Plugin for compile weex file.",
   "main": "index.js",
   "scripts": {
