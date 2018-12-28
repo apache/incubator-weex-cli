@@ -16,8 +16,7 @@ export default {
 
     if (isProject) {
       content = content.replace(patch.pattern, match => `${match}${patch.projectPatch}`)
-    }
-    else {
+    } else {
       content = content.replace(patch.pattern, match => `${match}${patch.patch}`)
     }
 
@@ -29,8 +28,8 @@ export default {
       pattern: /\t*dependencies {\n/,
       projectPatch: `    compile project(':${name}')\n`,
       patch: `    compile '${groupId}:${name}:${version}'\n`,
-      findPattern: new RegExp('\t*compile\\s+\'' + groupId + ':' + name + '.*\'\\n', 'g'),
-      findProjectPattern: new RegExp('\t*compile\\s+project\\(\':' + name + '\'\\).*\\n', 'g')
+      findPattern: new RegExp("\t*compile\\s+'" + groupId + ':' + name + ".*'\\n", 'g'),
+      findProjectPattern: new RegExp("\t*compile\\s+project\\(':" + name + "'\\).*\\n", 'g'),
     }
   },
 
@@ -47,10 +46,11 @@ export default {
 
     return {
       pattern: '\n',
-      patch: `include ':${name}'\n` +
-        `project(':${name}').projectDir = ` +
-        `new File('${projectDir}')\n`,
-      findPattern: new RegExp("include ':" + name + "'\\nproject\\(':" + name + "'\\).projectDir = new File\\('" + projectDir + "'\\)\\n", 'g')
+      patch: `include ':${name}'\n` + `project(':${name}').projectDir = ` + `new File('${projectDir}')\n`,
+      findPattern: new RegExp(
+        "include ':" + name + "'\\nproject\\(':" + name + "'\\).projectDir = new File\\('" + projectDir + "'\\)\\n",
+        'g',
+      ),
     }
   },
 
@@ -58,5 +58,5 @@ export default {
     let content = fse.readFileSync(file, 'utf8')
     content = content.replace(patch.findPattern || patch.patch, '').replace(patch.findProjectPattern, '')
     fse.writeFileSync(file, content)
-  }
+  },
 }

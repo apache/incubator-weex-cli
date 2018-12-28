@@ -1,5 +1,4 @@
 import * as path from 'path'
-import * as os from 'os'
 import * as fse from 'fs-extra'
 import * as childProcess from 'child_process'
 import npmHelper from './npm-helper'
@@ -11,8 +10,7 @@ const utils = {
       if (!fse.existsSync(dest)) {
         fse.mkdirSync(dest)
       }
-    }
-    else {
+    } else {
       let content = fse.readFileSync(src, 'utf8')
       Object.keys(replacements).forEach(regex => {
         content = content.replace(new RegExp(regex, 'gm'), replacements[regex])
@@ -21,22 +19,22 @@ const utils = {
     }
   },
 
-  findGradleProject (dir) {
+  findGradleProject(dir) {
     if (!fse.existsSync(dir)) {
       return false
     }
-    const files = glob.sync('**/build.gradle', {root:dir})
+    const files = glob.sync('**/build.gradle', { root: dir })
     if (files.length > 0) {
       return files
     }
     return false
   },
 
-  findXcodeProject (dir) {
+  findXcodeProject(dir) {
     if (!fse.existsSync(dir)) {
       return false
     }
-    const files = glob.sync('**/*.+(xcworkspace|xcodeproj)', {root:dir})
+    const files = glob.sync('**/*.+(xcworkspace|xcodeproj)', { root: dir })
     if (files.length > 0) {
       let name = ''
       let isWorkspace = false
@@ -49,7 +47,7 @@ const utils = {
       })
       return {
         isWorkspace: isWorkspace,
-        name: path.relative(dir, name.replace(path.basename(name), ''))
+        name: path.relative(dir, name.replace(path.basename(name), '')),
       }
     } else {
       return false
@@ -87,7 +85,7 @@ const utils = {
     const lines = result.trim().split(/\r?\n/)
 
     for (let i = 0; i < lines.length; i++) {
-      const words = lines[i].split(/[ ,\t]+/).filter((w) => w !== '')
+      const words = lines[i].split(/[ ,\t]+/).filter(w => w !== '')
 
       if (words[1] === 'device') {
         devices.push(words[0])
@@ -99,21 +97,25 @@ const utils = {
   exec(command: string, quiet: boolean, options?: any) {
     return new Promise((resolve, reject) => {
       try {
-        const child = childProcess.exec(command, Object.assign({ encoding: 'utf8', wraning: false, maxBuffer: Infinity }, options), (error, stdout, stderr) => {
-          if (error) {
-            console.warn('Command run error, please check if there has the same issue here: https://github.com/weexteam/weex-toolkit/issues/337')
-            reject(error)
-          }
-          else {
-            resolve()
-          }
-        })
+        const child = childProcess.exec(
+          command,
+          Object.assign({ encoding: 'utf8', wraning: false, maxBuffer: Infinity }, options),
+          (error, stdout, stderr) => {
+            if (error) {
+              console.warn(
+                'Command run error, please check if there has the same issue here: https://github.com/weexteam/weex-toolkit/issues/337',
+              )
+              reject(error)
+            } else {
+              resolve()
+            }
+          },
+        )
         if (!quiet) {
           child.stdout.pipe(process.stdout)
         }
         child.stderr.pipe(process.stderr)
-      }
-      catch (e) {
+      } catch (e) {
         console.error('execute command failed :', command)
         reject(e)
       }
@@ -129,15 +131,32 @@ const utils = {
     const splits = projectInfoText.split(/Targets:|Build Configurations:|Schemes:/)
     const projectInfo = {
       name: splits[0].match(/Information about project "([^"]+?)"/)[1],
-      targets: splits[1] ? splits[1].split('\n').filter(e => !!e.trim()).map(e => e.trim()) : [],
-      configurations: splits[2] ? splits[2].split('\n').filter((e, i) => !!e.trim() && i < 3).map(e => e.trim()) : [],
-      schemes: splits[3] ? splits[3].split('\n').filter(e => !!e.trim()).map(e => e.trim()) : []
+      targets: splits[1]
+        ? splits[1]
+            .split('\n')
+            .filter(e => !!e.trim())
+            .map(e => e.trim())
+        : [],
+      configurations: splits[2]
+        ? splits[2]
+            .split('\n')
+            .filter((e, i) => !!e.trim() && i < 3)
+            .map(e => e.trim())
+        : [],
+      schemes: splits[3]
+        ? splits[3]
+            .split('\n')
+            .filter(e => !!e.trim())
+            .map(e => e.trim())
+        : [],
     }
     return { project: projectInfo }
   },
 
   dashToCamel(str) {
-    return str.replace(/(-[a-z])/g, function ($1) { return $1.toUpperCase().replace('-', '') })
+    return str.replace(/(-[a-z])/g, function($1) {
+      return $1.toUpperCase().replace('-', '')
+    })
   },
 
   isIOSProject(dir) {
@@ -152,23 +171,20 @@ const utils = {
   async isNewVersionPlugin(pluginName, version) {
     return new Promise(async (resolve, reject) => {
       let trynum = 0
-      const load = async (npmName) => {
+      const load = async npmName => {
         let info: any = await npmHelper.getNpmPackageInfo(pluginName, version)
         let prefix
         if (info.error && trynum === 0) {
           trynum++
           if (npmName === 'weex-gcanvas') {
             prefix = 'weex-plugin--'
-          }
-          else {
+          } else {
             prefix = 'weex-plugin-'
           }
           await load(prefix + npmName)
-        }
-        else if (info.error && trynum !== 0) {
+        } else if (info.error && trynum !== 0) {
           reject(info.error)
-        }
-        else {
+        } else {
           if (info.android || info.ios || info.web) {
             const supports = []
             if (info.android) {
@@ -187,10 +203,9 @@ const utils = {
               version: info.version,
               name: info.name,
               weexpack: info.weexpack,
-              pluginDependencies: info.pluginDependencies
+              pluginDependencies: info.pluginDependencies,
             })
-          }
-          else {
+          } else {
             reject('Not support')
           }
         }
@@ -202,7 +217,7 @@ const utils = {
   async writePluginFile(root, path, config) {
     await fse.ensureDir(root)
     await fse.ensureFile(path)
-    await fse.writeJson(path, config, {spaces: '\t'})
+    await fse.writeJson(path, config, { spaces: '\t' })
   },
 
   updatePluginConfigs(configs, name, option, platform) {
@@ -212,8 +227,7 @@ const utils = {
       if (name && plugins[platform][i].name === name) {
         if (option[platform]) {
           plugins[platform].splice(i, 1, option[platform])
-        }
-        else {
+        } else {
           plugins[platform].splice(i, 1)
         }
         return plugins
@@ -228,10 +242,10 @@ const utils = {
   async writeAndroidPluginFile(root, path, config) {
     await fse.ensureDir(root)
     await fse.ensureFile(path)
-    await fse.writeJson(path, config, {spaces: '\t'})
+    await fse.writeJson(path, config, { spaces: '\t' })
   },
 
-  updateAndroidPluginConfigs (configs, name, option?: any) {
+  updateAndroidPluginConfigs(configs, name, option?: any) {
     const plugins = configs.slice(0)
     const len = plugins && plugins.length
     if (option && !option['dependency']) {
@@ -245,8 +259,7 @@ const utils = {
       if (name && plugin.name === name) {
         if (option) {
           plugins.splice(i, 1, option)
-        }
-        else {
+        } else {
           plugins.splice(i, 1)
         }
         return plugins
@@ -268,8 +281,7 @@ const utils = {
         // For sure is.
         if (fse.existsSync(path.join(dir, 'config.xml'))) {
           return 2
-        }
-        else {
+        } else {
           return 1
         }
       }
@@ -284,7 +296,7 @@ const utils = {
       return []
     }
     const subdirs = fse.readdirSync(platformsDir)
-    return subdirs.filter(function (p) {
+    return subdirs.filter(function(p) {
       return Object.keys(platforms).indexOf(p) > -1
     })
   },
@@ -298,7 +310,7 @@ const utils = {
     }
     return name
   },
-  
+
   sortDependencies(json): any {
     // Based on https://github.com/yarnpkg/yarn/blob/v1.3.2/src/config.js#L79-L85
     const sortedObject = {}
@@ -308,7 +320,7 @@ const utils = {
         sortedObject[item] = json[item]
       })
     return sortedObject
-  }
+  },
 }
 
 export default utils

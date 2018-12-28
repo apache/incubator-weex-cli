@@ -3,5 +3,5 @@ export const LOGLEVEL = {
   INFO: 'info',
   ERROR: 'error',
   LOG: 'log',
-  SUCCESS: 'success'
+  SUCCESS: 'success',
 }
