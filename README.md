@@ -9,6 +9,18 @@
 
 This is the branch that develops weex-toolkit2.0.
 
+Now you can install the alpha version by:
+
+```base
+$ npm i weex-toolkit@alpha -g
+```
+
+To know more help info, you can run :
+
+```base
+$ weex --help
+```
+
 ## Goals
 
 We hope to get the following goals:
