@@ -59,6 +59,7 @@
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.4",
     "multimatch": "^2.1.0",
+    "node-machine-id": "^1.1.10",
     "npminstall": "^3.11.0",
     "on-exit": "^1.0.1",
     "ora": "^2.1.0",

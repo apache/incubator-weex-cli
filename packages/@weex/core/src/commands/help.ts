@@ -45,8 +45,8 @@ export default {
         config: [`config`, 'Configure Weex Toolkit settings.'],
         'config-set': [`config set <key> <value>`, 'Set key-value.'],
         'config-get': [`config get <key>`, 'Get value by key.'],
-        'config-list': [`list [--json]`, 'List key-value as string or json.'],
-        'config-delete': [`delete <key>`, 'Delete key-value by key.'],
+        'config-list': [`config list [--json]`, 'List key-value as string or json.'],
+        'config-delete': [`config delete <key>`, 'Delete key-value by key.'],
       }
       let usageTableData = [
         [logger.colors.success('Synopsis'), logger.colors.success('Usage')],

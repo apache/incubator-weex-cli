@@ -1,5 +1,6 @@
 import { build, fs, IParameters, http, install, logger, strings, semver, inquirer } from '../index'
 import { parseParams } from '../toolbox/parameter-tools'
+import { machineIdSync } from 'node-machine-id'
 import * as path from 'path'
 
 const debug = require('debug')('weex:core')
@@ -132,6 +133,16 @@ export default class Cli {
   async start() {
     const command = this.argv.array[0]
     const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
+    // usertrack
+    const usertrackapi = http.create({
+      baseURL: `http://gm.mmstat.com/`,
+    })
+    try {
+      /* tslint-disabled */
+      usertrackapi.get(`weex-cli-2.0.tool_usage.usage?cmd=${command}&mid=${machineIdSync()}&t=${new Date().getTime()}`)
+    } catch (error) {
+      debug('Http request error', error)
+    }
     if (this.cliConfiguration.modules) {
       this.plugins = pickPlugins(this.cliConfiguration.modules)
     } else {
