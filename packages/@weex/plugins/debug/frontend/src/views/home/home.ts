@@ -67,7 +67,7 @@ export class HomeComponent extends Vue {
       icon: 'icon-taolun',
       title: '帮助和意见反馈',
       des: '提交Github issue 和帮助提高 Weex Devtool',
-      url: 'https://github.com/weexteam/weex-toolkit/issues/new?labels=debug'
+      url: 'https://github.com/weexteam/weex-toolkit/issues/new?labels=@weex-cli/debug'
     }
   ]
   tips: Tip[]
