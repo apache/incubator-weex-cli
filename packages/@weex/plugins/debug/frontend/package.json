@@ -57,7 +57,7 @@
     "@types/webpack-env": "~1.13.5",
     "autoprefixer": "~7.2.5",
     "awesome-typescript-loader": "~3.4.1",
-    "bootstrap": "~4.0.0",
+    "bootstrap": "^4.1.2",
     "chai": "~4.1.2",
     "compression-webpack-plugin": "~1.1.6",
     "copy-webpack-plugin": "^4.3.1",
