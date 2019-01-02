@@ -2,10 +2,12 @@ import { fs } from './fs-tools'
 import * as path from 'path'
 import * as importedColors from 'colors/safe'
 import { InstallerOption } from './installer-types'
-const debug = require('debug')('weex:core:toolbox')
-const execSync = require('child_process').execSync
-const npmii = require('npminstall')
-const co = require('co')
+import * as childProcess from 'child_process'
+import * as npmii from 'npminstall'
+import * as co from 'co'
+import * as debug from 'debug'
+const DEBUG = debug('weex:core:toolbox')
+const execSync = childProcess.execSync
 
 // hack typescript
 const colors: any = importedColors
@@ -16,16 +18,16 @@ const checkDependencies = async dir => {
   try {
     pkgData = await fs.read(path.join(dir, 'package.json'), 'json')
   } catch (e) {
-    debug('read package fail: %d', e && e.stack)
+    DEBUG('read package fail: %d', e && e.stack)
   }
 
   const deps = Object.keys(pkgData.dependencies || {})
   if (deps.length > 0) {
     deps.map(dep => {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           let p = path.join(dir, 'node_modules', dep)
-          require(p)
+          await fs.exists(p)
           resolve()
         } catch (e) {
           reject(e)
@@ -33,7 +35,7 @@ const checkDependencies = async dir => {
       })
     })
   }
-  debug('check using: %ds', (Date.now() - t) / 1000)
+  DEBUG('check using: %ds', (Date.now() - t) / 1000)
 }
 
 const installer = async opts => {
@@ -57,7 +59,7 @@ const installer = async opts => {
   }
 
   // set mirror env.
-  debug(`set mirror env`)
+  DEBUG(`set mirror env`)
   const binaryMirros = await utils.getBinaryMirrors(opts.registry)
   for (let key in binaryMirros.ENVS) {
     env[key] = binaryMirros.ENVS[key]
@@ -127,7 +129,7 @@ const _install = async (name, version, opts) => {
     root: opts.root,
     pkgs: [{ name: name, version: version }],
   })
-  debug('install using: %ds', (Date.now() - t) / 1000)
+  DEBUG('install using: %ds', (Date.now() - t) / 1000)
 }
 
 const install = async (name: string, version: string, opts: InstallerOption) => {
@@ -136,7 +138,7 @@ const install = async (name: string, version: string, opts: InstallerOption) => 
   // check lock
   const lockFile = path.join(opts.root, '.lock')
   const exists = fs.exists(lockFile)
-  debug(`start install package ${name}@${version}`)
+  DEBUG(`start install package ${name}@${version}`)
   if (exists && !opts.force) {
     let err: any = new Error('module is locked')
     err.type = '_lock'
@@ -148,7 +150,7 @@ const install = async (name: string, version: string, opts: InstallerOption) => 
 
   const clear = async () => {
     if (!cleared) {
-      debug('clear, lockfile: %s; succeed: %s; pkgfile: %s', lockFile, succeed, pkgFile)
+      DEBUG('clear, lockfile: %s; succeed: %s; pkgfile: %s', lockFile, succeed, pkgFile)
       try {
         // unlock
         fs.remove(lockFile)
@@ -157,18 +159,18 @@ const install = async (name: string, version: string, opts: InstallerOption) => 
           fs.remove(pkgFile)
         }
       } catch (e) {
-        debug('clear error', e.message)
+        DEBUG('clear error', e.message)
       }
       cleared = true
     } else {
-      debug('already cleared')
+      DEBUG('already cleared')
     }
   }
 
   // lock
   fs.write(lockFile, {})
   require('on-exit')(clear)
-  debug(`lock installing progress...`)
+  DEBUG(`lock installing progress...`)
 
   try {
     await _install(name, version, opts)
@@ -192,19 +194,19 @@ const install = async (name: string, version: string, opts: InstallerOption) => 
   try {
     packageJson = await fs.read(path.join(opts.root, 'node_modules', name, 'package.json'), 'json')
   } catch (e) {
-    debug('read package json error: %d', e && e.stack)
+    DEBUG('read package json error: %d', e && e.stack)
   }
   if (!packageJson) {
     packageJson = {}
   }
-  debug('new package json: %o', packageJson)
+  DEBUG('new package json: %o', packageJson)
 
   // mark install to success
   succeed = true
   await clear()
 
   console.log(colors.yellow('compelied, cost ' + (Date.now() - start) / 1000 + 's'))
-  debug('install core done')
+  DEBUG('install core done')
 
   return {
     root: path.join(opts.root, 'node_modules', name),
