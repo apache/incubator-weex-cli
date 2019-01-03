@@ -1,0 +1,9 @@
+{
+  "npmClient": "npm",
+  "useWorkspaces": false,
+  "packages": [
+    "packages/@weex/core",
+    "packages/@weex/plugins/*"
+  ],
+  "version": "1.0.11"
+}
