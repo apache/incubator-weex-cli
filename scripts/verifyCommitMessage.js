@@ -9,8 +9,8 @@ if (!commitRE.test(msg)) {
   console.error(
     `\n  ${colors.bgRed.white(' ERROR ')} ${colors.red(`invalid commit message format.`)}\n\n` +
     colors.red(`  Proper commit message format is required for automated changelog generation. Examples:\n\n`) +
-    `    ${colors.green(`feat(compile): add 'config' option`)}\n` +
-    `    ${colors.green(`fix(debug): handle error event (close #28)`)}\n\n` +
+    `    ${colors.green(`feat(compile): commit message`)}\n` +
+    `    ${colors.green(`fix(module): commit message (close #28)`)}\n\n` +
     colors.red(`  See .github/COMMIT_CONVENTION.md for more details.\n`)
   )
   process.exit(1)
