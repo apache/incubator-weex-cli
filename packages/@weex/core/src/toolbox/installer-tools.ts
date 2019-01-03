@@ -27,7 +27,7 @@ const checkDependencies = async dir => {
       return new Promise(async (resolve, reject) => {
         try {
           let p = path.join(dir, 'node_modules', dep)
-          await fs.exists(p)
+          await fs.existsAsync(p)
           resolve()
         } catch (e) {
           reject(e)
