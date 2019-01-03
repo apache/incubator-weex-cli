@@ -43,6 +43,6 @@ More detail you can see the [milestone](https://github.com/weexteam/weex-toolkit
 
 ![Life-cycle](https://img.alicdn.com/tfs/TB1MHroCrSYBuNjSspiXXXNzpXa-678-1018.png)
 
-## Issue & Feedback
+## License
 
- [Github Issue List](https://github.com/weexteam/weex-toolkit/issues)
+[MIT](https://github.com/weexteam/weex-toolkit/blob/dev/LICENSE)
