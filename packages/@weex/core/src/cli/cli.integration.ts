@@ -29,7 +29,6 @@ test('can start the cli', async () => {
   const cli = new Cli(cliConfiguration, options)
   expect(typeof cli.start).toBe('function')
   const toolbox = await cli.start()
-  console.log(toolbox)
   expect(toolbox.commandName).toBe('weex')
   expect(Array.isArray(toolbox.plugin.commands)).toBeTruthy()
   expect(Array.isArray(toolbox.plugin.extensions)).toBeTruthy()
