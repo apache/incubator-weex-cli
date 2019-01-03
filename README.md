@@ -4,6 +4,7 @@
 ![image | left](https://img.shields.io/badge/license-Apache--2.0-brightgreen.svg "")
 [![GitHub issues](https://img.shields.io/github/issues/weexteam/weex-toolkit.svg)](https://github.com/weexteam/weex-toolkit/issues)
 [![Npm package](https://img.shields.io/npm/dm/weex-toolkit.svg)](https://www.npmjs.com/package/weex-toolkit)
+[![Build status](https://ci.appveyor.com/api/projects/status/dy89sm44bcggc12q/branch/dev?svg=true)](https://ci.appveyor.com/project/erha19/weex-toolkit/branch/dev)
 
 > Weex Toolkit is the Standard Tooling for Weex Development.
 
