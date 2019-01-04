@@ -6,9 +6,10 @@
     "weex": "bin/weex.js"
   },
   "scripts": {
-    "test": "jest ./lib/*.spec.js",
+    "test": "jest",
     "lint": "eslint --fix lib/*.js bin/*.js",
-    "release": "np --yolo --no-yarn --any-branch"
+    "release": "np --yolo --no-yarn --any-branch",
+    "release:packages": "lerna publish --skip-git"
   },
   "engines": {
     "node": ">=7.6.0"
@@ -65,6 +66,9 @@
     "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/scripts/testSetup.js"
+    ],
+    "testMatch": [
+      "<rootDir>/lib/*.spec.js"
     ]
   }
 }
