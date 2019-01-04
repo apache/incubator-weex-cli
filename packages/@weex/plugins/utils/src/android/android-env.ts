@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 
-import * as PLATFORM from '../PLATFORM/PLATFORM'
+import * as PLATFORM from '../platform/platform'
 import * as PROCESS from '../process/process'
 import {
   ANDROID_SDK_NOT_FIND,
