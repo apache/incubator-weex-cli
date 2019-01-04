@@ -112,7 +112,8 @@ module.exports = {
         const templatesTarget = path.join(globalConfig.templatePath, template)
         let spinner = logger.spin(`Download from ${template} repo ...`);
         templatePath = await clone(template, templatesTarget, {
-          cache: exists(templatesTarget) && (typeof options.cache === 'boolean' ? options.cache : true)
+          cache: exists(templatesTarget) && (typeof options.cache === 'boolean' ? options.cache : true),
+          clone: options.clone || false          
         })
         spinner.stop();
         let answer = await askQuestion(platform, templatePath)
@@ -183,7 +184,8 @@ module.exports = {
         const templatesTarget = path.join(globalConfig.templatePath, template)
         let spinner = logger.spin(`Download from ${template} repo ...`);
         templatePath = await clone(template, templatesTarget, {
-          cache: false
+          cache: false,
+          clone: options.clone || false
         })
         spinner.stop();
         let answer = await askQuestion(platform, templatePath)
@@ -258,6 +260,9 @@ module.exports = {
           'Base': [{
             key: '--no-cache',
             description: 'Fetching latest template with no cache'
+          }, {
+            key: '--clone',
+            description: 'If true use git clone instead of an http download. While this can be a bit slower, it does allow private repositories to be used if the appropriate SSH keys are setup'
           }],
           'Miscellaneous:': [{
               key: '-v, --version',
