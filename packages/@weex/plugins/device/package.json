@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "prepublish": "yarn build && yarn lint",
+    "publish": "yarn build && yarn lint",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "test": "jest",

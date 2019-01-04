@@ -10,7 +10,7 @@
     "coverage": "jest --coverage",
     "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
     "lint": "tslint -p .",
-    "release": "yarn build && yarn lint && np --yolo --no-yarn --any-branch",
+    "publish": "yarn build && yarn lint",
     "precommit": "lint-staged",
     "snapupdate": "jest --updateSnapshot",
     "integrate": "jest -c jest-integration.config.json",
@@ -18,7 +18,7 @@
     "test:watch": "DEBUG=device jest --watch",
     "watch": "tsc -watch -p ./"
   },
-  "author": "Erha19 <faterrole@gmail.com>",
+  "author": "Mario <faterrole@gmail.com>",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -82,7 +82,6 @@
     "expect": "^23.1.0",
     "jest": "^23.1.0",
     "lint-staged": "^7.1.3",
-    "np": "^3.0.4",
     "prettier": "^1.14.0",
     "ramdasauce": "^2.1.0",
     "sinon": "^5.1.0",
