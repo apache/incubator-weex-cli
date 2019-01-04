@@ -4,8 +4,13 @@ node_modules/
 npm-debug.log
 
 .github/
+.eslintrc.js
+appveyor.yml
 
 src/
 lib/**/*.js.map
 
 typings/
+packages/
+scripts/
+templates/

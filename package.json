@@ -6,7 +6,7 @@
     "weex": "bin/weex.js"
   },
   "scripts": {
-    "test": "jest lib/*.spec.js",
+    "test": "jest ./lib/*.spec.js",
     "lint": "eslint --fix lib/*.js bin/*.js",
     "release": "np --yolo --no-yarn --any-branch"
   },
@@ -65,7 +65,6 @@
     "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/scripts/testSetup.js"
-    ],
-    "testMatch": []
+    ]
   }
 }
