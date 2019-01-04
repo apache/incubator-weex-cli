@@ -26,6 +26,11 @@ If you have never installed node.js, you should go to [nodejs.org]( https://node
 ## Commands
 
 ### create
+
+You can use `weex create` to create an official weex project.
+
+> Warning: to create the project base on `weex-toolkit@1.0`, you should run command `weex create weex-templates/webpack#v1.0 [projectname]`.
+
 ```bash
 # create a new project with an official template
 $ weex create my-project
@@ -37,7 +42,7 @@ Create a new project with an official template or from other remote, also you ca
 
 ### preview
 
-weex-toolkit supports previewing your Weex file(`.vue`) in a watch mode. You only need specify your file path.
+You can use `weex compile` to preview your Weex file(`.vue`) in a watch mode. You only need specify your file path.
 
 ``` bash
 $ weex preview src/foo.vue
@@ -55,7 +60,7 @@ You need to specify the folder path to preview and the entry file (passed in via
 
 ### compile
 
-Use `weex compile` o compile a single weex file or a weex file in an entire folder.
+You can use `weex compile` to compile a single weex file or a weex file in an entire folder.
 
 ``` bash
 $ weex compile [source] [dist]  [options]
@@ -78,7 +83,7 @@ $ weex compile src dest --devtool source-map -m
 
 ### platform
 
-Use `weex platform [add|remove|update] [ios|android]` to add, remove or update your ios / android project templates.
+You can use `weex platform [add|remove|update] [ios|android]` to add, remove or update your ios / android project templates.
 
 ``` bash
 # add weex platform
@@ -112,9 +117,7 @@ $ weex run web
 
 ### debug
 
-** [Weex devtools](https://github.com/weexteam/weex-devtool) ** is a custom devtools for Weex that implements [Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol), it is designed to help you quickly inspect your app and debug your JS bundle source in a Chrome web page, both android and iOS platform are supported. So you can use weex-devtools feature by weex-toolkit.
-
-#### usage
+> **[Weex Debugger](https://github.com/weexteam/weex-devtool)** is a custom devtools for Weex that implements [Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol), it is designed to help you quickly inspect your app and debug your JS bundle source in a Chrome web page, both android and iOS platform are supported. So you can use weex-devtools feature by weex-toolkit.
 
 ``` bash
 weex debug [we_file|bundles_dir] [options]
