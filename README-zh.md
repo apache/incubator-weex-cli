@@ -50,7 +50,7 @@ v5.6.0
 $ npm install -g weex-toolkit@latest
 ```
 
-## 使用选项
+## 选项
 
 ```
 Usage: weex <command>
@@ -71,69 +71,112 @@ where <command> is one of:
   weex <command> --help      help on <command>                                              
 ```
 
-#### 创建项目
+### 创建项目
+```bash
+# 从官方模板中创建项目
+$ weex create my-project
 
+# 从github上下载模板到本地
+$ weex create username/repo my-project
 ```
-$ weex create your_project_name
-```
+从官方模板或者远程源创建项目模板，你也可以创建你自己的`weex`项目模板，更多细节你可以查看[如何创建你自己的模板](https://github.com/weex-templates/How-to-create-your-own-template).
 
-运行成功后的目录结构如下：
+### 预览项目
 
-```
-| —— configs
-  | —— config.js                  global config of webpack
-  | —— helper.js                  helper functions
-  | —— logo.png                   
-  | —— plugin.js                  script for compile plugins
-  | —— utils.js                   tool functions
-  | —— vue-loader.conf.js         loader config of weex
-  | —— webpack.common.conf.js     webpack configuration for common environment
-  | —— webpack.dev.conf.js        webpack configuration for develop environment
-  | —— webpack.prod.conf.js       webpack configuration for production environment
-  | —— webpack.test.conf.js       webpack configuration for test environment
-| —— platforms
-  | —— platforms.json             platform meta data
-| —— plugins
-  | —— plugins.json               plugin data
-| —— src
-  | —— entry.js                   the entry file of whole bundle
-  | —— index.vue                  vue file source
-| —— test
-  | —— unit
-    | —— specs                    test scripts
-    | —— index.js                 source code and config test environment
-    | —— karma.conf.js            configuration for karma
-| —— web                          static source
-| —— .babelrc                     configuration for babel-loader
-| —— android.config.json          configuration for packing android project
-| —— ios.config.json              configuration for packing ios project
-| —— npm-shrinkwrap.json          npm dependence lock file
-| —— package.json                 
-| —— README.md                    
-| —— webpack.config.js            entry file of the webpack command
+weex-toolkit工具支持对你的Weex文件（`.we`或`.vue`)在监听模式下进行预览，你只需要指定一下你的项目路径。
 
+自`weex-toolkit v1.1.0+`版本后修改
+``` bash
+$ weex preview src/foo.vue
 ```
 
-#### 预览项目
-进入目录，运行
+浏览器会自动得打开预览页面并且你可以看到你的weex页面的布局和效果。如果你在你的设备上安装了[Playground](/cn/tools/playground.html)，你还可以通过扫描页面上的二维码来查看页面。
+
+使用下面的命令，你将可以预览整个文件夹中的`.vue`文件
+
+``` bash
+$ weex src --entry src/foo.vue
 ```
-$ npm start
+
+你需要指定要预览的文件夹路径以及入口文件（通过`--entry`传入）。
+
+### 编译项目
+
+使用 `weex compile` 命令可以编译单个weex文件或者整个文件夹中的weex文件。
+
+``` bash
+$ weex compile [source] [dist]  [options]
 ```
-如果在创建时选择了非自动安装的选项，在运行`npm start` 前需先运行 `npm install`, 运行成功后可以打开项目预览页面，如下
-![preview page](https://img.alicdn.com/tfs/TB1OGrdocLJ8KJjy0FnXXcFDpXa-1290-823.png)
 
-你可以通过访问`/index.html`, 如`localhost:8081/index.html`访问`web`端页面
+#### 选项
 
-> 注:如果端口号被占用，服务器的端口号可能会发生改变，具体请参考控制台输出
+| Option        | Description    |
+| --------   | :-----   |
+|`-w, --watch` | 开启watch模式，同步文件改动并进行编译|
+|`-d,--devtool [devtool]`|设置devtool选项|
+|`-e,--ext [ext]`| 设置文件拓展名，默认为vue|
+|`-m, --min`| 压缩jsbundle选项|
 
-同时你也可以通过 [Weex Playground](http://weex.apache.org/cn/tools/playground.html) 扫描右边二维码预览真机效果
+你可以这样子使用：
 
-#### 调试项目
+``` bash
+$ weex compile src dest --devtool source-map -m
 ```
-$ weex debug
-```
-详细使用请参考 [weex-debugger文档](https://github.com/weexteam/weex-debugger)
 
+### 添加iOS/Android工程
+
+使用`weex platform [add|remove] [ios|android]`命令可以添加或移除ios/android项目模板。
+
+``` bash
+$ weex platform add ios
+$ weex platform remove ios
+```
+
+使用 `weex platform list`来查看你的项目中支持的平台。
+
+### 运行iOS/Android工程
+
+你可以使用`weex-toolkit`来运行android/ios/web项目.
+
+``` bash
+$ weex run ios
+$ weex run android
+$ weex run web
+```
+
+### 调试项目
+
+** [Weex devtools](https://github.com/weexteam/weex-devtool) ** 是实现[Chrome调试协议](https://developer.chrome.com/devtools/docs/debugger-protocol)的Weex自定义开发工具,
+主要用于帮助你快速检查您的应用程序，并在Chrome网页中调试您的JS bundle源代码，支持Android和iOS平台。所以你可以通过`weex-toolkit`使用的`weex-devtool`功能。
+
+#### 用法
+
+``` bash
+weex debug [we_file|bundles_dir] [options]
+```
+
+#### 选项
+
+| Option        | Description    |
+| --------   | :-----   |
+|`-v, --version`|  显示weex-debugger版本信息|
+|`-h, --help`| 展示帮助信息 |
+|` -H --host [host]`| 设置浏览器打开的host地址（适用于代理环境下，如docker环境等）|
+|`-p, --port [port]`| 设置调试服务器的端口，默认值 8088|
+|`-m, --manual`|开启该选项后将不会自动打开浏览器|
+|`-e,--ext [ext]`|设置文件拓展名用于编译器编译，默认值为`vue`|
+|`--min`|开启该选项后将会压缩jsbunlde|
+|`--telemetry`|上传用户数据帮助提升weex-toolkit体验|
+|`--verbose`|显示详细的日志数据|
+|`--loglevel [loglevel]`|设置日志等级，可选silent/error/warn/info/log/debug,默认值为error|
+|`--remotedebugport [remotedebugport]`|设置调试服务器端口号，默认值为9222|
+
+自`weex-toolkit v1.1.0+`版本起默认的debug工具已从[weex-devtool](https://github.com/weexteam/weex-devtool)切换至[weex-debugger](https://github.com/weexteam/weex-debugger)，如想使用旧版本devtool，可通过以下命令使用：
+
+```
+$ weex xbind debugx weex-devtool
+$ weex debugx
+```
 
 ## 常见问题
 
