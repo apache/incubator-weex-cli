@@ -22,43 +22,40 @@ If you have never installed node.js, you should go to [nodejs.org]( https://node
 > **NOTE:** The node version must be 6.0 or higher, you can try [n](https://github.com/tj/n) to manage your node versions, and we recommend that you use `npm4` before fixing the [konw issues](https://github.com/npm/npm/issues/16991) on `npm5`. If an error occurs while installing, please go [weex-toolkit issues](https://github.com/weexteam/weex-toolkit/issues) or [weex-toolkit faq](https://github.com/weexteam/weex-toolkit#faq) to find solutions or have a discussion with us.
 
 
+
 ## Commands
 
 ### create
 ```bash
-$ weex create awesome-project
+# create a new project with an official template
+$ weex create my-project
+
+# create a new project straight from a github template
+$ weex create username/repo my-project
 ```
-Creates a new weex project. Executing this command will create an `awesome-project` directory with a pre-populated Weex template.
-
-Useful npm scripts are provided with your project to help you in the future:
-
-- `build`: Builds the source code and generate the JS bundle
-- `dev`: Runs webpack watch configuration
-- `serve`: Starts a hot-reload web server
-
-Before you can start your project, first run the `npm i` command in your project's directory to install the project's dependencies. After the dependencies are installed, you can now run the `npm start` command. The development page will automatically open within your browser after the application has fully started.
+Create a new project with an official template or from other remote, also you can create your own weex template, more detail you can see [How-to-create-your-own-template](https://github.com/weex-templates/How-to-create-your-own-template).
 
 ### preview
 
-weex-toolkit supports previewing your Weex file(`.vue`) in a watch mode. You only need to specify your file path.
+weex-toolkit supports previewing your Weex file(`.vue`) in a watch mode. You only need specify your file path.
 
 ``` bash
 $ weex preview src/foo.vue
 ```
 
-The browser will automatically open the preview page where you can see the layout and effects of your weex page. If you have a [Playground](https://weex.apache.org/cn/playground.html) app on your mobile device(s), you can scan the QR code from the opened page.
+The browser automatically opens the preview page and you can see the layout and effects of your weex page. If you have a [Playground App](/tools/playground.html) in your mobile devices, you can scan the QR code at the opened page.
 
-To preview the whole directory files, you can use the following command:
+Try the command below, you’ll preview the whole directory files.
 
 ``` bash
 $ weex preview src --entry src/foo.vue
 ```
 
-You will need to specify the folder path and the entry file (passed in via `--entry`).
+You need to specify the folder path to preview and the entry file (passed in via `--entry`).
 
 ### compile
 
-Use `weex compile` to compile a single weex file or a collection of weex files from a source folder.
+Use `weex compile` o compile a single weex file or a weex file in an entire folder.
 
 ``` bash
 $ weex compile [source] [dist]  [options]
@@ -66,14 +63,14 @@ $ weex compile [source] [dist]  [options]
 
 #### options
 
-| Option        | Description    | 
+| Option        | Description    |
 | --------   | :-----   |
-|`-w, --watch`        | Watch for file changes. Automatticly builds and refreshes the debugger page! [default `true`]|
-|`-d,--devtool [devtool]`        |Set webpack devtool mode.|
-|`-e,--ext [ext]`        | Set enabled extname for compiler. [default `vue`] |
-|`-m, --min`| Set jsbundle uglify or not. [default `false`]|
+|`-w, --watch`        | watch we file changes auto build them and refresh debugger page! [default `true`]|
+|`-d,--devtool [devtool]`        |set webpack devtool mode|
+|`-e,--ext [ext]`        | set enabled extname for compiler default is vue |
+|`-m, --min`| set jsbundle uglify or not. [default `false`]|
 
-Usage Example:
+You can use like this:
 
 ``` bash
 $ weex compile src dest --devtool source-map -m
@@ -81,40 +78,60 @@ $ weex compile src dest --devtool source-map -m
 
 ### platform
 
-Use `weex platform [add|remove] [ios|android]` to add or remove ios and android project templates.
+Use `weex platform [add|remove|update] [ios|android]` to add, remove or update your ios / android project templates.
 
 ``` bash
-$ weex platform add ios
-$ weex platform remove ios
+# add weex platform
+$ weex platform add [ios|android]
+
+# remove weex platform
+$ weex platform remove [ios|android]
+
+# update weex platform
+$ weex platform update [ios|android]
+
+# list weex platform
+$ weex platform list
 ```
-Use `weex platform list` to show the available supported platforms for your application.
+Use `weex platform list` to show what platforms your application supported.
 
 ### run
 
-You can use `weex-toolkit` to run the project on the `android`, `ios` and `web` platforms.
+You can use `weex-toolkit` to run project on android/ios/web.
 
 ``` bash
-$ weex run ios
+# run weex Android project
 $ weex run android
+
+# run weex iOS project
+$ weex run ios
+
+# run weex web
 $ weex run web
 ```
 
-### build
-
-You can use `weex-toolkit` to build the project for the `android`, `ios` and `web` platforms.
-
-``` bash
-$ weex build ios
-$ weex build android
-$ weex build web
-```
-### plugin
-
-Plugin documentation is still in progress.
-
 ### debug
 
-** [Weex devtools](https://github.com/weexteam/weex-debugger) ** is a custom developer toolkit designed to help you quickly inspect your app and debug the JS bundle source file right from a Chrome web page. This is made possible with the implementation of the [Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol). Both Android and iOS platforms are supported. You can start using the weex-devtools feature right from the weex-toolkit.
+** [Weex devtools](https://github.com/weexteam/weex-devtool) ** is a custom devtools for Weex that implements [Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol), it is designed to help you quickly inspect your app and debug your JS bundle source in a Chrome web page, both android and iOS platform are supported. So you can use weex-devtools feature by weex-toolkit.
+
+#### usage
+
+``` bash
+weex debug [we_file|bundles_dir] [options]
+```
+
+| Option        | Description    |
+| --------   | :-----   |
+|`-V, --verbose`       | display logs of debugger server|
+|`-v, --version`       | display version|
+|`-p, --port [port]`   | set debugger server port|
+|`-e, --entry [entry]` | set the entry bundlejs path when you specific the bundle server root path|
+|`-m, --mode [mode]`   | set build mode [transformer or loader]|
+|`-w, --watch`        | watch we file changes auto build them and refresh debugger page [default `true`]|
+|`--ip [ip]`|set the host ip of debugger server|
+|`--loglevel [loglevel]`| set log level|
+|`--min`| set jsbundle uglify or not. [default `false`]|
+|`--remotedebugport [remotedebugport]`|set the remote debug port,default 9222|
 
 ## FAQ
 
