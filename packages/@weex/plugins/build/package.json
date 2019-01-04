@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/build",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "description": "Build module for weex-toolkit",
   "main": "index.js",
   "scripts": {
