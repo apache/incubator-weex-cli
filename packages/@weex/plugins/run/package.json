@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/run",
-  "version": "1.0.4",
+  "version": "1.0.11",
   "description": "module for running iOS/Android/Web platform with weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -26,8 +26,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/build": "^1.0.1",
-    "@weex-cli/device": "^1.0.0",
+    "@weex-cli/build": "^1.0.11",
+    "@weex-cli/device": "^1.0.11",
     "@weex-cli/utils": "^0.0.7",
     "address": "^1.0.3",
     "debug": "^4.0.1",

@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/generator",
-  "version": "1.0.3",
+  "version": "1.0.11",
   "description": "Generator for weex-toolkit",
   "main": "index.js",
   "types": "./index.d.ts",

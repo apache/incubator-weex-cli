@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/preview",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "preview weex page",
   "main": "index.js",
   "scripts": {

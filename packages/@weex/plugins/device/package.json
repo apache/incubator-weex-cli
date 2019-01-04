@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/device",
-  "version": "1.0.3",
+  "version": "1.0.11",
   "description": "module for lanuch device with weex-toolkit",
   "main": "index.js",
   "scripts": {

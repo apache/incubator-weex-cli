@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/doctor",
-  "version": "1.0.1",
+  "version": "1.0.11",
   "description": "Doctor module for weex-toolkit",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -24,7 +24,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@weex-cli/utils": "^0.0.8",
+    "@weex-cli/utils": "^1.0.11",
     "colors": "^1.3.2"
   },
   "devDependencies": {
