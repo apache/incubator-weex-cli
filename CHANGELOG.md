@@ -1,5 +1,12 @@
 ## Changelog
 
+### 2.0.0-alpha.0
+- Rlease alpha version for the new CLI.
+- Better unit & functional testing support.
+- Built with typescript.
+- Optimization for the submodules, such as weex-debugger,weexpack and so on.
+- Reasonable Node-side command line solution that can be used by all Node-side programs.
+
 ### 1.3.7
 - Upgrade `xtoolkit` to `v1.0.9`.
 
