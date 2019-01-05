@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/lint",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Lint module for weex-toolkit",
   "main": "index.js",
   "scripts": {
