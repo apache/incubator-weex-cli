@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "format": "eslint ./src --fix",
-    "lint": "eslint ./",
-    "publish": "npm run compile"
+    "lint": "eslint ./"
   },
   "author": "Mario <faterrole@gmail.com>",
   "files": [
