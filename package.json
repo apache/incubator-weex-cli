@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint --fix lib/*.js bin/*.js",
     "release": "np --yolo --no-yarn --any-branch",
-    "release:packages": "lerna publish --skip-git"
+    "release:packages": "lerna publish --no-git-tag-version --no-push"
   },
   "engines": {
     "node": ">=7.6.0"
