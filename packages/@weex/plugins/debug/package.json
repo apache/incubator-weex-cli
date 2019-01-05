@@ -6,7 +6,7 @@
   "scripts": {
     "format": "eslint ./src --fix",
     "lint": "eslint ./",
-    "publish": "npm run format && cd frontend && npm run compile"
+    "publish": "npm run compile"
   },
   "author": "Mario <faterrole@gmail.com>",
   "files": [
