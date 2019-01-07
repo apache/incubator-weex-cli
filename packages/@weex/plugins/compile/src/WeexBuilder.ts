@@ -270,10 +270,10 @@ new Vue(App)
           },
         },
         /*
-        * Options affecting the resolving of modules.
-        *
-        * See: http://webpack.github.io/docs/configuration.html#module
-        */
+         * Options affecting the resolving of modules.
+         *
+         * See: http://webpack.github.io/docs/configuration.html#module
+         */
         module: {
           rules: [
             {
@@ -307,10 +307,10 @@ new Vue(App)
           moduleExtensions: ['-loader'],
         },
         /*
-        * Add additional plugins to the compiler.
-        *
-        * See: http://webpack.github.io/docs/configuration.html#plugins
-        */
+         * Add additional plugins to the compiler.
+         *
+         * See: http://webpack.github.io/docs/configuration.html#plugins
+         */
         plugins: plugins,
       }
 
@@ -365,12 +365,12 @@ new Vue(App)
       }
       if (this.options.min) {
         /*
-        * Plugin: UglifyJsPlugin
-        * Description: Minimize all JavaScript output of chunks.
-        * Loaders are switched into minimizing mode.
-        *
-        * See: https://webpack.js.org/configuration/optimization/#optimization-minimizer
-        */
+         * Plugin: UglifyJsPlugin
+         * Description: Minimize all JavaScript output of chunks.
+         * Loaders are switched into minimizing mode.
+         *
+         * See: https://webpack.js.org/configuration/optimization/#optimization-minimizer
+         */
         configs.plugins.unshift(
           new UglifyJsPlugin({
             sourceMap: true,
