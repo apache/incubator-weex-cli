@@ -14,6 +14,16 @@ This is the branch that develops weex-toolkit2.0.
 
 Now you can install the alpha version by:
 
+
+## Getting Started
+
+### Reuirements
+
+- node >= 7.6.0
+- iOS developer tools (for developing iOS plugins)
+- Android SDK and adb
+
+
 ```base
 $ npm i weex-toolkit@alpha -g
 ```
@@ -24,14 +34,7 @@ To know more help info, you can run :
 $ weex --help
 ```
 
-## Goals
 
-We hope to get the following goals:
-
-- Flawless installation and upgrade experience.
-- Better unit & functional testing support.
-- Reasonable Node-side command line solution that can be used by all Node-side programs.
-- Some feartures and optimization for the submodules, such as `weex-debugger`, `weexpack` and so on.
 
 More detail you can see the [milestone](https://github.com/weexteam/weex-toolkit/milestone).
 
