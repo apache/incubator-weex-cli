@@ -24,6 +24,7 @@
     "@babel/preset-env": "^7.2.3",
     "autoprefixer": "^8.6.2",
     "babel-loader": "^8.0.4",
+    "css-loader": "^2.1.0",
     "fs-extra": "^7.0.1",
     "postcss-plugin-px2rem": "^0.7.0",
     "postcss-plugin-weex": "^0.1.6",
