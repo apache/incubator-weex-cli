@@ -69,10 +69,10 @@ export default {
             // try prev version
           }
           commands.push({
-            name: content.name || '',
-            alias: content.alias || '',
-            showed: typeof content.dashed === 'boolean' ? !content.dashed : true,
-            description: content.description || '',
+            name: (content && content.name) || '',
+            alias: (content && content.alias) || '',
+            showed: content && typeof content.dashed === 'boolean' ? !content.dashed : true,
+            description: (content && content.description) || '',
           })
           type = ModType.PLUGIN
         })
@@ -88,6 +88,7 @@ export default {
             local: packages[i].root,
             commands: commands,
           }
+          commands = []
         } else {
           globalConfiguration.modules.mods[packages[i].package.name] = {
             type: type,
