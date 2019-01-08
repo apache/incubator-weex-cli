@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/build",
-  "version": "1.1.1",
+  "version": "1.1.8",
   "description": "Build module for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/utils": "^1.1.1",
+    "@weex-cli/utils": "^1.1.8",
     "userhome": "^1.0.0"
   },
   "devDependencies": {
@@ -95,5 +95,6 @@
   "keywords": [
     "run",
     "weex"
-  ]
+  ],
+  "gitHead": "a0368eeb37e9e6165ab64e754b82f169b0582628"
 }

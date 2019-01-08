@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/preview",
-  "version": "1.1.1",
+  "version": "1.1.8",
   "description": "preview weex page",
   "main": "index.js",
   "scripts": {
@@ -99,5 +99,6 @@
   ],
   "pluginDependencies": {
     "@weex-cli/compile": "latest"
-  }
+  },
+  "gitHead": "a0368eeb37e9e6165ab64e754b82f169b0582628"
 }
