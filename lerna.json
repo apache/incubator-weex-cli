@@ -5,7 +5,7 @@
     "packages/@weex/core",
     "packages/@weex/plugins/*"
   ],
-  "version": "1.1.8",
+  "version": "1.1.9",
   "command": {
     "publish": {
       "gitTagVersion": false
