@@ -19,6 +19,7 @@ module.exports = {
   }) => {
     const options = parameters.options
     const source = parameters.first
+    const analyzer: CliConfiguration = parameters.options.__analyzer
     
     const showHelp = async () => {
       let params = {
@@ -107,35 +108,37 @@ module.exports = {
             config: options.config || options.c
           },
           async (error, output, json) => {
-            
-            // console.log(json)
-            let bundles = json.assets.map(asset => {
-              let entry 
-              let date = new Date()
-              const formateTime = (value) => {
-                return value < 10 ? '0' + value : value
-              }
-              if (/\./.test(source)) {
-                entry = path.resolve(source)
-              } else {
-                entry = path.resolve(source, asset.name.replace('.js', '.vue'))
-              }
-              return {
-                updateTime: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${formateTime(date.getHours())}:${formateTime(date.getMinutes())}:${formateTime(date.getSeconds())}`,
-                output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}`,
-                size: (asset.size / 1024).toFixed(0),
-                time: json.time,
-                entry: entry
-              }
-            })
-            await api.startDevtoolServer(bundles, devtoolOptions)
+            if (error) {
+              await analyzer('compile', Array.isArray(error)?error.join('\n'):error)
+              return 
+            }
+            else {
+              let bundles = json.assets.map(asset => {
+                let entry 
+                let date = new Date()
+                const formateTime = (value) => {
+                  return value < 10 ? '0' + value : value
+                }
+                if (/\./.test(source)) {
+                  entry = path.resolve(source)
+                } else {
+                  entry = path.resolve(source, asset.name.replace('.js', '.vue'))
+                }
+                return {
+                  updateTime: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${formateTime(date.getHours())}:${formateTime(date.getMinutes())}:${formateTime(date.getSeconds())}`,
+                  output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}`,
+                  size: (asset.size / 1024).toFixed(0),
+                  time: json.time,
+                  entry: entry
+                }
+              })
+              await api.startDevtoolServer(bundles, devtoolOptions)
+            }
           }
         )
       } else {
         await api.startDevtoolServer([], devtoolOptions)
       }
     }
-    
-
   }
 }
