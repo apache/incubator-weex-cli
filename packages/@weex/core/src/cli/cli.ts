@@ -104,7 +104,7 @@ export default class Cli {
 
     this.cliConfiguration = {
       ...data,
-      force: this.argv.options.f || this.argv.options.force
+      force: this.argv.options.f || this.argv.options.force,
     }
     // create a CLI runtime
     this.cli = build(options.brand || 'weex')
@@ -181,7 +181,7 @@ export default class Cli {
           const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${packageSubName}`, 'latest', {
             root: this.cliConfiguration.moduleRoot,
             registry: this.cliConfiguration.registry,
-            force: this.cliConfiguration.force
+            force: this.cliConfiguration.force,
           })
           for (let i = 0; i < packages.length; i++) {
             const commandBasePath = path.join(packages[i].root, 'commands')
@@ -332,7 +332,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
   const packages: any = await installPackage(config, name, version, {
     root: config.moduleRoot,
     registry: config.registry,
-    force: config.force
+    force: config.force,
   })
   for (let i = 0; i < packages.length; i++) {
     let commandBasePath = path.join(packages[i].root, 'commands')
