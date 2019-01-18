@@ -65,6 +65,7 @@ export interface CliConfiguration {
   trash: string
   modules: ModData
   globalConfigFileName: string
+  force?: boolean
   configs?: {
     [key: string]: any
   }
@@ -101,7 +102,10 @@ export default class Cli {
 
     this.argv = parseParams(data.argv)
 
-    this.cliConfiguration = data
+    this.cliConfiguration = {
+      ...data,
+      force: this.argv.options.f || this.argv.options.force
+    }
     // create a CLI runtime
     this.cli = build(options.brand || 'weex')
       .src(__dirname)
@@ -177,6 +181,7 @@ export default class Cli {
           const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${packageSubName}`, 'latest', {
             root: this.cliConfiguration.moduleRoot,
             registry: this.cliConfiguration.registry,
+            force: this.cliConfiguration.force
           })
           for (let i = 0; i < packages.length; i++) {
             const commandBasePath = path.join(packages[i].root, 'commands')
@@ -327,6 +332,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
   const packages: any = await installPackage(config, name, version, {
     root: config.moduleRoot,
     registry: config.registry,
+    force: config.force
   })
   for (let i = 0; i < packages.length; i++) {
     let commandBasePath = path.join(packages[i].root, 'commands')
@@ -535,7 +541,6 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
  * @param options data from error stack
  */
 export async function analyzer(type: string, stack: any, options?: any) {
-  logger.log('\n')
   if (type === 'repair') {
     if (ErrorType.PACKAGE_NOT_FOUND === stack) {
       const innerMods = [
@@ -571,6 +576,7 @@ export async function analyzer(type: string, stack: any, options?: any) {
         })
       }
     } else if (typeof stack === 'string') {
+      logger.error(stack)
       logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
       let searchKey = stack
         .split('\n')[0]
