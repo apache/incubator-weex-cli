@@ -13,3 +13,7 @@ if (!sniff.isNewEnough) {
 }
 
 require('../lib/cli')(process.argv);
+
+process.on('SIGINT', function () {
+  process.exit();
+});
