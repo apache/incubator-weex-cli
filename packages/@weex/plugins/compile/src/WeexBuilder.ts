@@ -210,7 +210,7 @@ new Vue(App)
       let result = {}
       entries.forEach(entry => {
         const extname = path.extname(entry)
-        const basename = entry.replace(`${base}/`, '').replace(extname, '')
+        const basename = entry.replace(`${base}${this.isWin ? '\\' : '/'}`, '').replace(extname, '')
         const templatePathForWeb = path.resolve(this.vueTemplateFloder, basename + '.web.js')
         const templatePathForNative = path.resolve(this.vueTemplateFloder, basename + '.js')
         if (isweb) {
