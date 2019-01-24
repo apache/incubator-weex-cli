@@ -19,7 +19,7 @@ module.exports = {
   }) => {
     const options = parameters.options
     const source = parameters.first
-    const analyzer: CliConfiguration = parameters.options.__analyzer
+    const analyzer = options.__analyzer
     
     const showHelp = async () => {
       let params = {
