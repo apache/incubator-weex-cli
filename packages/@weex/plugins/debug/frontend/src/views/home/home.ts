@@ -113,7 +113,6 @@ export class HomeComponent extends Vue {
         this.updateVersion(data.params.version)
       } else if (data.method === 'WxDebug.startDebugger') {
         this.$router.push({ path: `/client/weex/${data.params}?type=weex` })
-        this.disconnect()
       }
     })
     this.socket.on('close', (data) => {
@@ -138,7 +137,7 @@ export class HomeComponent extends Vue {
   }
 
   disconnect () {
-    this.socket && this.socket.close()
+    this.socket && this.socket.connected && this.socket.close()
     this.cleanQRCode()
     this.$snotify.clear()
   }

@@ -20,7 +20,7 @@ class RuntimeManager {
           for (const target of list) {
             const urlObj = URL.parse(target.url)
             if (
-              urlObj.pathname === '/runtime.html' &&
+              urlObj.pathname === '/runtime/runtime.html' &&
               urlObj.port === config.port + ''
             ) {
               found = target

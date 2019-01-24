@@ -1,5 +1,6 @@
 node_modules
 coverage/
+!frontend/public/assets/inspector/coverage/
 
 .git/
 .vscode/

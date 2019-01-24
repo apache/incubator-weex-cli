@@ -54,10 +54,7 @@ let config = {
       from: 'src/assets',
       to: './assets'
     },{
-      from: 'src/runtime.html',
-      to: './',
-    },{
-      from: 'src/runtime',
+      from: 'runtime',
       to: './runtime',
     },{
       from: 'node_modules/monaco-editor/min/vs',

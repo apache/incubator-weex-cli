@@ -188,7 +188,7 @@
   &.navigation {
     flex: 1;
     input {
-      width: calc(100% - 40px);
+      width: calc(100% - 90px);
       height: 32px;
       border-radius: 3px;
       border: 1px solid #ced4da;
@@ -213,7 +213,7 @@
   &.navigation-button {
     flex: 1;
     .navigation-selection {
-      width: calc(100% - 80px);
+      width: calc(100% - 90px);
       margin-right: 10px;
       height: 30px;
       border: 1px solid #ddd;

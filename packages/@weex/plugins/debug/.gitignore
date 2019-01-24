@@ -3,6 +3,7 @@ node_modules/
 
 # coverage
 coverage/
+!frontend/src/assets/inspector/coverage/
 
 package-lock.json
 
