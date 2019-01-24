@@ -14,7 +14,8 @@
     "!frontend/public/weex",
     "commands/",
     "index.js",
-    "README.md"
+    "README.md",
+    "package.json"
   ],
   "license": "MIT",
   "dependencies": {
