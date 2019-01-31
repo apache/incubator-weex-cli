@@ -29,6 +29,7 @@ const Module = namespace('weex')
 })
 export class WeexComponent extends Vue {
   @State('webSocketHost') webSocketHost
+  @State('helpSetting') helpSetting
   @State('environmentSetting') environmentSetting
   @Module.Action('updateForm') updateForm
   @Module.Action('cleanEnvironment') cleanEnvironment
@@ -71,6 +72,60 @@ export class WeexComponent extends Vue {
     { value: 'info', text: 'Info' },
     { value: 'warn', text: 'Warn' },
     { value: 'error', text: 'Error' }
+  ]
+  tourCallBack: any = {
+    onNextStep: this.customNextStepCallback,
+    onPreviousStep: this.customPreStepCallback,
+    onStop: this.customStopCallback
+  }
+  steps: any = [
+    {
+      target: '[data-v-step="1"]',  // We're using document.querySelector() under the hood
+      content: `点击这里可以控制<strong>JS Debug</strong>开关，开启后即可开始JS调试!`
+    },
+    {
+      target: '[data-v-step="2"]',
+      content: '点击这里可以选择Log日志等级'
+    },
+    {
+      target: '[data-v-step="3"]',
+      content: '进入调试页面后点击这里可以刷新Weex页面'
+    },
+    {
+      target: '[data-v-step="4"]',
+      content: '在这里可以输入你本地想访问的JSBundle文件，回车键跳转',
+      params: {
+        placement: 'bottom'
+      }
+    },
+    {
+      target: '[data-v-step="5"]',
+      content: '点击这里可以针对Weex运行环境进行配置',
+      params: {
+        placement: 'bottom'
+      }
+    },
+    {
+      target: '[data-v-step="6"]',
+      content: '点击这里可以对文件进行Mock替换',
+      params: {
+        placement: 'bottom'
+      }
+    },
+    {
+      target: '[data-v-step="7"]',
+      content: '点击这里可以让环境配置生效',
+      params: {
+        placement: 'bottom'
+      }
+    },
+    {
+      target: '[data-v-step="8"]',
+      content: '点击这里重置环境',
+      params: {
+        placement: 'bottom'
+      }
+    }
   ]
   historyLatestUrl: string = ''
   appVersion: string = ''
@@ -145,9 +200,22 @@ export class WeexComponent extends Vue {
   set jsservice (value: string) {
     this.updateWeexEnvironment('jsservice', value)
   }
+
+  @Watch('helpSetting')
+  test (n, o) {
+    if (n) {
+      this.$tours['miniappTour'].start()
+    } else {
+      this.$tours['miniappTour'].stop()
+    }
+  }
+
   mounted () {
     this.initWebSocket()
     this.$store.commit(types.UPDATE_CHANNEL_ID, this.channelId)
+    if (!localStorage.getItem('hasBeenTour')) {
+      this.$store.commit(types.UPDATE_HELP_SETTING, true)
+    }
   }
 
   destroyed () {
@@ -398,5 +466,23 @@ export class WeexComponent extends Vue {
     setTimeout(() => {
       this.editorShow = true
     }, 200)
+  }
+
+  customNextStepCallback (currentStep) {
+    if (currentStep === 4) {
+      this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, true)
+    }
+  }
+
+  customPreStepCallback (currentStep) {
+    // if (currentStep === 5) {
+    //   this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, true)
+    // }
+  }
+
+  customStopCallback () {
+    localStorage.setItem('hasBeenTour', 'true')
+    this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, false)
+    this.$store.commit(types.UPDATE_HELP_SETTING, false)
   }
 }

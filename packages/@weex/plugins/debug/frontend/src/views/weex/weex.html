@@ -1,4 +1,5 @@
 <div class="wx-debug-weex-content">
+  <div data-v-step="5"></div>
   <div class="wx-debug-weex-advance" :class="{'active': environmentSetting}">
     <div class="title">
       <span class="iconfont icon-gaojishezhi">
@@ -17,7 +18,7 @@
           </small>
         </div>
         <input v-model="workerjs" type="text" placeholder="http://">
-        <span class="iconfont icon-mock" title="mock 文件" @click="toggleEditor('workerjs')"></span>
+        <span class="iconfont icon-mock" title="mock 文件" @click="toggleEditor('workerjs')"  data-v-step="6"></span>
       </div>
       <div class="col">
         <div class="label">
@@ -52,8 +53,8 @@
     </div>
     <div class="row">
       <div class="button-group">
-          <b-button variant="outline-success" size="sm" @click="activeWeexEnvironmentSetting()">更改设置</b-button>
-          <b-button variant="outline-danger" size="sm" @click="cleanWeexEnvironmentSetting()">重置</b-button>
+          <b-button variant="outline-success" size="sm" @click="activeWeexEnvironmentSetting()" data-v-step="7">更改设置</b-button>
+          <b-button variant="outline-danger" size="sm" @click="cleanWeexEnvironmentSetting()" data-v-step="8">重置</b-button>
       </div>
     </div>
   </div>
@@ -62,9 +63,9 @@
 
       <div class="wx-debug-weex-row">
         <div class="wx-debug-weex-col navigation">
-          <input v-model="sourcejs" type="text" class="bundleurl" placeholder="http://" @keyup.enter="navigator(sourcejs)" :disabled="!isSandbox">
+          <input v-model="sourcejs" type="text" class="bundleurl" placeholder="http://" @keyup.enter="navigator(sourcejs)" :disabled="!isSandbox" data-v-step="4">
           <span class="iconfont icon-huifu" @click="restore($event)" title="恢复"></span>
-          <span class="iconfont icon-icon" @click="reload($event)" title="刷新"></span>
+          <span class="iconfont icon-icon" @click="reload($event)" title="刷新" data-v-step="3"></span>
         </div>
         <div class="wx-debug-weex-col info">
           <div class="label">App Info</div>
@@ -72,12 +73,12 @@
         </div>
         <div class="wx-debug-weex-col switch">
           <div class="label">JS Debug</div>
-          <toggle-button :value="remoteDebugStatus" @change="handleRemoteDebug($event)" color="#f37327" :sync="true" :width="50" :height="24"
+          <toggle-button data-v-step="1" :value="remoteDebugStatus" @change="handleRemoteDebug($event)" color="#f37327" :sync="true" :width="50" :height="24"
             :labels="true" />
         </div>
         <div class="wx-debug-weex-col select">
           <div class="label">LogLevel</div>
-          <b-form-select v-model="logLevelSelected" :options="logLevelOptions" size="sm" class="wx-debug-weex-select"></b-form-select>
+          <b-form-select v-model="logLevelSelected" data-v-step="2" :options="logLevelOptions" size="sm" class="wx-debug-weex-select"></b-form-select>
         </div>
       </div>
       <div class="wx-debug-weex-row">
@@ -131,4 +132,5 @@
           </div>
       </div>
     </b-modal>
+    <v-tour name="miniappTour" :steps="steps" :callbacks="tourCallBack"></v-tour>
 </div>

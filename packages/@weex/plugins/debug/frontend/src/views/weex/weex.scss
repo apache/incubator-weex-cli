@@ -11,18 +11,24 @@
   align-items: center;
   z-index: 1030;
   border-left: 1px solid #ddd;
+  [data-v-step="5"] {
+    position: absolute;
+    top: 0;
+    right: 150px;
+    width: 0;
+    height:0;
+  }
 }
 .wx-debug-weex-advance {
   height: 0;
-  overflow: hidden;
   width: 100%;
-  z-index: 999;
   background: #fff;
   padding: 0 20px;
   transition: all .2s ease;
   box-shadow: -1px -4px 15px 1px #ddd inset;
+  z-index: 1;
   &.active {
-    height: 270px;
+    height: 280px;
   }
   .button-group {
     display: flex;
@@ -107,16 +113,16 @@
   background: #f9f9f9;
   position: relative;
   display: flex;
-  z-index: 999;
+  z-index: 9;
 }
 .wx-debug-weex-inspector {
   width: 100%;
   flex: 1;
   display: flex;
-  background: url(../../assets/img/ajax.gif) center center no-repeat;
+  background: url(../../assets/img/ajax.gif) center center no-repeat #f0f0f0;
   background-size: 50px;
   margin-bottom: 40px;
-  z-index: 2;
+  z-index: 10;
 }
 .wx-debug-weex-setting {
   margin: 10px 0px;

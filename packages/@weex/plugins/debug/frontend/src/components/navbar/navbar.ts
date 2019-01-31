@@ -46,8 +46,6 @@ export class NavbarComponent extends Vue {
   }
 
   toggleHelpSetting () {
-    if (!this.helpSetting) {
-      this.$store.commit(types.UPDATE_HELP_SETTING, !this.helpSetting)
-    }
+    this.$store.commit(types.UPDATE_HELP_SETTING, !this.helpSetting)
   }
 }

@@ -11,6 +11,7 @@ const mutations: MutationTree<State> = {
     state.environmentSetting = value
   },
   [types.UPDATE_HELP_SETTING] (state: State, value: string) {
+    console.log('here', value)
     state.helpSetting = value
   }
 }
