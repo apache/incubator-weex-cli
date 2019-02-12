@@ -8,3 +8,8 @@
 .custom-control-input:active ~ .custom-control-label::before {
   background-color: #ffd9ae !important;
 }
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: #ffd9ae;
+  background-color: #ffd9ae;
+}

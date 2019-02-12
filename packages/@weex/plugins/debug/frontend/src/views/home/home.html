@@ -1,11 +1,20 @@
 <b-container class="wx-home-content">
+  <div class="language">
+    <div class="language-title">
+      {{$t('home.languageTitle')}} <span class="iconfont icon-xiala"></span>
+    </div>
+    <ul>
+      <li @click="handleLanguageSetting('cn')">简体中文</li>
+      <li @click="handleLanguageSetting('en')">English</li>
+    </ul>
+  </div>
   <b-row class="justify-content-md-center">
     <b-col>
       <b-container class="box" :class="{ready: connectUrl}">
         <div class="wx-home-tabs">
           <div class="wx-home-tab-border">
-              <div class="wx-home-tab" :class="{'active': activeType === 'debug'}" @click = "toggleType('debug')">调试</div>
-              <div class="wx-home-tab" :class="{'active': activeType === 'pages'}" @click = "toggleType('pages')">页面</div>
+              <div class="wx-home-tab" :class="{'active': activeType === 'debug'}" @click = "toggleType('debug')">{{$t("home.tabs.debugName")}}</div>
+              <div class="wx-home-tab" :class="{'active': activeType === 'pages'}" @click = "toggleType('pages')">{{$t("home.tabs.pageName")}}</div>
           </div>
         </div>
         <div v-if="activeType === 'debug'">
@@ -19,10 +28,10 @@
           <b-row class="header">
             <img class='logo' src="" alt="">
             <div class="title">
-              Welcome to Weex Debugger
+              {{$t("home.welcomMessage")}}
             </div>
             <div class="version">
-              Version {{version}}
+              {{$t("home.version")}} {{version}}
             </div>
           </b-row>
           <b-row class="items" v-for="(tip, index) in tips" :key="index" >
@@ -47,7 +56,7 @@
               <i class="iconfont icon-bangzhu"></i>
             </div>
             <div class="tip">
-                暂无可预览页面，你可以通过下面的命令进行页面编译
+                {{$t("home.tips.noJsBundle")}}}
             </div>
             <code>
               $ weex debug [ folder | file ]

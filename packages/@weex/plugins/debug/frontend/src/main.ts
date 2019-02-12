@@ -11,6 +11,7 @@ import TreeView from 'vue-json-tree-view'
 import VueClipboard from 'vue-clipboard2'
 import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip'
 import vBPopover from 'bootstrap-vue/es/directives/popover/popover'
+import i18n from './lang'
 
 // const navbarComponent = () => import('./components/navbar').then(({ NavbarComponent }) => NavbarComponent)
 // const navbarComponent = () => import(/* webpackChunkName: 'navbar' */'./components/navbar').then(({ NavbarComponent }) => NavbarComponent)
@@ -45,6 +46,7 @@ Vue.use(Snotify, options)
 // tslint:disable-next-line:no-unused-expression
 new Vue({
   el: '#app-main',
+  i18n,
   store,
   router: createRouter(),
   components: {}

@@ -3,6 +3,44 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  .language {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: center;
+    .language-title {
+      font-size: 16px;
+      color: #4c4c4c;
+      cursor: pointer;
+      &:hover + ul{
+        display: block;
+      }
+    }
+    ul {
+      position: absolute;
+      width: 90px;
+      padding-top: 30px;
+      top: 0;
+      left: -5px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+      li {
+        color: #4c4c4c;
+        line-height: 30px;
+        text-align: center;
+        cursor: pointer;
+        background: #fff;
+        &:hover {
+          background-image: linear-gradient(to right, #ff9000 0, #ff5000 100%);
+          background-repeat: repeat-x;
+          border-color: #f37327;
+          color: #fff;
+        }
+      }
+    }
+  }
   .box {
     width: 450px;
     border: 1px #ddd solid;

@@ -17,9 +17,9 @@ const Module = namespace('home')
 
 export interface Tip {
   icon: string
-  title: string
-  des: string
-  url: string
+  title: any
+  des: any
+  url: any
 }
 
 @Component({
@@ -43,44 +43,10 @@ export class HomeComponent extends Vue {
   @Module.Action('cleanQRCode') cleanQRCode
   @Module.Action('updateBundles') updateBundles
   @State('webSocketHost') webSocketHost
-
-  defaultWeexTips: any = [
-    {
-      icon: 'icon-feiji',
-      title: '快速使用',
-      des: '快速了解如何在你的开发中使用 weex 调试工具',
-      url: 'http://weex.apache.org/tools/toolkit.html#debug'
-    },
-    {
-      icon: 'icon-jiaochengicon',
-      title: '使用教程',
-      des: '详细介绍各个功能的使用说明',
-      url: 'http://weex.apache.org/tools/toolkit.html#debug'
-    },
-    {
-      icon: 'icon-box',
-      title: '集成 Weex Devtool 到你的应用',
-      des: '了解如何在你的应用中集成 Weex Devtool SDK',
-      url: 'http://weex.apache.org/cn/guide/integrate-devtool-to-ios.html'
-    },
-    {
-      icon: 'icon-taolun',
-      title: '帮助和意见反馈',
-      des: '提交Github issue 和帮助提高 Weex Devtool',
-      url: 'https://github.com/weexteam/weex-toolkit/issues/new?labels=@weex-cli/debug'
-    }
-  ]
   tips: Tip[]
   activeType: string = localStorage.getItem('activeMode') || 'debug'
   activeBundle: string = localStorage.getItem('activeBundle') || ''
   socket: any = null
-  defaultBundles: any = [{
-    updateTime: '2018年12月25日 15:12',
-    output: 'http://dotwe.org/vue/f1a7f28cc5d470a9c296a04a1a79aa4a',
-    size: '120',
-    time: '120000',
-    entry: '/Users/kw/github/toolkit/def-test/src/pages/index'
-  }]
 
   mounted () {
     this.initWebSocket()
@@ -90,7 +56,36 @@ export class HomeComponent extends Vue {
   }
 
   created () {
-    this.tips = this.defaultWeexTips
+    this.initTips()
+  }
+
+  initTips () {
+    this.tips = [
+      {
+        icon: 'icon-feiji',
+        title: this.$t('home.tips.quickStartTitle'),
+        des: this.$t('home.tips.quickStartDesc'),
+        url: this.$t('home.tips.quickStartUrl')
+      },
+      {
+        icon: 'icon-jiaochengicon',
+        title: this.$t('home.tips.guideTitle'),
+        des: this.$t('home.tips.guideDesc'),
+        url: this.$t('home.tips.guideUrl')
+      },
+      {
+        icon: 'icon-box',
+        title: this.$t('home.tips.integerTitle'),
+        des: this.$t('home.tips.integerDesc'),
+        url: this.$t('home.tips.integerUrl')
+      },
+      {
+        icon: 'icon-taolun',
+        title: this.$t('home.tips.helpTitle'),
+        des: this.$t('home.tips.helpDesc'),
+        url: this.$t('home.tips.helpUrl')
+      }
+    ]
   }
 
   initWebSocket () {
@@ -123,14 +118,6 @@ export class HomeComponent extends Vue {
     })
   }
 
-  navigator (url: string) {
-    if (url) {
-      window.open(url)
-    } else {
-      this.$snotify.info('文档还在完善中...')
-    }
-  }
-
   toggleType (type) {
     this.activeType = type
     localStorage.setItem(`activeMode`, type)
@@ -148,7 +135,7 @@ export class HomeComponent extends Vue {
   }
 
   open (value: string) {
-    this.$snotify.async('打开页面 ...', () => new Promise((resolve, reject) => {
+    this.$snotify.async(`${this.$t('home.toastTips.openPage')} ...`, () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({ method: 'WxDebug.openFile', params: value }))
       setTimeout(() => resolve({
         body: '打开成功',
@@ -160,11 +147,17 @@ export class HomeComponent extends Vue {
     }))
   }
 
+  handleLanguageSetting (locale: string) {
+    this.$i18n.locale = locale
+    this.initTips()
+    localStorage.setItem('language', locale)
+  }
+
   async copy (value: string, filterName: string) {
     if (filterName) {
       value = filters[filterName](value)
     }
     const res = this.$copyText(value)
-    this.$snotify.success('复制成功')
+    this.$snotify.success(`${this.$t('home.toastTips.copySuccess')}`)
   }
 }

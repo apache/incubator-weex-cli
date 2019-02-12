@@ -57,16 +57,16 @@ export const createRoutes: () => RouteConfig[] = () => [
         props: (route) => ({ channelId: route.params.channelId }),
         component: weexComponent,
         meta: {
-          title: 'Weex 调试',
+          title: 'weexDebugPage',
           setting: true
         }
       },
       {
         path: 'analyze/:channelId',
         props: (route) => ({ channelId: route.params.channelId }),
-        component: analyzeComponent,
+        component: defaultComponent,
         meta: {
-          title: '性能面板'
+          title: 'defaultPage'
         }
       },
       {
@@ -74,7 +74,7 @@ export const createRoutes: () => RouteConfig[] = () => [
         props: (route) => ({ channelId: route.params.channelId }),
         component: defaultComponent,
         meta: {
-          title: '页面评价'
+          title: 'defaultPage'
         }
       },
       {
@@ -82,7 +82,7 @@ export const createRoutes: () => RouteConfig[] = () => [
         props: (route) => ({ channelId: route.params.channelId }),
         component: defaultComponent,
         meta: {
-          title: '资源分析'
+          title: 'defaultPage'
         }
       },
       {
@@ -90,7 +90,7 @@ export const createRoutes: () => RouteConfig[] = () => [
         props: (route) => ({ channelId: route.params.channelId }),
         component: defaultComponent,
         meta: {
-          title: '健康检查'
+          title: 'defaultPage'
         }
       },
       {
@@ -98,7 +98,7 @@ export const createRoutes: () => RouteConfig[] = () => [
         props: (route) => ({ channelId: route.params.channelId }),
         component: defaultComponent,
         meta: {
-          title: '开发设置'
+          title: 'defaultPage'
         }
       }
     ]

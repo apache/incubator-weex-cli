@@ -9,7 +9,7 @@ export class Link {
   icon: string
   type: number
 
-  constructor (name: string, path: string, icon: string, type: number = LINKTYPE.LINK) {
+  constructor (name: any, path: string, icon: string, type: number = LINKTYPE.LINK) {
     this.name = name
     this.path = path
     this.icon = icon

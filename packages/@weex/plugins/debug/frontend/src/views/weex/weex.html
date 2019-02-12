@@ -5,7 +5,7 @@
       <span class="iconfont icon-gaojishezhi">
 
       </span>
-      环境设置
+      {{$t('weexDebugPage.environmentSetting')}}
     </div>
     <div class="row">
       <div class="col">
@@ -13,48 +13,44 @@
           <span>
               WorkerJS
           </span>
-          <small>
-            WorkerJS为调试中间文件，文件开头为[Runtime]-的文件
-          </small>
+          <small v-html="$t('weexDebugPage.workerJsDesc')"></small>
         </div>
         <input v-model="workerjs" type="text" placeholder="http://">
-        <span class="iconfont icon-mock" title="mock 文件" @click="toggleEditor('workerjs')"  data-v-step="6"></span>
+        <span class="iconfont icon-mock" :title="$t('weexDebugPage.mockTips')" @click="toggleEditor('workerjs')"  data-v-step="6"></span>
       </div>
       <div class="col">
         <div class="label">
             <span>JSService</span>
-            <small>JSService是weex在运行中使用<a href="http://weex.apache.org/cn/references/js-service.html" target="_blank">JSService接口</a>注入的JS文件，多个文件用逗号隔开</small>
+            <small v-html="$t('weexDebugPage.jsServiceDesc')"></small>
         </div>
         <input v-model="jsservice" type="text" placeholder="http://">
-        <span class="iconfont icon-mock" title="mock 文件" @click="toggleEditor('jsservice')"></span>
+        <span class="iconfont icon-mock" :title="$t('weexDebugPage.mockTips')" @click="toggleEditor('jsservice')"></span>
       </div>
     </div>
     <div class="row">
       <div class="col">
         <div class="label">
           <span>DependenceJS</span>
-          <small>DependenceJS是weex在创建实例前在JS环境中注入的JS文件</small>
+          <small v-html="$t('weexDebugPage.dependenceJsDesc')"></small>
         </div>
         <input v-model="dependencejs" type="text" placeholder="http://">
-        <span class="iconfont icon-mock" title="mock 文件" @click="toggleEditor('dependencejs')"></span>
+        <span class="iconfont icon-mock" :title="$t('weexDebugPage.mockTips')" @click="toggleEditor('dependencejs')"></span>
       </div>
       <div class="col">
         <div class="label">
           <span>
               JSFramework
           </span>
-          <small>
-            JSFramework是为weex运行提供初始环境的JS
-          </small>
+          <small v-html="$t('weexDebugPage.jsFrameworkDesc')"></small>
         </div>
         <input v-model="jsframework" type="text" placeholder="http://">
-        <span class="iconfont icon-mock" title="mock 文件" @click="toggleEditor('jsframework')"></span>
+        <span class="iconfont icon-mock" :title="$t('weexDebugPage.mockTips')" @click="toggleEditor('jsframework')"></span>
       </div>
     </div>
     <div class="row">
       <div class="button-group">
-          <b-button variant="outline-success" size="sm" @click="activeWeexEnvironmentSetting()" data-v-step="7">更改设置</b-button>
-          <b-button variant="outline-danger" size="sm" @click="cleanWeexEnvironmentSetting()" data-v-step="8">重置</b-button>
+          <b-button variant="outline-success" size="sm" @click="activeWeexEnvironmentSetting()" data-v-step="7">{{$t('weexDebugPage.environmentSettingOkDesc')}}</b-button>
+          <b-button variant="outline-danger" size="sm" @click="cleanWeexEnvironmentSetting()" data-v-step="8">{{$t('weexDebugPage.environmentSettingCancelDesc')}}</b-button>
       </div>
     </div>
   </div>
@@ -64,20 +60,20 @@
       <div class="wx-debug-weex-row">
         <div class="wx-debug-weex-col navigation">
           <input v-model="sourcejs" type="text" class="bundleurl" placeholder="http://" @keyup.enter="navigator(sourcejs)" :disabled="!isSandbox" data-v-step="4">
-          <span class="iconfont icon-huifu" @click="restore($event)" title="恢复"></span>
-          <span class="iconfont icon-icon" @click="reload($event)" title="刷新" data-v-step="3"></span>
+          <span class="iconfont icon-huifu" @click="restore($event)" :title="$t('weexDebugPage.restoreDesc')"></span>
+          <span class="iconfont icon-icon" @click="reload($event)" :title="$t('weexDebugPage.reloadDesc')" data-v-step="3"></span>
         </div>
         <div class="wx-debug-weex-col info">
-          <div class="label">App Info</div>
+          <div class="label">{{$t('weexDebugPage.appInfo')}}</div>
           <span :title="userAgent">{{userAgent}}</span>
         </div>
         <div class="wx-debug-weex-col switch">
-          <div class="label">JS Debug</div>
+          <div class="label">{{$t('weexDebugPage.jsDebug')}}</div>
           <toggle-button data-v-step="1" :value="remoteDebugStatus" @change="handleRemoteDebug($event)" color="#f37327" :sync="true" :width="50" :height="24"
             :labels="true" />
         </div>
         <div class="wx-debug-weex-col select">
-          <div class="label">LogLevel</div>
+          <div class="label">{{$t('weexDebugPage.logLevel')}}</div>
           <b-form-select v-model="logLevelSelected" data-v-step="2" :options="logLevelOptions" size="sm" class="wx-debug-weex-select"></b-form-select>
         </div>
       </div>
@@ -92,20 +88,20 @@
             </div>
             <span class="iconfont icon-xiala"></span>
           </div>
-          <b-button variant="outline-danger" size="sm" @click="cleanHistory()">清空历史</b-button>
+          <b-button variant="outline-danger" size="sm" @click="cleanHistory()">{{$t('weexDebugPage.clearHistory')}}</b-button>
         </div>
         <div class="wx-debug-weex-col info">
-          <div class="label" :title="appVersion">SDK Version</div>
+          <div class="label" :title="appVersion">{{$t('weexDebugPage.sdkVersion')}}</div>
           <span>{{appVersion}}
           </span>
         </div>
         <div class="switch wx-debug-weex-col">
-          <div class="label">Network</div>
+          <div class="label">{{$t('weexDebugPage.network')}}</div>
           <toggle-button :value="networkStatus" @change="handleNetwork($event)" color="#f37327" :width="50" :height="24" :sync="true"
             :labels="true" />
         </div>
         <div class="wx-debug-weex-col select">
-          <div class="label">ElementMode</div>
+          <div class="label">{{$t('weexDebugPage.elementMode')}}</div>
           <b-form-select v-model="elementModeSelected" :options="elementModeOptions" size="sm" class="wx-debug-weex-select"></b-form-select>
         </div>
       </div>
@@ -127,10 +123,10 @@
         ></monacoeditor>
         <div class="footer">
             <div class="button-group">
-                <b-button variant="outline-success" size="sm" @click="mockFile(mockCode)">生成文件</b-button>
+                <b-button variant="outline-success" size="sm" @click="mockFile(mockCode)">{{$t('weexDebugPage.generatorFile')}}</b-button>
             </div>
           </div>
       </div>
     </b-modal>
-    <v-tour name="miniappTour" :steps="steps" :callbacks="tourCallBack"></v-tour>
+    <v-tour name="miniappTour" :steps="steps" :options="tourOptions" :callbacks="tourCallBack"></v-tour>
 </div>

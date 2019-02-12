@@ -33,7 +33,7 @@ export class NavbarComponent extends Vue {
   }
 
   get title () {
-    return this.$route.meta.title
+    return this.$t(`${this.$route.meta.title}.title`)
   }
 
   @Watch('$route.path')

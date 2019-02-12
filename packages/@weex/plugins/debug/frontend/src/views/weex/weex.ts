@@ -78,55 +78,8 @@ export class WeexComponent extends Vue {
     onPreviousStep: this.customPreStepCallback,
     onStop: this.customStopCallback
   }
-  steps: any = [
-    {
-      target: '[data-v-step="1"]',  // We're using document.querySelector() under the hood
-      content: `点击这里可以控制<strong>JS Debug</strong>开关，开启后即可开始JS调试!`
-    },
-    {
-      target: '[data-v-step="2"]',
-      content: '点击这里可以选择Log日志等级'
-    },
-    {
-      target: '[data-v-step="3"]',
-      content: '进入调试页面后点击这里可以刷新Weex页面'
-    },
-    {
-      target: '[data-v-step="4"]',
-      content: '在这里可以输入你本地想访问的JSBundle文件，回车键跳转',
-      params: {
-        placement: 'bottom'
-      }
-    },
-    {
-      target: '[data-v-step="5"]',
-      content: '点击这里可以针对Weex运行环境进行配置',
-      params: {
-        placement: 'bottom'
-      }
-    },
-    {
-      target: '[data-v-step="6"]',
-      content: '点击这里可以对文件进行Mock替换',
-      params: {
-        placement: 'bottom'
-      }
-    },
-    {
-      target: '[data-v-step="7"]',
-      content: '点击这里可以让环境配置生效',
-      params: {
-        placement: 'bottom'
-      }
-    },
-    {
-      target: '[data-v-step="8"]',
-      content: '点击这里重置环境',
-      params: {
-        placement: 'bottom'
-      }
-    }
-  ]
+  tourOptions: any
+  steps: any
   historyLatestUrl: string = ''
   appVersion: string = ''
   userAgent: string = ''
@@ -208,6 +161,66 @@ export class WeexComponent extends Vue {
     } else {
       this.$tours['miniappTour'].stop()
     }
+  }
+
+  created () {
+    this.tourOptions = {
+      labels: {
+        buttonSkip: this.$t('tour.skip'),
+        buttonPrevious: this.$t('tour.prevText'),
+        buttonNext: this.$t('tour.nextText'),
+        buttonStop: this.$t('tour.finishText')
+      }
+    }
+    this.steps = [
+      {
+        target: '[data-v-step="1"]',  // We're using document.querySelector() under the hood
+        content: `${this.$t('tour.step_1')}`
+      },
+      {
+        target: '[data-v-step="2"]',
+        content: `${this.$t('tour.step_2')}`
+      },
+      {
+        target: '[data-v-step="3"]',
+        content: `${this.$t('tour.step_3')}`
+      },
+      {
+        target: '[data-v-step="4"]',
+        content: `${this.$t('tour.step_4')}`,
+        params: {
+          placement: 'bottom'
+        }
+      },
+      {
+        target: '[data-v-step="5"]',
+        content: `${this.$t('tour.step_5')}`,
+        params: {
+          placement: 'bottom'
+        }
+      },
+      {
+        target: '[data-v-step="6"]',
+        content: `${this.$t('tour.step_6')}`,
+        params: {
+          placement: 'bottom'
+        }
+      },
+      {
+        target: '[data-v-step="7"]',
+        content: `${this.$t('tour.step_7')}`,
+        params: {
+          placement: 'bottom'
+        }
+      },
+      {
+        target: '[data-v-step="8"]',
+        content: `${this.$t('tour.step_8')}`,
+        params: {
+          placement: 'bottom'
+        }
+      }
+    ]
   }
 
   mounted () {
@@ -445,22 +458,28 @@ export class WeexComponent extends Vue {
         sourceUrl = sourceUrl[0]
       }
     }
-    if (!/^http(s)?/ig.test(sourceUrl)) {
+    if (!/^http(s)?/ig.test(sourceUrl) && sourceUrl) {
       sourceUrl = `${window.location.origin}${sourceUrl}`
     }
-    this.$http.get(sourceUrl).then((response: any) => {
-      if (this.editor) {
-        this.editor.setValue(response.body)
-      } else {
-        this.mockCode = response.body
-      }
-    }, response => {
-      if (this.editor) {
-        this.editor.setValue('')
-      } else {
-        this.mockCode = ''
-      }
-    })
+
+    if (sourceUrl) {
+      this.$http.get(sourceUrl).then((response: any) => {
+        if (this.editor) {
+          this.editor.setValue(response.body)
+        } else {
+          this.mockCode = response.body
+        }
+      }, response => {
+        if (this.editor) {
+          this.editor.setValue('')
+        } else {
+          this.mockCode = ''
+        }
+      })
+    } else {
+      this.mockCode = ''
+    }
+
     this.modalKey = data
     this.modalShow = !this.modalShow
     setTimeout(() => {

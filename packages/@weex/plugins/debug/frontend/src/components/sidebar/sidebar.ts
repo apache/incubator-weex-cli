@@ -25,9 +25,9 @@ export class SidebarComponent extends Vue {
 
   initLinks (type?: string) {
     this.links = [
-      new Link('WEEX 调试', `/client/weex/${this.channelId}?type=${type}`, 'icon-debug'),
+      new Link(this.$t('sideBar.weex.title'), `/client/weex/${this.channelId}?type=${type}`, 'icon-debug'),
       new Link('', '', '', LINKTYPE.DEVIDING),
-      new Link('性能面板', `/client/analyze/${this.channelId}?type=${type}`, 'icon-ceshi')
+      new Link(this.$t('sideBar.analyze.title'), `/client/analyze/${this.channelId}?type=${type}`, 'icon-ceshi')
       // new Link('页面评价', `/client/eval/${this.channelId}?type=${type}`, 'icon-tongjibaobiao'),
       // new Link('', '', '', LINKTYPE.DEVIDING),
       // new Link('资源分析', `/client/source/${this.channelId}?type=${type}`, 'icon-number'),
