@@ -1,1 +1,0 @@
-Plugin for manage device with commandline.
