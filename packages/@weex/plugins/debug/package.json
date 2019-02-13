@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/debug",
-  "version": "2.0.0-alpha.2",
+  "version": "2.0.0-beta.0",
   "description": "Module for debug weex file",
   "main": "index.js",
   "scripts": {
