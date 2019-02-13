@@ -108,12 +108,12 @@ module.exports = {
             config: options.config || options.c
           },
           async (error, output, json) => {
+            let bundles = []
             if (error) {
               await analyzer('compile', Array.isArray(error)?error.join('\n'):error)
-              return 
             }
             else {
-              let bundles = json.assets.map(asset => {
+              bundles = json.assets.map(asset => {
                 let entry 
                 let date = new Date()
                 const formateTime = (value) => {
@@ -132,8 +132,8 @@ module.exports = {
                   entry: entry
                 }
               })
-              await api.startDevtoolServer(bundles, devtoolOptions)
             }
+            await api.startDevtoolServer(bundles, devtoolOptions)
           }
         )
       } else {
