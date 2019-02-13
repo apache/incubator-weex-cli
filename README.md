@@ -10,41 +10,36 @@
 
 ## Introduction
 
-This is the branch that develops weex-toolkit2.0.
+> This document is for the `weex-toolkit` **2.x** version. For the old version of the `weex-toolkit` documentation, please go to [here] (https://github.com/weexteam/weex-toolkit/blob/v1.0/README.md).
 
-Now you can install the alpha version by:
 
+[Weex Toolkit](https://github.com/weexteam/weex-toolkit) is dedicated to standardizing the tool base in the Weex ecosystem. It ensures that various build tools can be seamlessly connected based on smart default configuration, so you can focus on writing applications without having to spend days tangling configuration issues.
+
+## System Components
+
+[Weex Toolkit](https://github.com/weexteam/weex-toolkit) split each function module into separate parts, if you see our [source code](https://github.com/weexteam/weex-toolkit/tree/master/packages/%40weex) , you will find that we manage multiple separate releases in the repository via [Lerna](https://lernajs.io/) Package, providing the following functional modules:
 
 ## Getting Started
 
 ### Reuirements
 
 - node >= 7.6.0
-- iOS developer tools (for developing iOS plugins)
-- Android SDK and adb
+- iOS developer tools like `XCode`
+- Android SDK and ADB
 
+Now you can install the beta version use below command:
 
 ```base
-$ npm i weex-toolkit@alpha -g
+$ npm i weex-toolkit@beta -g
 ```
 
-To know more help info, you can run :
+To know more detail about the command, you can run:
 
 ```base
 $ weex --help
 ```
 
-
-
-More detail you can see the [milestone](https://github.com/weexteam/weex-toolkit/milestone).
-
-## Basic architecture diagram
-
-![Basic architecture diagram](https://img.alicdn.com/tfs/TB10GYeCAyWBuNjy0FpXXassXXa-743-585.png)
-
-## Lifecycle
-
-![Life-cycle](https://img.alicdn.com/tfs/TB1MHroCrSYBuNjSspiXXXNzpXa-678-1018.png)
+Also you can see the document [here](https://weex.io/tools/toolkit.html).
 
 ## License
 
