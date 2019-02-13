@@ -534,6 +534,26 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
 }
 
 /**
+ * Pick suitable search from stack
+ * @param stack error stack
+ */
+export function pickSearchKey (stack: string) {
+  let errorIndex = /error:/ig.exec(stack).index
+  if (errorIndex) {
+    return stack
+    .slice(errorIndex + 6)
+    .split('\n')[0]
+    .split(' ')
+    .join('+')
+  } else {
+    return stack
+    .split('\n')[0]
+    .split(' ')
+    .join('+')
+  }
+}
+
+/**
  * Analyzer error stack and give some solution.
  *
  * @param type command type
@@ -578,10 +598,7 @@ export async function analyzer(type: string, stack: any, options?: any) {
     } else if (typeof stack === 'string') {
       logger.error(stack)
       logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
-      let searchKey = stack
-        .split('\n')[0]
-        .split(' ')
-        .join('+')
+      let searchKey = pickSearchKey(stack)
       logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
 
       logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
@@ -600,11 +617,9 @@ export async function analyzer(type: string, stack: any, options?: any) {
       logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
     }
   } else if (typeof stack === 'string') {
+    logger.error(stack)
     logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
-    let searchKey = stack
-      .split('\n')[0]
-      .split(' ')
-      .join('+')
+    let searchKey = pickSearchKey(stack)
     logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
 
     logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
