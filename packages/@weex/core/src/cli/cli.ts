@@ -537,19 +537,19 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
  * Pick suitable search from stack
  * @param stack error stack
  */
-export function pickSearchKey (stack: string) {
-  let errorIndex = /error:/ig.exec(stack).index
+export function pickSearchKey(stack: string) {
+  let errorIndex = /error:/gi.exec(stack).index
   if (errorIndex) {
     return stack
-    .slice(errorIndex + 6)
-    .split('\n')[0]
-    .split(' ')
-    .join('+')
+      .slice(errorIndex + 6)
+      .split('\n')[0]
+      .split(' ')
+      .join('+')
   } else {
     return stack
-    .split('\n')[0]
-    .split(' ')
-    .join('+')
+      .split('\n')[0]
+      .split(' ')
+      .join('+')
   }
 }
 
