@@ -8,8 +8,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --fix lib/*.js bin/*.js",
-    "release": "np --yolo --no-yarn --any-branch",
-    "release:packages": "lerna publish --no-git-tag-version --no-push"
+    "publish": "npm run test && npm run lint && lerna publish"
   },
   "engines": {
     "node": ">=7.6.0"
