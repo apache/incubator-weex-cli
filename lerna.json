@@ -2,9 +2,9 @@
   "npmClient": "npm",
   "useWorkspaces": false,
   "packages": [
+    "./",
     "packages/@weex/core",
-    "packages/@weex/plugins/*",
-    "./"
+    "packages/@weex/plugins/*"
   ],
-  "version": "2.0.0-alpha.1"
+  "version": "2.0.0-alpha.2"
 }
