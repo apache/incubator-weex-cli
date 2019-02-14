@@ -10,7 +10,7 @@
 
 ## Introduction
 
-> This document is for the `weex-toolkit` **2.x** version. For the old version of the `weex-toolkit` documentation, please go to [here] (https://github.com/weexteam/weex-toolkit/blob/v1.0/README.md).
+> This document is for the `weex-toolkit` **2.x** version. For the old version of the `weex-toolkit` documentation, please go to [here](https://github.com/weexteam/weex-toolkit/blob/v1.0/README.md).
 
 
 [Weex Toolkit](https://github.com/weexteam/weex-toolkit) is dedicated to standardizing the tool base in the Weex ecosystem. It ensures that various build tools can be seamlessly connected based on smart default configuration, so you can focus on writing applications without having to spend days tangling configuration issues.
