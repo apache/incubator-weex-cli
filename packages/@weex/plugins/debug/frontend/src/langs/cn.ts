@@ -54,7 +54,8 @@ export const cn = {
     reloadDesc: '刷新',
     restoreDesc: '恢复',
     mockTips: 'mock 文件',
-    generatorFile: '生成文件'
+    generatorFile: '生成文件',
+    environmentSetting: '环境设置'
   },
   sideBar: {
     weex: {

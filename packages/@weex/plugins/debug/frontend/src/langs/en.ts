@@ -54,7 +54,8 @@ export const en = {
     reloadDesc: 'Refresh',
     restoreDesc: 'Restore',
     mockTips: 'Mock file',
-    generatorFile: 'Generate File'
+    generatorFile: 'Generate File',
+    environmentSetting: 'Environment Setting'
   },
   sideBar: {
     weex: {
