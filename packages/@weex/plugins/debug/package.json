@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "format": "eslint ./src --fix",
-    "lint": "eslint ./"
+    "lint": "eslint ./src"
   },
   "author": "Mario <faterrole@gmail.com>",
   "files": [
@@ -43,6 +43,7 @@
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-ie11": "^1.0.0",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.8.0",
