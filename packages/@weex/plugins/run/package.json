@@ -107,6 +107,9 @@
     "run",
     "weex"
   ],
+  "pluginDependencies": {
+    "@weex-cli/device": "latest"
+  },
   "changelog": "fix run command",
   "gitHead": "a0368eeb37e9e6165ab64e754b82f169b0582628"
 }
