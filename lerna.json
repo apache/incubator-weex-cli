@@ -1,6 +1,4 @@
 {
-  "npmClient": "npm",
-  "useWorkspaces": false,
   "packages": [
     "./",
     "packages/@weex/core",
