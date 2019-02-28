@@ -137,15 +137,18 @@ export default class Cli {
   async start() {
     const command = this.argv.array[0]
     const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
-    // usertrack
-    const usertrackapi = http.create({
-      baseURL: `http://gm.mmstat.com/`,
-    })
-    try {
-      /* tslint-disabled */
-      usertrackapi.get(`weex-cli-2.0.tool_usage.usage?cmd=${command}&mid=${machineIdSync()}&t=${new Date().getTime()}`)
-    } catch (error) {
-      debug('Http request error', error)
+    if (this.cliConfiguration.configs.telemetry) {
+      // usertrack
+      const usertrackapi = http.create({
+        baseURL: `http://gm.mmstat.com/`,
+      })
+      try {
+        const pkg = require('../../package.json')
+        /* tslint-disabled */
+        usertrackapi.get(`weex-cli-2.0.tool_usage.usage?cmd=${command}&argv=${this.argv.array.join('+')}&mid=${machineIdSync()}&node=${process.version}&core=v${pkg.version}&t=${new Date().getTime()}`)
+      } catch (error) {
+        debug('Http request error', error)
+      }
     }
     if (this.cliConfiguration.modules) {
       this.plugins = pickPlugins(this.cliConfiguration.modules)
@@ -175,12 +178,12 @@ export default class Cli {
         }
         const res: { error?: string; [key: string]: any } = await suggestPackage(
           packageSubName,
-          this.cliConfiguration.registry,
+          this.cliConfiguration.configs.registry,
         )
         if (!res.error) {
           const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${packageSubName}`, 'latest', {
             root: this.cliConfiguration.moduleRoot,
-            registry: this.cliConfiguration.registry,
+            registry: this.cliConfiguration.configs.registry,
             force: this.cliConfiguration.force,
           })
           for (let i = 0; i < packages.length; i++) {
@@ -242,7 +245,7 @@ export default class Cli {
         // check last_update_time
         const info: any = await updateNpmPackageInfo(
           this.cliConfiguration.modules,
-          this.cliConfiguration.registry,
+          this.cliConfiguration.configs.registry,
           this.updateTime,
         )
         if (info) {
@@ -331,7 +334,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
   const moduleConfigFilePath = path.join(config.moduleRoot, config.moduleConfigFileName)
   const packages: any = await installPackage(config, name, version, {
     root: config.moduleRoot,
-    registry: config.registry,
+    registry: config.configs.registry,
     force: config.force,
   })
   for (let i = 0; i < packages.length; i++) {
