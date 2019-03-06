@@ -34,6 +34,8 @@ debuggerRouter
       }
       config.env[message.channelId]['isLayoutAndSandbox'] =
         payload.params.isLayoutAndSandbox
+      config.env[message.channelId]['environment'] = payload.params.env
+      config.env[message.channelId]['device'] = device
     }
     else if (
       method === 'WxDebug.callJS' &&
@@ -43,6 +45,8 @@ debuggerRouter
       let bundleUrl =
         payload.params.args[2].bundleUrl || crypto.md5(code) + '.js'
       let env = {
+        environment: config.env[message.channelId]['environment'],
+        device: config.env[message.channelId]['device'],
         isLayoutAndSandbox: config.env[message.channelId]['isLayoutAndSandbox']
       }
       if (
@@ -134,6 +138,8 @@ debuggerRouter
       const options = payload.params.args[1]
       const dependenceCode = payload.params.args[3]
       let env = {
+        environment: config.env[message.channelId]['environment'],
+        device: config.env[message.channelId]['device'],
         isLayoutAndSandbox: config.env[message.channelId]['isLayoutAndSandbox']
       }
       let bundleUrl = options.bundleUrl
