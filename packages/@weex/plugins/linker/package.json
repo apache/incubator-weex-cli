@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/linker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An abstract model framework for message resolve and dispatch",
   "main": "index.js",
   "scripts": {

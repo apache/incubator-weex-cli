@@ -4,7 +4,7 @@ declare enum CHANNEL_MODE {
   N2N = 2,
 }
 
-declare module '@weex-cli/link' {
+declare module '@weex-cli/linker' {
   interface FromType {
     hubId: string
     terminalId: string
