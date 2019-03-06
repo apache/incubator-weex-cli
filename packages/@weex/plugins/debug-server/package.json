@@ -1,0 +1,105 @@
+{
+  "name": "@weex-cli/debug-server",
+  "version": "1.0.0",
+  "description": "Module for start debug server",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run format && npm run clean && npm run compile",
+    "clean": "rm -rf ./lib",
+    "compile": "tsc -p ./",
+    "coverage": "jest --config jest-integration.config.json --coverage",
+    "format": "prettier --write \"**/*.ts\" --loglevel error && tslint -p . --fix",
+    "lint": "tslint -p .",
+    "prepublish": "npm run test && npm run build && npm run lint",
+    "precommit": "lint-staged",
+    "snapupdate": "jest --updateSnapshot",
+    "test": "jest --config jest-integration.config.json",
+    "test:watch": "jest  --config jest-integration.config.json --watch",
+    "watch": "tsc -watch -p ./"
+  },
+  "author": "Mario <faterrole@gmail.com>",
+  "keywords": [
+    "debug-server"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@weex-cli/linker": "^1.0.1",
+    "debug": "^4.1.1",
+    "fs-extra": "^7.0.1",
+    "ip": "^1.1.5",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "koa-websocket": "^5.0.1",
+    "opn": "^5.4.0",
+    "queryparser": "^1.0.0",
+    "querystring": "^0.2.0",
+    "url": "^0.11.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/cli-table2": "^0.2.1",
+    "@types/colors": "^1.2.1",
+    "@types/jest": "^22.2.3",
+    "@types/node": "^10.0.4",
+    "@types/pluralize": "^0.0.28",
+    "@types/ramda": "^0.25.32",
+    "coveralls": "^3.0.1",
+    "expect": "^23.1.0",
+    "ip": "^1.1.5",
+    "jest": "^23.1.0",
+    "lint-staged": "^7.1.3",
+    "np": "^3.0.4",
+    "prettier": "^1.14.0",
+    "puppeteer": "^1.11.0",
+    "ramdasauce": "^2.1.0",
+    "sinon": "^5.1.0",
+    "temp-write": "^3.4.0",
+    "ts-jest": "^22.4.6",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^3.0.1",
+    "unique-temp-dir": "^1.0.0",
+    "ws": "^6.1.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(\\.|/)(test)\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "tslint --fix",
+      "git add"
+    ],
+    "*.md": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "gitHead": "6a96f0d933fe71bd3210cc3201029fb31ea6879c"
+}
