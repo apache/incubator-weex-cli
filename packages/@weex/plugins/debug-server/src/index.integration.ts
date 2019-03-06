@@ -52,7 +52,7 @@ describe('JSDebug can be worked', () => {
   })
 
   test('debug process should be worked', async done => {
-    let testMehod = 'WMLDebug.test'
+    let testMehod = 'WxDebug.test'
     let appID = 'VM'
     let runtimeMessages = []
     nativeWS = new WebSocket(devtoolServer.socket.native)
@@ -68,15 +68,15 @@ describe('JSDebug can be worked', () => {
     runtimeWS.on('message', message => {
       message = JSON.parse(message)
       runtimeMessages.push(message)
-      if (message.method === 'WMLDebug.importAppJS') {
-        expect(message.params.appId).toEqual(appID)
-        expect(runtimeMessages.length === 4).toBeTruthy()
+      if (message.method === 'WxDebug.callJS' && message.params.method === 'importScript') {
+        expect(message.params.args[0]).toEqual(appID)
+        expect(runtimeMessages.length).toEqual(3)
       }
     })
     nativeWS.on('open', () => {
       nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.registerDevice',
+          method: 'WxDebug.registerDevice',
           params: {
             appId: appID,
             device: {},
@@ -85,47 +85,44 @@ describe('JSDebug can be worked', () => {
       )
       nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.initRuntimeWorker',
+          method: 'WxDebug.initJSRuntime',
           params: {
-            appId: appID,
+            env: {
+              WXEnvironment: {},
+            },
             source: `
-          self.__get_app_context__ = () => {};
-          console.log('Im WMLDebug.initRuntimeWorker');`,
-            bundleUrl: 'windmill.dsl.js',
-            env: {},
+          self.createInstanceContext = () => {};
+          console.log('Im WxDebug.initJSRuntime');`,
+            bundleUrl: 'js-framework.js',
           },
         }),
       )
       nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.initFrameworkApi',
+          method: 'WxDebug.callJS',
           params: {
-            appId: appID,
-            source: `console.log('Im WMLDebug.initFrameworkApi')`,
-            bundleUrl: 'windmill.module.api.js',
+            method: 'createInstanceContext',
+            args: [appID, {}, '', null],
           },
         }),
       )
-      nativeWS.send(
-        JSON.stringify({
-          method: 'WMLDebug.initAppFrameworkWorker',
-          params: {
-            appId: appID,
-            source: `console.log('Im WMLDebug.initAppFrameworkWorker')`,
-            bundleUrl: 'windmill.worker.js',
-          },
-        }),
-      )
-      nativeWS.send(
-        JSON.stringify({
-          method: 'WMLDebug.importAppJS',
-          params: {
-            appId: appID,
-            source: `__postData__({method: '${testMehod}', params: {}})`,
-            bundleUrl: 'app.js',
-          },
-        }),
-      )
+      setTimeout(() => {
+        nativeWS.send(
+          JSON.stringify({
+            method: 'WxDebug.callJS',
+            params: {
+              method: 'importScript',
+              args: [
+                appID,
+                `__postmessage__({method: '${testMehod}', params: {}})`,
+                {
+                  bundleUrl: 'app.js'
+                }
+              ],
+            },
+          })
+        )
+      }, 1000)
     })
   })
 })
@@ -170,7 +167,7 @@ describe('SyncCall can be worked', () => {
 
   test('sync call should be worked', async done => {
     let testData = 'syncCall'
-    let testMehod = 'WMLDebug.test'
+    let testMehod = 'WxDebug.test'
     let testCallbackData = 'syncreturn'
     let appID = 'VM'
     let runtimeMessages = []
@@ -188,15 +185,15 @@ describe('SyncCall can be worked', () => {
     runtimeWS.on('message', message => {
       message = JSON.parse(message)
       runtimeMessages.push(message)
-      if (message.method === 'WMLDebug.importAppJS') {
-        expect(message.params.appId).toEqual(appID)
+      if (message.params.method === 'WxDebug.importAppJS') {
+        expect(message.params.args[0]).toEqual(appID)
         expect(runtimeMessages.length === 4).toBeTruthy()
       }
     })
     nativeWS.on('open', () => {
       nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.registerDevice',
+          method: 'WxDebug.registerDevice',
           params: {
             appId: appID,
             device: {},
@@ -205,62 +202,58 @@ describe('SyncCall can be worked', () => {
       )
       nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.initRuntimeWorker',
+          method: 'WxDebug.initJSRuntime',
           params: {
-            appId: appID,
+            env: {
+              WXEnvironment: {},
+            },
             source: `
-          self.__get_app_context__ = () => {};
-          console.log('Im WMLDebug.initRuntimeWorker');`,
-            bundleUrl: 'windmill.dsl.js',
-            env: {},
+            self.createInstanceContext = () => {};
+          console.log('Im WxDebug.initJSRuntime');`,
+            bundleUrl: 'js-framework.js',
           },
         }),
       )
       nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.initFrameworkApi',
+          method: 'WxDebug.callJS',
           params: {
-            appId: appID,
-            source: `console.log('Im WMLDebug.initFrameworkApi')`,
-            bundleUrl: 'windmill.module.api.js',
+            method: 'createInstanceContext',
+            args: [appID, {}, '', null],
           },
         }),
       )
-      nativeWS.send(
+      setTimeout(() => {
+        nativeWS.send(
         JSON.stringify({
-          method: 'WMLDebug.initAppFrameworkWorker',
+          method: 'WxDebug.callJS',
           params: {
-            appId: appID,
-            source: `console.log('Im WMLDebug.initAppFrameworkWorker')`,
-            bundleUrl: 'windmill.worker.js',
+            method: 'importScript',
+            args: [
+              appID,
+              `let result = self.callNativeModule('${appID}');
+              __postData__({method: '${testMehod}', params: result});
+              `,
+              {
+                bundleUrl: 'app.js',
+              },
+            ],
           },
         }),
       )
-      nativeWS.send(
-        JSON.stringify({
-          method: 'WMLDebug.importAppJS',
-          params: {
-            appId: appID,
-            source: `
-          let result = self.__dispatch_message_sync__('${appID}', '${testData}')
-          __postData__({method: '${testMehod}', params: result})
-          `,
-            bundleUrl: 'app.js',
-          },
-        }),
-      )
+      }, 1000)
     })
     nativeWS.on('message', message => {
       message = JSON.parse(message)
-      if (message.method === 'WMLDebug.dispatchMessageSync') {
-        expect(message.params.data).toEqual(testData)
+      if (message.method === 'WxDebug.syncCall') {
+        expect(message.params.method).toEqual('callNativeModule')
         nativeWS.send(
           JSON.stringify({
-            method: 'WMLDebug.receiveMessageSync',
+            method: 'WxDebug.syncReturn',
             id: message.id,
             params: {
-              data: testCallbackData,
-            },
+              ret: testCallbackData
+            }
           }),
         )
       }
