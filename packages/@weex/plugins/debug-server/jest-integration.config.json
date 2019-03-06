@@ -1,0 +1,9 @@
+{
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.ts$": "jest"
+  },
+  "verbose": true,
+  "testRegex": "(\\.|/)integration\\.js$",
+  "moduleFileExtensions": ["ts", "js", "json", "node"]
+}
