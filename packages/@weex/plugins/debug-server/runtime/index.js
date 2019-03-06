@@ -8,10 +8,6 @@ var cacheRegisterLoop = [];
 var cacheSyncList = [];
 var activeWorkerId;
 
-var heartbeatTimer = null
-var wmlCacheEnv;
-var wmlWorkers = {};
-var wmlAppMaps = {};
 BrowserChannelId = new URLSearchParams(location.search).get('channelId');
 
 if (BrowserChannelId) {
@@ -20,88 +16,81 @@ if (BrowserChannelId) {
 
 function connect(channelId) {
   RuntimeSocket = new WebsocketClient('ws://' + window.location.host + '/debugProxy/runtime/' + channelId);
-
+  
   RuntimeSocket.on('*', function (message) {
     if (!message) return;
     var domain = message.method.split('.')[0];
-    var appId;
-    if (message && message.params && message.params.appId) {
-      appId = message.params.appId;
-    } else {
-      appId = activeWorkerId
+    if (domain === 'WxDebug') {
+      var instanceId;
+      if (message && message.params) {
+        instanceId = message.params && message.params.args && message.params.args[0];
+      }
+      else {
+        instanceId = activeWorkerId
+      }
+      if (workers[instanceId]) {
+        workers[instanceId].postMessage(message);
+      }
     }
-    if (wmlWorkers[appId]) {
-      wmlWorkers[appId].postMessage(message);
-    }
-    heartbeat()
   });
 
-  RuntimeSocket.on('WMLDebug.deviceDisconnect', function () {
+  RuntimeSocket.on('WxDebug.deviceDisconnect', function () {
     location.href = `http://${location.host}/runtime.html`
   })
 
-  RuntimeSocket.on('WMLDebug.initRuntimeWorker', function (message) {
-    if (message.params.appId) {
-      activeWorkerId = message.params.appId;
-    }
-    wmlCacheEnv = message.params.env;
+  RuntimeSocket.on('WxDebug.refresh', function () {
+    location.reload();
   });
 
-  RuntimeSocket.on('WMLDebug.initAppFrameworkWorker', function (message) {
-    if (message.params.appId) {
-      activeWorkerId = message.params.appId;
-    }
-    if (message.params.workerjs) {
-      destoryWmlRuntime(message)
+  RuntimeSocket.on('WxDebug.callJS', function (message) {
+    var instanceId = message.params.args[0];
+    if (message.params.method === 'createInstanceContext') {
+      destroyJSRuntime(message)
       message.channelId = BrowserChannelId;
-      message.method = 'WMLDebug.initSandboxWorker';
-      message.params.env = wmlCacheEnv;
-      initWmlRuntime(message)
+      message.method = 'WxDebug.initSandboxWorker';
+      message.params.env = cacheWeexEnv;
+      message.params.syncList = cacheSyncList.splice(0, cacheSyncList.length);
+      initJSRuntime(message)
+    }
+    else if(message.params.method === 'createInstance') {
+      destroyJSRuntime(message)
+      message.channelId = BrowserChannelId;
+      message.method = 'WxDebug.initWorker';
+      message.params.env = cacheWeexEnv;
+      initJSRuntime(message)
+    }
+    else if(message.params.method === 'importScript') {
+      if (workers[instanceId]) {
+        workers[instanceId].postMessage(message)
+      }
+      else {
+        cacheJsbundleImportMessage = message;
+      }
+    }
+    else if(message.params.method === 'destroyInstance') {
+      destroyJSRuntime(message);
+    }
+    else if (message.params.args && (message.params.method === 'registerComponents' || message.params.method === 'registerModules' || message.params.method === 'getJSFMVersion' || message.params.method === 'getJSFMVersion')) {
+      cacheRegisterLoop.push(message);
+    }
+    else {
+      if (message.params && message.params.args && message.params.args[0] && workers[message.params.args[0]]) {
+        workers[message.params.args[0]].postMessage(message);
+      }
+      else if (activeWorkerId && workers[activeWorkerId]) {
+        workers[activeWorkerId].postMessage(message);
+      }
     }
   });
 
-  RuntimeSocket.on('WMLDebug.destoryAppContext', function (message) {
-    destoryWmlRuntime(message)
-  });
-
-}
-
-function heartbeat() {
-  heartbeatTimer && clearInterval(heartbeatTimer)
-  heartbeatTimer = setInterval(() => {
-    RuntimeSocket && RuntimeSocket.send({
-      method: 'WMLDebug.heartbeat'
-    })
-  }, 30000)
-}
-
-function initWmlRuntime(message) {
-  var appId = message.params.appId;
-  wmlAppMaps[message.params.workerjs] = appId;
-  wmlWorkers[appId] = new Worker(message.params.workerjs);
-  wmlWorkers[appId]['prev'] = getPrevWorker(wmlWorkers);
-  wmlWorkers[appId].onmessage = function (message) {
-    message = message.data;
-    RuntimeSocket.send(message);
-  };
-  wmlWorkers[appId].postMessage(message);
-}
-
-function destoryWmlRuntime(message) {
-  var appId = message.params.appId;
-  var workerjs = message.params.workerjs;
-  if (workerjs) {
-    appId = wmlAppMaps[workerjs]
-  }
-  if (wmlWorkers[appId]) {
-    if (wmlWorkers[appId].prev) {
-      activeWorkerId = wmlWorkers[appId].prev;
-    } else {
-      activeWorkerId = null;
+  RuntimeSocket.on('WxDebug.initJSRuntime', function (message) {
+    var logLevel = localStorage.getItem('logLevel');
+    if (logLevel) {
+      message.params.env.WXEnvironment.logLevel = logLevel;
     }
-    wmlWorkers[appId].terminate();
-    delete wmlWorkers[appId];
-  }
+    cacheWeexEnv = message.params.env;
+    cacheRegisterLoop = [];
+  });
 }
 
 function destroyJSRuntime(message) {
@@ -113,7 +102,8 @@ function destroyJSRuntime(message) {
   if (workers[instanceId]) {
     if (workers[instanceId].prev) {
       activeWorkerId = workers[instanceId].prev;
-    } else {
+    }
+    else {
       activeWorkerId = null;
     }
     workers[instanceId].terminate();
@@ -130,7 +120,7 @@ function initJSRuntime(message) {
     message = message.data;
     RuntimeSocket.send(message);
   };
-  cacheRegisterLoop.forEach(function (message) {
+  cacheRegisterLoop.forEach(function(message) {
     workers[instanceId].postMessage(message)
   })
   if (cacheJsbundleImportMessage) {
@@ -142,10 +132,11 @@ function initJSRuntime(message) {
 function getPrevWorker(workers) {
   var lists = Object.keys(workers);
   if (lists.length === 0) return null;
-  for (var i = lists.length - 2; i >= 0; i--) {
+  for(var i = lists.length - 2; i >=0; i--) {
     if (workers[lists[lists.length - 2]]) {
       return lists[lists.length - 2];
     }
   }
   return null;
 }
+
