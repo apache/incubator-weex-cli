@@ -7,6 +7,7 @@ import * as ora from 'ora'
 import { times, flip, prop } from 'ramda'
 import * as logUpdate from 'log-update'
 import * as cliSpinners from 'cli-spinners'
+import * as logUtils from 'log-utils'
 
 // hack typescript
 const colors: any = importedColors
@@ -232,6 +233,10 @@ function printHelp(toolbox: Toolbox): void {
   printCommands(toolbox)
 }
 
+function timestamp (message: string): void {
+  info(`${logUtils.timestamp} ${message}`)
+}
+
 async function logPromise(promise, text, completedLabel = '') {
   const { frames, interval } = dots
 
@@ -246,14 +251,14 @@ async function logPromise(promise, text, completedLabel = '') {
 
   clearInterval(id)
 
-  logUpdate(`${colors.green('✔︎')} ${text} ${colors.gray(completedLabel)}`)
+  logUpdate(`${colors.green(logUtils.success)} ${text} ${colors.gray(completedLabel)}`)
   logUpdate.done()
 
   return returnValue
 }
 
-const checkmark = colors.success('✔︎')
-const xmark = colors.error('ⅹ')
+const checkmark = colors.success(logUtils.success)
+const xmark = colors.error(logUtils.error)
 
 const logger: ILOGGER = {
   colors,
@@ -268,6 +273,7 @@ const logger: ILOGGER = {
   success,
   spin,
   progress,
+  timestamp,
   printCommands,
   printHelp,
   checkmark,
