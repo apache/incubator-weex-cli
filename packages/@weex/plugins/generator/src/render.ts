@@ -176,7 +176,7 @@ function renderTemplateFiles (skipInterpolation) {
             return next(err);
           }
           files[file] = rawBuffer;
-          files[file].contents = new Buffer(res);
+          files[file].contents = Buffer.from(res);
 
           // delete old buffer
           if (rawFileName !== file) {
