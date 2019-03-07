@@ -31,7 +31,9 @@
     "glob": "^7.1.3",
     "merge": "^1.2.1",
     "plist": "^3.0.1",
-    "xcode": "^1.1.0"
+    "tar": "^4.4.8",
+    "xcode": "^1.1.0",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@types/cli-table2": "^0.2.1",
