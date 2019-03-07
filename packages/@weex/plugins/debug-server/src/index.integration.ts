@@ -166,7 +166,6 @@ describe('SyncCall can be worked', () => {
   })
 
   test('sync call should be worked', async done => {
-    let testData = 'syncCall'
     let testMehod = 'WxDebug.test'
     let testCallbackData = 'syncreturn'
     let appID = 'VM'
