@@ -233,7 +233,7 @@ function printHelp(toolbox: Toolbox): void {
   printCommands(toolbox)
 }
 
-function timestamp (message: string): void {
+function timestamp(message: string): void {
   info(`${logUtils.timestamp} ${message}`)
 }
 

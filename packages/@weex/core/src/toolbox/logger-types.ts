@@ -18,6 +18,8 @@ export interface ILOGGER {
   error: (message: any) => void
   /* DEPRECATED: prints a normal line of text. */
   log: (value: string) => void
+  /* prints a normal line of text with timestamp. */
+  timestamp: (value: string) => void
   /* Finds the column widths for a table */
   findWidths: (cliTable: CLITable) => number[]
   /* Returns column header dividers for a table */
