@@ -8,7 +8,7 @@ export default {
   run: ({ meta, logger, parameters }) => {
     const globalConfiguration: CliConfiguration = parameters.options.__config
     const info = meta.getModulesInfo()
-    logger.warn(globalConfiguration.cliVersion)
+    logger.warn(globalConfiguration.cliVersion || `[Beta]${meta.version()}`)
     if (info && info.mods) {
       for (let mod in info.mods) {
         logger.info(`- ${mod} : v${info.mods[mod].version}`)
