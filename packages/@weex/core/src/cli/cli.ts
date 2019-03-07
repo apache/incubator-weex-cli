@@ -339,7 +339,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
   const moduleConfigFilePath = path.join(config.moduleRoot, config.moduleConfigFileName)
   const packages: any = await installPackage(config, name, version, {
     root: config.moduleRoot,
-    registry: config.configs.registry,
+    registry: config && config.configs && config.configs.registry,
     force: config.force,
   })
   for (let i = 0; i < packages.length; i++) {
@@ -546,7 +546,13 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
  * @param stack error stack
  */
 export function pickSearchKey(stack: string) {
-  let errorIndex = /error:/gi.exec(stack).index
+  let res = /error:/gi.exec(stack)
+  let errorIndex
+  if (res) {
+    errorIndex = res.index
+  } else {
+    errorIndex = -6
+  }
   if (errorIndex) {
     return stack
       .slice(errorIndex + 6)

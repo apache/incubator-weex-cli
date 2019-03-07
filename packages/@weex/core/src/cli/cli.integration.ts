@@ -10,6 +10,7 @@ afterAll(() => jest.setTimeout(5 * 1000))
 
 test('can start the cli', async () => {
   const cliConfiguration: CliConfiguration = {
+    cliVersion: '',
     corePath: '',
     coreName: '',
     coreRoot: '',
