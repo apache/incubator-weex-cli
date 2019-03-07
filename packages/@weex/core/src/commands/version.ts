@@ -1,11 +1,14 @@
+import { CliConfiguration } from '../cli/cli'
+
 export default {
   name: 'version',
   alias: 'v',
   description: 'Output the version number',
   dashed: true,
-  run: ({ meta, logger }) => {
+  run: ({ meta, logger, parameters }) => {
+    const globalConfiguration: CliConfiguration = parameters.options.__config
     const info = meta.getModulesInfo()
-    logger.warn(meta.version())
+    logger.warn(globalConfiguration.cliVersion)
     if (info && info.mods) {
       for (let mod in info.mods) {
         logger.info(`- ${mod} : v${info.mods[mod].version}`)
