@@ -40,6 +40,7 @@ function createFakeToolbox(): Toolbox {
       __config: {
         home: home,
         globalConfigFileName: globalConfigFileName,
+        coreRoot: home,
       },
     },
   }
