@@ -116,11 +116,11 @@ describe('JSDebug can be worked', () => {
                 appID,
                 `__postmessage__({method: '${testMehod}', params: {}})`,
                 {
-                  bundleUrl: 'app.js'
-                }
+                  bundleUrl: 'app.js',
+                },
               ],
             },
-          })
+          }),
         )
       }, 1000)
     })
@@ -224,22 +224,22 @@ describe('SyncCall can be worked', () => {
       )
       setTimeout(() => {
         nativeWS.send(
-        JSON.stringify({
-          method: 'WxDebug.callJS',
-          params: {
-            method: 'importScript',
-            args: [
-              appID,
-              `let result = self.callNativeModule('${appID}');
+          JSON.stringify({
+            method: 'WxDebug.callJS',
+            params: {
+              method: 'importScript',
+              args: [
+                appID,
+                `let result = self.callNativeModule('${appID}');
               __postData__({method: '${testMehod}', params: result});
               `,
-              {
-                bundleUrl: 'app.js',
-              },
-            ],
-          },
-        }),
-      )
+                {
+                  bundleUrl: 'app.js',
+                },
+              ],
+            },
+          }),
+        )
       }, 1000)
     })
     nativeWS.on('message', message => {
@@ -251,8 +251,8 @@ describe('SyncCall can be worked', () => {
             method: 'WxDebug.syncReturn',
             id: message.id,
             params: {
-              ret: testCallbackData
-            }
+              ret: testCallbackData,
+            },
           }),
         )
       }

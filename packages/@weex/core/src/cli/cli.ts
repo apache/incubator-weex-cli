@@ -145,7 +145,11 @@ export default class Cli {
       try {
         const pkg = require('../../package.json')
         /* tslint-disabled */
-        usertrackapi.get(`weex-cli-2.0.tool_usage.usage?cmd=${command}&argv=${this.argv.array.join('+')}&mid=${machineIdSync()}&node=${process.version}&core=v${pkg.version}&t=${new Date().getTime()}`)
+        usertrackapi.get(
+          `weex-cli-2.0.tool_usage.usage?cmd=${command}&argv=${this.argv.array.join('+')}&mid=${machineIdSync()}&node=${
+            process.version
+          }&core=v${pkg.version}&t=${new Date().getTime()}`,
+        )
       } catch (error) {
         debug('Http request error', error)
       }
