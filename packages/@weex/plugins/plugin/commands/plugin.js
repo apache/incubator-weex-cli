@@ -198,16 +198,17 @@ module.exports = {
       } else if (command) {
         let pluginName = second
         let plugin = new Plugin()
+        let spinner = logger.spin(`Fetching plugin ...`)
 
         plugin.on(LOGLEVEL.INFO, (value) => {
           logger.info(value)
-          console.log(value)
         })
         plugin.on(LOGLEVEL.WARN, (value) => {
           logger.warn(value)
         })
         plugin.on(LOGLEVEL.LOG, (value) => {
-          logger.log(value)
+          spinner.stop()
+          logger.log(logger.colors.grey(value))
         })
         plugin.on(LOGLEVEL.SUCCESS, (value) => {
           logger.success(value)
