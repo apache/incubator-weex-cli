@@ -185,7 +185,7 @@ export default class Cli {
           packageSubName,
           this.cliConfiguration.configs.registry,
         )
-        if (!res.error) {
+        if (res && !res.error) {
           const packages: any = await installPackage(this.cliConfiguration, `@weex-cli/${packageSubName}`, 'latest', {
             root: this.cliConfiguration.moduleRoot,
             registry: this.cliConfiguration.configs.registry,
@@ -447,12 +447,12 @@ export async function checkNpmPackageExist(name: string, version: string, regist
     baseURL: `${registry}`,
   })
   const res: any = await npmApi.get(`${name}`)
-  if (res.data.error) {
+  if (res && res.data.error) {
     if (/not_found/.test(res.data.error)) {
       res.data.error = ErrorType.PACKAGE_NOT_FOUND
     }
   } else if (version && version !== 'latest') {
-    if (!res.data.versions[version]) {
+    if (res && !res.data.versions[version]) {
       res.data.error = ErrorType.PACKAGE_VERSION_NOT_FOUND
       res.data.versions = Object.keys(res.data.versions)
     }
@@ -478,7 +478,7 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
     let spinner = logger.spin(`Checking ${mod} ... ${logger.colors.grey('this may take a few seconds')}`)
     spinner.text = ``
     let res = await getLatestNpmPackageInfo(mod, registry)
-    if (!res.error) {
+    if (res && !res.error) {
       spinner.stopAndPersist({
         symbol: `${logger.colors.green(`[${logger.checkmark}]`)}`,
         text: `sync module [${mod}]`,
@@ -523,7 +523,7 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
   })
   const res: any = await npmApi.get(`${name}/latest`)
   let error
-  if (res.data.error) {
+  if (res && res.data.error) {
     if (/not_found/.test(res.data.error)) {
       error = ErrorType.PACKAGE_NOT_FOUND
     }
