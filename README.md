@@ -27,10 +27,10 @@
 - iOS developer tools like `XCode`
 - Android SDK and ADB
 
-Now you can install the beta version use below command:
+Now you can install the latest version use below command:
 
 ```base
-$ npm i weex-toolkit@beta -g
+$ npm i weex-toolkit -g
 ```
 
 To know more detail about the command, you can run:
