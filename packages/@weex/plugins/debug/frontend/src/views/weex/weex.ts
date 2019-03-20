@@ -89,6 +89,7 @@ export class WeexComponent extends Vue {
   isSandbox: boolean = true
   editorShow: boolean = false
   canReload: boolean = true
+  loadingTimer: any = null
   @Prop({ type: String })
   private channelId: { value: string }
   // computed
@@ -284,10 +285,7 @@ export class WeexComponent extends Vue {
           this.$router.replace({ path: '/' })
         }, 8000)
       } else if (method === 'WxDebug.bundleRendered') {
-        this.canReload = true
         this.historyLatestUrl = data.params.bundleUrl
-        this.$snotify.clear()
-        this.$snotify.success(this.$t('weexDebugPage.reloadSuccess'))
         let env = Object.assign({}, this.environment)
         if (data.params.env) {
           for (let key in data.params.env) {
@@ -348,6 +346,16 @@ export class WeexComponent extends Vue {
       this.$snotify.async(`${this.$t('weexDebugPage.reloading')}...`, () => new Promise((resolve, reject) => {
         this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
         this.canReload = false
+        this.loadingTimer = setTimeout(() => {
+          this.canReload = true
+          resolve({
+            body: this.$t('weexDebugPage.reloadSuccess'),
+            config: {
+              timeout: 1000,
+              closeOnClick: true
+            }
+          })
+        }, 1000)
       }))
     }
   }
