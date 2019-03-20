@@ -259,6 +259,9 @@ debuggerRouter
         (payload.params.args[2] && payload.params.args[2].bundleUrl) ||
         crypto.md5(code) + '.js'
       bundleUrl = bundleUrl.replace(/\?random=(-)?\d+/i, '')
+      if (!config.env[message.channelId]) {
+        config.env[message.channelId] = {}
+      }
       if (
         config.env[message.channelId] &&
         config.env[message.channelId]['polify'] &&
