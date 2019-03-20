@@ -88,6 +88,7 @@ export class WeexComponent extends Vue {
   timer: any = null
   isSandbox: boolean = true
   editorShow: boolean = false
+  canReload: boolean = true
   @Prop({ type: String })
   private channelId: { value: string }
   // computed
@@ -283,7 +284,10 @@ export class WeexComponent extends Vue {
           this.$router.replace({ path: '/' })
         }, 8000)
       } else if (method === 'WxDebug.bundleRendered') {
+        this.canReload = true
         this.historyLatestUrl = data.params.bundleUrl
+        this.$snotify.clear()
+        this.$snotify.success(this.$t('weexDebugPage.reloadSuccess'))
         let env = Object.assign({}, this.environment)
         if (data.params.env) {
           for (let key in data.params.env) {
@@ -306,7 +310,7 @@ export class WeexComponent extends Vue {
         this.mockCode = ''
         this.$snotify.clear()
         this.modalShow = false
-        this.$snotify.success(`生成文件${template}`)
+        this.$snotify.success(`${this.$t('weexDebugPage.generateFile')}${template}`)
         env[this.modalKey] = template
         this.updateEnvironment(env)
         this.modalKey = ''
@@ -340,16 +344,12 @@ export class WeexComponent extends Vue {
   }
 
   reload () {
-    this.$snotify.async('刷新页面...', () => new Promise((resolve, reject) => {
-      this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
-      this.timer = setTimeout(() => resolve({
-        body: '刷新成功',
-        config: {
-          closeOnClick: true,
-          timeout: 1000
-        }
-      }), 1000)
-    }))
+    if (this.canReload) {
+      this.$snotify.async(`${this.$t('weexDebugPage.reloading')}...`, () => new Promise((resolve, reject) => {
+        this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
+        this.canReload = false
+      }))
+    }
   }
 
   cleanHistory () {
@@ -364,7 +364,7 @@ export class WeexComponent extends Vue {
         { text: 'No', action: (toast) => this.$snotify.remove(toast.id) }
       ]
     }
-    this.$snotify.confirm('确定删除历史记录？', comfirmOptions)
+    this.$snotify.confirm(this.$t('weexDebugPage.ensureDeleteHistory'), comfirmOptions)
   }
 
   updateWeexEnvironment (type, value) {
@@ -376,7 +376,7 @@ export class WeexComponent extends Vue {
   }
 
   activeWeexEnvironmentSetting () {
-    this.$snotify.async('更改环境配置', () => new Promise((resolve, reject) => {
+    this.$snotify.async(this.$t('weexDebugPage.changeEnvSetting'), () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({
         method: 'WxDebug.setContextEnvironment',
         params: {
@@ -386,7 +386,7 @@ export class WeexComponent extends Vue {
       }))
       this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
       setTimeout(() => resolve({
-        body: '更改成功',
+        body: this.$t('weexDebugPage.changeSettingSuccess'),
         config: {
           closeOnClick: true,
           timeout: 1000
@@ -412,12 +412,12 @@ export class WeexComponent extends Vue {
       environment = this.environment
     }
     if (!value) {
-      this.$snotify.error('页面URL不能为空')
+      this.$snotify.error(this.$t('weexDebugPage.noEmptyUrl'))
       return
     } else {
       environment['sourcejs'] = value
     }
-    this.$snotify.async('加载中...', () => new Promise((resolve, reject) => {
+    this.$snotify.async(`${this.$t('weexDebugPage.loadingTip')}...`, () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({
         method: 'WxDebug.setContextEnvironment',
         params: {
@@ -427,7 +427,7 @@ export class WeexComponent extends Vue {
       }))
       this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
       setTimeout(() => resolve({
-        body: '加载成功',
+        body: this.$t('weexDebugPage.loadingSuccess'),
         config: {
           closeOnClick: true,
           timeout: 1000
@@ -441,7 +441,7 @@ export class WeexComponent extends Vue {
   }
 
   mockFile (code: string) {
-    this.$snotify.async(`生成文件中...`, () => new Promise((resolve, reject) => {
+    this.$snotify.async(`${this.$t('weexDebugPage.generatingFile')}...`, () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({ method: 'WxDebug.postTemplateFile', params: { value: this.editor.getValue() } }))
       this.editor.setValue('')
     }))

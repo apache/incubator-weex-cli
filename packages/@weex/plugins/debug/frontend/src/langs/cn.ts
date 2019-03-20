@@ -55,7 +55,18 @@ export const cn = {
     restoreDesc: '恢复',
     mockTips: 'mock 文件',
     generatorFile: '生成文件',
-    environmentSetting: '环境设置'
+    environmentSetting: '环境设置',
+    generatingFile: '生成文件中',
+    generateFile: '生成文件',
+    reloadSuccess: '刷新成功',
+    reloading: '刷新页面中',
+    ensureDeleteHistory: '确定删除历史记录？',
+    changeEnvSetting: '更改环境配置',
+    changeSettingSuccess: '更改成功',
+    noEmptyUrl: '页面URL不能为空',
+    loadingTip: '加载中',
+    loadingSuccess: '加载成功'
+
   },
   sideBar: {
     weex: {
