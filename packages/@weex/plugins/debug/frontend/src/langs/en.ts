@@ -55,7 +55,17 @@ export const en = {
     restoreDesc: 'Restore',
     mockTips: 'Mock file',
     generatorFile: 'Generate File',
-    environmentSetting: 'Environment Setting'
+    environmentSetting: 'Environment Setting',
+    generatingFile: 'New Files',
+    generateFile: 'New File',
+    reloadSuccess: 'Reload Success',
+    reloading: 'Reloading',
+    ensureDeleteHistory: 'Delete History?',
+    changeEnvSetting: 'Change Environment',
+    changeSettingSuccess: 'Change Success',
+    noEmptyUrl: 'Url should not be empty',
+    loadingTip: 'Loading',
+    loadingSuccess: 'Load Success'
   },
   sideBar: {
     weex: {
