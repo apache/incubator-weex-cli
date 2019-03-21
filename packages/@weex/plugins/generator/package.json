@@ -21,6 +21,7 @@
   "author": "balloonzzq <zqzhuang888@qq.com>",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.6.2",
     "chalk": "^2.4.1",
     "consolidate": "^0.15.1",
     "debug": "^4.1.0",
