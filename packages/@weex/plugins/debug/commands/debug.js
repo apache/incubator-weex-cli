@@ -92,7 +92,7 @@ module.exports = {
     }
 
     let devtoolOptions = await transformOptions(options)
-
+    let shouldReload = false
     if (options.help || options.h) {
       await showHelp()
     } else if (options.v || options.version) {
@@ -102,7 +102,7 @@ module.exports = {
         await compile(
           source,
           path.join(__dirname, '../frontend/public/weex'), {
-            watch: false,
+            watch: true,
             filename: '[name].js',
             web: false,
             config: options.config || options.c
@@ -133,7 +133,12 @@ module.exports = {
                 }
               })
             }
-            await api.startDevtoolServer(bundles, devtoolOptions)
+            if (!shouldReload) {
+              shouldReload = true
+              await api.startDevtoolServer(bundles, devtoolOptions)
+            } else {
+              api.reload()
+            }
           }
         )
       } else {
