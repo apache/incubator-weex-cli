@@ -29,7 +29,8 @@ const startDevtoolServer = async (entrys, options) => {
 };
 
 const api = {
-  startDevtoolServer: startDevtoolServer
+  startDevtoolServer: startDevtoolServer,
+  reload: devtool.reload
 };
 
 module.exports = {
