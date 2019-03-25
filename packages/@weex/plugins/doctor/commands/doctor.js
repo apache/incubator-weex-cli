@@ -68,7 +68,7 @@ module.exports = {
           symbol: `${logger.colors.red(`[${logger.xmark}]`)}`,
           text: `${logger.colors.red('@weex-cli/core is not the latest version')}`
         })
-        logger.warn(`    •  You can run \`weex update @weex-cli/core@latest\` to update it.`)
+        logger.warn(`    •  You can run \`weex repair @weex-cli/core\` to update it.`)
       } 
       else {
         spinner.stopAndPersist({
