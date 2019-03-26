@@ -12,7 +12,6 @@ import { loadModule } from './module-loader'
  */
 export function loadExtensionFromFile(file: string, options = {}): Extension {
   const extension = new Extension()
-
   // sanity check the input
   if (strings.isBlank(file)) {
     throw new Error(`Error: couldn't load extension (file is blank): ${file}`)
