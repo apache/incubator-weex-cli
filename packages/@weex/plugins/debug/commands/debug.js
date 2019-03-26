@@ -4,6 +4,7 @@ const {
 const ip = require('ip').address()
 const exit = require('exit')
 const path = require('path')
+const uuid = require('uuid')
 const detect = require('detect-port')
 const pkg = require('../package.json')
 
@@ -85,7 +86,7 @@ module.exports = {
       return {
         ip: options.host,
         port: options.port || options.p || defaultPort,
-        channelId: options.channelid,
+        channelId: options.channelid || uuid(),
         manual: options.manual,
         remoteDebugPort: options.remoteDebugPort
       }
@@ -126,7 +127,7 @@ module.exports = {
                 }
                 return {
                   updateTime: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()} ${formateTime(date.getHours())}:${formateTime(date.getMinutes())}:${formateTime(date.getSeconds())}`,
-                  output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}`,
+                  output: `http://${ip}:${devtoolOptions.port}/weex/${asset.name}?bundleType=vue`,
                   size: (asset.size / 1024).toFixed(0),
                   time: json.time,
                   entry: entry

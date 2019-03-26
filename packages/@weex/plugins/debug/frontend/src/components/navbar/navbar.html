@@ -7,6 +7,12 @@
   </b-navbar-nav>
   <b-navbar-nav class="ml-auto">
     <template></template>
+    <b-nav-item class="wx-navbar-item operate" @click="toggleBundlesModal()" :class="{'active': bundleSetting}">
+      <span class="iconfont icon-qrcode-scan">
+
+      </span>
+      {{$t('navbar.bundlesToggle')}}
+    </b-nav-item>
     <b-nav-item class="wx-navbar-item operate" v-if="enableEnvironmentSetting" @click="toggleEnvironmentSetting()" :class="{'active': environmentSetting}">
       <span class="iconfont icon-gaojishezhi">
 

@@ -18,6 +18,23 @@
     width: 0;
     height:0;
   }
+  .bundle-list {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .bundle-item {
+    text-align: center;
+    margin-right: 20px;
+  }
+
+  .bundle-title {
+    font-size: 12px;
+    color:#656565;
+  }
 }
 .wx-debug-weex-advance {
   height: 0;

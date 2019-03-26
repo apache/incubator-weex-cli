@@ -2,7 +2,8 @@ export const cn = {
   title: 'Weex 真机调试工具',
   navbar: {
     help: '帮助',
-    environmentSetting: '环境设置'
+    environmentSetting: '环境设置',
+    bundlesToggle: '页面'
   },
   home: {
     languageTitle: 'Languages',

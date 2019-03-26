@@ -128,5 +128,15 @@
           </div>
       </div>
     </b-modal>
+    <b-modal hide-backdrop v-model="bundlesModalShow" id="bundle" size="lg" hide-footer hide-title class="wx-debug-weex-modal">
+      <div class="bundle-list">
+        <a class="bundle-item" target="_blank" :href="item.output" v-for="(item, index) in bundles" :key="index">
+          <qrcode :value="item.output" :title="item.output" :size="100"></qrcode>
+          <div class="bundle-title">
+            {{item.entry.slice(item.entry.lastIndexOf('/') + 1)}}
+          </div>
+        </a>
+      </div>
+    </b-modal>
     <v-tour name="miniappTour" :steps="steps" :options="tourOptions" :callbacks="tourCallBack"></v-tour>
 </div>

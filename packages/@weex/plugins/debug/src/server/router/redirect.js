@@ -6,7 +6,7 @@ const redirectHttpRouter = new Router()
 
 redirectHttpRouter.get('/client/*', async (ctx, next) => {
   let content = fs.readFileSync(
-    path.join(__dirname, '../../../frontend/index.html'),
+    path.join(__dirname, '../../../frontend/public/index.html'),
     'utf-8'
   )
   ctx.response.status = 200

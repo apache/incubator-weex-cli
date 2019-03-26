@@ -27,6 +27,7 @@ import {
 export class NavbarComponent extends Vue {
   @State('environmentSetting') environmentSetting
   @State('helpSetting') helpSetting
+  @State('bundleSetting') bundleSetting
 
   get enableEnvironmentSetting () {
     return this.$route.meta.setting
@@ -47,5 +48,9 @@ export class NavbarComponent extends Vue {
 
   toggleHelpSetting () {
     this.$store.commit(types.UPDATE_HELP_SETTING, !this.helpSetting)
+  }
+
+  toggleBundlesModal () {
+    this.$store.commit(types.UPDATE_BUNDLE_SETTING, !this.bundleSetting)
   }
 }
