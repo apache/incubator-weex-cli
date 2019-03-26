@@ -2,7 +2,7 @@ import { IToolbox } from '../core/toolbox'
 import { install } from '../toolbox/installer-tools'
 
 /**
- * Extensions to fs.  Brought to you by fs-jetpack.
+ * Extensions to installer.
  *
  * @param toolbox The running toolbox.
  */
