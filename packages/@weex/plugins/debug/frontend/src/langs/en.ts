@@ -2,7 +2,8 @@ export const en = {
   title: 'Weex Debug Tool',
   navbar: {
     help: 'Help',
-    environmentSetting: 'Environment'
+    environmentSetting: 'Environment',
+    bundlesToggle: 'Pages'
   },
   home: {
     languageTitle: '切换语言',

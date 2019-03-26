@@ -19,45 +19,25 @@ function resolveConnectUrl (config) {
   )
 }
 
-exports.startServerAndLaunch = function (ip, port, manual, cb) {
-  this.startServer(ip, port).then(() => {
+exports.startServerAndLaunch = function (config, cb) {
+  this.startServer(config).then(() => {
     cb && cb()
-    if (!manual) this.launch(ip, port)
+    if (!config.manual) this.launch(config.ip, config.port)
   })
 }
 
-exports.startServer = function (ip, port) {
+exports.startServer = function (config) {
   return new Promise((resolve, reject) => {
     const inUse = config.inUse
-    let message = chalk.green('Start debugger server!')
-    if (inUse) {
-      message +=
-        ' ' +
-        chalk.red(
-          '(on port ' +
-            inUse.open +
-            ',' +
-            (' because ' + inUse.old + ' is already in use)')
-        )
-    }
-    message += '\n\n'
-    message +=
-      '- ' +
-      chalk.bold('Websocket Address For Native: ') +
-      ' ws://' +
-      ip +
-      ':' +
-      port +
-      '/debugProxy/native\n'
-    message +=
-      '- ' +
-      chalk.bold('Debug Server:                 ') +
-      ' http://' +
-      ip +
-      ':' +
-      port +
-      '\n'
-    debugServer.start(port, function () {
+    let message = `${chalk.green('Start debugger server!')}${inUse ? `\n${chalk.red(`(on port ${inUse.open},  because ${inUse.old} is already in use)`)}` : ''}
+
+${chalk.bold('Websocket Address For Native: ')}
+
+${chalk.grey(`ws://${config.ip}:${config.port}/debugProxy/native/${config.CHANNELID}`)}
+
+${chalk.bold('Debug Server:')} ${chalk.grey(`http://${config.ip}:${config.port}/`)}
+`
+    debugServer.start(config.port, function () {
       logger.log(
         boxen(message, {
           padding: 1,
@@ -103,5 +83,5 @@ exports.reload = function () {
 exports.start = function (bundles, config, cb) {
   config.bundles = bundles
   resolveConnectUrl(config)
-  this.startServerAndLaunch(config.ip, config.port, config.manual, cb)
+  this.startServerAndLaunch(config, cb)
 }

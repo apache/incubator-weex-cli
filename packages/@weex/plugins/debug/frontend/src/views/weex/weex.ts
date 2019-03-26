@@ -4,6 +4,7 @@ import {
   Action,
   namespace
 } from 'vuex-class'
+import QrcodeVue from 'qrcode.vue'
 import bEmbed from 'bootstrap-vue/es/components/embed/embed'
 import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select'
 import bButton from 'bootstrap-vue/es/components/button/button'
@@ -24,12 +25,14 @@ const Module = namespace('weex')
     'b-button': bButton,
     'b-modal': bModal,
     'b-form-select': bFormSelect,
-    'monacoeditor': MonacoEditor
+    'monacoeditor': MonacoEditor,
+    'qrcode': QrcodeVue
   }
 })
 export class WeexComponent extends Vue {
   @State('webSocketHost') webSocketHost
   @State('helpSetting') helpSetting
+  @State('bundleSetting') bundleSetting
   @State('environmentSetting') environmentSetting
   @Module.Action('updateForm') updateForm
   @Module.Action('cleanEnvironment') cleanEnvironment
@@ -43,8 +46,10 @@ export class WeexComponent extends Vue {
   @Module.State('historys') historys
   @Module.State('environment') environment
   bundleurl: string = ''
+  bundles: string[] = []
   mockCode: string = ''
   modalShow: boolean = false
+  bundlesModalShow: boolean = false
   modalKey: string = ''
   editor: any
   editorSrcPath: string = window.location.origin
@@ -157,12 +162,17 @@ export class WeexComponent extends Vue {
   }
 
   @Watch('helpSetting')
-  test (n, o) {
+  help (n, o) {
     if (n) {
       this.$tours['miniappTour'].start()
     } else {
       this.$tours['miniappTour'].stop()
     }
+  }
+
+  @Watch('bundleSetting')
+  bundle (n, o) {
+    this.bundlesModalShow = n
   }
 
   created () {
@@ -231,6 +241,9 @@ export class WeexComponent extends Vue {
     if (!localStorage.getItem('hasBeenTour')) {
       this.$store.commit(types.UPDATE_HELP_SETTING, true)
     }
+    this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+      this.$store.commit(types.UPDATE_BUNDLE_SETTING, false)
+    })
   }
 
   destroyed () {
@@ -266,6 +279,7 @@ export class WeexComponent extends Vue {
             let split = name.split('.')
             name = split.slice(Math.min(split.length - 1, 2)).join('.')
           }
+          this.bundles = data.params.bundles
           this.userAgent = name + '@' + device.model
           this.appVersion = 'v ' + device.weexVersion + ' - ' + device.platform + ' (inspector ' + device.devtoolVersion + ')'
           this.updateForm({ type: types.UPDATE_REMOTE_DEBUG_STATUS, value: typeof (device.remoteDebug) === 'undefined' ? sessionStorage.getItem('remoteDebug') === 'true' : device.remoteDebug })
@@ -285,6 +299,7 @@ export class WeexComponent extends Vue {
           this.$router.replace({ path: '/' })
         }, 8000)
       } else if (method === 'WxDebug.bundleRendered') {
+        this.$store.commit(types.UPDATE_BUNDLE_SETTING, false)
         this.historyLatestUrl = data.params.bundleUrl
         let env = Object.assign({}, this.environment)
         if (data.params.env) {

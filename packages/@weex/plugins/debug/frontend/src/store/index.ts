@@ -14,15 +14,18 @@ const debug = process.env.NODE_ENV !== 'production'
 export interface GlobalState {
   webSocketHost: string
   channelId: string
-  environmentSetting: string
-  helpSetting: string
+  environmentSetting: boolean
+  helpSetting: boolean
+  bundleSetting: boolean
 }
+
 const state: GlobalState = {
   webSocketHost: location.host,
   // webSocketHost: '30.8.57.159:8089',
   channelId: '',
-  environmentSetting: '',
-  helpSetting: ''
+  environmentSetting: false,
+  helpSetting: false,
+  bundleSetting: false
 }
 
 const store = new Vuex.Store({
