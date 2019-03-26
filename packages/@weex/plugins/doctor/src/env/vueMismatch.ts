@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra'
-import * as path from  'path'
-import * as util from  'util'
+import * as path from 'path'
+import * as util from 'util'
 import * as childProcess from 'child_process'
 import { EventEmitter } from 'events'
 import * as debug from 'debug'
@@ -13,33 +13,33 @@ export const VueDoctorMessageType = {
   warn: 'warn',
   info: 'info',
   end: 'end',
-  install: 'install'
+  install: 'install',
 }
 
 export class VueDoctor extends EventEmitter {
   modulePath: string
   corePath: string
 
-  constructor (modulePath: string, corePath: string) {
+  constructor(modulePath: string, corePath: string) {
     super()
     this.modulePath = modulePath
     this.corePath = corePath
   }
 
-  async check () {
+  async check() {
     await this.checkToolkit()
     await this.fixVue(this.modulePath)
     await this.fixVue(this.corePath)
   }
 
-  async checkToolkit () {
+  async checkToolkit() {
     const { stdout } = await exec('npm ls weex-toolkit -g --parseable -s')
     await this.fixVue(stdout, true)
   }
 
-  async fixVue (fixPath: any, uninstall?: boolean) {
+  async fixVue(fixPath: any, uninstall?: boolean) {
     if (!fixPath) {
-      return 
+      return
     }
     let locat
     if (fixPath.indexOf('node_modules') > -1) {
@@ -55,7 +55,7 @@ export class VueDoctor extends EventEmitter {
         DEBUG('cli packages need to be uninstalled', locat)
         this.emit(VueDoctorMessageType.info, `Start fix ${locat}`)
         let output = await exec('npm uninstall vue', {
-          cwd: locat
+          cwd: locat,
         })
         this.emit(VueDoctorMessageType.log, output.toString())
         this.emit(VueDoctorMessageType.end, `Fix vue mismatch error on ${locat}`)
@@ -63,9 +63,19 @@ export class VueDoctor extends EventEmitter {
         let vuePackage = await fse.readJson(path.join(locat, 'vue', 'package.json'))
         let vueTemplateCompilerPackage = await fse.readJson(path.join(locat, 'vue-template-compiler', 'package.json'))
         DEBUG('mismatch packages:', vueTemplateCompilerPackage, vuePackage)
-        if (vueTemplateCompilerPackage && vueTemplateCompilerPackage && vueTemplateCompilerPackage.version !== vuePackage.version) {
+        if (
+          vueTemplateCompilerPackage &&
+          vueTemplateCompilerPackage &&
+          vueTemplateCompilerPackage.version !== vuePackage.version
+        ) {
           this.emit(VueDoctorMessageType.error, `Vue packages version mismatch on ${locat}`)
-          this.emit(VueDoctorMessageType.install, JSON.stringify({package: `vue-template-compiler@${vuePackage.version}`, cwd: locat.substr(0, locat.lastIndexOf('node_modules'))}))
+          this.emit(
+            VueDoctorMessageType.install,
+            JSON.stringify({
+              package: `vue-template-compiler@${vuePackage.version}`,
+              cwd: locat.substr(0, locat.lastIndexOf('node_modules')),
+            }),
+          )
           this.emit(VueDoctorMessageType.end, `Fix vue mismatch error on ${locat}`)
         } else {
           DEBUG(`Path ${locat} is ok`)
@@ -76,7 +86,6 @@ export class VueDoctor extends EventEmitter {
       DEBUG(`Path ${locat} is ok`)
       this.emit(VueDoctorMessageType.end, `Path ${locat} is ok`)
     }
-    return 
+    return
   }
-
 }

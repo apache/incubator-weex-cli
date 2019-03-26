@@ -61,7 +61,7 @@ export class Runtime {
       'template',
       'patching',
       'open',
-      'installer'
+      'installer',
     ]
     coreExtensions.filter(ex => !exclude.includes(ex)).forEach(ex => {
       this.addExtension(ex, require(`../extensions/${ex}-extension`))
