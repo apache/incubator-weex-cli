@@ -1,6 +1,11 @@
-const { Doctor } = require('../lib')
+const { Doctor, VueDoctor, VueDoctorMessageType } = require('../lib')
 const os = require('os');
+const path = require('path');
+const fse = require('fs-extra');
+const glob = require('glob');
 const platform = os.platform();
+const debug = require('debug')
+const DEBUG = debug('plugin:doctor')
 
 /**
  * For check platform and provide some platform value
@@ -11,13 +16,16 @@ module.exports = {
   name: 'doctor',
   description: 'Checks your system for configuration problems which might prevent the Weex CLI from working properly',
   run: async (
-    {
+    context
+  ) => {
+    const {
       logger,
       parameters,
-      meta
-    }
-  ) => {
+      meta,
+      install
+    } = context
     const options = parameters.options
+    const globalConfiguration = parameters.options.__config
 
     const showHelp = async () => {
       let params = {
@@ -47,6 +55,15 @@ module.exports = {
       meta.generateHelp(params)
     }
 
+    const installPackage = async (
+      package,
+      options
+    ) => {
+      const [name, version] = package.split('@')
+      const res = await install(name, version || 'latest', options)
+      return res
+    }
+    
     const doctor = async () => {
       const androidAndiOSDoctor = new Doctor();
       let spinner = logger.spin(`Verify iOS and Android environment ...`)
@@ -96,6 +113,63 @@ module.exports = {
           })
         }
       }
+
+      logger.log(`\n[vue environment] check if there has Vue packages version mismatch issue\n`)
+
+      // check if there has Vue packages version mismatch issue
+      spinner = logger.spin(`Check if there has vue packages version mismatch issue`)
+      let doctorStep = 0
+      let vueDoctor = new VueDoctor(parameters.options.__config.moduleRoot, parameters.options.__config.coreRoot)
+      vueDoctor.on(VueDoctorMessageType.log, (message) => {
+        spinner.text = message
+      })
+      vueDoctor.on(VueDoctorMessageType.install, async (message) => {
+        const { package, cwd } = JSON.parse(message) 
+        await new Promise((resolve, reject) => {
+          glob('+(_vue-template-compiler*|vue-template-compiler)', {cwd: path.join(cwd, 'node_modules')}, async (err, files) => {
+            let len = files.length
+            if (len > 0) {
+              for(let i = 0; i < len; i++) {
+                try {
+                  await fse.remove(path.join(cwd, 'node_modules', files[i]))
+                } catch (err) {
+                  DEBUG('Remove _vue-template-compiler failed: ', err)
+                }
+              }
+            }
+            resolve()
+          })
+        })
+        await installPackage(package, {
+          root: cwd,
+          registry: globalConfiguration.registry,
+        })
+        spinner.color = 'green'
+        spinner.text = logger.colors.green(`Fix ${message.package} successed`)
+      })
+      vueDoctor.on(VueDoctorMessageType.error, (message) => {
+        spinner.color = 'red'
+        spinner.text = logger.colors.red(message)
+      })
+      vueDoctor.on(VueDoctorMessageType.warn, (message) => {
+        spinner.color = 'yellow'
+        spinner.text = logger.colors.yellow(message)
+      })
+      vueDoctor.on(VueDoctorMessageType.info, (message) => {
+        spinner.color = 'white'
+        spinner.text = message
+      })
+      vueDoctor.on(VueDoctorMessageType.end, (message) => {
+        spinner.text = logger.colors.green(message)
+        doctorStep ++
+        if (doctorStep === 3) {
+          spinner.stopAndPersist({
+            symbol: `  -`,
+            text: `AutoFix vue mismatch issue\n`
+          })
+        }
+      })
+      await vueDoctor.check()
     }
     
     if (options.version || options.v) { 
