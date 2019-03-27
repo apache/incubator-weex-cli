@@ -430,11 +430,16 @@ export async function installPackage(
  * @param command command name
  * @param registry npm registry
  */
-export async function suggestPackage(command: string, registry: string) {
+export async function suggestPackage(command: string, registry: string = 'https://registry.npm.taobao.org') {
   const npmApi = http.create({
-    baseURL: `${registry || 'http://registry.npmjs.org'}/@weex-cli/`,
+    baseURL: `${registry}/@weex-cli/`,
+    timeout: 30000,
   })
-  const res = await npmApi.get(`${command}`)
+  const res: any = await npmApi.get(`${command}`)
+  if (res.problem) {
+    debug('suggest package error:', res.problem)
+    await analyzer('request', res.problem, { registry })
+  }
   return res.data
 }
 
@@ -632,6 +637,14 @@ export async function analyzer(type: string, stack: any, options?: any) {
 
       logger.log(logger.colors.grey(`\nLooking for related issues on:`))
       logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
+    }
+  } else if (type === 'request') {
+    if (stack === 'CONNECTION_ERROR') {
+      logger.log(`Please check if your network can access ${logger.colors.yellow(options.registry)} normally`)
+      logger.log(`Or you can use \`weex config set registry [registry-url]\` command to use other npm registry`)
+    } else if (stack === 'TIMEOUT_ERROR') {
+      logger.log(`Please check if your network can access ${logger.colors.yellow(options.registry)} normally`)
+      logger.info(`Or you can use the \`install\` command to install the plugin.`)
     }
   } else if (typeof stack === 'string') {
     logger.error(stack)

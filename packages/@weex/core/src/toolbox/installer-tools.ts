@@ -62,7 +62,11 @@ const installer = async opts => {
   DEBUG(`set mirror env`)
   let binaryMirros
   await co(function*() {
-    binaryMirros = yield utils.getBinaryMirrors(opts.registry)
+    try {
+      binaryMirros = yield utils.getBinaryMirrors(opts.registry)
+    } catch (e) {
+      debug('getBinaryMirrors Error:', e)
+    }
   })
 
   for (let key in binaryMirros.ENVS) {
