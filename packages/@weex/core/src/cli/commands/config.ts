@@ -80,9 +80,8 @@ export default {
     }
     const configurationPath = path.join(globalConfiguration.coreRoot, globalConfiguration.globalConfigFileName)
     const get = async (key?: string) => {
-      if (cache) {
-        return cache
-      } else {
+      let keys = []
+      if (!cache) {
         if (fs.exists(configurationPath)) {
           cache = fs.read(configurationPath, 'json')
         } else {
@@ -90,14 +89,41 @@ export default {
           fs.write(configurationPath, cache)
         }
       }
+      if (key && key.indexOf('.') > -1) {
+        keys = key.split('.')
+      }
+      if (keys.length > 0) {
+        return keys.reduce((pre, cur) => {
+         if (pre[cur]) {
+           return pre[cur]
+         }
+         return ''
+        }, cache)
+      }
       if (key) {
         return cache[key]
       }
       return cache
     }
+    
     const set = async (key: string, value: string | boolean) => {
+      let keys = []
+      if (key.indexOf('.') > -1) {
+        keys = key.split('.')
+      }
       if (!cache) {
         cache = await get()
+      }
+      if (keys.length > 0) {
+        let temp = cache
+        for(let i = 0; i < keys.length - 1; i++) {
+          if (!temp[keys[i]]) {
+            temp[keys[i]] = {}
+          }
+          temp = temp[keys[i]]
+        }
+        temp[keys[keys.length - 1]] = value
+        return cache
       }
       cache[key] = value
       return cache
@@ -121,8 +147,10 @@ export default {
         for (let key in data) {
           if (typeof data[key] === 'boolean') {
             text.push(`${key} = ${data[key]}`)
-          } else {
+          } else if (typeof data[key] === 'string') {
             text.push(`${key} = "${data[key]}"`)
+          } else {
+            text.push(`${key} = ${JSON.stringify(data[key])}`)
           }
         }
         return text.join('\n')
@@ -152,7 +180,7 @@ export default {
             third = false
           }
           let data = await set(second, third)
-          logger.success(`\nset success\n`)
+          logger.success(`\nset ${second}=${third} success\n`)
           if (data[second] === third) {
             if (typeof third === 'boolean') {
               logger.info(`- ${second} = ${third}`)

@@ -69,7 +69,8 @@ export interface CliConfiguration {
   force?: boolean
   configs?: {
     [key: string]: any
-  }
+  },
+  ENVS?: any
 }
 
 export interface CoreOptions {
@@ -190,6 +191,7 @@ export default class Cli {
             root: this.cliConfiguration.moduleRoot,
             registry: this.cliConfiguration.configs.registry,
             force: this.cliConfiguration.force,
+            ENVS: this.cliConfiguration.configs.ENVS
           })
           for (let i = 0; i < packages.length; i++) {
             const commandBasePath = path.join(packages[i].root, 'commands')
@@ -341,6 +343,7 @@ export async function repairPackage(config: CliConfiguration, name: string, vers
     root: config.moduleRoot,
     registry: config && config.configs && config.configs.registry,
     force: config.force,
+    ENVS: config.ENVS
   })
   for (let i = 0; i < packages.length; i++) {
     let commandBasePath = path.join(packages[i].root, 'commands')
