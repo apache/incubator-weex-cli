@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/doctor",
-  "version": "2.0.0-beta.9",
+  "version": "2.0.0-beta.10",
   "description": "Doctor module for weex-toolkit",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
