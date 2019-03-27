@@ -143,6 +143,7 @@ module.exports = {
         await installPackage(package, {
           root: cwd,
           registry: globalConfiguration.registry,
+          ENVS: globalConfiguration.ENVS
         })
         spinner.color = 'green'
         spinner.text = logger.colors.green(`Fix ${message.package} successed`)

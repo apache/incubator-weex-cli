@@ -47,6 +47,7 @@ export default {
       const packages: any = await installPackage(globalConfiguration, name, version, {
         root: globalConfiguration.moduleRoot,
         registry: globalConfiguration.registry,
+        ENVS: globalConfiguration.ENVS
       })
       let commands = []
       let type = ModType.EXTENSION
