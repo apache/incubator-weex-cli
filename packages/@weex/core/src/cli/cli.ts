@@ -432,7 +432,7 @@ export async function installPackage(
  */
 export async function suggestPackage(command: string, registry: string) {
   const npmApi = http.create({
-    baseURL: `${registry}/@weex-cli/`,
+    baseURL: `${registry || 'https://registry.npmjs.org'}/@weex-cli/`,
   })
   const res = await npmApi.get(`${command}`)
   return res.data
