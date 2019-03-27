@@ -94,10 +94,10 @@ export default {
       }
       if (keys.length > 0) {
         return keys.reduce((pre, cur) => {
-         if (pre[cur]) {
-           return pre[cur]
-         }
-         return ''
+          if (pre[cur]) {
+            return pre[cur]
+          }
+          return ''
         }, cache)
       }
       if (key) {
@@ -105,7 +105,7 @@ export default {
       }
       return cache
     }
-    
+
     const set = async (key: string, value: string | boolean) => {
       let keys = []
       if (key.indexOf('.') > -1) {
@@ -116,7 +116,7 @@ export default {
       }
       if (keys.length > 0) {
         let temp = cache
-        for(let i = 0; i < keys.length - 1; i++) {
+        for (let i = 0; i < keys.length - 1; i++) {
           if (!temp[keys[i]]) {
             temp[keys[i]] = {}
           }
