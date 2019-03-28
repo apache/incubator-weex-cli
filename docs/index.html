@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Description">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      loadSidebar: true,
+      loadNavbar: true,
+      subMaxLevel: 2,
+      repo: 'weexteam/weex-toolkit',
+      name: 'Weex Toolkit',
+      ga: 'UA-137152340-1',
+      coverpage: true,
+      search: 'auto',
+      plugins: [
+        (hook, vm) => {
+          hook.beforeEach((html) => {
+            var url = 'https://github.com/weexteam/weex-toolkit/tree/master/docs' + vm.router.getFile()
+            var editHtml = '[📝 EDIT DOCUMENT](' + url + ')\n'
+
+            return html
+              + '\n----\n'
+              + editHtml
+          })
+        }
+      ],
+      search: [
+        '/',
+        'develop-your-own-plugin',
+        'toolbox-api',
+        'toolbox-config',
+        'toolbox-filesystem',
+        'toolbox-semver',
+        'toolbox-http',
+        'toolbox-meta',
+        'toolbox-parameters',
+        'toolbox-patching',
+        'toolbox-print',
+        'toolbox-prompt',
+        'toolbox-semver',
+        'toolbox-strings',
+        'toolbox-system',
+        'toolbox-template',
+        'tutorial-making-a-plugin',
+        'tutorial-making-a-movie-cli',
+        'runtime',
+        'plugins',
+        'contributing',
+        'sniff',
+      ]
+    }
+  </script>
+  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/ga.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/emoji.min.js"></script>
+  <script src="//unpkg.com/docsify-copy-code"></script>
+  <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
+</body>
+</html>
