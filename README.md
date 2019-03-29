@@ -17,9 +17,6 @@
 
 ## System Components
 
-
-## System Components
-
 [Weex Toolkit](https://github.com/weexteam/weex-toolkit) split each function module into separate parts, if you see our [source code](https://github.com/weexteam/weex-toolkit/tree/master/packages/%40weex) , you will find that we manage multiple separate releases in the repository via [Lerna](https://lernajs.io/) Package, providing the following functional modules:
 
 | Project | Status | Description |
