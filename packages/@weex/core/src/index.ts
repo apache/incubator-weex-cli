@@ -19,7 +19,6 @@ export { install, InstallerOption } from './toolbox/installer-tools'
 
 // TODO: can't export these tools directly as they require context to run
 // need ideas on how to handle this
-export { ITemplate } from './extensions/template-extension'
 export { IMeta } from './extensions/meta-extension'
 
 // this adds the node_modules path to the "search path"
