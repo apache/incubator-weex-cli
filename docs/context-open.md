@@ -19,3 +19,12 @@ open('https://weex.io', 'chrome', (error) => {
   }
 })
 ```
+
+## chromeOpn
+
+Powered by [chrome-opn](https://www.npmjs.com/package/chrome-opn).
+
+```js
+const chromeOpn = context.chromeOpn
+chromeOpn('https://weex.io', null, false)
+```
