@@ -23,7 +23,7 @@
       plugins: [
         (hook, vm) => {
           hook.beforeEach((html) => {
-            var url = 'https://github.com/weexteam/weex-toolkit/tree/master/docs' + vm.router.getFile()
+            var url = 'https://github.com/weexteam/weex-toolkit/tree/master/docs' + vm.router.getFile().replace('weex-toolkit/', '')
             var editHtml = '[📝 EDIT DOCUMENT](' + url + ')\n'
 
             return html
