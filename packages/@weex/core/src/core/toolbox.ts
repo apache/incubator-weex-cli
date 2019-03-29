@@ -2,19 +2,7 @@ import { Runtime } from '../runtime/runtime'
 import { Command } from './command'
 import { Options } from './options'
 import { Plugin } from './plugin'
-import {
-  IFilesystem,
-  IStrings,
-  ILOGGER,
-  ISystem,
-  ISemver,
-  IHttp,
-  IPatching,
-  IInquirer,
-  ITemplate,
-  IMeta,
-  IParameters,
-} from '..'
+import { IFilesystem, IStrings, ILOGGER, ISystem, ISemver, IHttp, IPatching, IInquirer, IMeta, IParameters } from '..'
 export interface IParameters {
   /* The command arguments as an array. */
   array?: string[]
@@ -62,7 +50,6 @@ export interface IToolbox {
   semver?: ISemver
   strings?: IStrings
   system?: ISystem
-  template?: ITemplate
   generate?: any
 
   // our catch-all! since we can add whatever to this object

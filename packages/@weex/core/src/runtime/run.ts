@@ -4,7 +4,7 @@ import { createParams, parseParams } from '../toolbox/parameter-tools'
 import { Runtime } from './runtime'
 import { findCommand } from './runtime-find-command'
 import { Options } from '../core/options'
-import { loadConfig } from '../loaders/config-loader';
+import { loadConfig } from '../loaders/config-loader'
 
 /**
  * Runs a command.
