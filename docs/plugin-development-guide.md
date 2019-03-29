@@ -83,7 +83,7 @@ We've assembled an all star cast of libraries to help you build your CLI.
 ⭐️ [node-which](https://github.com/npm/node-which) for finding executables</br>
 ⭐️ [pluralize](https://github.com/blakeembrey/pluralize) for manipulating strings</br>
 
-## How to test the
+## How to test the plugin
 
 1. publish to `npm`
 
