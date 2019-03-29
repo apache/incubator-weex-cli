@@ -102,7 +102,8 @@
     "weex-cli"
   ],
   "pluginDependencies": {
-    "@weex-cli/compile": "latest"
+    "@weex-cli/compile": "latest",
+    "@weex-cli/generator": "latest"
   },
   "gitHead": "a0368eeb37e9e6165ab64e754b82f169b0582628"
 }
