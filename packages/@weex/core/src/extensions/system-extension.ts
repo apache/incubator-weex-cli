@@ -2,7 +2,7 @@ import { IToolbox } from '../core/toolbox'
 import { system } from '../toolbox/system-tools'
 
 /**
- * Extensions to launch processes and open files.
+ * Extensions to launch processes.
  *
  * @param toolbox The running toolbox.
  */

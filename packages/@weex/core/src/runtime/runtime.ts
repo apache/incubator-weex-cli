@@ -58,7 +58,6 @@ export class Runtime {
       'system',
       'inquirer',
       'http',
-      'template',
       'patching',
       'open',
       'installer',
