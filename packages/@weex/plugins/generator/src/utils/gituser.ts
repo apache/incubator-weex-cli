@@ -1,5 +1,7 @@
 import * as child_process from 'child_process'
+import * as DEBUG from 'debug'
 
+const debug = DEBUG('weex-cli:generator')
 const exec = child_process.execSync
 
 export function gitUser(): string {
@@ -11,7 +13,7 @@ export function gitUser(): string {
     email = exec('git config --get user.email');
   }
   catch (e) {
-    console.error(e)
+    debug('Exec gituser error:', e)
   }
 
   name = name && JSON.stringify(name.toString().trim()).slice(1, -1);
