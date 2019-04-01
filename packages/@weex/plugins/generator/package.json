@@ -24,7 +24,7 @@
     "async": "^2.6.2",
     "chalk": "^2.4.1",
     "consolidate": "^0.15.1",
-    "debug": "^4.1.0",
+    "debug": "^4.1.1",
     "download-git-repo": "^1.1.0",
     "fs-extra": "^7.0.1",
     "handlebars": "^4.0.11",
