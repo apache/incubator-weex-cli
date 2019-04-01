@@ -25,6 +25,7 @@ export interface IosBuilderConfig extends BuilderConfig {
    * Build for real device or not
    */
   isRealDevice?: boolean
+  [key: string]: any
 }
 
 export interface AndroidBuilderConfig extends BuilderConfig {
@@ -35,4 +36,6 @@ export interface AndroidBuilderConfig extends BuilderConfig {
   apkPath?: string
 }
 
-export interface RunOptions extends ExecOptions {}
+export interface RunOptions extends ExecOptions {
+  [key: string]: any
+}
