@@ -432,11 +432,11 @@ export async function installPackage(
  */
 export async function suggestPackage(command: string, registry: string = 'https://registry.npm.taobao.org/') {
   const npmApi = http.create({
-    baseURL: `${registry}${registry.slice(-1) === '/'? '' : '/'}@weex-cli/`,
+    baseURL: `${registry}${registry.slice(-1) === '/' ? '' : '/'}@weex-cli/`,
     timeout: 30000,
     headers: {
-      'Accept':'*/*'
-    }
+      Accept: '*/*',
+    },
   })
   const res: any = await npmApi.get(`${command}`)
   if (res.problem) {
