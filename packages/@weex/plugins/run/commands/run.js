@@ -77,6 +77,23 @@ module.exports = {
           }
         ],
         options: {
+          'Bash': [
+            {
+              key: 'target',
+              description: 'Specify the product folder',
+              default: 'dist'
+            },
+            {
+              key: 'entry',
+              description: 'Specify the hotRelod home page, base on `src` folder',
+              default: 'index.js'
+            },
+            {
+              key: 'precmd',
+              description: 'Specify precommand',
+              default: 'npm run dev'
+            }
+          ],
           'Miscellaneous:': [
             {
               key:'-v, --version',

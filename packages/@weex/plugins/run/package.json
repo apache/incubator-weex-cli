@@ -110,6 +110,6 @@
   "pluginDependencies": {
     "@weex-cli/device": "latest"
   },
-  "changelog": "fix run command",
+  "changelog": "feat(run): modify help info (close #525)",
   "gitHead": "a0368eeb37e9e6165ab64e754b82f169b0582628"
 }
