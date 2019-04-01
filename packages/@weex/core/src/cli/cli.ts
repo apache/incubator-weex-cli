@@ -430,10 +430,13 @@ export async function installPackage(
  * @param command command name
  * @param registry npm registry
  */
-export async function suggestPackage(command: string, registry: string = 'https://registry.npm.taobao.org') {
+export async function suggestPackage(command: string, registry: string = 'https://registry.npm.taobao.org/') {
   const npmApi = http.create({
-    baseURL: `${registry}/@weex-cli/`,
+    baseURL: `${registry}${registry.slice(-1) === '/'? '' : '/'}@weex-cli/`,
     timeout: 30000,
+    headers: {
+      'Accept':'*/*'
+    }
   })
   const res: any = await npmApi.get(`${command}`)
   if (res.problem) {
