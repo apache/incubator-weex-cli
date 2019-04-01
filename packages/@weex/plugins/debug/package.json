@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "format": "eslint ./src --fix",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "prepublish": "npm run lint && npm run build",
+    "build": "cd frontend && npm i && npm run compile"
   },
   "author": "Mario <faterrole@gmail.com>",
   "files": [
