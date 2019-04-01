@@ -33,7 +33,6 @@ module.exports = {
       system
     }
   ) => {
-    const iOSDevice = new device.IOSDevices()
     const options = parameters.options
     const analyzer = options.__analyzer
     let platform = parameters.first
