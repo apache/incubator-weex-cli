@@ -4,5 +4,5 @@
     "packages/@weex/core",
     "packages/@weex/plugins/*"
   ],
-  "version": "2.0.0-beta.14"
+  "version": "2.0.0-beta.15"
 }
