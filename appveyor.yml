@@ -9,9 +9,8 @@ test_script:
   - git --version
   - node --version
   - yarn --version
-  - yarn test
-  # ui tests temporarily disabled due to Cypress 3.0 issue on windows
-  # - cd "packages/@vue/cli-ui" && yarn test
+  # disable init prompt
+  - WEEX_CLI_TEST=true yarn test
 
 cache:
   - node_modules -> yarn.lock
