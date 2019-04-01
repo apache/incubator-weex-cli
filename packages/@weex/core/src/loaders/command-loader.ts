@@ -29,8 +29,8 @@ export function loadCommandFromFile(file: string, options: Options = {}): Comman
   // default name is the name without the file extension
   command.name = head(split('.', (fs.inspect(file) as any).name))
   // strip the extension from the end of the commandPath
-  command.commandPath = (options.commandPath || last(file.split('/commands/')).split('/')).map(
-    f => ([`${command.name}.js`, `${command.name}.ts`].includes(f) ? command.name : f),
+  command.commandPath = (options.commandPath || last(file.split('/commands/')).split('/')).map(f =>
+    [`${command.name}.js`, `${command.name}.ts`].includes(f) ? command.name : f,
   )
 
   // if the last two elements of the commandPath are the same, remove the last one
