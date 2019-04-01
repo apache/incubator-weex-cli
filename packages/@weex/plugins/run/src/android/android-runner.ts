@@ -7,7 +7,7 @@ import { PLATFORM_TYPES } from '../common/const'
 import * as DEBUG from 'debug'
 
 const debug = DEBUG('run')
-export default class IosRunner extends Runner {
+export default class AndroidRunner extends Runner {
   protected config: RunnerConfig
 
   constructor(options: RunnerConfig) {
