@@ -3,13 +3,13 @@ import evaluate from './eval'
 
 /**
  * Filter files
- * 
- * @param files 
- * @param filters 
- * @param data 
- * @param done 
+ *
+ * @param files
+ * @param filters
+ * @param data
+ * @param done
  */
-export function filter (files, filters, data, done){
+export function filter(files, filters, data, done) {
   if (!filters) {
     return done()
   }

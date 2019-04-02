@@ -70,7 +70,7 @@
     "@types/jest": "^22.2.3",
     "@types/node": "^10.0.4",
     "@types/pluralize": "^0.0.28",
-    "@types/ramda": "^0.25.32",
+    "@types/ramda": "^0.25.51",
     "coveralls": "^3.0.1",
     "expect": "^23.1.0",
     "jest": "^23.1.0",

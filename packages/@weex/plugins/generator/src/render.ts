@@ -33,25 +33,25 @@ interface Metadate {
 
 export default function(source: string, dest = './build', metadata: Metadate) {
   return new Promise((resolve, reject) => {
-    const metalsmith = Metalsmith(process.cwd());
+    const metalsmith = Metalsmith(process.cwd())
 
     metadata = Object.assign(metalsmith.metadata(), metadata)
 
-    metadata.helpers && Object.keys(metadata.helpers).map(key => {
-      Handlebars.registerHelper(key, metadata.helpers[key]);
-    });
+    metadata.helpers &&
+      Object.keys(metadata.helpers).map(key => {
+        Handlebars.registerHelper(key, metadata.helpers[key])
+      })
 
-    const helpers = { chalk, logger: console };
+    const helpers = { chalk, logger: console }
 
     if (metadata.metalsmith && typeof metadata.metalsmith.before === 'function') {
-      metadata.metalsmith.before(metalsmith, metadata, helpers);
+      metadata.metalsmith.before(metalsmith, metadata, helpers)
     }
 
     if (typeof metadata.metalsmith === 'function') {
-      metadata.metalsmith(metalsmith, metadata, helpers);
-    }
-    else if (metadata.metalsmith && typeof metadata.metalsmith.after === 'function') {
-      metadata.metalsmith.after(metalsmith, metadata, helpers);
+      metadata.metalsmith(metalsmith, metadata, helpers)
+    } else if (metadata.metalsmith && typeof metadata.metalsmith.after === 'function') {
+      metadata.metalsmith.after(metalsmith, metadata, helpers)
     }
 
     metalsmith
@@ -65,8 +65,8 @@ export default function(source: string, dest = './build', metadata: Metadate) {
       .build((err, files) => {
         if (err) throw err
         if (typeof metadata.complete === 'function') {
-          const helpers = { chalk, logger: console, files };
-          metadata.complete(metadata, helpers);
+          const helpers = { chalk, logger: console, files }
+          metadata.complete(metadata, helpers)
         }
       })
     resolve(metadata)
@@ -142,50 +142,52 @@ function filterFiles(filters) {
  * @param {Metalsmith} metalsmith
  * @param {Function} done
  */
-function renderTemplateFiles (skipInterpolation) {
-  skipInterpolation = typeof skipInterpolation === 'string'
-    ? [skipInterpolation]
-    : skipInterpolation;
+function renderTemplateFiles(skipInterpolation) {
+  skipInterpolation = typeof skipInterpolation === 'string' ? [skipInterpolation] : skipInterpolation
   return (files, metalsmith, done) => {
-    const keys = Object.keys(files);
-    const metalsmithMetadata = metalsmith.metadata();
-    async.each(keys, (file, next) => {
-      // skipping files with skipInterpolation option
-      if (skipInterpolation && multimatch([file], skipInterpolation, { dot: true }).length) {
-        return next();
-      }
-      const rawFileName = file;
-      const rawBuffer = files[file];
-      const contents = rawBuffer.contents.toString();
-      // do not attempt to render files that do not have mustaches
-      if (!/{{([^{}]+)}}/g.test(contents) && !/{{([^{}]+)}}/g.test(file)) {
-        return next();
-      }
-
-      // first replace filename
-      render(file, metalsmithMetadata, (err, res) => {
-        if (err) {
-          err.message = `[${file}] ${err.message}`;
-          return next(err);
+    const keys = Object.keys(files)
+    const metalsmithMetadata = metalsmith.metadata()
+    async.each(
+      keys,
+      (file, next) => {
+        // skipping files with skipInterpolation option
+        if (skipInterpolation && multimatch([file], skipInterpolation, { dot: true }).length) {
+          return next()
         }
-        file = res;
-        // second replace file contents
-        render(contents, metalsmithMetadata, (err, res) => {
-          if (err) {
-            err.message = `[${file}] ${err.message}`;
-            return next(err);
-          }
-          files[file] = rawBuffer;
-          files[file].contents = Buffer.from(res);
+        const rawFileName = file
+        const rawBuffer = files[file]
+        const contents = rawBuffer.contents.toString()
+        // do not attempt to render files that do not have mustaches
+        if (!/{{([^{}]+)}}/g.test(contents) && !/{{([^{}]+)}}/g.test(file)) {
+          return next()
+        }
 
-          // delete old buffer
-          if (rawFileName !== file) {
-            files[rawFileName] = null;
-            delete files[rawFileName];
+        // first replace filename
+        render(file, metalsmithMetadata, (err, res) => {
+          if (err) {
+            err.message = `[${file}] ${err.message}`
+            return next(err)
           }
-          next();
-        });
-      });
-    }, done);
-  };
+          file = res
+          // second replace file contents
+          render(contents, metalsmithMetadata, (err, res) => {
+            if (err) {
+              err.message = `[${file}] ${err.message}`
+              return next(err)
+            }
+            files[file] = rawBuffer
+            files[file].contents = Buffer.from(res)
+
+            // delete old buffer
+            if (rawFileName !== file) {
+              files[rawFileName] = null
+              delete files[rawFileName]
+            }
+            next()
+          })
+        })
+      },
+      done,
+    )
+  }
 }

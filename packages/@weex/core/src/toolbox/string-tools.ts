@@ -54,11 +54,13 @@ function identity(value: any): any {
  * @param value The string to convert
  * @returns PascalCase string.
  */
-function pascalCase(value: string): string {
-  return pipe(
+function pascalCase(value?: string): string {
+  // make tslint work
+  const pipeFn: any = pipe(
     camelCase,
     upperFirst,
-  )(value) as string
+  )
+  return pipeFn(value) as string
 }
 
 /**
