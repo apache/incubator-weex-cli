@@ -26,7 +26,7 @@ export function generator(source: string, dest: string, metadata: Metadate): Pro
 }
 
 interface CloneOption {
-  cache: boolean,
+  cache: boolean
   clone: boolean
 }
 
@@ -51,7 +51,7 @@ export function clone(templateUrl: string, target = defautlTarget, option?: Clon
       done()
     }
     function done() {
-      download(templateUrl, target, {clone: option.clone}, err => {
+      download(templateUrl, target, { clone: option.clone }, err => {
         // download('direct:https://github.com/balloonzzq/webpack.git#temp', target, { clone: true }, (err) => {
         if (err) {
           reject(err)
@@ -75,6 +75,3 @@ export function clone(templateUrl: string, target = defautlTarget, option?: Clon
 export function getOptions(name: string, dir: string, opt: Metadate) {
   return options(name, dir, opt)
 }
-
-
-

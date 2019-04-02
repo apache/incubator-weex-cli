@@ -3,7 +3,7 @@ import * as metadata from 'read-metadata'
 import * as fs from 'fs'
 import getGitUser from './utils/gituser'
 import * as validateName from 'validate-npm-package-name'
-const exists = fs.existsSync;
+const exists = fs.existsSync
 
 /**
  * Read prompts metadata.
@@ -12,23 +12,23 @@ const exists = fs.existsSync;
  * @return {Object}
  */
 
-export default function options (name: string, dir: string, opt: any): any {
-  const opts = getMetadata(dir);
+export default function options(name: string, dir: string, opt: any): any {
+  const opts = getMetadata(dir)
 
-  setDefault(opts, 'name', name);
-  setValidateName(opts);
+  setDefault(opts, 'name', name)
+  setValidateName(opts)
 
-  const author = getGitUser();
+  const author = getGitUser()
 
   if (author) {
-    setDefault(opts, 'author', author);
+    setDefault(opts, 'author', author)
   }
   for (const key in opt) {
-    setDefault(opts, key, opt[key]);
+    setDefault(opts, key, opt[key])
   }
 
-  return opts;
-};
+  return opts
+}
 
 /**
  * Gets the metadata from either a meta.json or meta.js file.
@@ -37,23 +37,22 @@ export default function options (name: string, dir: string, opt: any): any {
  * @return {Object}
  */
 
-function getMetadata (dir: string) {
-  const json = path.join(dir, 'meta.json');
-  const js = path.join(dir, 'meta.js');
-  let opts = {};
+function getMetadata(dir: string) {
+  const json = path.join(dir, 'meta.json')
+  const js = path.join(dir, 'meta.js')
+  let opts = {}
 
   if (exists(json)) {
-    opts = metadata.sync(json);
-  }
-  else if (exists(js)) {
-    const req = require(path.resolve(js));
+    opts = metadata.sync(json)
+  } else if (exists(js)) {
+    const req = require(path.resolve(js))
     if (req !== Object(req)) {
-      throw new Error('meta.js needs to expose an object');
+      throw new Error('meta.js needs to expose an object')
     }
-    opts = req;
+    opts = req
   }
 
-  return opts;
+  return opts
 }
 
 /**
@@ -64,33 +63,32 @@ function getMetadata (dir: string) {
  * @param {String} val
  */
 
-function setDefault (opts, key, val) {
+function setDefault(opts, key, val) {
   if (opts.schema) {
-    opts.prompts = opts.schema;
-    delete opts.schema;
+    opts.prompts = opts.schema
+    delete opts.schema
   }
-  const prompts = opts.prompts || (opts.prompts = {});
+  const prompts = opts.prompts || (opts.prompts = {})
   if (!prompts[key] || typeof prompts[key] !== 'object') {
     prompts[key] = {
-      'type': 'string',
-      'default': val
-    };
-  }
-  else {
-    prompts[key]['default'] = val;
+      type: 'string',
+      default: val,
+    }
+  } else {
+    prompts[key]['default'] = val
   }
 }
 
-function setValidateName (opts) {
-  const name = opts.prompts.name;
-  const customValidate = name.validate;
+function setValidateName(opts) {
+  const name = opts.prompts.name
+  const customValidate = name.validate
   name.validate = name => {
-    const its = validateName(name);
+    const its = validateName(name)
     if (!its.validForNewPackages) {
-      const errors = (its.errors || []).concat(its.warnings || []);
-      return 'Sorry, ' + errors.join(' and ') + '.';
+      const errors = (its.errors || []).concat(its.warnings || [])
+      return 'Sorry, ' + errors.join(' and ') + '.'
     }
-    if (typeof customValidate === 'function') return customValidate(name);
-    return true;
-  };
+    if (typeof customValidate === 'function') return customValidate(name)
+    return true
+  }
 }
