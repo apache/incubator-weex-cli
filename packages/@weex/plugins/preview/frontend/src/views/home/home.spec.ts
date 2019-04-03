@@ -13,7 +13,12 @@ describe('Home component', () => {
     directiveTest.createComponent()
     await directiveTest.execute(vm => {
       const mode = process.env.ENV
-      expect(vm.$el.querySelector('.title').textContent).to.equal(`Weex&nbsp&nbspPreview`)
+      const title = vm.$el.querySelector('.title').textContent.trim()
+      console.log(typeof title, title.length, 'Weex  Preview'.length)
+      expect(title.length).to.equal('Weex  Preview'.length)
+      expect(typeof title).to.equal('string')
+      expect(title.indexOf('Weex') !== -1).to.equal(true)
+      expect(title.indexOf('Preview') !== -1).to.equal(true)
     })
   })
 })

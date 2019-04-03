@@ -1,20 +1,20 @@
 export interface IParser {
-  unique(array: any[])
+  unique (array: any[])
 }
 
 export class Parser implements IParser {
-  unique(array: any[]) {
+  unique (array: any[]) {
     let unique = {}
-    array.forEach(function(item) {
+    array.forEach(function (item) {
       unique[JSON.stringify(item)] = item
     })
-    array = Object.keys(unique).map(function(u) {
+    array = Object.keys(unique).map(function (u) {
       return JSON.parse(u)
     })
     return array
   }
 
-  mergeApmData(data: any) {
+  mergeApmData (data: any) {
     let result = {}
     for (let key in data) {
       result[key] = {}

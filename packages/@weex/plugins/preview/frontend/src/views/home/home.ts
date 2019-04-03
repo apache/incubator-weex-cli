@@ -9,18 +9,18 @@ const Module = namespace('home')
 @Component({
   template: require('./home.html'),
   components: {
-    qrcode: QrcodeVue,
+    qrcode: QrcodeVue
   },
   filters: {
-    sliceFilename(value: any) {
+    sliceFilename (value: any) {
       let array = value.split('/')
       let len: number = array.length
       if (len > 2) {
         return `${array[len - 2]}/${array[len - 1]}`
       }
       return value
-    },
-  },
+    }
+  }
 })
 export class HomeComponent extends Vue {
   entry: string = ''
@@ -30,11 +30,13 @@ export class HomeComponent extends Vue {
   port: number | string
   socket: any = null
   preview: string = ''
-  created() {
-    this.init(this.$route.query)
+  created () {
+    if (this.$route) {
+      this.init(this.$route.query)
+    }
   }
 
-  mounted() {
+  mounted () {
     if (this.entry) {
       this.previewUrl = this.generatePreviewUrl(this.entry)
       this.qrcodeUrl = this.generateQRCodeUrl(this.port, this.transformEntry(this.entry))
@@ -44,7 +46,7 @@ export class HomeComponent extends Vue {
     }
   }
 
-  init(query: any) {
+  init (query: any) {
     if (query.entry) {
       this.entry = query.entry
     }
@@ -64,7 +66,7 @@ export class HomeComponent extends Vue {
     }
   }
 
-  connectHotreloadServer(port: number | string) {
+  connectHotreloadServer (port: number | string) {
     this.socket = new SockJS(`ws://${window.location.hostname}:${port}`)
     // this.socket = new SockJS(`ws://localhost:8080/sockjs-node/768/vz1v51sz/websocket`)
     this.socket.on('connect', data => {
@@ -86,11 +88,11 @@ export class HomeComponent extends Vue {
     })
   }
 
-  transformEntry(entry) {
+  transformEntry (entry) {
     return `http://${window.location.host}/dist/${entry}`
   }
 
-  generatePreviewUrl(entry) {
+  generatePreviewUrl (entry) {
     if (this.preview === 'single') {
       return `/assets/weex/weex.html?page=${entry.replace('.js', '.web.js')}`
     } else {
@@ -98,11 +100,11 @@ export class HomeComponent extends Vue {
     }
   }
 
-  generateQRCodeUrl(port: number | string, url: string) {
+  generateQRCodeUrl (port: number | string, url: string) {
     return `${url}?wsport=${port}&_wx_tpl=${url}`
   }
 
-  togglePage(entry: string) {
+  togglePage (entry: string) {
     this.entry = entry
     this.previewUrl = this.generatePreviewUrl(entry)
     this.qrcodeUrl = this.generateQRCodeUrl(this.port, this.transformEntry(entry))

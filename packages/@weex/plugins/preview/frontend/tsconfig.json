@@ -6,6 +6,9 @@
       "es2015",
       "es2015.promise"
     ],
+    "files": [
+      "./src/vue-shim.d.ts"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es5",
