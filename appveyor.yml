@@ -10,7 +10,7 @@ test_script:
   - node --version
   - yarn --version
   # disable init prompt
-  - WEEX_CLI_TEST=true yarn test
+  - export WEEX_CLI_TEST=true && yarn test
 
 cache:
   - node_modules -> yarn.lock
