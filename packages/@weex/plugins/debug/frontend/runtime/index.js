@@ -7,13 +7,13 @@ var cacheJsbundleImportMessage;
 var cacheRegisterLoop = [];
 var cacheSyncList = [];
 var activeWorkerId;
+var cacheLogLevel;
 var EntrySocket = new WebsocketClient('ws://' + location.host + '/page/entry');
 
 EntrySocket.on('WxDebug.startDebugger', function (message) {
   if (!RuntimeSocket) {
     location.href = `http://${location.host}/runtime/runtime.html?channelId=${message.params}`
-  }
-  else if(RuntimeSocket && BrowserChannelId!==message.params){
+  } else if (RuntimeSocket && BrowserChannelId !== message.params) {
     location.href = `http://${location.host}/runtime/runtime.html?channelId=${message.params}`
   }
 })
@@ -26,16 +26,15 @@ if (BrowserChannelId) {
 
 function connect(channelId) {
   RuntimeSocket = new WebsocketClient('ws://' + window.location.host + '/debugProxy/runtime/' + channelId);
-  
+
   RuntimeSocket.on('*', function (message) {
     if (!message) return;
     var domain = message.method.split('.')[0];
     if (domain === 'WxDebug') {
       var instanceId;
-      if (message && message.params) {
-        instanceId = message.params && message.params.args && message.params.args[0];
-      }
-      else {
+      if (message.params && message.params.args) {
+        instanceId = message.params.args[0];
+      } else {
         instanceId = activeWorkerId
       }
       if (workers[instanceId]) {
@@ -46,6 +45,13 @@ function connect(channelId) {
 
   RuntimeSocket.on('WxDebug.deviceDisconnect', function () {
     location.href = `http://${location.host}/runtime/runtime.html`
+  })
+
+  RuntimeSocket.on('WxDebug.setLogLevel', function (message) {
+    cacheLogLevel = message.params.logLevel
+    if (activeWorkerId && workers[activeWorkerId]) {
+      workers[activeWorkerId].postMessage(message);
+    }
   })
 
   RuntimeSocket.on('WxDebug.refresh', function () {
@@ -61,33 +67,26 @@ function connect(channelId) {
       message.params.env = cacheWeexEnv;
       message.params.syncList = cacheSyncList.splice(0, cacheSyncList.length);
       initJSRuntime(message)
-    }
-    else if(message.params.method === 'createInstance') {
+    } else if (message.params.method === 'createInstance') {
       destroyJSRuntime(message)
       message.channelId = BrowserChannelId;
       message.method = 'WxDebug.initWorker';
       message.params.env = cacheWeexEnv;
       initJSRuntime(message)
-    }
-    else if(message.params.method === 'importScript') {
+    } else if (message.params.method === 'importScript') {
       if (workers[instanceId]) {
         workers[instanceId].postMessage(message)
-      }
-      else {
+      } else {
         cacheJsbundleImportMessage = message;
       }
-    }
-    else if(message.params.method === 'destroyInstance') {
+    } else if (message.params.method === 'destroyInstance') {
       destroyJSRuntime(message);
-    }
-    else if (message.params.args && (message.params.method === 'registerComponents' || message.params.method === 'registerModules' || message.params.method === 'getJSFMVersion' || message.params.method === 'getJSFMVersion')) {
+    } else if (message.params.args && (message.params.method === 'registerComponents' || message.params.method === 'registerModules' || message.params.method === 'getJSFMVersion' || message.params.method === 'getJSFMVersion')) {
       cacheRegisterLoop.push(message);
-    }
-    else {
+    } else {
       if (message.params && message.params.args && message.params.args[0] && workers[message.params.args[0]]) {
         workers[message.params.args[0]].postMessage(message);
-      }
-      else if (activeWorkerId && workers[activeWorkerId]) {
+      } else if (activeWorkerId && workers[activeWorkerId]) {
         workers[activeWorkerId].postMessage(message);
       }
     }
@@ -112,8 +111,7 @@ function destroyJSRuntime(message) {
   if (workers[instanceId]) {
     if (workers[instanceId].prev) {
       activeWorkerId = workers[instanceId].prev;
-    }
-    else {
+    } else {
       activeWorkerId = null;
     }
     workers[instanceId].terminate();
@@ -130,11 +128,14 @@ function initJSRuntime(message) {
     message = message.data;
     RuntimeSocket.send(message);
   };
-  cacheRegisterLoop.forEach(function(message) {
+  cacheRegisterLoop.forEach(function (message) {
     workers[instanceId].postMessage(message)
   })
   if (cacheJsbundleImportMessage) {
     workers[instanceId].postMessage(message);
+  }
+  if (cacheLogLevel) {
+    message.params.env.WXEnvironment.logLevel = cacheLogLevel;
   }
   workers[instanceId].postMessage(message);
 }
@@ -142,11 +143,10 @@ function initJSRuntime(message) {
 function getPrevWorker(workers) {
   var lists = Object.keys(workers);
   if (lists.length === 0) return null;
-  for(var i = lists.length - 2; i >=0; i--) {
+  for (var i = lists.length - 2; i >= 0; i--) {
     if (workers[lists[lists.length - 2]]) {
       return lists[lists.length - 2];
     }
   }
   return null;
 }
-

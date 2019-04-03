@@ -19,23 +19,11 @@ debuggerRouter
     if (domain === 'WxDebug') {
       if (method === 'WxDebug.setLogLevel') {
         device.logLevel = payload.params.data
-        message.payload = {
-          method: 'WxDebug.setLogLevel',
-          params: {
-            logLevel: payload.params.data
-          }
-        }
         debuggerRouter.pushMessage('runtime.worker', message.terminalId, {
           method: 'WxDebug.setLogLevel',
           params: {
             logLevel: payload.params.data
           }
-        })
-        debuggerRouter.pushMessage('page.debugger', message.terminalId, {
-          method: 'WxDebug.reloadInspector'
-        })
-        debuggerRouter.pushMessage('page.debugger', message.terminalId, {
-          method: 'WxDebug.reloadRuntime'
         })
       }
       else if (method === 'WxDebug.setElementMode') {

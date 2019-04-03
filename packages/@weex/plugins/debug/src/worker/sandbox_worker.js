@@ -68,8 +68,8 @@ __eventEmitter__.on('WxDebug.callJS', function(data) {
   }
 })
 
-__eventEmitter__.on('WxDebug.changeLogLevel', function(message) {
-  self.WXEnvironment.logLevel = message.params
+__eventEmitter__.on('WxDebug.setLogLevel', function(message) {
+  __rewriteLog__(message.params.logLevel)
 })
 
 __eventEmitter__.on('Console.messageAdded', function(message) {
