@@ -239,28 +239,33 @@ module.exports = {
         if (!runnerOptions.deviceId) {
           const androidDevice = new device.AndroidDevices()
           let androidDeviceList = await androidDevice.getList()
-          androidDeviceList = androidDeviceList.map(device => {
-            if (device.isSimulator) {
-              return {
-                name :`${device.name} ${device.isSimulator ? '(Simulator)' : ''}`,
-                value: device.id
+          if (androidDeviceList && androidDeviceList.length > 1) {
+            androidDeviceList = androidDeviceList.map(device => {
+              if (device.isSimulator) {
+                return {
+                  name :`${device.name} ${device.isSimulator ? '(Simulator)' : ''}`,
+                  value: device.id
+                }
+              } else {
+                return {
+                  name: device.name,
+                  value: device.id
+                }
               }
-            } else {
-              return {
-                name: device.name,
-                value: device.id
+            })
+            let answers = await inquirer.prompt([
+              {
+                type: 'list',
+                message: 'Select one of the device',
+                name: 'chooseDevice',
+                choices: androidDeviceList
               }
-            }
-          })
-          let answers = await inquirer.prompt([
-            {
-              type: 'list',
-              message: 'Select one of the device',
-              name: 'chooseDevice',
-              choices: androidDeviceList
-            }
-          ])
-          runnerOptions.deviceId = answers.chooseDevice
+            ])
+            runnerOptions.deviceId = answers.chooseDevice
+          } else if (androidDeviceList && androidDeviceList.length === 1) {
+            runnerOptions.deviceId = androidDeviceList[0].id
+            logger.log(`${logger.colors.green(`[${logger.checkmark}]`)} Use ${logger.colors.green(`${androidDeviceList[0].name}${androidDeviceList[0].isSimulator ? ' (Simulator)' : ''}`)}`)
+          }
         }
         if (fse.existsSync(androidConfigurationFilePath)) {
           nativeConfig = await fse.readJson(androidConfigurationFilePath, {throws: false})
