@@ -9,8 +9,8 @@ test_script:
   - git --version
   - node --version
   - yarn --version
-  # disable init prompt
-  - export WEEX_CLI_TEST=true && yarn test
+  # support windows env setting
+  - set WEEX_CLI_TEST=true && yarn test
 
 cache:
   - node_modules -> yarn.lock
