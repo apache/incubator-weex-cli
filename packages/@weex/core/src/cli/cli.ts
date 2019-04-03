@@ -531,6 +531,10 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
 export async function getLatestNpmPackageInfo(name: string, registry: string) {
   const npmApi = http.create({
     baseURL: `${registry}`,
+    timeout: 30000,
+    headers: {
+      Accept: '*/*',
+    },
   })
   const res: any = await npmApi.get(`${name}/latest`)
   let error
