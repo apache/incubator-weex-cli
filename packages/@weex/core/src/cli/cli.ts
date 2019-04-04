@@ -432,13 +432,13 @@ export async function installPackage(
  */
 export async function suggestPackage(command: string, registry: string = 'https://registry.npm.taobao.org/') {
   const npmApi = http.create({
-    baseURL: `${registry}${registry.slice(-1) === '/' ? '' : '/'}@weex-cli/`,
+    baseURL: `${registry}${registry.slice(-1) === '/' ? '' : '/'}-/package/@weex-cli/`,
     timeout: 30000,
     headers: {
       Accept: '*/*',
     },
   })
-  const res: any = await npmApi.get(`${command}`)
+  const res: any = await npmApi.get(`${command}/dist-tags`)
   if (res.problem) {
     debug('suggest package error:', res.problem)
     await analyzer('request', res.problem, { registry })
@@ -536,7 +536,7 @@ export async function getLatestNpmPackageInfo(name: string, registry: string) {
       Accept: '*/*',
     },
   })
-  const res: any = await npmApi.get(`${name}/latest`)
+  const res: any = await npmApi.get(`${registry}${registry.slice(-1) === '/' ? '' : '/'}${name}/latest`)
   let error
   if (res && res.data && res.data.error) {
     if (/not_found/.test(res.data.error)) {
