@@ -6,6 +6,9 @@ import { kCFBundleShortVersionStringKey } from '@weex-cli/utils/lib/ios/plist-ut
 import { versionParse, VersionOption, compareVersion } from '@weex-cli/utils/lib/base/version'
 import { canRunSync, runSync } from '../base/process'
 
+import * as debug from 'debug'
+const DEBUG = debug('plugin:doctor:android-studio')
+
 // Android Studio layout:
 
 // Linux/Windows:
@@ -123,9 +126,8 @@ export class AndroidStudio {
 
   public fromMacOSBundle(bundlePath: string): AndroidStudioValid {
     const studioPath = path.join(bundlePath, 'Contents')
-    const plistFile = path.join(studioPath, 'Info.plist')
+    const plistFile: any = path.join(studioPath, 'Info.plist')
     const versionString = this.iosWorkflow.getPlistValueFromFile(plistFile, kCFBundleShortVersionStringKey)
-
     let version: VersionOption
     if (versionString) {
       version = versionParse(versionString)
@@ -171,13 +173,18 @@ export class AndroidStudio {
     // pointing to the same installation, so we grab only the latest one.
     if (fs.existsSync(homedir)) {
       for (let entity of fs.readdirSync(homedir)) {
-        const homeDotDir = path.join(homedir, entity)
-        if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
-          const studio = this.fromHomeDot(homeDotDir)
-          if (studio && !hasStudioAt(studio.directory, studio.version)) {
-            studios = studios.filter(other => other.directory !== studio.directory)
-            studios.push(studio)
+        const homeDotDir: any = path.join(homedir, entity)
+        try {
+          let homeDotDirType = fs.statSync(homeDotDir)
+          if (homeDotDirType && homeDotDirType.isDirectory() && entity.startsWith('.AndroidStudio')) {
+            const studio = this.fromHomeDot(homeDotDir)
+            if (studio && !hasStudioAt(studio.directory, studio.version)) {
+              studios = studios.filter(other => other.directory !== studio.directory)
+              studios.push(studio)
+            }
           }
+        } catch (error) {
+          DEBUG(error, homeDotDir)
         }
       }
     }

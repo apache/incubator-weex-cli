@@ -7,6 +7,8 @@ const ios_workflow_1 = require("../ios/ios-workflow");
 const plist_utils_1 = require("@weex-cli/utils/lib/ios/plist-utils");
 const version_1 = require("@weex-cli/utils/lib/base/version");
 const process_1 = require("../base/process");
+const debug = require("debug");
+const DEBUG = debug('plugin:doctor:android-studio');
 // Android Studio layout:
 // Linux/Windows:
 // $HOME/.AndroidStudioX.Y/system/.home
@@ -148,12 +150,18 @@ class AndroidStudio {
         if (fs.existsSync(platform_1.homedir)) {
             for (let entity of fs.readdirSync(platform_1.homedir)) {
                 const homeDotDir = path.join(platform_1.homedir, entity);
-                if (fs.statSync(homeDotDir).isDirectory() && entity.startsWith('.AndroidStudio')) {
-                    const studio = this.fromHomeDot(homeDotDir);
-                    if (studio && !hasStudioAt(studio.directory, studio.version)) {
-                        studios = studios.filter(other => other.directory !== studio.directory);
-                        studios.push(studio);
+                try {
+                    let homeDotDirType = fs.statSync(homeDotDir);
+                    if (homeDotDirType && homeDotDirType.isDirectory() && entity.startsWith('.AndroidStudio')) {
+                        const studio = this.fromHomeDot(homeDotDir);
+                        if (studio && !hasStudioAt(studio.directory, studio.version)) {
+                            studios = studios.filter(other => other.directory !== studio.directory);
+                            studios.push(studio);
+                        }
                     }
+                }
+                catch (error) {
+                    DEBUG(error, homeDotDir);
                 }
             }
         }
