@@ -81,8 +81,8 @@ export class Doctor {
         result.type === ValidationType.missing
           ? colors.red
           : result.type === ValidationType.installed
-            ? colors.green
-            : colors.yellow
+          ? colors.green
+          : colors.yellow
       // console.log(this.androidSdk.latestVersion.AndroidSdkVersion.sdkLevel)
       messageResult += `${color(`\n${result.leadingBox} ${validator.title}\n`)}`
       // console.log(`${result.leadingBox} ${validator.title} is`)

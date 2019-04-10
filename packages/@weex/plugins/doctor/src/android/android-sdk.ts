@@ -213,7 +213,12 @@ export class AndroidSdk {
     }
 
     platforms.map(platformName => {
-      let matchVersion = platformName.match(numberedAndroidPlatformRe)[1]
+      let matchVersion: any = platformName.match(numberedAndroidPlatformRe)
+      if (Array.isArray(matchVersion) && matchVersion.length > 1) {
+        matchVersion = matchVersion[1]
+      } else {
+        return null
+      }
       if (matchVersion === 'P') {
         matchVersion = '28'
       }
