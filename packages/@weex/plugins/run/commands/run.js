@@ -270,6 +270,9 @@ module.exports = {
         if (fse.existsSync(androidConfigurationFilePath)) {
           nativeConfig = await fse.readJson(androidConfigurationFilePath, {throws: false})
         }
+        if (!nativeConfig) {
+          nativeConfig = {}
+        }
         runner = new AndroidRunner({
           jsBundleFolderPath: path.resolve(runnerOptions.jsBundleFolderPath),
           jsBundleEntry: runnerOptions.jsBundleEntry,
