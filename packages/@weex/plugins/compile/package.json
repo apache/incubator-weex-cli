@@ -27,6 +27,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^1.0.1",
     "fs-extra": "^7.0.1",
+    "postcss": "^7.0.14",
     "postcss-plugin-px2rem": "^0.7.0",
     "postcss-plugin-weex": "^0.1.6",
     "sourcer": "^0.1.4",
