@@ -1,4 +1,4 @@
-const debug = require('debug')('create')
+const debug = require('debug')('plugin')
 const fse = require('fs-extra')
 const path = require('path')
 const {
