@@ -308,7 +308,7 @@ export default class Cli {
               await repairPackage(this.cliConfiguration, res.choose, upgradeList[res.choose].next_version)
               logger.success(
                 `[${logger.checkmark}] Upgrade ${res.choose} ${upgradeList[res.choose].version} -> ${
-                  upgradeList[res.updatelist].next_version
+                  upgradeList[res.choose].next_version
                 } success`,
               )
             }
