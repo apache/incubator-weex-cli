@@ -417,8 +417,7 @@ export async function installPackage(
   let res = result.concat(info)
   if (info.package.pluginDependencies) {
     for (let name in info.package.pluginDependencies) {
-      let sub = await installPackage(config, name, info.package.pluginDependencies[name], options, res)
-      return sub
+      res = await installPackage(config, name, info.package.pluginDependencies[name], options, res)
     }
   }
   return res
