@@ -192,6 +192,7 @@
           line-height: 30px;
           background: #ff5000;
           color: #fff;
+          margin-left: 10px;
           text-align: center;
         }
         .title {
@@ -203,7 +204,7 @@
       .operate {
         position: absolute;
         top: 15px;
-        right: 10px;
+        right: 20px;
         height: 30px;
         .iconfont {
           font-size: 16px;
@@ -309,6 +310,11 @@
       display: inline-flex;
       border-radius: 15px;
       overflow: hidden;
+    }
+    .wx-home-body {
+      max-height: 600px;
+      overflow: initial;
+      overflow-y: auto;
     }
     .wx-home-tab {
       width: 80px;
