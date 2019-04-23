@@ -66,8 +66,8 @@ export const cn = {
     changeSettingSuccess: '更改成功',
     noEmptyUrl: '页面URL不能为空',
     loadingTip: '加载中',
-    loadingSuccess: '加载成功'
-
+    loadingSuccess: '加载成功',
+    noPages: '暂无页面'
   },
   sideBar: {
     weex: {

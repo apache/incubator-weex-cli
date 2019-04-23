@@ -20,11 +20,14 @@
   }
   .bundle-list {
     width: 100%;
-    height: 150px;
-    display: flex;
+    float: left;
     align-items: center;
     overflow-x: auto;
-    overflow-y: hidden;
+    .nopage {
+      text-align: center;
+      line-height: 80px;
+      color: #949393;
+    }
   }
   .bundle-item {
     text-align: center;

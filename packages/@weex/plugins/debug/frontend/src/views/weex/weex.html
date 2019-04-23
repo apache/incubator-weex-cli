@@ -130,6 +130,7 @@
     </b-modal>
     <b-modal hide-backdrop v-model="bundlesModalShow" id="bundle" size="lg" hide-footer hide-title class="wx-debug-weex-modal">
       <div class="bundle-list">
+        <div v-if="bundles.length === 0" class="nopage">{{$t('weexDebugPage.noPages')}}</div>
         <a class="bundle-item" target="_blank" :href="item.output" v-for="(item, index) in bundles" :key="index">
           <qrcode :value="item.output" :title="item.output" :size="100"></qrcode>
           <div class="bundle-title">

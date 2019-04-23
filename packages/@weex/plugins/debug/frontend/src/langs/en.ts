@@ -66,7 +66,8 @@ export const en = {
     changeSettingSuccess: 'Change Success',
     noEmptyUrl: 'Url should not be empty',
     loadingTip: 'Loading',
-    loadingSuccess: 'Load Success'
+    loadingSuccess: 'Load Success',
+    noPages: 'No pages'
   },
   sideBar: {
     weex: {
