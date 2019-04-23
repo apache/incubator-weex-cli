@@ -527,7 +527,7 @@ export async function updateNpmPackageInfo(modules: ModData, registry: string, t
  * @param registry npm registry
  * @returns {error?:string, latest?:string}
  */
-export async function getLatestNpmPackageInfo(name: string, registry: string) {
+export async function getLatestNpmPackageInfo(name: string, registry: string = 'https://registry.npm.taobao.org/') {
   const npmApi = http.create({
     baseURL: `${registry}`,
     timeout: 30000,
