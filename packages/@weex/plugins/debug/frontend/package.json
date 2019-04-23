@@ -14,7 +14,7 @@
     "ci:teamcity": "karma --env=tc start config/karma.coverage.js && npm run coverage:remap",
     "ci:jenkins": "karma --env=jk start config/karma.coverage.js && npm run coverage:remap",
     "clean": "rimraf public && rimraf coverage",
-    "compile": "webpack --config config/webpack.config.prod.js",
+    "compile": "npm run clean && webpack --config config/webpack.config.prod.js",
     "watch": "webpack --config config/webpack.config.prod.js --watch",
     "coverage": "npm run coverage:run && npm run coverage:remap && npm run coverage:open",
     "coverage:open": "opn coverage/html-ts/index.html",
