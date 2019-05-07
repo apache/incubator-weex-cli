@@ -537,8 +537,8 @@ export async function getLatestNpmPackageInfo(name: string, registry: string = '
   })
   const res: any = await npmApi.get(`${registry}${registry.slice(-1) === '/' ? '' : '/'}${name}/latest`)
   let error
-  debug('Get latest npm package info: ', JSON.stringify(res))
   if (res && res.data) {
+    debug('Get latest npm package info: ', JSON.stringify(res.data))
     if (res.data.error) {
       if (/not_found/.test(res.data.error)) {
         error = ErrorType.PACKAGE_NOT_FOUND
