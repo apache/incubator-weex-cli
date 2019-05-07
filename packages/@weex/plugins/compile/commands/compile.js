@@ -18,6 +18,7 @@ module.exports = {
     const source = parameters.first;
     const target = parameters.second;
     const array = parameters.array;
+    const analyzer = parameters.options.__analyzer
     let progressBar;
 
     const showHelp = async () => {
@@ -103,19 +104,20 @@ module.exports = {
       }
     }
 
-    const formateResult = (error, output, json) => {
+    const formateResult = async (error, output, json) => {
       progressBar.hide();
       if (error) {
-        logger.error(`${logger.xmark} Build failed, please check the error below:`);
-        if (Array.isArray(error)) {
-          error.forEach(e => {
-            logger.error(e.replace("/n", "\n"));
-          });
-        } else if (error.stack) {
-          logger.error(error.stack.replace("/n", "\n"));
-        } else {
-          logger.error(error.replace("/n", "\n"));
-        }
+        await analyzer('compile', Array.isArray(error)?error.join('\n'):error)
+        // logger.error(`${logger.xmark} Build failed, please check the error below:`);
+        // if (Array.isArray(error)) {
+        //   error.forEach(e => {
+        //     logger.error(e.replace("/n", "\n"));
+        //   });
+        // } else if (error.stack) {
+        //   logger.error(error.stack.replace("/n", "\n"));
+        // } else {
+        //   logger.error(error.replace("/n", "\n"));
+        // }
       } else {
         logger.log(output.toString());
       }
