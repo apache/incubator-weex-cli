@@ -585,6 +585,32 @@ export function pickSearchKey(stack: string) {
 }
 
 /**
+ * Show help message while catch an unknow issue
+ * @param stack
+ */
+export function showUnknowErrorsHelp(stack: string) {
+  logger.error(stack)
+  logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
+  let searchKey = pickSearchKey(stack)
+  logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
+
+  logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
+  logger.log(`https://github.com/weexteam/weex-toolkit/issues/new`)
+
+  logger.log(
+    logger.colors.grey(
+      `\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`,
+    ),
+  )
+  logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
+
+  logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))
+
+  logger.log(logger.colors.grey(`\nLooking for related issues on:`))
+  logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
+}
+
+/**
  * Analyzer error stack and give some solution.
  *
  * @param type command type
@@ -655,29 +681,23 @@ export async function analyzer(type: string, stack: any, options?: any) {
       logger.log(`Please check if your network can access ${logger.colors.yellow(options.registry)} normally`)
       logger.info(`Or you can use the \`install\` command to install the plugin.`)
     }
+  } else if (type === 'compile') {
+    let vueMismatchReg = /Vue packages version mismatch/gi
+    if (vueMismatchReg.test(stack)) {
+      logger.error(stack)
+      logger.warn('\n Try `weex doctor` command to fix this problem.')
+    } else {
+      showUnknowErrorsHelp(stack)
+    }
   } else if (typeof stack === 'string') {
-    logger.error(stack)
-    logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
-    let searchKey = pickSearchKey(stack)
-    logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
-
-    logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
-    logger.log(`https://github.com/weexteam/weex-toolkit/issues/new`)
-
-    logger.log(
-      logger.colors.grey(
-        `\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`,
-      ),
-    )
-    logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
-
-    logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))
-
-    logger.log(logger.colors.grey(`\nLooking for related issues on:`))
-    logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
+    showUnknowErrorsHelp(stack)
   }
 }
 
+/**
+ * Formate time to hh:mm:ss
+ * @param date
+ */
 export function formateTime(date: Date) {
   let hourse = date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
   let min = date.getHours() > 9 ? date.getMinutes() : '0' + date.getMinutes()
