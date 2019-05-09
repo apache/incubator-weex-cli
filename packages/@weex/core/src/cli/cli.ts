@@ -88,6 +88,8 @@ export interface CoreOptions {
   }
   exclude?: string[]
 }
+// use for analyzer function
+let cliConfiguration: CliConfiguration
 
 export default class Cli {
   private cli: any
@@ -104,7 +106,7 @@ export default class Cli {
 
     this.argv = parseParams(data.argv)
 
-    this.cliConfiguration = {
+    this.cliConfiguration = cliConfiguration = {
       ...data,
       force: this.argv.options.f || this.argv.options.force,
     }
@@ -139,23 +141,17 @@ export default class Cli {
   async start() {
     const command = this.argv.array[0]
     const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
-    if (this.cliConfiguration.configs.telemetry) {
-      // usertrack
-      const usertrackapi = http.create({
-        baseURL: `http://gm.mmstat.com/`,
-      })
-      try {
-        const pkg = require('../../package.json')
-        /* tslint-disabled */
-        usertrackapi.get(
-          `weex-cli-2.0.tool_usage.usage?cmd=${command}&argv=${this.argv.array.join('+')}&mid=${machineIdSync()}&node=${
-            process.version
-          }&core=v${pkg.version}&t=${new Date().getTime()}`,
-        )
-      } catch (error) {
-        debug('Http request error', error)
-      }
+    const pkg = require('../../package.json')
+    
+    const traceData = {
+      cmd: command || '',
+      argv: this.argv.array.join('+'),
+      mid: machineIdSync(),
+      node: process.version,
+      core: pkg.version
     }
+    usertrack('usage', traceData, this.cliConfiguration.configs.telemetry)
+
     if (this.cliConfiguration.modules) {
       this.plugins = pickPlugins(this.cliConfiguration.modules)
     } else {
@@ -691,6 +687,34 @@ export async function analyzer(type: string, stack: any, options?: any) {
     }
   } else if (typeof stack === 'string') {
     showUnknowErrorsHelp(stack)
+    usertrack('error_track', {type, stack}, cliConfiguration.configs.telemetry)
+  }
+}
+
+/**
+ * usertrack
+ * @param stage usertrack usage
+ * @param track data
+ * @param telemetry can report data or not
+ */
+export function usertrack (stage: string, track: any, telemetry: boolean) {
+  if (!telemetry) {
+    return 
+  }
+  // usertrack
+  const usertrackapi = http.create({
+    baseURL: `http://gm.mmstat.com/`,
+  })
+  let trackQuery = `weex-cli-2.0.tool_usage.${stage}?`
+  for (let key in track) {
+    trackQuery += `${key}=${track[key]}&`
+  }
+  trackQuery +=`t=${new Date().getTime()}`
+  try {
+    /* tslint-disabled */
+    usertrackapi.get(trackQuery)
+  } catch (error) {
+    debug('Http request error', error)
   }
 }
 
