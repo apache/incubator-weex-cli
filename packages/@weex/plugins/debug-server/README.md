@@ -1,12 +1,10 @@
-# @ali/mp-remote-debug-server
+# @weex-cli/debug-server
 
-Remote debug server for Taobao MiniApp
-
+Remote debug server for Weex Debug.
 
 ## index.d.ts
 
 ```
-import { Socket } from "net";
 
 interface DevtoolOptions {
   channelId: string
