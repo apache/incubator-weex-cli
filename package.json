@@ -1,6 +1,6 @@
 {
   "name": "weex-toolkit",
-  "version": "2.0.0-beta.27",
+  "version": "2.0.0-beta.28",
   "description": "Weex CLI Toolkit",
   "bin": {
     "weex": "bin/weex.js"

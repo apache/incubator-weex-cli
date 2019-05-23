@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/debug-server",
-  "version": "2.0.0-beta.4",
+  "version": "2.0.0-beta.28",
   "description": "Module for start debug server",
   "main": "index.js",
   "scripts": {
