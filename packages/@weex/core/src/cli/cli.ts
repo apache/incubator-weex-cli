@@ -649,25 +649,11 @@ export async function analyzer(type: string, stack: any, options?: any) {
         })
       }
     } else if (typeof stack === 'string') {
-      logger.error(stack)
-      logger.log(logger.colors.grey(`Search for existing GitHub issues similar to yours:`))
-      let searchKey = pickSearchKey(stack)
-      logger.log(`https://github.com/weexteam/weex-toolkit/issues?q=${searchKey}&type=issue`)
-
-      logger.log(logger.colors.grey(`\nIf none exists, create a ticket, with the template displayed above, on:`))
-      logger.log(`https://github.com/weexteam/weex-toolkit/issues/new?labels=${type}`)
-
-      logger.log(
-        logger.colors.grey(
-          `\nBe sure to first read the contributing guide for details on how to properly submit a ticket:`,
-        ),
-      )
-      logger.log(`https://github.com/weexteam/weex-toolkit/master/CONTRIBUTING.md`)
-
-      logger.log(logger.colors.grey(`\nDon't forget to anonymize any private data!`))
-
-      logger.log(logger.colors.grey(`\nLooking for related issues on:`))
-      logger.log('https://github.com/weexteam/weex-toolkit/issues?q=is%3Aclosed')
+      if (/module is locked/.test(stack)) {
+        logger.log(`The module is locked now, please be patient and wait for other installation processes to complete.`)
+        logger.warn(`You can also enforce it by adding \`-f\` or \`--force\` flag.`)
+      }
+      showUnknowErrorsHelp(stack)
     }
   } else if (type === 'request') {
     if (stack === 'CONNECTION_ERROR') {
