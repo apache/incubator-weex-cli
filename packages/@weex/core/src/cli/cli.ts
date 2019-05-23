@@ -142,13 +142,13 @@ export default class Cli {
     const command = this.argv.array[0]
     const moduleConfigFilePath = path.join(this.cliConfiguration.moduleRoot, this.cliConfiguration.moduleConfigFileName)
     const pkg = require('../../package.json')
-    
+
     const traceData = {
       cmd: command || '',
       argv: this.argv.array.join('+'),
       mid: machineIdSync(),
       node: process.version,
-      core: pkg.version
+      core: pkg.version,
     }
     usertrack('usage', traceData, this.cliConfiguration.configs.telemetry)
 
@@ -673,7 +673,7 @@ export async function analyzer(type: string, stack: any, options?: any) {
     }
   } else if (typeof stack === 'string') {
     showUnknowErrorsHelp(stack)
-    usertrack('error_track', {type, stack}, cliConfiguration.configs.telemetry)
+    usertrack('error_track', { type, stack }, cliConfiguration.configs.telemetry)
   }
 }
 
@@ -683,9 +683,9 @@ export async function analyzer(type: string, stack: any, options?: any) {
  * @param track data
  * @param telemetry can report data or not
  */
-export function usertrack (stage: string, track: any, telemetry: boolean) {
+export function usertrack(stage: string, track: any, telemetry: boolean) {
   if (!telemetry) {
-    return 
+    return
   }
   // usertrack
   const usertrackapi = http.create({
@@ -695,7 +695,7 @@ export function usertrack (stage: string, track: any, telemetry: boolean) {
   for (let key in track) {
     trackQuery += `${key}=${track[key]}&`
   }
-  trackQuery +=`t=${new Date().getTime()}`
+  trackQuery += `t=${new Date().getTime()}`
   try {
     /* tslint-disabled */
     usertrackapi.get(trackQuery)
