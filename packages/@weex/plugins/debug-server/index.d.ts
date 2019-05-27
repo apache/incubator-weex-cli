@@ -75,7 +75,7 @@ declare interface Devtool {
   runtime: string
 }
 
-declare module '@ali/mp-remote-debug-server' {
+declare module '@weex-cli/debug-server' {
   /**
    * 用于启动Devtool服务接口
    *
