@@ -261,7 +261,6 @@ export class WeexComponent extends Vue {
     this.socket = new SockJS(`ws://${this.webSocketHost}/debugProxy/debugger/${this.channelId}`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'Page.stopScreencast' }))
-      this.socket.send(JSON.stringify({ method: 'WxDebug.enablePerformanceMonitor', params: { value: true } }))
     })
     this.socket.on('data', (data) => {
       data = JSON.parse(data)
