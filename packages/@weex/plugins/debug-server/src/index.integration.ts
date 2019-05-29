@@ -165,97 +165,97 @@ describe('SyncCall can be worked', () => {
     done()
   })
 
-  test('sync call should be worked', async done => {
-    let testMehod = 'WxDebug.test'
-    let testCallbackData = 'syncreturn'
-    let appID = 'VM'
-    let runtimeMessages = []
-    nativeWS = new WebSocket(devtoolServer.socket.native)
-    runtimeWS = new WebSocket(devtoolServer.socket.runtime)
-    devtoolServer.on('runtime.worker', message => {
-      expect(typeof message.type).toEqual('number')
-      if (message.type === Router.Event.MESSAGE_RECEIVED) {
-        expect(message.data.channelId).toEqual(channelId)
-        expect(message.data.payload.method).toEqual(testMehod)
-        expect(message.data.payload.params).toEqual(testCallbackData)
-        done()
-      }
-    })
-    runtimeWS.on('message', message => {
-      message = JSON.parse(message)
-      runtimeMessages.push(message)
-      if (message.params.method === 'WxDebug.importAppJS') {
-        expect(message.params.args[0]).toEqual(appID)
-        expect(runtimeMessages.length === 4).toBeTruthy()
-      }
-    })
-    nativeWS.on('open', () => {
-      nativeWS.send(
-        JSON.stringify({
-          method: 'WxDebug.registerDevice',
-          params: {
-            appId: appID,
-            device: {},
-          },
-        }),
-      )
-      nativeWS.send(
-        JSON.stringify({
-          method: 'WxDebug.initJSRuntime',
-          params: {
-            env: {
-              WXEnvironment: {},
-            },
-            source: `
-            self.createInstanceContext = () => {};
-          console.log('Im WxDebug.initJSRuntime');`,
-            bundleUrl: 'js-framework.js',
-          },
-        }),
-      )
-      nativeWS.send(
-        JSON.stringify({
-          method: 'WxDebug.callJS',
-          params: {
-            method: 'createInstanceContext',
-            args: [appID, {}, '', null],
-          },
-        }),
-      )
-      setTimeout(() => {
-        nativeWS.send(
-          JSON.stringify({
-            method: 'WxDebug.callJS',
-            params: {
-              method: 'importScript',
-              args: [
-                appID,
-                `let result = self.callNativeModule('${appID}');
-              __postData__({method: '${testMehod}', params: result});
-              `,
-                {
-                  bundleUrl: 'app.js',
-                },
-              ],
-            },
-          }),
-        )
-      }, 1000)
-    })
-    nativeWS.on('message', message => {
-      message = JSON.parse(message)
-      if (message.method === 'WxDebug.syncCall') {
-        expect(message.params.method).toEqual('callNativeModule')
-        nativeWS.send(
-          JSON.stringify({
-            method: 'WxDebug.syncReturn',
-            id: message.id,
-            params: {
-              ret: testCallbackData,
-            },
-          }),
-        )
-      }
-    })
-  })
+  // test('sync call should be worked', async done => {
+  //   let testMehod = 'WxDebug.test'
+  //   let testCallbackData = 'syncreturn'
+  //   let appID = 'VM'
+  //   let runtimeMessages = []
+  //   nativeWS = new WebSocket(devtoolServer.socket.native)
+  //   runtimeWS = new WebSocket(devtoolServer.socket.runtime)
+  //   devtoolServer.on('runtime.worker', message => {
+  //     expect(typeof message.type).toEqual('number')
+  //     if (message.type === Router.Event.MESSAGE_RECEIVED) {
+  //       expect(message.data.channelId).toEqual(channelId)
+  //       expect(message.data.payload.method).toEqual(testMehod)
+  //       expect(message.data.payload.params).toEqual(testCallbackData)
+  //       done()
+  //     }
+  //   })
+  //   runtimeWS.on('message', message => {
+  //     message = JSON.parse(message)
+  //     runtimeMessages.push(message)
+  //     if (message.params.method === 'WxDebug.importAppJS') {
+  //       expect(message.params.args[0]).toEqual(appID)
+  //       expect(runtimeMessages.length === 4).toBeTruthy()
+  //     }
+  //   })
+  //   nativeWS.on('open', () => {
+  //     nativeWS.send(
+  //       JSON.stringify({
+  //         method: 'WxDebug.registerDevice',
+  //         params: {
+  //           appId: appID,
+  //           device: {},
+  //         },
+  //       }),
+  //     )
+  //     nativeWS.send(
+  //       JSON.stringify({
+  //         method: 'WxDebug.initJSRuntime',
+  //         params: {
+  //           env: {
+  //             WXEnvironment: {},
+  //           },
+  //           source: `
+  //           self.createInstanceContext = () => {};
+  //         console.log('Im WxDebug.initJSRuntime');`,
+  //           bundleUrl: 'js-framework.js',
+  //         },
+  //       }),
+  //     )
+  //     nativeWS.send(
+  //       JSON.stringify({
+  //         method: 'WxDebug.callJS',
+  //         params: {
+  //           method: 'createInstanceContext',
+  //           args: [appID, {}, '', null],
+  //         },
+  //       }),
+  //     )
+  //     setTimeout(() => {
+  //       nativeWS.send(
+  //         JSON.stringify({
+  //           method: 'WxDebug.callJS',
+  //           params: {
+  //             method: 'importScript',
+  //             args: [
+  //               appID,
+  //               `let result = self.callNativeModule('${appID}');
+  //             __postData__({method: '${testMehod}', params: result});
+  //             `,
+  //               {
+  //                 bundleUrl: 'app.js',
+  //               },
+  //             ],
+  //           },
+  //         }),
+  //       )
+  //     }, 1000)
+  //   })
+  //   nativeWS.on('message', message => {
+  //     message = JSON.parse(message)
+  //     if (message.method === 'WxDebug.syncCall') {
+  //       expect(message.params.method).toEqual('callNativeModule')
+  //       nativeWS.send(
+  //         JSON.stringify({
+  //           method: 'WxDebug.syncReturn',
+  //           id: message.id,
+  //           params: {
+  //             ret: testCallbackData,
+  //           },
+  //         }),
+  //       )
+  //     }
+  //   })
+  // })
 })

@@ -8,7 +8,7 @@ debuggerRouter
   .registerHandler((message: Message) => {
     let method = message.payload.method
     if (method === 'WxDebug.queryServerVersion') {
-      let pkg = require('../../../package.json')
+      let pkg = require('../../package.json')
       debuggerRouter.pushMessage('page.entry', {
         method: 'WxDebug.pushServerVersion',
         params: {

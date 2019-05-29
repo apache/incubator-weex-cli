@@ -498,7 +498,6 @@ ${mockAndroidApi}
 `
   if (env.jsframework) {
     environment += `importScripts('${env.jsframework}');\n`
-    // environment += `importScripts('/lib/runtime/js-framework.js');\n`
   }
   return `${environment}
 ${worker}

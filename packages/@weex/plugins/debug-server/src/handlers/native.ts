@@ -206,7 +206,7 @@ debuggerRouter
       if (environmentMap[message.channelId]['jsservice'].indexOf(url) === -1) {
         environmentMap[message.channelId]['jsservice'].push(url)
       }
-    } else if (method === 'WxDebug.syncReturn') {
+    } else if (method === 'syncReturn') {
       message.payload = {
         error: payload.error,
         ret: payload.params && payload.params.ret,
@@ -259,6 +259,14 @@ debuggerRouter
           },
         }
       }
+    } else if (payload.result && payload.result.method === 'WxDebug.syncReturn') {
+      message.payload = {
+        id: payload.result.params && payload.result.id && payload.result.params.syncId,
+        error: payload.error,
+        ret: payload.result.params && payload.result.params.ret,
+      }
+      message.to('sync.native')
+      return
     } else if (payload.result && payload.id === undefined) {
       message.discard()
     }

@@ -25,6 +25,7 @@ const chromeDevtoolDiabledProtocol = [
 
 debuggerRouter
   .registerHandler(async (message: Message) => {
+    const method = message.payload.method
     const device = Device.getDevice(message.channelId)
     if (device) {
       if (redirectMessage.test(message.payload.method)) {
@@ -35,17 +36,16 @@ debuggerRouter
       } else if (ignoredMessage.test(message.payload.method)) {
         message.discard()
       } else {
-        if (message.payload.method === 'Page.startScreencast') {
+        if (method === 'Page.startScreencast') {
           message.to('page.debugger')
-        } else if (message.payload.method === 'Runtime.enable') {
+        } else if (method === 'Runtime.enable') {
           message.payload.method = 'Console.enable'
-          message.to('proxy.native')
-        } else if (message.payload.method === 'Page.screencastFrameAck') {
+        } else if (method === 'Page.screencastFrameAck') {
           message.to('page.debugger')
         }
         message.to('proxy.native')
       }
-      if (chromeDevtoolDiabledProtocol.indexOf(message.payload.method) >= 0) {
+      if (chromeDevtoolDiabledProtocol.indexOf(method) >= 0) {
         message.payload = {
           id: message.payload.id,
           result: {},
