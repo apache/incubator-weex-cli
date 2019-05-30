@@ -82,6 +82,7 @@ export default class Message {
     }
     this._destination = []
     this._to.forEach(to => {
+      console.log(this._from, to, this.channelId)
       if (!to.terminalId && resolver) {
         this._destination.push.apply(this._destination, resolver(this._from, to, this.channelId))
       } else {

@@ -20,7 +20,6 @@ export default class Hub {
     }
     _hubInstances[id] = this
     this.id = id
-
     this._pushToRouter = new Filter(async message => {
       const response = await this.router.fetchMessage(message)
       return response

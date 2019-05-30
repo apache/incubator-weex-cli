@@ -93,7 +93,7 @@ export class HomeComponent extends Vue {
   }
 
   connection () {
-    this.socket = new SockJS(`ws://${this.webSocketHost}/page/entry`)
+    this.socket = new SockJS(`ws://30.10.88.187:8099/page/entry/1000`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'WxDebug.applyChannelId' }))
       this.socket.send(JSON.stringify({ method: 'WxDebug.queryServerVersion' }))
@@ -101,11 +101,11 @@ export class HomeComponent extends Vue {
     this.socket.on('data', (data) => {
       data = JSON.parse(data)
       if (data.method === 'WxDebug.pushChannelId') {
-        this.updateQRCode(data.params)
         this.updateBundles(data.params.bundles || [])
         this.$snotify.clear()
       } else if (data.method === 'WxDebug.pushServerVersion') {
         this.updateVersion(data.params.version)
+        this.updateQRCode({connectUrl: 'http://localhost:8889/test.html?_wx_devtool=ws://30.10.88.187:8099/debugProxy/native/1000', channelId: '1000' })
       } else if (data.method === 'WxDebug.startDebugger') {
         this.$router.push({ path: `/client/weex/${data.params}?type=weex` })
       }

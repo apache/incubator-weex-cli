@@ -27,6 +27,7 @@ self.__WEEX_DEVTOOL__ = true
 
 __eventEmitter__.on('WxDebug.callJS', function(data) {
   var method = data.params.method
+  console.log('do something->', method)
   if (method === 'importScript') {
     importScripts(data.params.sourceUrl)
   } else if (method === 'destroyInstance') {
