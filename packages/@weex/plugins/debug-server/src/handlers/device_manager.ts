@@ -9,12 +9,17 @@ debuggerRouter.on(Router.Event.TERMINAL_LEAVED, 'proxy.native', signal => {
   if (!device) {
     return
   }
-  Device.removeDevice(signal.channelId, async () => {
-    await debuggerRouter.pushMessageByChannelId('page.debugger', signal.channelId, {
-      method: 'WxDebug.deviceDisconnect',
-      params: device,
+  // need to be fix
+  // cause the old version of android devtool sdk will sending disconnect message after the second connect
+  // make sure the android device not be removed
+  if (device.platform === 'iOS') {
+    Device.removeDevice(signal.channelId, async () => {
+      await debuggerRouter.pushMessageByChannelId('page.debugger', signal.channelId, {
+        method: 'WxDebug.deviceDisconnect',
+        params: device,
+      })
     })
-  })
+  }
 })
 
 debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'page.debugger', async signal => {
