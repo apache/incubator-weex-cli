@@ -20,6 +20,7 @@ export default class Hub {
     }
     _hubInstances[id] = this
     this.id = id
+
     this._pushToRouter = new Filter(async message => {
       const response = await this.router.fetchMessage(message)
       return response
@@ -45,8 +46,24 @@ export default class Hub {
     }
     if (!this.terminalMap[terminal.id]) {
       terminal.hub = this.id
-      this.terminalMap[terminal.id] = terminal
-      this.setupTerminal(terminal, forced)
+      if (forced) {
+        let replace: boolean = false
+        for(let index in this.terminalMap) {
+          if (this.terminalMap[index].hub === terminal.hub) {
+            this.setupTerminal(terminal, forced)
+            let disposeTerminal = this.terminalMap.splice(index, 1, terminal)
+            disposeTerminal.close()
+            replace = true
+          }
+        }
+        if (!replace) {
+          this.terminalMap[terminal.id] = terminal
+          this.setupTerminal(terminal, forced)
+        }
+      } else {
+        this.terminalMap[terminal.id] = terminal
+        this.setupTerminal(terminal, forced)
+      }
     } else {
       debug('Cannot add terminal into some hub')
       throw new Error('Cannot add terminal into some hub')

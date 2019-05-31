@@ -139,7 +139,8 @@ export default class Router extends Emitter {
 
   async fetchMessage(message: Message) {
     this.emit(Router.Event.MESSAGE_RECEIVED, message._from.hubId + '.' + message._from.terminalId, message)
-    // console.log(Router.Event.MESSAGE_RECEIVED, message._from.hubId + '.' + message._from.terminalId, message.payload.method)
+    // console.log(message._from.hubId, '-->', JSON.stringify(message.payload).slice(0, 80))
+
     try {
       await Handler.run(this.handlerList, message)
     } catch (error) {
