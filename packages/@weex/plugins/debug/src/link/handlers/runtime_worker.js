@@ -22,7 +22,6 @@ debuggerRouter
 debuggerRouter
   .registerHandler(function (message) {
     const payload = message.payload
-    console.log(message.payload.method)
     if (payload.method === 'syncReturn') {
       message.payload = {
         ret: payload.params.ret,

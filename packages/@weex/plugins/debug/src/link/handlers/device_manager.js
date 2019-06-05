@@ -32,8 +32,6 @@ debuggerRouter.on(Router.Event.TERMINAL_JOINED, 'page.debugger', signal => {
 
 debuggerRouter
   .registerHandler(message => {
-    console.log(message, 'test')
-
     const device = DeviceManager.registerDevice(
       message.payload.params,
       message.channelId

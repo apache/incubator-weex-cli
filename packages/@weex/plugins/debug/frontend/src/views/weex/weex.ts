@@ -258,10 +258,9 @@ export class WeexComponent extends Vue {
   }
 
   connection () {
-    this.socket = new SockJS(`ws://30.10.88.187:8099/debugProxy/debugger/${this.channelId}`)
+    this.socket = new SockJS(`ws://${this.webSocketHost}/debugProxy/debugger/${this.channelId}`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'Page.stopScreencast' }))
-      this.initChromeDevtool()
     })
     this.socket.on('data', (data) => {
       data = JSON.parse(data)
@@ -286,6 +285,7 @@ export class WeexComponent extends Vue {
           this.updateForm({ type: types.UPDATE_NETWORK_STATUS, value: typeof (device.network) === 'undefined' ? sessionStorage.getItem('network') === 'true' : device.network })
           this.updateForm({ type: types.UPDATE_LOG_LEVEL_STATUS, value: device.logLevel || 'debug' })
           this.updateForm({ type: types.UPDATE_ELEMENT_MODE_STATUS,value: device.elementMode || 'native' })
+          this.initChromeDevtool()
         }
 
       } else if (method === 'WxDebug.reloadInspector') {
@@ -337,7 +337,7 @@ export class WeexComponent extends Vue {
   }
 
   initChromeDevtool () {
-    this.inspectorUrl = `../../assets/inspector/inspector.html?ws=30.10.88.187:8099/debugProxy/inspector/${this.channelId}`
+    this.inspectorUrl = `../../assets/inspector/inspector.html?ws=${this.webSocketHost}/debugProxy/inspector/${this.channelId}`
   }
 
   handleRemoteDebug ($event) {
