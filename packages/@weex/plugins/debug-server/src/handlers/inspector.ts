@@ -2,6 +2,9 @@ import { Router, Message } from '@weex-cli/linker'
 import { Config } from '../ConfigResolver'
 import { Device } from '../managers/DeviceManager'
 
+import * as DEBUG from 'debug'
+const debug = DEBUG('Handler:Proxy.Inspector')
+
 const debuggerRouter = Router.get(`debugger-${Config.get('channelId')}`)
 
 const redirectMessage = /^(Page.(enable|disable|reload)|Debugger|Target|Worker|Runtime\.runIfWaitingForDebugger)/
@@ -23,10 +26,21 @@ const chromeDevtoolDiabledProtocol = [
   // 'Page.setAdBlockingEnabled'
 ]
 
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('proxy.inspector', 'ping')
+    debug('ping-pong')
+    sendHeartbeat()
+  }, Config.get('heartbeatTime') || 30000)
+}
+
 debuggerRouter
   .registerHandler(async (message: Message) => {
     const method = message.payload.method
     const device = Device.getDevice(message.channelId)
+    sendHeartbeat()
     if (device) {
       if (redirectMessage.test(message.payload.method)) {
         if (message.payload && message.payload.method === 'Page.reload') {

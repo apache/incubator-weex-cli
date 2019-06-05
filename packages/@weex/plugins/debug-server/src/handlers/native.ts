@@ -4,10 +4,23 @@ import { Config } from '../ConfigResolver'
 import { Device } from '../managers/DeviceManager'
 import utils from '../utils'
 
+import * as DEBUG from 'debug'
+const debug = DEBUG('Handler:Proxy.Native')
+
 const debuggerRouter = Router.get(`debugger-${Config.get('channelId')}`)
 let environmentMap = Config.get(`debugger-${Config.get('channelId')}`)
 let vmIndex = 0
 let jsserviceIndex = 0
+
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('proxy.native', 'ping')
+    debug('ping-pong')
+    sendHeartbeat()
+  }, Config.get('heartbeatTime') || 30000)
+}
 
 debuggerRouter
   .registerHandler(async (message: Message) => {
@@ -274,3 +287,9 @@ debuggerRouter
   })
   .at('proxy.native')
   .when('!payload.method||(payload.method.split(".")[0]!=="WxDebug")')
+
+debuggerRouter
+  .registerHandler(async () => {
+    sendHeartbeat()
+  })
+  .at('proxy.native')

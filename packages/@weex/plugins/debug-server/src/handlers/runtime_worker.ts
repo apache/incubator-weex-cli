@@ -4,10 +4,20 @@ import { Device } from '../managers/DeviceManager'
 import { Config } from '../ConfigResolver'
 
 import * as DEBUG from 'debug'
-const debug = DEBUG('handler debugger')
+const debug = DEBUG('Handler:Runtime.Worker')
 
 const debuggerRouter = Router.get(`debugger-${Config.get('channelId')}`)
 const runtimeProxyHub = Hub.get('runtime.proxy')
+
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('runtime.worker', 'ping')
+    debug('ping-pong')
+    sendHeartbeat()
+  }, Config.get('heartbeatTime') || 30000)
+}
 
 debuggerRouter
   .registerHandler((message: Message) => {
@@ -25,6 +35,7 @@ debuggerRouter
   .registerHandler((message: Message) => {
     const payload = message.payload
     const method = payload.method
+    sendHeartbeat()
     if (method === 'syncReturn') {
       message.payload = {
         ret: payload.params.ret,

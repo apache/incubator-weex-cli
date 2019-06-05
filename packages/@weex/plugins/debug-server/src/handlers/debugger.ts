@@ -4,14 +4,28 @@ import { Device } from '../managers/DeviceManager'
 import { Config } from '../ConfigResolver'
 import * as uuid from 'uuid'
 
+import * as DEBUG from 'debug'
+const debug = DEBUG('Handler:Page.Entry')
+
 let environmentMap = Config.get(`debugger-${Config.get('channelId')}`)
 const debuggerRouter = Router.get(`debugger-${Config.get('channelId')}`)
+
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('page.debugger', 'ping')
+    debug('ping-pong')
+    sendHeartbeat()
+  }, Config.get('heartbeatTime') || 30000)
+}
 
 debuggerRouter
   .registerHandler((message: Message) => {
     const payload = message.payload
     const method = payload.method
     const device = Device.getDevice(message.channelId)
+    sendHeartbeat()
     if (!device) {
       message.discard()
       return

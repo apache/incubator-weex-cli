@@ -75,12 +75,20 @@ class WebsocketTerminal extends EventEmitter {
       this.emit(TerminalEvent.TERMINAL_ERROR)
       debug(`${channelId} socket error: ${error}`)
     })
+    websocket.on("pong", () => {
+      debug('ping-pong')
+    })
   }
 
   read(message: any) {
     if (this.websocket.readyState === 1) {
       this.emit('read', message)
-      this.websocket.send(JSON.stringify(message))
+      if (message === 'ping') {
+        this.websocket.ping()
+      }
+      else {
+        this.websocket.send(JSON.stringify(message))
+      }
     }
   }
 }

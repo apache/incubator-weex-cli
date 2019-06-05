@@ -36,7 +36,7 @@ describe('Terminal should be worked', () => {
   })
 
   test('websocketTerminal should be correct', () => {
-    expect(onCallbackA.callCount).toEqual(4)
+    expect(onCallbackA.callCount).toEqual(5)
     expect(typeof websocketTerminal.read).toEqual('function')
   })
 

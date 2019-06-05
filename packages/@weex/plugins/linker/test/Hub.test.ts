@@ -42,7 +42,7 @@ describe('Hub should be worked', () => {
     huba.join(terminal)
     expect(huba.router.id).toEqual(routerName)
     expect(onCallback.called).toBeTruthy()
-    expect(onCallback.callCount).toEqual(4)
+    expect(onCallback.callCount).toEqual(5)
   })
 
   test('broadcast message', () => {
