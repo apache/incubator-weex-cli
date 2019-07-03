@@ -36,7 +36,7 @@ async function run(commandLine: string, options: Options = {}): Promise<any> {
  * @param options Additional child_process options for node.
  * @returns Promise with result.
  */
-async function exec(commandLine: string, options: Options = {}): Promise<any> {
+async function exec(commandLine: string, options: Options = {maxBuffer: Infinity}): Promise<any> {
   return new Promise((resolve, reject) => {
     const args = split(' ', commandLine)
     execa(head(args), tail(args), options)
