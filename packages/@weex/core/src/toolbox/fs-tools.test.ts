@@ -2,7 +2,6 @@ import * as expect from 'expect'
 import * as path from 'path'
 import { contains } from 'ramda'
 import { fs } from './fs-tools'
-import { textSpanContainsPosition } from 'typescript'
 
 test('isFile', () => {
   expect(fs.isFile(__filename)).toBe(true)
