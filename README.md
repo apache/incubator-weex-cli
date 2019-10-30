@@ -52,7 +52,3 @@ $ weex --help
 ```
 
 Also you can see the document [here](https://weex.io/tools/toolkit.html).
-
-## License
-
-[MIT](https://github.com/weexteam/weex-toolkit/blob/dev/LICENSE)
