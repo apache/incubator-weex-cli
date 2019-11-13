@@ -51,4 +51,4 @@ To know more detail about the command, you can run:
 $ weex --help
 ```
 
-Also you can see the document [here](https://weex.io/tools/toolkit.html).
+Also you can see the document [here](https://weex.apache.org/guide/develop/weex_cli.html).
