@@ -92,7 +92,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/weexteam/weex-toolkit/issues"
+    "url": "https://github.com/apache/weex-cli.git"
   },
   "keywords": [
     "device"

@@ -7,5 +7,5 @@
 - Plugin-ready
 
 
-[GitHub](https://github.com/weexteam/weex-toolkit)
+[GitHub](https://github.com/apache/weex-cli)
 [Get Started](#quick-start)

@@ -13,7 +13,7 @@ Also install yarn: `brew install yarn` or [https://yarnpkg.com](https://yarnpkg.
 
 ## Installing `weex-toolkit`
 
-Next, fork the repo [on Github](https://github.com/weexteam/weex-toolkit) and clone down your repo.
+Next, fork the repo [on Github](https://github.com/apache/weex-cli) and clone down your repo.
 
 ```sh
 git clone git@github.com/<yourusername>/weex-toolkit
@@ -41,7 +41,7 @@ yarn lint
 git commit -m "feat(core): add some funny features"
 git push -u origin --HEAD
 ```
-Your commit log should fellow the rules on [scripts/verifyCommitMessage.js](https://github.com/weexteam/weex-toolkit/blob/master/scripts/verifyCommitMessage.js).
+Your commit log should fellow the rules on [scripts/verifyCommitMessage.js](https://github.com/apache/weex-cli/blob/master/scripts/verifyCommitMessage.js).
 
 The commit log should be consistent with the following:
 
@@ -55,7 +55,7 @@ docs(getting-started): update installation description
 ## Submitting a Pull Request
 
 Go to Github and open your fork, Switch to the branch with your new changes, click `new pull request` button, choose the `compare across forks` option and
-open a PR against `master` of [weexteam/weex-toolkit](https://github.com/weexteam/weex-toolkit).
+open a PR against `master` of [apache/weex-cli](https://github.com/apache/weex-cli).
 
 If there has no code conflicts, you can submit this pull request.
 
@@ -68,7 +68,7 @@ You want your fork's `master` to be the same as `weex-toolkit/master`.
 
 ```sh
 # just once, run this to track our repo as `upstream`
-git remote add upstream https://github.com/weexteam/weex-toolkit.git
+git remote add upstream https://github.com/apache/weex-cli.git
 
 # then when you need to update
 git checkout master

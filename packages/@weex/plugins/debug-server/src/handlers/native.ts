@@ -268,7 +268,7 @@ debuggerRouter
         payload.params.metadata.pageScaleFactor = 0.999
       }
     } else if (payload.method === 'Console.messageAdded') {
-      // issue: https://github.com/weexteam/weex-toolkit/issues/408
+      // issue: https://github.com/apache/weex-cli/issues/408
       // TODO: make it can be control by user
       if (device && device.remoteDebug) {
         message.discard()

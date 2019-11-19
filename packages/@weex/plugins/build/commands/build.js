@@ -20,11 +20,11 @@ module.exports = {
 
     logger.log('\nFor more infomations, you can see:')
 
-    logger.log(logger.colors.grey('https://github.com/weexteam/weex-toolkit/blob/master/README.md'))
+    logger.log(logger.colors.grey('https://github.com/apache/weex-cli/blob/master/README.md'))
   
     logger.log('\nOr you can give us some advice here:')
 
-    logger.log(logger.colors.grey('https://github.com/weexteam/weex-toolkit/issues/new?labels=@weex-cli/build'))
+    logger.log(logger.colors.grey('https://github.com/apache/weex-cli/issues/new?labels=@weex-cli/build'))
     
   }
 };
