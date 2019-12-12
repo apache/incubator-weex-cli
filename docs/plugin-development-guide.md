@@ -8,7 +8,7 @@ In addition, `weex-toolkit` supports expanding your CLI's ecosystem with a robus
 
 ## Code
 
-!> As a third-part plugin, we recommend that you use `weex-cli-plugin-` as your package prefix, e.g `weex-cli-plugin-logger`.
+As a third-part plugin, we recommend that you use `weex-cli-plugin-` as your package prefix, e.g `weex-cli-plugin-logger`.
 
 Let's start with write a Weex Toolkit plugin.
 
@@ -68,11 +68,9 @@ See the [Context API](./context-api) docs for more details on what you can do.
 
 ## What's under the context?
 
-We've assembled an all star cast of libraries to help you build your CLI.
+We've assembled an all star cast of libraries to help you build your CLI.  
 ⭐️ [chrome-opn](https://github.com/JeromeTan1997/chrome-opn) for open file<br />
 ⭐️ [inquirer](https://github.com/SBoudrias/Inquirer.js) for prompts<br />
-⭐️ [semver](https://github.com/npm/node-semver) for version investigations<br />
-⭐️ [semver](https://github.com/npm/node-semver) for version investigations<br />
 ⭐️ [semver](https://github.com/npm/node-semver) for version investigations<br />
 ⭐️ [fs-jetpack](https://github.com/szwacz/fs-jetpack) for the filesystem<br />
 ⭐️ [yargs-parser](https://github.com/yargs/yargs-parser), [enquirer](https://github.com/enquirer/enquirer), [colors](https://github.com/Marak/colors.js), [ora](https://github.com/sindresorhus/ora) and [cli-table3](https://github.com/cli-table/cli-table3) for the command line<br />
