@@ -41,7 +41,7 @@ export const cn = {
       integerUrl: 'https://weex.apache.org/zh/guide/debug/integrate-devtool-to-android.html',
       helpTitle: '帮助和意见反馈',
       helpDesc: '提交Github issue 和帮助提高 Weex Devtool',
-      helpUrl: 'https://github.com/weexteam/weex-toolkit/issues/new?labels=@weex-cli/debug',
+      helpUrl: 'https://github.com/apache/incubator-weex-cli/issues/new?labels=@weex-cli/debug',
       noJsBundle: '暂无可预览页面，你可以通过下面的命令进行页面编译'
     },
     toastTips: {
@@ -64,7 +64,7 @@ export const cn = {
     elementMode: '切换视图',
     clearHistory: '清空历史',
     workerJsDesc: 'WorkerJS为调试中间文件，文件开头为[Runtime]-的文件',
-    jsServiceDesc: 'JSService是weex在运行中使用<a href="http://weex.apache.org/cn/references/js-service.html" target="_blank">JSService接口</a>注入的JS文件，多个文件用逗号隔开',
+    jsServiceDesc: 'JSService是weex在运行中使用<a href="https://weex.apache.org/zh/docs/api/js-service.html" target="_blank">JSService接口</a>注入的JS文件，多个文件用逗号隔开',
     dependenceJsDesc: 'DependenceJS是weex在创建实例前在JS环境中注入的JS文件',
     jsFrameworkDesc: 'JSFramework是为weex运行提供初始环境的JS',
     environmentSettingOkDesc: '更改设置',

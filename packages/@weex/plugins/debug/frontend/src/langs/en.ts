@@ -41,7 +41,7 @@ export const en = {
       integerUrl: 'https://weex.apache.org/guide/debug/integrate-devtool-to-android.html',
       helpTitle: 'Help & Feedback',
       helpDesc: 'Submit a Github issue to help Weex Devtool be better',
-      helpUrl: 'https://github.com/weexteam/weex-toolkit/issues/new?labels=@weex-cli/debug',
+      helpUrl: 'https://github.com/apache/incubator-weex-cli/issues/new?labels=@weex-cli/debug',
       noJsBundle: 'There is no preview page yet, you can compile the page with the following command'
     },
     toastTips: {
@@ -64,7 +64,7 @@ export const en = {
     elementMode: 'ElementMode',
     clearHistory: 'Clean',
     workerJsDesc: 'WorkerJS is a debugging intermediate file, the file starts with \`[Runtime]-\`',
-    jsServiceDesc: 'JSService is using <a href="http://weex.apache.org/cn/references/js-service.html" target="_blank">JSService API</a>register in the run, multiple files separated by commas',
+    jsServiceDesc: 'JSService is using <a href="https://weex.apache.org/docs/api/js-service.html" target="_blank">JSService API</a>register in the run, multiple files separated by commas',
     dependenceJsDesc: 'DependenceJS is the JS file injected by Weex in the JS environment before creating the instance',
     jsFrameworkDesc: 'JSFramework is the JS that provides the initial environment for weex to run',
     environmentSettingOkDesc: 'Change Setting',
