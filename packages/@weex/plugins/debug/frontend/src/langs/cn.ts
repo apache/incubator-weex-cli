@@ -32,7 +32,7 @@ export const cn = {
     tips: {
       quickStartTitle: '快速使用',
       quickStartDesc: '快速了解如何在你的开发中使用 weex 调试工具',
-      quickStartUrl: 'http://weex.apache.org/zh/tools/toolkit.html#debug',
+      quickStartUrl: 'https://weex.apache.org/zh/guide/debug/debug.html',
       guideTitle: '使用教程',
       guideDesc: '详细介绍各个功能的使用说明',
       guideUrl: 'https://weex.apache.org/zh/guide/debug/debug.html',

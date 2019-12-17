@@ -164,6 +164,10 @@ export class HomeComponent extends Vue {
     }))
   }
 
+  navigator(url:string){
+    window.open(url,'_blank')
+  }
+
   handleLanguageSetting(locale: string) {
     this.$i18n.locale = locale
     this.initTips()

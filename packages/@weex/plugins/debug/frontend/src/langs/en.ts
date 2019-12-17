@@ -32,7 +32,7 @@ export const en = {
     tips: {
       quickStartTitle: 'Quick start',
       quickStartDesc: 'Quickly learn how to use the weex debugging tool',
-      quickStartUrl: 'http://weex.apache.org/tools/toolkit.html#debug',
+      quickStartUrl: 'https://weex.apache.org/guide/debug/debug.html',
       guideTitle: 'Tutorial',
       guideDesc: 'Detailed instructions for using each function',
       guideUrl: 'https://weex.apache.org/guide/debug/debug.html',

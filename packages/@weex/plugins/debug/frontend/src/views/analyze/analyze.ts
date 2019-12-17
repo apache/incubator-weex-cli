@@ -32,7 +32,7 @@ import * as types from '../../store/mutation-types'
 import { Parser } from '../../util/parser'
 import { SelectComponent } from '../../components/select'
 import VeWaterfallBar from 'v-charts/lib/waterfall.common'
-import { BFormRadioGroup } from 'bootstrap-vue/esm/components'
+import { BFormRadioGroup } from 'bootstrap-vue/esm/components/form-radio'
 import { BPopover } from 'bootstrap-vue/esm/components/popover'
 import './analyze.scss'
 
