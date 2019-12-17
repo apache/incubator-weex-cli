@@ -22,11 +22,11 @@ import {
   namespace
 } from 'vuex-class'
 import QrcodeVue from 'qrcode.vue'
-import bEmbed from 'bootstrap-vue/es/components/embed/embed'
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select'
-import bButton from 'bootstrap-vue/es/components/button/button'
+import { BEmbed } from 'bootstrap-vue/esm/components/embed/embed'
+import { BFormSelect } from 'bootstrap-vue/esm/components/form-select/form-select'
+import { BButton } from 'bootstrap-vue/esm/components/button/button'
 import SockJS from 'simple-websocket'
-import bModal from 'bootstrap-vue/es/components/modal/modal'
+import { BModal } from 'bootstrap-vue/esm/components/modal/modal'
 import MonacoEditor from 'vue-monaco-editor'
 import * as types from '../../store/mutation-types'
 import { Environment } from '../../store/modules/weex'
@@ -38,10 +38,10 @@ const Module = namespace('weex')
 @Component({
   template: require('./weex.html'),
   components: {
-    'b-embed': bEmbed,
-    'b-button': bButton,
-    'b-modal': bModal,
-    'b-form-select': bFormSelect,
+    'b-embed': BEmbed,
+    'b-button': BButton,
+    'b-modal': BModal,
+    'b-form-select': BFormSelect,
     'monacoeditor': MonacoEditor,
     'qrcode': QrcodeVue
   }
@@ -115,22 +115,22 @@ export class WeexComponent extends Vue {
   @Prop({ type: String })
   private channelId: { value: string }
   // computed
-  get remoteDebugStatus () {
+  get remoteDebugStatus() {
     return this.remoteDebug
   }
-  get networkStatus () {
+  get networkStatus() {
     return this.network
   }
-  get sourcejs () {
+  get sourcejs() {
     return this.environment.sourcejs
   }
-  set sourcejs (value: string) {
+  set sourcejs(value: string) {
     this.updateWeexEnvironment('sourcejs', value)
   }
-  get elementModeSelected () {
+  get elementModeSelected() {
     return this.elementMode
   }
-  set elementModeSelected (value: boolean) {
+  set elementModeSelected(value: boolean) {
     this.updateForm({ type: types.UPDATE_ELEMENT_MODE_STATUS, value: value })
     this.socket.send(JSON.stringify({
       method: 'WxDebug.setElementMode',
@@ -139,10 +139,10 @@ export class WeexComponent extends Vue {
       }
     }))
   }
-  get logLevelSelected () {
+  get logLevelSelected() {
     return this.logLevel
   }
-  set logLevelSelected (value: boolean) {
+  set logLevelSelected(value: boolean) {
     this.updateForm({ type: types.UPDATE_LOG_LEVEL_STATUS, value: value })
     this.socket.send(JSON.stringify({
       method: 'WxDebug.setLogLevel',
@@ -152,34 +152,34 @@ export class WeexComponent extends Vue {
     }))
   }
 
-  get workerjs () {
+  get workerjs() {
     return this.environment.workerjs
   }
-  set workerjs (value: string) {
+  set workerjs(value: string) {
     this.updateWeexEnvironment('workerjs', value)
   }
 
-  get jsframework () {
+  get jsframework() {
     return this.environment.jsframework
   }
-  set jsframework (value: string) {
+  set jsframework(value: string) {
     this.updateWeexEnvironment('jsframework', value)
   }
-  get dependencejs () {
+  get dependencejs() {
     return this.environment.dependencejs
   }
-  set dependencejs (value: string) {
+  set dependencejs(value: string) {
     this.updateWeexEnvironment('dependencejs', value)
   }
-  get jsservice () {
+  get jsservice() {
     return this.environment.jsservice
   }
-  set jsservice (value: string) {
+  set jsservice(value: string) {
     this.updateWeexEnvironment('jsservice', value)
   }
 
   @Watch('helpSetting')
-  help (n, o) {
+  help(n, o) {
     if (n) {
       this.$tours['miniappTour'].start()
     } else {
@@ -188,11 +188,11 @@ export class WeexComponent extends Vue {
   }
 
   @Watch('bundleSetting')
-  bundle (n, o) {
+  bundle(n, o) {
     this.bundlesModalShow = n
   }
 
-  created () {
+  created() {
     this.tourOptions = {
       labels: {
         buttonSkip: this.$t('tour.skip'),
@@ -252,7 +252,7 @@ export class WeexComponent extends Vue {
     ]
   }
 
-  mounted () {
+  mounted() {
     this.initWebSocket()
     this.$store.commit(types.UPDATE_CHANNEL_ID, this.channelId)
     if (!localStorage.getItem('hasBeenTour')) {
@@ -263,18 +263,20 @@ export class WeexComponent extends Vue {
     })
   }
 
-  destroyed () {
+  destroyed() {
     this.socket.send(JSON.stringify({ method: 'WxDebug.disable' }))
-    this.socket.send(JSON.stringify({ method: 'WxDebug.network', params: {
-      enable: false
-    }}))
+    this.socket.send(JSON.stringify({
+      method: 'WxDebug.network', params: {
+        enable: false
+      }
+    }))
   }
 
-  initWebSocket () {
+  initWebSocket() {
     this.connection()
   }
 
-  connection () {
+  connection() {
     this.socket = new SockJS(`ws://${this.webSocketHost}/debugProxy/debugger/${this.channelId}`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'Page.stopScreencast' }))
@@ -301,7 +303,7 @@ export class WeexComponent extends Vue {
           this.updateForm({ type: types.UPDATE_REMOTE_DEBUG_STATUS, value: typeof (device.remoteDebug) === 'undefined' ? sessionStorage.getItem('remoteDebug') === 'true' : device.remoteDebug })
           this.updateForm({ type: types.UPDATE_NETWORK_STATUS, value: typeof (device.network) === 'undefined' ? sessionStorage.getItem('network') === 'true' : device.network })
           this.updateForm({ type: types.UPDATE_LOG_LEVEL_STATUS, value: device.logLevel || 'debug' })
-          this.updateForm({ type: types.UPDATE_ELEMENT_MODE_STATUS,value: device.elementMode || 'native' })
+          this.updateForm({ type: types.UPDATE_ELEMENT_MODE_STATUS, value: device.elementMode || 'native' })
           this.initChromeDevtool()
         }
 
@@ -329,10 +331,12 @@ export class WeexComponent extends Vue {
           this.updateEnvironment(env)
         }
         this.isSandbox = data.params.isSandbox
-        this.updateForm({ type: types.UPDATE_INSTANCE_URL, value: {
-          value: data.params.bundleUrl,
-          env: env
-        } })
+        this.updateForm({
+          type: types.UPDATE_INSTANCE_URL, value: {
+            value: data.params.bundleUrl,
+            env: env
+          }
+        })
       } else if (method === 'WxDebug.getTemplateFile') {
         let env = Object.assign({}, this.environment)
         let template = data.params.value
@@ -353,16 +357,16 @@ export class WeexComponent extends Vue {
     })
   }
 
-  initChromeDevtool () {
+  initChromeDevtool() {
     this.inspectorUrl = `../../assets/inspector/inspector.html?ws=${this.webSocketHost}/debugProxy/inspector/${this.channelId}`
   }
 
-  handleRemoteDebug ($event) {
+  handleRemoteDebug($event) {
     this.updateForm({ type: types.UPDATE_REMOTE_DEBUG_STATUS, value: $event.value })
     this.socket.send(JSON.stringify({ method: 'WxDebug.' + ($event.value ? 'enable' : 'disable') }))
   }
 
-  handleNetwork ($event) {
+  handleNetwork($event) {
     this.updateForm({ type: types.UPDATE_NETWORK_STATUS, value: $event.value })
     this.socket.send(JSON.stringify({
       method: 'WxDebug.network',
@@ -372,7 +376,7 @@ export class WeexComponent extends Vue {
     }))
   }
 
-  reload () {
+  reload() {
     if (this.canReload) {
       this.$snotify.async(`${this.$t('weexDebugPage.reloading')}...`, () => new Promise((resolve, reject) => {
         this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
@@ -391,22 +395,24 @@ export class WeexComponent extends Vue {
     }
   }
 
-  cleanHistory () {
+  cleanHistory() {
     let comfirmOptions: SnotifyToastConfig = {
       position: SnotifyPosition.centerCenter,
       buttons: [
-        { text: 'Yes', action: (toast) => {
-          this.cleanHistorys()
-          this.historyLatestUrl = ''
-          this.$snotify.remove(toast.id)
-        } },
+        {
+          text: 'Yes', action: (toast) => {
+            this.cleanHistorys()
+            this.historyLatestUrl = ''
+            this.$snotify.remove(toast.id)
+          }
+        },
         { text: 'No', action: (toast) => this.$snotify.remove(toast.id) }
       ]
     }
     this.$snotify.confirm(this.$t('weexDebugPage.ensureDeleteHistory'), comfirmOptions)
   }
 
-  updateWeexEnvironment (type, value) {
+  updateWeexEnvironment(type, value) {
     let env = Object.assign({}, this.environment)
     if (env[type] !== value) {
       env[type] = value
@@ -414,7 +420,7 @@ export class WeexComponent extends Vue {
     }
   }
 
-  activeWeexEnvironmentSetting () {
+  activeWeexEnvironmentSetting() {
     this.$snotify.async(this.$t('weexDebugPage.changeEnvSetting'), () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({
         method: 'WxDebug.setContextEnvironment',
@@ -434,7 +440,7 @@ export class WeexComponent extends Vue {
     }))
   }
 
-  cleanWeexEnvironmentSetting () {
+  cleanWeexEnvironmentSetting() {
     this.cleanEnvironment()
     this.socket.send(JSON.stringify({
       method: 'WxDebug.setContextEnvironment',
@@ -446,7 +452,7 @@ export class WeexComponent extends Vue {
     this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
   }
 
-  navigator (value: string, environment: Environment) {
+  navigator(value: string, environment: Environment) {
     if (!environment) {
       environment = this.environment
     }
@@ -475,22 +481,22 @@ export class WeexComponent extends Vue {
     }))
   }
 
-  restore () {
+  restore() {
     this.cleanWeexEnvironmentSetting()
   }
 
-  mockFile (code: string) {
+  mockFile(code: string) {
     this.$snotify.async(`${this.$t('weexDebugPage.generatingFile')}...`, () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({ method: 'WxDebug.postTemplateFile', params: { value: this.editor.getValue() } }))
       this.editor.setValue('')
     }))
   }
 
-  onMounted (editor) {
+  onMounted(editor) {
     this.editor = editor
   }
 
-  toggleEditor (data: any) {
+  toggleEditor(data: any) {
     let sourceUrl = this.environment[data]
     if (data === 'jsservice') {
       if (Array.isArray(sourceUrl)) {
@@ -526,19 +532,19 @@ export class WeexComponent extends Vue {
     }, 200)
   }
 
-  customNextStepCallback (currentStep) {
+  customNextStepCallback(currentStep) {
     if (currentStep === 4) {
       this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, true)
     }
   }
 
-  customPreStepCallback (currentStep) {
+  customPreStepCallback(currentStep) {
     // if (currentStep === 5) {
     //   this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, true)
     // }
   }
 
-  customStopCallback () {
+  customStopCallback() {
     localStorage.setItem('hasBeenTour', 'true')
     this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, false)
     this.$store.commit(types.UPDATE_HELP_SETTING, false)

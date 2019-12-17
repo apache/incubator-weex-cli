@@ -21,9 +21,9 @@ import {
   Action,
   namespace
 } from 'vuex-class'
-import bEmbed from 'bootstrap-vue/es/components/embed/embed'
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select'
-import bButton from 'bootstrap-vue/es/components/button/button'
+import { BEmbed } from 'bootstrap-vue/esm/components/embed/embed'
+import { BFormSelect } from 'bootstrap-vue/esm/components/form-select/form-select'
+import { BButton } from 'bootstrap-vue/esm/components/button/button'
 import SockJS from 'simple-websocket'
 import * as types from '../../store/mutation-types'
 import { Environment } from '../../store/modules/weex'
@@ -36,9 +36,9 @@ const Module = namespace('eval')
 @Component({
   template: require('./eval.html'),
   components: {
-    'b-embed': bEmbed,
-    'b-button': bButton,
-    'b-form-select': bFormSelect
+    'b-embed': BEmbed,
+    'b-button': BButton,
+    'b-form-select': BFormSelect
   }
 })
 export class EvalComponent extends Vue {

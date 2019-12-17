@@ -21,19 +21,19 @@ import {
   Action,
   namespace
 } from 'vuex-class'
-import bCheckbox from 'bootstrap-vue/es/components/form-checkbox/form-checkbox'
-import bEmbed from 'bootstrap-vue/es/components/embed/embed'
-import bTable from 'bootstrap-vue/es/components/table/table'
-import bProgress from 'bootstrap-vue/es/components/progress/progress'
-import bButton from 'bootstrap-vue/es/components/button/button'
-import bModal from 'bootstrap-vue/es/components/modal/modal'
+import { BFormCheckbox } from 'bootstrap-vue/esm/components/form-checkbox'
+import { BEmbed } from 'bootstrap-vue/esm/components/embed'
+import { BTable } from 'bootstrap-vue/esm/components/table'
+import { BProgress } from 'bootstrap-vue/esm/components/progress'
+import { BButton } from 'bootstrap-vue/esm/components/button'
+import { BModal } from 'bootstrap-vue/esm/components/modal'
 import SockJS from 'simple-websocket'
 import * as types from '../../store/mutation-types'
 import { Parser } from '../../util/parser'
 import { SelectComponent } from '../../components/select'
 import VeWaterfallBar from 'v-charts/lib/waterfall.common'
-import bFormRadioGroup from 'bootstrap-vue/es/components/form-radio/form-radio-group'
-import bPopover from 'bootstrap-vue/es/components/popover/popover'
+import { BFormRadioGroup } from 'bootstrap-vue/esm/components'
+import { BPopover } from 'bootstrap-vue/esm/components/popover'
 import './analyze.scss'
 
 const Module = namespace('analyze')
@@ -41,15 +41,15 @@ const Module = namespace('analyze')
 @Component({
   template: require('./analyze.html'),
   components: {
-    'b-embed': bEmbed,
-    'b-button': bButton,
+    'b-embed': BEmbed,
+    'b-button': BButton,
     'wx-select': SelectComponent,
-    'b-checkbox': bCheckbox,
-    'b-progress': bProgress,
-    'b-table': bTable,
-    'b-modal': bModal,
-    'b-popover': bPopover,
-    'b-form-radio-group': bFormRadioGroup,
+    'b-checkbox': BFormCheckbox,
+    'b-progress': BProgress,
+    'b-table': BTable,
+    'b-modal': BModal,
+    'b-popover': BPopover,
+    'b-form-radio-group': BFormRadioGroup,
     've-waterfall': VeWaterfallBar
   }
 })
@@ -116,7 +116,7 @@ export class AnalyzeComponent extends Vue {
   progressValue: number = 0
   progressMaxValue: number = 0
   performanceTableData: any = {
-    fields: [ {
+    fields: [{
       key: 'name',
       label: '指标项'
     }, {
@@ -125,7 +125,7 @@ export class AnalyzeComponent extends Vue {
     }, {
       key: 'description',
       label: '说明'
-    } ],
+    }],
     items: [
     ]
   }
@@ -150,10 +150,10 @@ export class AnalyzeComponent extends Vue {
     value: 'all'
   }]
   @Watch('historys')
-  historyChange () {
+  historyChange() {
     let downloadContent
     let len = this.historys.length
-    for (let i = 0; i < len;i++) {
+    for (let i = 0; i < len; i++) {
       if (this.historys[i].key === this.activeId) {
         downloadContent = this.historys[i]
         break
@@ -161,10 +161,10 @@ export class AnalyzeComponent extends Vue {
     }
     let downloadTime = new Date()
     this.downloadName = `${downloadTime.getTime()}-${this.reportData.properties.wxBizID}.json`
-    this.downloadHref = URL.createObjectURL(new Blob([JSON.stringify(downloadContent,null,2)]))
+    this.downloadHref = URL.createObjectURL(new Blob([JSON.stringify(downloadContent, null, 2)]))
   }
 
-  mockAfterConfig (options) {
+  mockAfterConfig(options) {
     let xAxis = options.xAxis
     let yAxis = options.yAxis
     options.xAxis = yAxis
@@ -174,7 +174,7 @@ export class AnalyzeComponent extends Vue {
     options.series[1].label.normal.formatter = (item) => {
       return `${item.data}ms`
     }
-    options.color = ['#f37327','#f37327', '#61a0a8']
+    options.color = ['#f37327', '#f37327', '#61a0a8']
     if (this.relativePositionWithFsAndAsync) {
       options.series[0].data[2] = options.series[0].data[3] + this.relativePositionWithFsAndAsync
       options.series[0].data[1] = options.series[0].data[1] + this.relativePositionWithFsAndAsync - options.series[1].data[3]
@@ -187,26 +187,26 @@ export class AnalyzeComponent extends Vue {
   @Prop({ type: String })
   private channelId: { value: string }
 
-  get reloadToggle () {
+  get reloadToggle() {
     return this.reload
   }
-  set reloadToggle (value) {
+  set reloadToggle(value) {
     this.updateToggle({ value: value, name: 'reloadToggle' })
   }
-  get captureToggle () {
+  get captureToggle() {
     return this.capture
   }
-  set captureToggle (value) {
+  set captureToggle(value) {
     this.updateToggle({ value: value, name: 'captureToggle' })
   }
-  get compareToggle () {
+  get compareToggle() {
     return this.compare
   }
-  set compareToggle (value) {
+  set compareToggle(value) {
     this.updateToggle({ value: value, name: 'compareToggle' })
   }
 
-  mounted () {
+  mounted() {
     if (!this.parser) {
       this.parser = new Parser()
     }
@@ -214,7 +214,7 @@ export class AnalyzeComponent extends Vue {
     this.$store.commit(types.UPDATE_CHANNEL_ID, this.channelId)
   }
 
-  initData () {
+  initData() {
     let jsAsyncTime
     let fsViewTime = this.reportData.stage.wxFirstInteractionView - this.reportData.stage.wxEndLoadBundle
     let bundleCompileTime = this.reportData.stage.wxEndLoadBundle - this.reportData.stage.wxRenderTimeOrigin
@@ -255,7 +255,7 @@ export class AnalyzeComponent extends Vue {
       }
     }
     this.chartData.rows.push({
-      '耗时': fsViewTime ,
+      '耗时': fsViewTime,
       '类型': '首屏视图编译时间'
     })
     this.chartData.rows.push({
@@ -305,7 +305,7 @@ export class AnalyzeComponent extends Vue {
       }
       let len = this.reportData.wxinteraction.length
       let types = []
-      for (let index = 0; index < len; index ++) {
+      for (let index = 0; index < len; index++) {
         if (index === 0) {
           this.reportData.wxinteraction[index].diff = 0
         } else {
@@ -359,11 +359,11 @@ export class AnalyzeComponent extends Vue {
     this.pageScoreTableData = this.generateScoreData(performanceScoreData, this.performanceScoreTextMap, this.performanceScoreSeed)
   }
 
-  initWebSocket () {
+  initWebSocket() {
     this.connection()
   }
 
-  connection () {
+  connection() {
     this.socket = new SockJS(`ws://${this.webSocketHost}/debugProxy/debugger/${this.channelId}`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'Page.stopScreencast' }))
@@ -385,7 +385,7 @@ export class AnalyzeComponent extends Vue {
             }
           } else if (this.completeCounter[key]) {
             if (this.completeCounter[key].value === data.params[key].length) {
-              this.completeCounter[key].count ++
+              this.completeCounter[key].count++
             } else {
               this.completeCounter[key].count = 1
               this.completeCounter[key].value = data.params[key].length
@@ -404,7 +404,7 @@ export class AnalyzeComponent extends Vue {
         for (let item in data.params) {
           let instanceID = item
           dataCopy[instanceID] = []
-          for (let index = 0; index < data.params[item].length; index ++) {
+          for (let index = 0; index < data.params[item].length; index++) {
             if (!dataCopy[instanceID][data.params[item][index].type]) {
               dataCopy[instanceID][data.params[item][index].type] = []
             }
@@ -452,35 +452,35 @@ export class AnalyzeComponent extends Vue {
     })
   }
 
-  handleCaptureTimesChange (value) {
+  handleCaptureTimesChange(value) {
     this.updateDefaultCapture(value)
   }
 
-  handleHistoryChange (value) {
+  handleHistoryChange(value) {
     this.updateDefaultHistory(value)
   }
 
-  handleFilterTypeChange (value) {
+  handleFilterTypeChange(value) {
     this.defaultRenderType = value
   }
 
-  activeHistory (history) {
+  activeHistory(history) {
     this.reportData = history.data
     this.activeId = history.key
     this.initData()
   }
 
-  handleSetting () {
+  handleSetting() {
     this.reportData = ''
     this.activeId = ''
   }
 
-  startAnalyze () {
+  startAnalyze() {
     if (!this.start) {
       this.start = true
       this.activeId = ''
       this.reportData = ''
-      this.$snotify.async('捕获数据中...', () => new Promise((resolve, reject) => {}))
+      this.$snotify.async('捕获数据中...', () => new Promise((resolve, reject) => { }))
       if (this.reload) {
         this.socket.send(JSON.stringify({ method: 'WxDebug.reload' }))
       }
@@ -511,7 +511,7 @@ export class AnalyzeComponent extends Vue {
 
   }
 
-  clearHistory (activeId) {
+  clearHistory(activeId) {
     let historys = [].concat(this.historys)
     if (activeId) {
       historys = historys.filter((hisotry) => {
@@ -530,7 +530,7 @@ export class AnalyzeComponent extends Vue {
     }
   }
 
-  showDetail (type, value) {
+  showDetail(type, value) {
     if (type) {
       this.treeViewerOptions.rootObjectKey = type
     }
@@ -538,7 +538,7 @@ export class AnalyzeComponent extends Vue {
     this.modalShow = true
   }
 
-  generateScoreData (raw, map, scoreMap) {
+  generateScoreData(raw, map, scoreMap) {
     let len = raw.length
     let data = []
     let scoreSum = 100
@@ -592,11 +592,11 @@ export class AnalyzeComponent extends Vue {
     }
   }
 
-  copyText (message) {
-    this.$copyText(message).then(() => {})
+  copyText(message) {
+    this.$copyText(message).then(() => { })
   }
 
-  tirggerFile (event) {
+  tirggerFile(event) {
     const files = event.target.files
     if (files && files.length > 0 && files[0].size > 0) {
       let file = files[0]
