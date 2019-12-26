@@ -16,8 +16,18 @@ config.env = {}
 
 config.wmlEnv = {}
 
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('page.entry', 'ping')
+    sendHeartbeat()
+  }, config.heartbeatTime)
+}
+
 debuggerRouter
   .registerHandler(function (message) {
+    sendHeartbeat()
     const payload = message.payload
     const method = payload.method
     const device = DeviceManager.getDevice(message.channelId)
@@ -314,6 +324,7 @@ debuggerRouter
 
 debuggerRouter
   .registerHandler(function (message) {
+    sendHeartbeat()
     const payload = message.payload
     const device = DeviceManager.getDevice(message.channelId)
     if (payload.method === 'Page.screencastFrame') {

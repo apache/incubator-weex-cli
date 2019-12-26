@@ -5,8 +5,20 @@ const { util } = require('../../util')
 const debuggerRouter = Router.get('debugger')
 const opn = require('opn')
 
+
+
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('page.entry', 'ping')
+    sendHeartbeat()
+  }, config.heartbeatTime)
+}
+
 debuggerRouter
   .registerHandler(message => {
+    sendHeartbeat()
     let method = message.payload.method
     if (method === 'WxDebug.applyChannelId') {
       const channelId = debuggerRouter.newChannel(config.CHANNELID)

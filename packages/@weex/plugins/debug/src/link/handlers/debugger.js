@@ -6,8 +6,18 @@ const config = require('../../config')
 const MemoryFile = require('../../MemoryFile')
 const uuidv1 = require('uuid/v1')
 
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('page.entry', 'ping')
+    sendHeartbeat()
+  }, config.heartbeatTime)
+}
+
 debuggerRouter
   .registerHandler((message, next) => {
+    sendHeartbeat()
     const payload = message.payload
     const method = payload.method
     const domain = method.split('.')[0]
