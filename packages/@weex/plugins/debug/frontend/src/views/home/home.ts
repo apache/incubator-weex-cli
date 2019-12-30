@@ -22,11 +22,11 @@ import {
   namespace
 } from 'vuex-class'
 import SockJS from 'simple-websocket'
-import bContainer from 'bootstrap-vue/es/components/layout/container'
-import bCol from 'bootstrap-vue/es/components/layout/col'
-import bRow from 'bootstrap-vue/es/components/layout/row'
+import { BContainer } from 'bootstrap-vue/esm/components/layout/container'
+import { BCol } from 'bootstrap-vue/esm/components/layout/col'
+import { BRow } from 'bootstrap-vue/esm/components/layout/row'
 import QrcodeVue from 'qrcode.vue'
-import bPopover from 'bootstrap-vue/es/components/popover/popover'
+import { BPopover } from 'bootstrap-vue/esm/components/popover/popover'
 import filters from './filters'
 import './home.scss'
 
@@ -42,10 +42,10 @@ export interface Tip {
 @Component({
   template: require('./home.html'),
   components: {
-    'b-container': bContainer,
-    'b-col': bCol,
-    'b-row': bRow,
-    'b-popover': bPopover,
+    'b-container': BContainer,
+    'b-col': BCol,
+    'b-row': BRow,
+    'b-popover': BPopover,
     'qrcode': QrcodeVue
   },
   filters
@@ -162,6 +162,10 @@ export class HomeComponent extends Vue {
         }
       }), 1000)
     }))
+  }
+
+  navigator (url: string) {
+    window.open(url, '_blank')
   }
 
   handleLanguageSetting (locale: string) {

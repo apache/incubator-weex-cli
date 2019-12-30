@@ -6,8 +6,8 @@
   "scripts": {
     "format": "eslint ./src --fix",
     "lint": "eslint ./src",
-    "prepublish": "npm run lint && npm run build",
-    "build": "cd frontend && npm i && npm run compile"
+    "prepublish": "yarn lint && yarn build",
+    "build": "cd frontend && yarn && yarn compile"
   },
   "author": "Mario <faterrole@gmail.com>",
   "files": [

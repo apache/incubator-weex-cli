@@ -1,6 +1,8 @@
 const mlink = require('../index')
 const debuggerRouter = mlink.Router.get('debugger')
 const DeviceManager = require('../managers/device_manager')
+const config = require('../../config')
+
 const redirectMessage = /^(Page.(enable|disable|reload)|Debugger|Target|Worker|Runtime\.runIfWaitingForDebugger)/
 const ignoredMessage = /^(ServiceWorker)/
 const chromeDevtoolDiabledProtocol = [
@@ -19,8 +21,18 @@ const chromeDevtoolDiabledProtocol = [
   // 'Page.setAdBlockingEnabled'
 ]
 
+let heartbeatTimer
+const sendHeartbeat = () => {
+  heartbeatTimer && clearTimeout(heartbeatTimer)
+  heartbeatTimer = setTimeout(() => {
+    debuggerRouter.pushMessage('page.entry', 'ping')
+    sendHeartbeat()
+  }, config.heartbeatTime)
+}
+
 debuggerRouter
   .registerHandler(function (message) {
+    sendHeartbeat()
     const device = DeviceManager.getDevice(message.channelId)
     if (device) {
       if (redirectMessage.test(message.payload.method)) {

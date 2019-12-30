@@ -22,11 +22,11 @@ import {
   namespace
 } from 'vuex-class'
 import QrcodeVue from 'qrcode.vue'
-import bEmbed from 'bootstrap-vue/es/components/embed/embed'
-import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select'
-import bButton from 'bootstrap-vue/es/components/button/button'
+import { BEmbed } from 'bootstrap-vue/esm/components/embed/embed'
+import { BFormSelect } from 'bootstrap-vue/esm/components/form-select/form-select'
+import { BButton } from 'bootstrap-vue/esm/components/button/button'
 import SockJS from 'simple-websocket'
-import bModal from 'bootstrap-vue/es/components/modal/modal'
+import { BModal } from 'bootstrap-vue/esm/components/modal/modal'
 import MonacoEditor from 'vue-monaco-editor'
 import * as types from '../../store/mutation-types'
 import { Environment } from '../../store/modules/weex'
@@ -38,10 +38,10 @@ const Module = namespace('weex')
 @Component({
   template: require('./weex.html'),
   components: {
-    'b-embed': bEmbed,
-    'b-button': bButton,
-    'b-modal': bModal,
-    'b-form-select': bFormSelect,
+    'b-embed': BEmbed,
+    'b-button': BButton,
+    'b-modal': BModal,
+    'b-form-select': BFormSelect,
     'monacoeditor': MonacoEditor,
     'qrcode': QrcodeVue
   }
@@ -265,9 +265,11 @@ export class WeexComponent extends Vue {
 
   destroyed () {
     this.socket.send(JSON.stringify({ method: 'WxDebug.disable' }))
-    this.socket.send(JSON.stringify({ method: 'WxDebug.network', params: {
-      enable: false
-    }}))
+    this.socket.send(JSON.stringify({
+      method: 'WxDebug.network', params: {
+        enable: false
+      }
+    }))
   }
 
   initWebSocket () {
@@ -301,7 +303,7 @@ export class WeexComponent extends Vue {
           this.updateForm({ type: types.UPDATE_REMOTE_DEBUG_STATUS, value: typeof (device.remoteDebug) === 'undefined' ? sessionStorage.getItem('remoteDebug') === 'true' : device.remoteDebug })
           this.updateForm({ type: types.UPDATE_NETWORK_STATUS, value: typeof (device.network) === 'undefined' ? sessionStorage.getItem('network') === 'true' : device.network })
           this.updateForm({ type: types.UPDATE_LOG_LEVEL_STATUS, value: device.logLevel || 'debug' })
-          this.updateForm({ type: types.UPDATE_ELEMENT_MODE_STATUS,value: device.elementMode || 'native' })
+          this.updateForm({ type: types.UPDATE_ELEMENT_MODE_STATUS, value: device.elementMode || 'native' })
           this.initChromeDevtool()
         }
 
@@ -329,10 +331,12 @@ export class WeexComponent extends Vue {
           this.updateEnvironment(env)
         }
         this.isSandbox = data.params.isSandbox
-        this.updateForm({ type: types.UPDATE_INSTANCE_URL, value: {
-          value: data.params.bundleUrl,
-          env: env
-        } })
+        this.updateForm({
+          type: types.UPDATE_INSTANCE_URL, value: {
+            value: data.params.bundleUrl,
+            env: env
+          }
+        })
       } else if (method === 'WxDebug.getTemplateFile') {
         let env = Object.assign({}, this.environment)
         let template = data.params.value
@@ -395,11 +399,13 @@ export class WeexComponent extends Vue {
     let comfirmOptions: SnotifyToastConfig = {
       position: SnotifyPosition.centerCenter,
       buttons: [
-        { text: 'Yes', action: (toast) => {
-          this.cleanHistorys()
-          this.historyLatestUrl = ''
-          this.$snotify.remove(toast.id)
-        } },
+        {
+          text: 'Yes', action: (toast) => {
+            this.cleanHistorys()
+            this.historyLatestUrl = ''
+            this.$snotify.remove(toast.id)
+          }
+        },
         { text: 'No', action: (toast) => this.$snotify.remove(toast.id) }
       ]
     }

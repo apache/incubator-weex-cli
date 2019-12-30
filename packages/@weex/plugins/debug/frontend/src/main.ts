@@ -26,8 +26,8 @@ import Snotify, { SnotifyPosition, SnotifyToastConfig } from 'vue-snotify'
 import VueResource from 'vue-resource'
 import TreeView from 'vue-json-tree-view'
 import VueClipboard from 'vue-clipboard2'
-import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip'
-import vBPopover from 'bootstrap-vue/es/directives/popover/popover'
+import { VBTooltip } from 'bootstrap-vue/esm/directives/tooltip/tooltip'
+import { VBPopover } from 'bootstrap-vue/esm/directives/popover/popover'
 import i18n from './lang'
 
 // const navbarComponent = () => import('./components/navbar').then(({ NavbarComponent }) => NavbarComponent)
@@ -43,10 +43,10 @@ Vue.use(TreeView)
 // let vue-clipboard2 set container to current element by doing this
 VueClipboard.config.autoSetContainer = true
 Vue.use(VueClipboard)
-Vue.directive('b-popover', vBPopover)
-Vue.directive('b-tooltip', vBTooltip)
+Vue.directive('b-popover', VBPopover)
+Vue.directive('b-tooltip', VBTooltip)
 
-const options: {toast: SnotifyToastConfig} = {
+const options: { toast: SnotifyToastConfig } = {
   toast: {
     position: SnotifyPosition.centerTop,
     bodyMaxLength: 20,

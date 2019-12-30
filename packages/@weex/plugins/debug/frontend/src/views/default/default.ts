@@ -22,9 +22,7 @@ import {
   namespace
 } from 'vuex-class'
 import SockJS from 'simple-websocket'
-import bContainer from 'bootstrap-vue/es/components/layout/container'
-import bCol from 'bootstrap-vue/es/components/layout/col'
-import bRow from 'bootstrap-vue/es/components/layout/row'
+import { BContainer, BCol, BRow } from 'bootstrap-vue/esm'
 import QrcodeVue from 'qrcode.vue'
 import './default.scss'
 
@@ -38,9 +36,9 @@ export interface Tip {
 @Component({
   template: require('./default.html'),
   components: {
-    'b-container': bContainer,
-    'b-col': bCol,
-    'b-row': bRow,
+    'b-container': BContainer,
+    'b-col': BCol,
+    'b-row': BRow,
     'qrcode': QrcodeVue
   }
 })

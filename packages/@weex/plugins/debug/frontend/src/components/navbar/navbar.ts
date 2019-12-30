@@ -16,12 +16,12 @@
  * under the License.
  */
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
-import bCollapse from 'bootstrap-vue/es/components/collapse/collapse'
-import bNavItem from 'bootstrap-vue/es/components/nav/nav-item'
-import bNavbar from 'bootstrap-vue/es/components/navbar/navbar'
-import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle'
-import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand'
-import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav'
+import { BCollapse } from 'bootstrap-vue/esm/components/collapse/collapse'
+import { BNavItem } from 'bootstrap-vue/esm/components/nav/nav-item'
+import { BNavbar } from 'bootstrap-vue/esm/components/navbar/navbar'
+import { BNavbarToggle } from 'bootstrap-vue/esm/components/navbar/navbar-toggle'
+import { BNavbarBrand } from 'bootstrap-vue/esm/components/navbar/navbar-brand'
+import { BNavbarNav } from 'bootstrap-vue/esm/components/navbar/navbar-nav'
 import * as types from '../../store/mutation-types'
 
 import './navbar.scss'
@@ -33,12 +33,12 @@ import {
 @Component({
   template: require('./navbar.html'),
   components: {
-    'b-collapse': bCollapse,
-    'b-nav-item': bNavItem,
-    'b-navbar': bNavbar,
-    'b-navbar-toggle': bNavbarToggle,
-    'b-navbar-brand': bNavbarBrand,
-    'b-navbar-nav': bNavbarNav
+    'b-collapse': BCollapse,
+    'b-nav-item': BNavItem,
+    'b-navbar': BNavbar,
+    'b-navbar-toggle': BNavbarToggle,
+    'b-navbar-brand': BNavbarBrand,
+    'b-navbar-nav': BNavbarNav
   }
 })
 export class NavbarComponent extends Vue {
