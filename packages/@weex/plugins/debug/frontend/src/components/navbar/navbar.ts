@@ -46,28 +46,28 @@ export class NavbarComponent extends Vue {
   @State('helpSetting') helpSetting
   @State('bundleSetting') bundleSetting
 
-  get enableEnvironmentSetting() {
+  get enableEnvironmentSetting () {
     return this.$route.meta.setting
   }
 
-  get title() {
+  get title () {
     return this.$t(`${this.$route.meta.title}.title`)
   }
 
   @Watch('$route.path')
-  pathChanged() {
+  pathChanged () {
     console.log('Changed current path to: ' + this.$route.path)
   }
 
-  toggleEnvironmentSetting() {
+  toggleEnvironmentSetting () {
     this.$store.commit(types.UPDATE_ENVIRONMENT_SETTING, !this.environmentSetting)
   }
 
-  toggleHelpSetting() {
+  toggleHelpSetting () {
     this.$store.commit(types.UPDATE_HELP_SETTING, !this.helpSetting)
   }
 
-  toggleBundlesModal() {
+  toggleBundlesModal () {
     this.$store.commit(types.UPDATE_BUNDLE_SETTING, !this.bundleSetting)
   }
 }

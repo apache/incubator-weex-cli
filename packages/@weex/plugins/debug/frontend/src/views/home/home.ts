@@ -65,18 +65,18 @@ export class HomeComponent extends Vue {
   activeBundle: string = localStorage.getItem('activeBundle') || ''
   socket: any = null
 
-  mounted() {
+  mounted () {
     this.initWebSocket()
     if (!this.socket) {
       this.initWebSocket()
     }
   }
 
-  created() {
+  created () {
     this.initTips()
   }
 
-  initTips() {
+  initTips () {
     this.tips = [
       {
         icon: 'icon-feiji',
@@ -105,11 +105,11 @@ export class HomeComponent extends Vue {
     ]
   }
 
-  initWebSocket() {
+  initWebSocket () {
     this.connection()
   }
 
-  connection() {
+  connection () {
     this.socket = new SockJS(`ws://${this.webSocketHost}/page/entry`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'WxDebug.applyChannelId' }))
@@ -135,23 +135,23 @@ export class HomeComponent extends Vue {
     })
   }
 
-  toggleType(type) {
+  toggleType (type) {
     this.activeType = type
     localStorage.setItem(`activeMode`, type)
   }
 
-  disconnect() {
+  disconnect () {
     this.socket && this.socket.connected && this.socket.close()
     this.cleanQRCode()
     this.$snotify.clear()
   }
 
-  openQRCode(bundle: any) {
+  openQRCode (bundle: any) {
     this.activeBundle = bundle.entry
     localStorage.setItem('activeBundle', bundle.entry)
   }
 
-  open(value: string) {
+  open (value: string) {
     this.$snotify.async(`${this.$t('home.toastTips.openPage')} ...`, () => new Promise((resolve, reject) => {
       this.socket.send(JSON.stringify({ method: 'WxDebug.openFile', params: value }))
       setTimeout(() => resolve({
@@ -164,17 +164,17 @@ export class HomeComponent extends Vue {
     }))
   }
 
-  navigator(url:string){
-    window.open(url,'_blank')
+  navigator (url: string) {
+    window.open(url, '_blank')
   }
 
-  handleLanguageSetting(locale: string) {
+  handleLanguageSetting (locale: string) {
     this.$i18n.locale = locale
     this.initTips()
     localStorage.setItem('language', locale)
   }
 
-  async copy(value: string, filterName: string) {
+  async copy (value: string, filterName: string) {
     if (filterName) {
       value = filters[filterName](value)
     }

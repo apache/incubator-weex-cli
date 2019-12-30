@@ -150,7 +150,7 @@ export class AnalyzeComponent extends Vue {
     value: 'all'
   }]
   @Watch('historys')
-  historyChange() {
+  historyChange () {
     let downloadContent
     let len = this.historys.length
     for (let i = 0; i < len; i++) {
@@ -164,7 +164,7 @@ export class AnalyzeComponent extends Vue {
     this.downloadHref = URL.createObjectURL(new Blob([JSON.stringify(downloadContent, null, 2)]))
   }
 
-  mockAfterConfig(options) {
+  mockAfterConfig (options) {
     let xAxis = options.xAxis
     let yAxis = options.yAxis
     options.xAxis = yAxis
@@ -187,26 +187,26 @@ export class AnalyzeComponent extends Vue {
   @Prop({ type: String })
   private channelId: { value: string }
 
-  get reloadToggle() {
+  get reloadToggle () {
     return this.reload
   }
-  set reloadToggle(value) {
+  set reloadToggle (value) {
     this.updateToggle({ value: value, name: 'reloadToggle' })
   }
-  get captureToggle() {
+  get captureToggle () {
     return this.capture
   }
-  set captureToggle(value) {
+  set captureToggle (value) {
     this.updateToggle({ value: value, name: 'captureToggle' })
   }
-  get compareToggle() {
+  get compareToggle () {
     return this.compare
   }
-  set compareToggle(value) {
+  set compareToggle (value) {
     this.updateToggle({ value: value, name: 'compareToggle' })
   }
 
-  mounted() {
+  mounted () {
     if (!this.parser) {
       this.parser = new Parser()
     }
@@ -214,7 +214,7 @@ export class AnalyzeComponent extends Vue {
     this.$store.commit(types.UPDATE_CHANNEL_ID, this.channelId)
   }
 
-  initData() {
+  initData () {
     let jsAsyncTime
     let fsViewTime = this.reportData.stage.wxFirstInteractionView - this.reportData.stage.wxEndLoadBundle
     let bundleCompileTime = this.reportData.stage.wxEndLoadBundle - this.reportData.stage.wxRenderTimeOrigin
@@ -359,11 +359,11 @@ export class AnalyzeComponent extends Vue {
     this.pageScoreTableData = this.generateScoreData(performanceScoreData, this.performanceScoreTextMap, this.performanceScoreSeed)
   }
 
-  initWebSocket() {
+  initWebSocket () {
     this.connection()
   }
 
-  connection() {
+  connection () {
     this.socket = new SockJS(`ws://${this.webSocketHost}/debugProxy/debugger/${this.channelId}`)
     this.socket.on('connect', (data) => {
       this.socket.send(JSON.stringify({ method: 'Page.stopScreencast' }))
@@ -452,30 +452,30 @@ export class AnalyzeComponent extends Vue {
     })
   }
 
-  handleCaptureTimesChange(value) {
+  handleCaptureTimesChange (value) {
     this.updateDefaultCapture(value)
   }
 
-  handleHistoryChange(value) {
+  handleHistoryChange (value) {
     this.updateDefaultHistory(value)
   }
 
-  handleFilterTypeChange(value) {
+  handleFilterTypeChange (value) {
     this.defaultRenderType = value
   }
 
-  activeHistory(history) {
+  activeHistory (history) {
     this.reportData = history.data
     this.activeId = history.key
     this.initData()
   }
 
-  handleSetting() {
+  handleSetting () {
     this.reportData = ''
     this.activeId = ''
   }
 
-  startAnalyze() {
+  startAnalyze () {
     if (!this.start) {
       this.start = true
       this.activeId = ''
@@ -511,7 +511,7 @@ export class AnalyzeComponent extends Vue {
 
   }
 
-  clearHistory(activeId) {
+  clearHistory (activeId) {
     let historys = [].concat(this.historys)
     if (activeId) {
       historys = historys.filter((hisotry) => {
@@ -530,7 +530,7 @@ export class AnalyzeComponent extends Vue {
     }
   }
 
-  showDetail(type, value) {
+  showDetail (type, value) {
     if (type) {
       this.treeViewerOptions.rootObjectKey = type
     }
@@ -538,7 +538,7 @@ export class AnalyzeComponent extends Vue {
     this.modalShow = true
   }
 
-  generateScoreData(raw, map, scoreMap) {
+  generateScoreData (raw, map, scoreMap) {
     let len = raw.length
     let data = []
     let scoreSum = 100
@@ -592,11 +592,11 @@ export class AnalyzeComponent extends Vue {
     }
   }
 
-  copyText(message) {
+  copyText (message) {
     this.$copyText(message).then(() => { })
   }
 
-  tirggerFile(event) {
+  tirggerFile (event) {
     const files = event.target.files
     if (files && files.length > 0 && files[0].size > 0) {
       let file = files[0]
