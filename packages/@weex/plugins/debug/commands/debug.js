@@ -56,7 +56,7 @@ module.exports = {
               description: 'specify debug channel id'
             },
             {
-              key: '--manul',
+              key: '--manual',
               default: 'false',
               description: 'control open browser or not'
             },

@@ -22,7 +22,7 @@ function resolveConnectUrl (config) {
 exports.startServerAndLaunch = function (config, cb) {
   this.startServer(config).then(() => {
     cb && cb()
-    if (!config.manual) this.launch(config.ip, config.port)
+    this.launch(config.ip, config.port)
   })
 }
 
@@ -71,7 +71,7 @@ exports.launch = function (ip, port) {
       headless.launchHeadless(`${config.ip}:${config.port}`, open)
     })
   }
-  launcher.launchChrome(debuggerURL, config.REMOTE_DEBUG_PORT || 9222)
+  if (!config.manual) launcher.launchChrome(debuggerURL, config.REMOTE_DEBUG_PORT || 9222)
 }
 
 exports.reload = function () {
