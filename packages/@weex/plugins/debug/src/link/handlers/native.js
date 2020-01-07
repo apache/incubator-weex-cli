@@ -20,7 +20,7 @@ let heartbeatTimer
 const sendHeartbeat = () => {
   heartbeatTimer && clearTimeout(heartbeatTimer)
   heartbeatTimer = setTimeout(() => {
-    debuggerRouter.pushMessage('page.entry', 'ping')
+    debuggerRouter.pushMessage('proxy.native', 'ping')
     sendHeartbeat()
   }, config.heartbeatTime)
 }
