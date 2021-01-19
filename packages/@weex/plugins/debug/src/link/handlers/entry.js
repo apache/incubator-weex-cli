@@ -5,8 +5,6 @@ const { util } = require('../../util')
 const debuggerRouter = Router.get('debugger')
 const opn = require('opn')
 
-
-
 let heartbeatTimer
 const sendHeartbeat = () => {
   heartbeatTimer && clearTimeout(heartbeatTimer)
