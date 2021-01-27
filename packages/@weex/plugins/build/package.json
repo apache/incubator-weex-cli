@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/build",
-  "version": "2.0.0-beta.15",
+  "version": "2.0.0-beta.32",
   "description": "Build module for weex-toolkit",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/utils": "^2.0.0-beta.2",
+    "@weex-cli/utils": "^2.0.0-beta.32",
     "userhome": "^1.0.0"
   },
   "devDependencies": {
