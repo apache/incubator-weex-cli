@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/debug-server",
-  "version": "2.0.0-beta.31",
+  "version": "2.0.0-beta.32",
   "description": "Module for start debug server",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@weex-cli/linker": "^2.0.0-beta.31",
+    "@weex-cli/linker": "^2.0.0-beta.32",
     "debug": "^4.1.1",
     "fs-extra": "^7.0.1",
     "ip": "^1.1.5",

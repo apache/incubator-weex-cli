@@ -1,6 +1,6 @@
 {
   "name": "@weex-cli/plugin",
-  "version": "2.0.0-beta.22",
+  "version": "2.0.0-beta.32",
   "description": "Module for manage weex plugin and create plugin project",
   "main": "index.js",
   "scripts": {
